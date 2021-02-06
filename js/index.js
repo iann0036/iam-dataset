@@ -73,4 +73,3 @@ console.log("\nTOTAL METHODS:");
 console.log(methods.length);
 console.log("\nTOTAL UNMAPPED METHODS:")
 console.log(unmapped_methods.length);
-
