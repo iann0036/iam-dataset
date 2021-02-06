@@ -61,7 +61,7 @@ for (let service of Object.keys(AWS.apiLoader.services)) {
                 }
 
                 if (!fully_mapped) {
-                    console.log(sdkclass + "." + operation);
+                    console.log("Unmapped method: " + sdkclass + "." + operation);
                     unmapped_methods.push(sdkclass + "." + operation);
                 }
             }
@@ -69,5 +69,8 @@ for (let service of Object.keys(AWS.apiLoader.services)) {
     }
 }
 
+console.log("\nTOTAL METHODS:");
 console.log(methods.length);
+console.log("\nTOTAL UNMAPPED METHODS:")
 console.log(unmapped_methods.length);
+
