@@ -7,3 +7,5 @@ It is currently being used to support [https://github.com/iann0036/iamlive](http
 Mapping tool hosted version: [https://iann0036.github.io/sdk-iam-map/index.html#](https://iann0036.github.io/sdk-iam-map/index.html#).
 
 Template checking notes: check for `/{` or `""` mistakes after full mapping.
+
+Current position: AppStream.StopFleet

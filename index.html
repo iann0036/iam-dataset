@@ -165,6 +165,16 @@
             return service;
         }
 
+        function skipTo() {
+            var mappingkeys = Object.keys(map['sdk_method_iam_mappings']);
+
+            while (mappingkeys[0] != document.getElementById('skipto').value) {
+                delete map['sdk_method_iam_mappings'][mappingkeys.shift()];
+            }
+
+            nextMethod();
+        }
+
         async function nextMethod() {
             var mappingkeys = Object.keys(map['sdk_method_iam_mappings']);
 
@@ -179,13 +189,15 @@
 
             var splitcall = call.split(".");
 
-            document.getElementById('methodmappingarea').innerHTML = `<h3>${call}</h3><a href="https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/${splitcall[0]}.html#${splitcall[1][0].toLowerCase() + splitcall[1].substr(1)}-property" target="_blank">[docs]</a><br /><br />`;
+            document.getElementById('methodmappingarea').innerHTML = `<h3>${call}</h3><a href="https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/${splitcall[0]}.html#${splitcall[1][0].toLowerCase() + splitcall[1].substr(1)}-property" target="_blank">[docs]</a>&nbsp;&nbsp;<input id="skipto" /> <button onclick="skipTo()">Skip To</button><br /><br />`;
 
             try {
                 document.getElementById('docs').innerHTML = await getDocsForCall(splitcall[0], splitcall[1]);
             } catch(e) {
                 nextMethod();
             }
+
+            var has_valid_res_type = false;
 
             existingmappings.forEach(existingmapping => {
                 if (!existingmapping['resource_mappings']) {
@@ -207,6 +219,8 @@
                                 if (priv['privilege'].toLowerCase() == method.toLowerCase()) {
                                     priv['resource_types'].forEach(restype => {
                                         if (restype['resource_type'] != "") {
+                                            has_valid_res_type = true;
+
                                             var resourcemap = document.createElement('div');
                                             resourcemap.setAttribute("class", "resourceblock");
                                             resourcemap.setAttribute("data-restype", restype['resource_type']);
@@ -248,6 +262,10 @@
                     document.getElementById('methodmappingarea').appendChild(methodmap);
                 }
             });
+
+            if (!has_valid_res_type) {
+                nextMethod();
+            }
 
             document.querySelectorAll(".dc").forEach(dc => {
                 dc.addEventListener('click', e => {
