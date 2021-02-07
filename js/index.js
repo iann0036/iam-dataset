@@ -4,7 +4,7 @@ const fs = require('fs');
 const iam_def = JSON.parse(fs.readFileSync('./iam_definition.json', {encoding:'utf8', flag:'r'}));
 const map = JSON.parse(fs.readFileSync('../map.json', {encoding:'utf8', flag:'r'}));
 
-sdk_services = []
+let sdk_services = []
 
 for (let prop of Object.getOwnPropertyNames(AWS)) {
     if (AWS[prop].prototype instanceof AWS.Service) {
@@ -12,7 +12,7 @@ for (let prop of Object.getOwnPropertyNames(AWS)) {
     }
 }
 
-iam_services = iam_def.map(x => x.prefix.toLowerCase());
+let iam_services = iam_def.map(x => x.prefix.toLowerCase());
 
 for (let sdk_service of sdk_services) {
     iam_service = null;
@@ -73,3 +73,4 @@ console.log("\nTOTAL METHODS:");
 console.log(methods.length);
 console.log("\nTOTAL UNMAPPED METHODS:")
 console.log(unmapped_methods.length);
+

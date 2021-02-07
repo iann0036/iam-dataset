@@ -1,0 +1,222 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>IAM Mapping Tool</title>
+    <style>
+        .column {
+            float: left;
+            width: 50%;
+        }
+
+        .row:after {
+            content: "";
+            display: table;
+            clear: both;
+        }
+    </style>
+  </head>
+  <body>
+    <div class="row">
+        <div class="column">
+            <div id="loadjsonarea">
+                <button id="loadjsonbutton" onclick="loadJson()">Load JSON</button>
+                <br />
+            </div>
+        
+            <div id="methodmappingarea"></div>
+            <br /><br /><button id="submitbutton" onclick="submitMapping()">Submit Mapping [`]</button>&nbsp;&nbsp;<button id="skipbutton" onclick="nextMethod()">Skip Mapping [\]</button>
+        
+            <br /><br /><br /><h4>Output</h4>
+            <textarea id="output" cols="80" rows="20"></textarea>
+        </div>
+        <div class="column">
+            <pre id="docs"></pre>
+        </div>
+    </div>
+
+
+
+    <script>
+        var map = {};
+        var iamdef = {};
+        var updated_map = {};
+        var call = "";
+
+        async function getDocsForCall(service, method) {
+            var ret = "";
+            var sdkdatatxt = await fetch('https://raw.githubusercontent.com/aws/aws-sdk-js/master/apis/apigateway-2015-07-09.min.json');
+            var sdkdata = await sdkdatatxt.json();
+
+            if (sdkdata['operations'][method]) {
+                if (sdkdata['operations'][method]['http'] && sdkdata['operations'][method]['http']['requestUri']) {
+                    ret += `
+    <i>httprequesturi</i>: <a href="#" class="dc" data-map="${sdkdata['operations'][method]['http']['requestUri']}">${sdkdata['operations'][method]['http']['requestUri']}</a>
+                    `;
+                }
+
+                if (sdkdata['operations'][method]['input'] && sdkdata['operations'][method]['input']['members']) {
+                    Object.keys(sdkdata['operations'][method]['input']['members']).forEach(member => {
+                        ret += `
+    <a href="#" class="dc" data-map="\$\{${member}\}">${member}</a>: ${JSON.stringify(sdkdata['operations'][method]['input']['members'][member])}
+                    `;
+                    });
+                    
+                }
+            }
+
+            return ret;
+        }
+
+        async function loadJson() {
+            var mapdata = await fetch('https://raw.githubusercontent.com/iann0036/sdk-iam-map/main/map.json');
+            map = await mapdata.json();
+            updated_map = JSON.parse(JSON.stringify(map)); // copy
+            var iamdefdata = await fetch('https://raw.githubusercontent.com/iann0036/sdk-iam-map/main/js/iam_definition.json');
+            iamdef = await iamdefdata.json();
+
+            document.getElementById('loadjsonarea').setAttribute('style', 'display: none;');
+
+            nextMethod();
+        }
+
+        async function submitMapping() {
+            var submitted_mapping = [];
+            
+            document.getElementById('methodmappingarea').querySelectorAll(".actionblock").forEach(actionblock => {
+                var block = {
+                    'action': actionblock.dataset.action,
+                    'resource_mappings': {}
+                };
+                
+                actionblock.querySelectorAll('.resourceblock').forEach(resourceblock => {
+                    resourceblock.querySelectorAll('.mappinginput').forEach(mappinginput => {
+                        block['resource_mappings'][mappinginput.dataset.varmatch] = {
+                            "template": mappinginput.value
+                        };
+                    });
+                });
+
+                submitted_mapping.push(block);
+            });
+
+            updated_map['sdk_method_iam_mappings'][call] = submitted_mapping;
+
+            document.getElementById('output').innerHTML = JSON.stringify(updated_map, null, 4);
+
+            nextMethod();
+        }
+
+        function resolveService(service) {
+            if (map['sdk_service_mappings'][service]) {
+                return map['sdk_service_mappings'][service];
+            }
+
+            return service;
+        }
+
+        async function nextMethod() {
+            var mappingkeys = Object.keys(map['sdk_method_iam_mappings']);
+
+            call = mappingkeys.shift();
+
+            var existingmappings = map['sdk_method_iam_mappings'][call];
+
+            document.getElementById('methodmappingarea').innerHTML = `<h3>${call}</h3><br />`;
+
+            var splitcall = call.split(".");
+            document.getElementById('docs').innerHTML = await getDocsForCall(splitcall[0], splitcall[1]);
+
+            existingmappings.forEach(existingmapping => {
+                if (!existingmapping['resource_mappings']) {
+                    var methodmap = document.createElement('div');
+                    methodmap.setAttribute("class", "actionblock");
+                    methodmap.setAttribute("data-action", existingmapping['action']);
+                    methodmap.setAttribute("style", "border-width: 2px; border-style: solid; border-color: #dddddd;");
+
+                    methodmap.innerHTML += `
+                        <b>Action: </b><code>${existingmapping['action']}</code>
+                    `;
+
+                    var service = existingmapping['action'].split(":")[0];
+                    var method = existingmapping['action'].split(":")[1];
+
+                    iamdef.forEach(iamdefservice => {
+                        if (iamdefservice['prefix'] == resolveService(service.toLowerCase())) {
+                            iamdefservice['privileges'].forEach(priv => {
+                                if (priv['privilege'].toLowerCase() == method.toLowerCase()) {
+                                    priv['resource_types'].forEach(restype => {
+                                        if (restype['resource_type'] != "") {
+                                            var resourcemap = document.createElement('div');
+                                            resourcemap.setAttribute("class", "resourceblock");
+                                            resourcemap.setAttribute("data-restype", restype['resource_type']);
+                                            resourcemap.setAttribute("style", "border-width: 2px; border-style: solid; border-color: #aaaadd;");
+
+                                            resourcemap.innerHTML += `
+                                                <br /><br /><b>Restype: </b><code>${restype['resource_type']}</code><br />
+                                            `;
+
+                                            iamdefservice['resources'].forEach(resource => {
+                                                if (resource['resource'] == restype['resource_type'].replace("*", "")) {
+                                                    resourcemap.innerHTML += `
+                                                        <b>ARN style: </b><code>${resource['arn']}</code><br />
+                                                    `;
+
+                                                    var varmatches = [...resource['arn'].matchAll(/\$\{.+?\}/g)].map(x => {
+                                                        var y = x.shift();
+                                                        return y.substring(2, y.length-1);
+                                                    });
+
+                                                    varmatches.forEach(varmatch => {
+                                                        if (!["Partition", "Region", "Account"].includes(varmatch)) {
+                                                            resourcemap.innerHTML += `
+                                                                <b><code>${varmatch}</code>: </b><input class="mappinginput" data-varmatch="${varmatch}" type="text" /><br />
+                                                            `;
+                                                        }
+                                                    });
+                                                }
+                                            });
+
+                                            methodmap.appendChild(resourcemap);
+                                        }
+                                    });
+                                }
+                            });
+                        }
+                    });
+
+                    document.getElementById('methodmappingarea').appendChild(methodmap);
+                }
+            });
+
+            document.querySelectorAll(".dc").forEach(dc => {
+                dc.addEventListener('click', e => {
+                    let mappinginputs = document.querySelectorAll(".mappinginput");
+                    for (var mi of mappinginputs) {
+                        if (mi.value == "") {
+                            mi.value = e.srcElement.dataset.map;
+
+                            break;
+                        }
+                    }
+                });
+            });
+
+            delete map['sdk_method_iam_mappings'][call];
+        }
+
+        window.onload = () => {
+            document.getElementById('loadjsonbutton').click();
+        }
+
+        document.addEventListener("keypress", (e) => {
+            if (e.key == '`') {
+                document.getElementById('submitbutton').click();
+            } else if (e.key == '\\') {
+                document.getElementById('skipbutton').click();
+            }
+        }, false);
+    </script>
+  </body>
+</html>
