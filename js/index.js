@@ -54,7 +54,7 @@ for (let service of Object.keys(AWS.apiLoader.services)) {
                     if (iam_service['prefix'].toLowerCase() == mapped_iam_service.toLowerCase()) {
                         for (let priv of iam_service["privileges"]) {
                             if (priv.privilege == operation) {
-                                fully_mapped = true;
+                                //fully_mapped = true; // uncomment to only show non-same-name match failures
                             }
                         }
                     }
@@ -74,3 +74,34 @@ console.log(methods.length);
 console.log("\nTOTAL UNMAPPED METHODS:")
 console.log(unmapped_methods.length);
 
+/*
+unmapped_methods.forEach(x => {
+    var sdkclass = x.split(".")[0];
+    var operation = x.split(".")[1];
+    var iammethod = null;
+
+    let mapped_iam_service = sdkclass;
+    if (map['sdk_service_mappings'][sdkclass]) {
+        mapped_iam_service = map['sdk_service_mappings'][sdkclass];
+    }
+
+    for (let iam_service of iam_def) {
+        if (iam_service['prefix'].toLowerCase() == mapped_iam_service.toLowerCase()) {
+            for (let priv of iam_service["privileges"]) {
+                if (priv.privilege == operation) {
+                    iammethod = priv.privilege;
+                }
+            }
+        }
+    }
+
+    if (iammethod) {
+        console.log(`
+    "${x}": [
+        {
+            "action": "${mapped_iam_service.toLowerCase()}:${iammethod}"
+        }
+    ],`);
+    }
+});
+*/
