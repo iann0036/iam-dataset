@@ -6,6 +6,13 @@ It is currently being used to support [https://github.com/iann0036/iamlive](http
 
 Mapping tool hosted version: [https://iann0036.github.io/sdk-iam-map/index.html#](https://iann0036.github.io/sdk-iam-map/index.html#).
 
-Template checking notes: check for `/{` or `""` mistakes after full mapping.
+Template checking notes: check for `/{` or `""` or `\`` mistakes after full mapping.
 
-Current position: EC2.DeleteRoute
+Current position: EC2.ModifyManagedPrefixList
+
+## Syntax Definition
+
+`${PropertyName}` - Variable substitution for the `PropertyName` property
+`.` - A property within an object/map
+`[]` - For each value within the array
+`%urlencode:${PropertyName}%` - Performs a URL-encoding on the `PropertyName` property
