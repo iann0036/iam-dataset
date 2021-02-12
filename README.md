@@ -13,6 +13,9 @@ Current position: EC2.ModifyManagedPrefixList
 ## Syntax Definition
 
 `${PropertyName}` - Variable substitution for the `PropertyName` property
+
 `.` - A property within an object/map
+
 `[]` - For each value within the array
+
 `%urlencode:${PropertyName}%` - Performs a URL-encoding on the `PropertyName` property
