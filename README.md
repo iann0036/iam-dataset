@@ -19,3 +19,5 @@ Current position: RDS.ModifyOptionGroup
 `[]` - For each value within the array
 
 `%urlencode:${PropertyName}%` - Performs a URL-encoding on the `PropertyName` property
+
+`%many:${PropertyName}:${PropertyName2}:${PropertyName3}%` - For each of the `PropertyName`, `PropertyName2` & `PropertyName3` properties (any length)
