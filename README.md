@@ -8,7 +8,7 @@ Mapping tool hosted version: [https://iann0036.github.io/sdk-iam-map/index.html#
 
 Template checking notes: check for `/{` or `""` or `\`` mistakes after full mapping.
 
-Run 2: EFS.CreateAccessPoint
+Run 2: Kinesis
 
 ## Syntax Definition
 
