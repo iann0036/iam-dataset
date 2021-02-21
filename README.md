@@ -8,6 +8,8 @@ Mapping tool hosted version: [https://iann0036.github.io/sdk-iam-map/index.html#
 
 Template checking notes: check for `/{` or `""` or `\`` mistakes after full mapping.
 
+Run 3: CloudFormation.CreateStackInstances
+
 ## Syntax Definition
 
 `${PropertyName}` - Variable substitution for the `PropertyName` property
@@ -23,5 +25,6 @@ Template checking notes: check for `/{` or `""` or `\`` mistakes after full mapp
 `%iftemplatematch:${ArnProperty}%` - Only valid if the template matches the resource types template
 
 ```
+%iftemplatematch:${resourceArn}%
 %iftemplatematch:${ResourceArn}%
 ```
