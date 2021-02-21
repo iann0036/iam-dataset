@@ -6,11 +6,6 @@ It is currently being used to support [https://github.com/iann0036/iamlive](http
 
 Mapping tool hosted version: [https://iann0036.github.io/sdk-iam-map/index.html#](https://iann0036.github.io/sdk-iam-map/index.html#).
 
-Template checking notes: check for `/{` or `""` or `\`` mistakes after full mapping.
-
-TODO: Handle ${aws:username}
-TODO: WAFV2 crash
-
 ## Syntax Definition
 
 `${PropertyName}` - Variable substitution for the `PropertyName` property
@@ -23,10 +18,11 @@ TODO: WAFV2 crash
 
 `%many:${PropertyName}:${PropertyName2}:${PropertyName3}%` - For each of the `PropertyName`, `PropertyName2` & `PropertyName3` properties (any length)
 
-`%iftemplatematch:${ArnProperty}%` - Only valid if the template matches the resource types template
+`%iftemplatematch:${ArnProperty}%` - Only valid if the template matches the resource type's template
 
-```
-%iftemplatematch:${resourceArn}%
-%iftemplatematch:${ResourceArn}%
-%iftemplatematch:${ResourceARN}%
-```
+## Notes
+
+Template checking notes: check for `/{` or `""` or `\`` mistakes after full mapping.
+
+TODO: Handle ${aws:username}
+TODO: WAFV2 crash
