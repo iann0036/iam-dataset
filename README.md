@@ -8,7 +8,7 @@ Mapping tool hosted version: [https://iann0036.github.io/sdk-iam-map/index.html#
 
 Template checking notes: check for `/{` or `""` or `\`` mistakes after full mapping.
 
-Run 3: Rekognition.CreateProjectVersion
+Run 3: WorkMail.ListTagsForResource
 
 TODO: Handle ${aws:username}
 
@@ -29,4 +29,5 @@ TODO: Handle ${aws:username}
 ```
 %iftemplatematch:${resourceArn}%
 %iftemplatematch:${ResourceArn}%
+%iftemplatematch:${ResourceARN}%
 ```
