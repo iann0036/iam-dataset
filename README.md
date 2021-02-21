@@ -19,3 +19,9 @@ Template checking notes: check for `/{` or `""` or `\`` mistakes after full mapp
 `%urlencode:${PropertyName}%` - Performs a URL-encoding on the `PropertyName` property
 
 `%many:${PropertyName}:${PropertyName2}:${PropertyName3}%` - For each of the `PropertyName`, `PropertyName2` & `PropertyName3` properties (any length)
+
+`%iftemplatematch:${ArnProperty}%` - Only valid if the template matches the resource types template
+
+```
+%iftemplatematch:${ResourceArn}%
+```
