@@ -103,12 +103,12 @@
                 if (sdkdata['operations'][method]['input'] && sdkdata['operations'][method]['input']['members']) {
                     Object.keys(sdkdata['operations'][method]['input']['members']).forEach(member => {
                         ret += `
-    <a href="#" class="dc" data-map="\$\{${member}\}">${member}</a>: ${JSON.stringify(sdkdata['operations'][method]['input']['members'][member])}<br />`;
+    <a href="#" class="dc" data-map="\$\{${member}\}">${member}</a> <a href="#" class="dcarn" data-map="\$\{${member}\}">[A]</a>: ${JSON.stringify(sdkdata['operations'][method]['input']['members'][member])}<br />`;
 
                         var subfields = resolveObj(sdkdata, sdkdata['operations'][method]['input']['members'][member], member).split(",").filter(x => x != "");
 
                         subfields.forEach(subfield => {
-                            ret += `        <a href="#" class="dc" data-map="\$\{${subfield}\}">${subfield}</a><br />`;
+                            ret += `        <a href="#" class="dc" data-map="\$\{${subfield}\}">${subfield}</a> <a href="#" class="dcarn" data-map="\$\{${subfield}\}">[A]</a><br />`;
                         });
                     });
                     
@@ -140,11 +140,20 @@
                 };
                 
                 actionblock.querySelectorAll('.resourceblock').forEach(resourceblock => {
-                    resourceblock.querySelectorAll('.mappinginput').forEach(mappinginput => {
-                        block['resource_mappings'][mappinginput.dataset.varmatch] = {
-                            "template": mappinginput.value
-                        };
-                    });
+                    var arninput = resourceblock.querySelector('.mappinginputarn');
+                    if (arninput.value != "") {
+                        if (!block['resourcearn_mappings']) {
+                            block['resourcearn_mappings'] = {};
+                        }
+
+                        block['resourcearn_mappings'][arninput.dataset.resource] = arninput.value;
+                    } else {
+                        resourceblock.querySelectorAll('.mappinginput').forEach(mappinginput => {
+                            block['resource_mappings'][mappinginput.dataset.varmatch] = {
+                                "template": mappinginput.value
+                            };
+                        });
+                    }
                 });
 
                 submitted_mapping.push(block);
@@ -234,6 +243,7 @@
                                                 if (resource['resource'] == restype['resource_type'].replace("*", "")) {
                                                     resourcemap.innerHTML += `
                                                         <b>ARN style: </b><code>${resource['arn']}</code><br />
+                                                        <b><i><code>fullarn</code></i>: </b><input size="50" class="mappinginputarn" data-resource="${resource['resource']}" type="text" /><br />
                                                     `;
 
                                                     var varmatches = [...resource['arn'].matchAll(/\$\{.+?\}/g)].map(x => {
@@ -270,6 +280,19 @@
             document.querySelectorAll(".dc").forEach(dc => {
                 dc.addEventListener('click', e => {
                     let mappinginputs = document.querySelectorAll(".mappinginput");
+                    for (var mi of mappinginputs) {
+                        if (mi.value == "") {
+                            mi.value = e.srcElement.dataset.map;
+
+                            break;
+                        }
+                    }
+                });
+            });
+
+            document.querySelectorAll(".dcarn").forEach(dc => {
+                dc.addEventListener('click', e => {
+                    let mappinginputs = document.querySelectorAll(".mappinginputarn");
                     for (var mi of mappinginputs) {
                         if (mi.value == "") {
                             mi.value = e.srcElement.dataset.map;
