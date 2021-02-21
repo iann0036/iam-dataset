@@ -20,6 +20,10 @@ Mapping tool hosted version: [https://iann0036.github.io/sdk-iam-map/index.html#
 
 `%iftemplatematch:${ArnProperty}%` - Only valid if the template matches the resource type's template
 
+`%regex:${PropertyName}:/(.+)/g%` - Returns first capture group of Regex
+
+`%ifregexmatch:${PropertyName}:/^.+$/g:${PropertyName}:*%` - Conditional Regex test
+
 ## Notes
 
 Template checking notes: check for `/{` or `""` or `\`` mistakes after full mapping.
