@@ -8,8 +8,6 @@ Mapping tool hosted version: [https://iann0036.github.io/sdk-iam-map/index.html#
 
 Template checking notes: check for `/{` or `""` or `\`` mistakes after full mapping.
 
-Run 3: Imagebuilder.CancelImageCreation
-
 TODO: Handle ${aws:username}
 TODO: WAFV2 crash
 
