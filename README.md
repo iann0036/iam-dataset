@@ -30,5 +30,5 @@ TODO: Handle ${aws:username} in iamlive
 TODO: WAFV2 crash
 TODO: Check LexModelsV2 mapped correctly
 TODO: Run 4: ElastiCache.AddTagsToResource
-TODO: PassRole additions - 28
+TODO: PassRole additions - 28 (https://gist.github.com/noamsdahan/928aafbcca71f95b07472f22e35dc93c)
 TODO: Fix for broken model downloads
