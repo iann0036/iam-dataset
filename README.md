@@ -29,7 +29,6 @@ Template checking notes: check for `/{` or `""` or `\`` or `" ` or ` "` or `"%m`
 TODO: Handle ${aws:username} in iamlive
 TODO: WAFV2 crash
 TODO: Check LexModelsV2 mapped correctly
-
-Run 4: ElastiCache.AddTagsToResource
-
-PassRole: 28
+TODO: Run 4: ElastiCache.AddTagsToResource
+TODO: PassRole additions - 28
+TODO: Fix for broken model downloads
