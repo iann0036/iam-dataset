@@ -24,10 +24,12 @@ Mapping tool hosted version: [https://iann0036.github.io/sdk-iam-map/index.html#
 
 ## Notes
 
-Template checking notes: check for `/{` or `""` or `\`` or `" ` or ` "` mistakes after full mapping.
+Template checking notes: check for `/{` or `""` or `\`` or `" ` or ` "` or `"%m` or `"%$` or ` or `}%"` mistakes after full mapping.
 
-TODO: Handle ${aws:username}
+TODO: Handle ${aws:username} in iamlive
 TODO: WAFV2 crash
+TODO: Check LexModelsV2 mapped correctly
 
 Run 4: ElastiCache.AddTagsToResource
 
+PassRole: 28
