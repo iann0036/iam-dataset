@@ -26,7 +26,10 @@ Mapping tool hosted version: [https://iann0036.github.io/sdk-iam-map/index.html#
 
 ## Notes
 
-Template checking notes: check for `/{` or `""` or `\`` mistakes after full mapping.
+Template checking notes: check for `/{` or `""` or `\`` or `" ` or ` "` mistakes after full mapping.
 
 TODO: Handle ${aws:username}
 TODO: WAFV2 crash
+
+Run 4: ElastiCache.AddTagsToResource
+
