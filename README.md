@@ -14,15 +14,13 @@ Mapping tool hosted version: [https://iann0036.github.io/sdk-iam-map/index.html#
 
 `[]` - For each value within the array
 
-`%urlencode:${PropertyName}%` - Performs a URL-encoding on the `PropertyName` property
+`%%urlencode%${PropertyName}%%` - Performs a URL-encoding on the `PropertyName` property
 
-`%many:${PropertyName}:${PropertyName2}:${PropertyName3}%` - For each of the `PropertyName`, `PropertyName2` & `PropertyName3` properties (any length)
+`%%many%${PropertyName}%${PropertyName2}%${PropertyName3}%%` - For each of the `PropertyName`, `PropertyName2` & `PropertyName3` properties (any length)
 
-`%iftemplatematch:${ArnProperty}%` - Only valid if the template matches the resource type's template
+`%%iftemplatematch%${ArnProperty}%%` - Only valid if the template matches the resource type's template
 
-`%regex:${PropertyName}:/(.+)/g%` - Returns first capture group of Regex
-
-`%ifregexmatch:${PropertyName}:/^.+$/g:${PropertyName}:*%` - Conditional Regex test
+`%%regex%${PropertyName}:/(.+)/g%%` - Returns first capture group of Regex
 
 ## Notes
 
