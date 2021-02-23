@@ -29,4 +29,4 @@ Template checking notes: check for `/{` or `""` or `\`` or `" ` or ` "` or `"%m`
 TODO: Handle ${aws:username} in iamlive
 TODO: WAFV2.Check* crash
 TODO: Check LexModelsV2 mapped correctly
-TODO: PassRole additions - 28 (https://gist.github.com/noamsdahan/928aafbcca71f95b07472f22e35dc93c)
+TODO: PassRole additions - 242 (https://gist.github.com/noamsdahan/928aafbcca71f95b07472f22e35dc93c) & check name v. ARN & * special cases & resources without existing resource_mappings & LaunchTemplate* / taskDefinition* / TemplateName / RolesKey / InstanceProfileName / roleAlias / UseServiceLinkedRole / IamUserAccessToBilling / EnableIAMDatabaseAuthentication
