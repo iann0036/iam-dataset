@@ -20,9 +20,9 @@ Mapping tool hosted version: [https://iann0036.github.io/sdk-iam-map/index.html#
 
 `%%iftemplatematch%${ArnProperty}%%` - Only valid if the template matches the resource type's template
 
-`%%regex%${PropertyName}%/(.+)/g%%` - Returns first capture group of Regex
-
 `%%iftruthy%${PropertyName}%ValueIfTrue%ValueIfFalse%%` - Truthy test
+
+`%%regex%${PropertyName}%/(.+)/g%%` - Returns first capture group of Regex
 
 ## Notes
 
@@ -31,4 +31,4 @@ Template checking notes: check for `/{` or `""` or `\`` or `" ` or ` "` or `"%m`
 TODO: Handle ${aws:username} in iamlive
 TODO: WAFV2.Check* crash
 TODO: Check LexModelsV2 mapped correctly
-TODO: PassRole additions - check name v. ARN & * special cases & resources without existing resource_mappings & LaunchTemplate* / taskDefinition* / InstanceProfileName
+TODO: PassRole additions - check name v. ARN & resources without existing resource_mappings
