@@ -7129,7 +7129,7 @@
             {
                 "action": "iam:PassRole",
                 "arn_override": {
-                    "template": "arn:${Partition}:iam::${Account}:role/%%regex%${computeResources.instanceRole}%/(?:arn.*\/)?(.+)/g%%"
+                    "template": "arn:${Partition}:iam::${Account}:role/%%regex%${computeResources.instanceRole}%/(?:arn.*/)?(.+)/g%%"
                 }
             },
             {
@@ -7300,7 +7300,7 @@
             {
                 "action": "iam:PassRole",
                 "arn_override": {
-                    "template": "arn:${Partition}:iam::${Account}:role/%%regex%${serviceRole}%/(?:arn.*\/)?(.+)/g%%"
+                    "template": "arn:${Partition}:iam::${Account}:role/%%regex%${serviceRole}%/(?:arn.*/)?(.+)/g%%"
                 }
             }
         ],
@@ -30675,17 +30675,31 @@
         ],
         "Lambda.AddLayerVersionPermission": [
             {
-                "action": "lambda:AddLayerVersionPermission"
+                "action": "lambda:AddLayerVersionPermission",
+                "resource_mappings": {},
+                "resourcearn_mappings": {
+                    "layerVersion": "%%iftemplatematch%${LayerName}%%"
+                }
             }
         ],
         "Lambda.AddPermission": [
             {
-                "action": "lambda:AddPermission"
+                "action": "lambda:AddPermission",
+                "resource_mappings": {
+                    "FunctionName": {
+                        "template": "%%regex%${FunctionName}%/^(?:^arn\\:aws\\:.+function\\:|^[0-9]{12}\\:function\\:)?([^:]+?)(?:\\:[^:]+)?$/g%%"
+                    }
+                }
             }
         ],
         "Lambda.CreateAlias": [
             {
-                "action": "lambda:CreateAlias"
+                "action": "lambda:CreateAlias",
+                "resource_mappings": {
+                    "FunctionName": {
+                        "template": "%%regex%${FunctionName}%/^(?:^arn\\:aws\\:.+function\\:|^[0-9]{12}\\:function\\:)?([^:]+?)(?:\\:[^:]+)?$/g%%"
+                    }
+                }
             }
         ],
         "Lambda.CreateCodeSigningConfig": [
@@ -30722,7 +30736,12 @@
         ],
         "Lambda.DeleteAlias": [
             {
-                "action": "lambda:DeleteAlias"
+                "action": "lambda:DeleteAlias",
+                "resource_mappings": {
+                    "FunctionName": {
+                        "template": "%%regex%${FunctionName}%/^(?:^arn\\:aws\\:.+function\\:|^[0-9]{12}\\:function\\:)?([^:]+?)(?:\\:[^:]+)?$/g%%"
+                    }
+                }
             }
         ],
         "Lambda.DeleteCodeSigningConfig": [
@@ -30746,32 +30765,67 @@
         ],
         "Lambda.DeleteFunction": [
             {
-                "action": "lambda:DeleteFunction"
+                "action": "lambda:DeleteFunction",
+                "resource_mappings": {
+                    "FunctionName": {
+                        "template": "%%regex%${FunctionName}%/^(?:^arn\\:aws\\:.+function\\:|^[0-9]{12}\\:function\\:)?([^:]+?)(?:\\:[^:]+)?$/g%%"
+                    }
+                }
             }
         ],
         "Lambda.DeleteFunctionCodeSigningConfig": [
             {
-                "action": "lambda:DeleteFunctionCodeSigningConfig"
+                "action": "lambda:DeleteFunctionCodeSigningConfig",
+                "resource_mappings": {
+                    "FunctionName": {
+                        "template": "%%regex%${FunctionName}%/^(?:^arn\\:aws\\:.+function\\:|^[0-9]{12}\\:function\\:)?([^:]+?)(?:\\:[^:]+)?$/g%%"
+                    }
+                }
             }
         ],
         "Lambda.DeleteFunctionConcurrency": [
             {
-                "action": "lambda:DeleteFunctionConcurrency"
+                "action": "lambda:DeleteFunctionConcurrency",
+                "resource_mappings": {
+                    "FunctionName": {
+                        "template": "%%regex%${FunctionName}%/^(?:^arn\\:aws\\:.+function\\:|^[0-9]{12}\\:function\\:)?([^:]+?)(?:\\:[^:]+)?$/g%%"
+                    }
+                }
             }
         ],
         "Lambda.DeleteFunctionEventInvokeConfig": [
             {
-                "action": "lambda:DeleteFunctionEventInvokeConfig"
+                "action": "lambda:DeleteFunctionEventInvokeConfig",
+                "resource_mappings": {
+                    "FunctionName": {
+                        "template": "%%regex%${FunctionName}%/^(?:^arn\\:aws\\:.+function\\:|^[0-9]{12}\\:function\\:)?([^:]+?)(?:\\:[^:]+)?$/g%%"
+                    }
+                }
             }
         ],
         "Lambda.DeleteLayerVersion": [
             {
-                "action": "lambda:DeleteLayerVersion"
+                "action": "lambda:DeleteLayerVersion",
+                "resource_mappings": {},
+                "resourcearn_mappings": {
+                    "layerVersion": "%%iftemplatematch%${LayerName}%%"
+                }
             }
         ],
         "Lambda.DeleteProvisionedConcurrencyConfig": [
             {
-                "action": "lambda:DeleteProvisionedConcurrencyConfig"
+                "action": "lambda:DeleteProvisionedConcurrencyConfig",
+                "resource_mappings": {
+                    "FunctionName": {
+                        "template": "%%regex%${FunctionName}%/^(?:^arn\\:aws\\:.+function\\:|^[0-9]{12}\\:function\\:)?([^:]+?)(?:\\:[^:]+)?$/g%%"
+                    },
+                    "Alias": {
+                        "template": "%%regex%${Qualifier}%/^(?!^[0-9]+$)([a-zA-Z0-9-_]+)$/g%%"
+                    },
+                    "Version": {
+                        "template": "%%regex%${Qualifier}%/^([0-9]+)$/g%%"
+                    }
+                }
             }
         ],
         "Lambda.GetAccountSettings": [
@@ -30782,7 +30836,12 @@
         ],
         "Lambda.GetAlias": [
             {
-                "action": "lambda:GetAlias"
+                "action": "lambda:GetAlias",
+                "resource_mappings": {
+                    "FunctionName": {
+                        "template": "%%regex%${FunctionName}%/^(?:^arn\\:aws\\:.+function\\:|^[0-9]{12}\\:function\\:)?([^:]+?)(?:\\:[^:]+)?$/g%%"
+                    }
+                }
             }
         ],
         "Lambda.GetCodeSigningConfig": [
@@ -30806,57 +30865,116 @@
         ],
         "Lambda.GetFunction": [
             {
-                "action": "lambda:GetFunction"
+                "action": "lambda:GetFunction",
+                "resource_mappings": {
+                    "FunctionName": {
+                        "template": "%%regex%${FunctionName}%/^(?:^arn\\:aws\\:.+function\\:|^[0-9]{12}\\:function\\:)?([^:]+?)(?:\\:[^:]+)?$/g%%"
+                    }
+                }
             }
         ],
         "Lambda.GetFunctionCodeSigningConfig": [
             {
-                "action": "lambda:GetFunctionCodeSigningConfig"
+                "action": "lambda:GetFunctionCodeSigningConfig",
+                "resource_mappings": {
+                    "FunctionName": {
+                        "template": "%%regex%${FunctionName}%/^(?:^arn\\:aws\\:.+function\\:|^[0-9]{12}\\:function\\:)?([^:]+?)(?:\\:[^:]+)?$/g%%"
+                    }
+                }
             }
         ],
         "Lambda.GetFunctionConcurrency": [
             {
-                "action": "lambda:GetFunctionConcurrency"
+                "action": "lambda:GetFunctionConcurrency",
+                "resource_mappings": {
+                    "FunctionName": {
+                        "template": "%%regex%${FunctionName}%/^(?:^arn\\:aws\\:.+function\\:|^[0-9]{12}\\:function\\:)?([^:]+?)(?:\\:[^:]+)?$/g%%"
+                    }
+                }
             }
         ],
         "Lambda.GetFunctionConfiguration": [
             {
-                "action": "lambda:GetFunctionConfiguration"
+                "action": "lambda:GetFunctionConfiguration",
+                "resource_mappings": {
+                    "FunctionName": {
+                        "template": "%%regex%${FunctionName}%/^(?:^arn\\:aws\\:.+function\\:|^[0-9]{12}\\:function\\:)?([^:]+?)(?:\\:[^:]+)?$/g%%"
+                    }
+                }
             }
         ],
         "Lambda.GetFunctionEventInvokeConfig": [
             {
-                "action": "lambda:GetFunctionEventInvokeConfig"
+                "action": "lambda:GetFunctionEventInvokeConfig",
+                "resource_mappings": {
+                    "FunctionName": {
+                        "template": "%%regex%${FunctionName}%/^(?:^arn\\:aws\\:.+function\\:|^[0-9]{12}\\:function\\:)?([^:]+?)(?:\\:[^:]+)?$/g%%"
+                    }
+                }
             }
         ],
         "Lambda.GetLayerVersion": [
             {
-                "action": "lambda:GetLayerVersion"
+                "action": "lambda:GetLayerVersion",
+                "resource_mappings": {},
+                "resourcearn_mappings": {
+                    "layerVersion": "%%iftemplatematch%${LayerName}%%"
+                }
             }
         ],
         "Lambda.GetLayerVersionPolicy": [
             {
-                "action": "lambda:GetLayerVersionPolicy"
+                "action": "lambda:GetLayerVersionPolicy",
+                "resource_mappings": {},
+                "resourcearn_mappings": {
+                    "layerVersion": "%%iftemplatematch%${LayerName}%%"
+                }
             }
         ],
         "Lambda.GetPolicy": [
             {
-                "action": "lambda:GetPolicy"
+                "action": "lambda:GetPolicy",
+                "resource_mappings": {
+                    "FunctionName": {
+                        "template": "%%regex%${FunctionName}%/^(?:^arn\\:aws\\:.+function\\:|^[0-9]{12}\\:function\\:)?([^:]+?)(?:\\:[^:]+)?$/g%%"
+                    }
+                }
             }
         ],
         "Lambda.GetProvisionedConcurrencyConfig": [
             {
-                "action": "lambda:GetProvisionedConcurrencyConfig"
+                "action": "lambda:GetProvisionedConcurrencyConfig",
+                "resource_mappings": {
+                    "FunctionName": {
+                        "template": "%%regex%${FunctionName}%/^(?:^arn\\:aws\\:.+function\\:|^[0-9]{12}\\:function\\:)?([^:]+?)(?:\\:[^:]+)?$/g%%"
+                    },
+                    "Alias": {
+                        "template": "%%regex%${Qualifier}%/^(?!^[0-9]+$)([a-zA-Z0-9-_]+)$/g%%"
+                    },
+                    "Version": {
+                        "template": "%%regex%${Qualifier}%/^([0-9]+)$/g%%"
+                    }
+                }
             }
         ],
         "Lambda.InvokeAsync": [
             {
-                "action": "lambda:InvokeAsync"
+                "action": "lambda:InvokeAsync",
+                "resource_mappings": {
+                    "FunctionName": {
+                        "template": "%%regex%${FunctionName}%/^(?:^arn\\:aws\\:.+function\\:|^[0-9]{12}\\:function\\:)?([^:]+?)(?:\\:[^:]+)?$/g%%"
+                    }
+                }
             }
         ],
         "Lambda.ListAliases": [
             {
-                "action": "lambda:ListAliases"
+                "action": "lambda:ListAliases",
+                "resource_mappings": {
+                    "FunctionName": {
+                        "template": "%%regex%${FunctionName}%/^(?:^arn\\:aws\\:.+function\\:|^[0-9]{12}\\:function\\:)?([^:]+?)(?:\\:[^:]+)?$/g%%"
+                    }
+                }
             }
         ],
         "Lambda.ListCodeSigningConfigs": [
@@ -30873,7 +30991,12 @@
         ],
         "Lambda.ListFunctionEventInvokeConfigs": [
             {
-                "action": "lambda:ListFunctionEventInvokeConfigs"
+                "action": "lambda:ListFunctionEventInvokeConfigs",
+                "resource_mappings": {
+                    "FunctionName": {
+                        "template": "%%regex%${FunctionName}%/^(?:^arn\\:aws\\:.+function\\:|^[0-9]{12}\\:function\\:)?([^:]+?)(?:\\:[^:]+)?$/g%%"
+                    }
+                }
             }
         ],
         "Lambda.ListFunctions": [
@@ -30905,7 +31028,12 @@
         ],
         "Lambda.ListProvisionedConcurrencyConfigs": [
             {
-                "action": "lambda:ListProvisionedConcurrencyConfigs"
+                "action": "lambda:ListProvisionedConcurrencyConfigs",
+                "resource_mappings": {
+                    "FunctionName": {
+                        "template": "%%regex%${FunctionName}%/^(?:^arn\\:aws\\:.+function\\:|^[0-9]{12}\\:function\\:)?([^:]+?)(?:\\:[^:]+)?$/g%%"
+                    }
+                }
             }
         ],
         "Lambda.ListTags": [
@@ -30919,47 +31047,100 @@
         ],
         "Lambda.ListVersionsByFunction": [
             {
-                "action": "lambda:ListVersionsByFunction"
+                "action": "lambda:ListVersionsByFunction",
+                "resource_mappings": {
+                    "FunctionName": {
+                        "template": "%%regex%${FunctionName}%/^(?:^arn\\:aws\\:.+function\\:|^[0-9]{12}\\:function\\:)?([^:]+?)(?:\\:[^:]+)?$/g%%"
+                    }
+                }
             }
         ],
         "Lambda.PublishLayerVersion": [
             {
-                "action": "lambda:PublishLayerVersion"
+                "action": "lambda:PublishLayerVersion",
+                "resource_mappings": {
+                    "LayerName": {
+                        "template": "%%regex%${FunctionName}%/^(?:^arn\\:aws\\:.+function\\:|^[0-9]{12}\\:function\\:)?([^:]+?)(?:\\:[^:]+)?$/g%%"
+                    }
+                }
             }
         ],
         "Lambda.PublishVersion": [
             {
-                "action": "lambda:PublishVersion"
+                "action": "lambda:PublishVersion",
+                "resource_mappings": {
+                    "FunctionName": {
+                        "template": "%%regex%${FunctionName}%/^(?:^arn\\:aws\\:.+function\\:|^[0-9]{12}\\:function\\:)?([^:]+?)(?:\\:[^:]+)?$/g%%"
+                    }
+                }
             }
         ],
         "Lambda.PutFunctionCodeSigningConfig": [
             {
-                "action": "lambda:PutFunctionCodeSigningConfig"
+                "action": "lambda:PutFunctionCodeSigningConfig",
+                "resource_mappings": {
+                    "FunctionName": {
+                        "template": "%%regex%${FunctionName}%/^(?:^arn\\:aws\\:.+function\\:|^[0-9]{12}\\:function\\:)?([^:]+?)(?:\\:[^:]+)?$/g%%"
+                    }
+                },
+                "resourcearn_mappings": {
+                    "code signing config": "${CodeSigningConfigArn}"
+                }
             }
         ],
         "Lambda.PutFunctionConcurrency": [
             {
-                "action": "lambda:PutFunctionConcurrency"
+                "action": "lambda:PutFunctionConcurrency",
+                "resource_mappings": {
+                    "FunctionName": {
+                        "template": "%%regex%${FunctionName}%/^(?:^arn\\:aws\\:.+function\\:|^[0-9]{12}\\:function\\:)?([^:]+?)(?:\\:[^:]+)?$/g%%"
+                    }
+                }
             }
         ],
         "Lambda.PutFunctionEventInvokeConfig": [
             {
-                "action": "lambda:PutFunctionEventInvokeConfig"
+                "action": "lambda:PutFunctionEventInvokeConfig",
+                "resource_mappings": {
+                    "FunctionName": {
+                        "template": "%%regex%${FunctionName}%/^(?:^arn\\:aws\\:.+function\\:|^[0-9]{12}\\:function\\:)?([^:]+?)(?:\\:[^:]+)?$/g%%"
+                    }
+                }
             }
         ],
         "Lambda.PutProvisionedConcurrencyConfig": [
             {
-                "action": "lambda:PutProvisionedConcurrencyConfig"
+                "action": "lambda:PutProvisionedConcurrencyConfig",
+                "resource_mappings": {
+                    "FunctionName": {
+                        "template": "%%regex%${FunctionName}%/^(?:^arn\\:aws\\:.+function\\:|^[0-9]{12}\\:function\\:)?([^:]+?)(?:\\:[^:]+)?$/g%%"
+                    },
+                    "Alias": {
+                        "template": "%%regex%${Qualifier}%/^(?!^[0-9]+$)([a-zA-Z0-9-_]+)$/g%%"
+                    },
+                    "Version": {
+                        "template": "%%regex%${Qualifier}%/^([0-9]+)$/g%%"
+                    }
+                }
             }
         ],
         "Lambda.RemoveLayerVersionPermission": [
             {
-                "action": "lambda:RemoveLayerVersionPermission"
+                "action": "lambda:RemoveLayerVersionPermission",
+                "resource_mappings": {},
+                "resourcearn_mappings": {
+                    "layerVersion": "%%iftemplatematch%${LayerName}%%"
+                }
             }
         ],
         "Lambda.RemovePermission": [
             {
-                "action": "lambda:RemovePermission"
+                "action": "lambda:RemovePermission",
+                "resource_mappings": {
+                    "FunctionName": {
+                        "template": "%%regex%${FunctionName}%/^(?:^arn\\:aws\\:.+function\\:|^[0-9]{12}\\:function\\:)?([^:]+?)(?:\\:[^:]+)?$/g%%"
+                    }
+                }
             }
         ],
         "Lambda.TagResource": [
@@ -30982,7 +31163,12 @@
         ],
         "Lambda.UpdateAlias": [
             {
-                "action": "lambda:UpdateAlias"
+                "action": "lambda:UpdateAlias",
+                "resource_mappings": {
+                    "FunctionName": {
+                        "template": "%%regex%${FunctionName}%/^(?:^arn\\:aws\\:.+function\\:|^[0-9]{12}\\:function\\:)?([^:]+?)(?:\\:[^:]+)?$/g%%"
+                    }
+                }
             }
         ],
         "Lambda.UpdateCodeSigningConfig": [
@@ -30996,12 +31182,22 @@
         ],
         "Lambda.UpdateEventSourceMapping": [
             {
-                "action": "lambda:UpdateEventSourceMapping"
+                "action": "lambda:UpdateEventSourceMapping",
+                "resource_mappings": {
+                    "UUID": {
+                        "template": "${UUID}"
+                    }
+                }
             }
         ],
         "Lambda.UpdateFunctionCode": [
             {
-                "action": "lambda:UpdateFunctionCode"
+                "action": "lambda:UpdateFunctionCode",
+                "resource_mappings": {
+                    "FunctionName": {
+                        "template": "%%regex%${FunctionName}%/^(?:^arn\\:aws\\:.+function\\:|^[0-9]{12}\\:function\\:)?([^:]+?)(?:\\:[^:]+)?$/g%%"
+                    }
+                }
             }
         ],
         "Lambda.UpdateFunctionConfiguration": [
@@ -31022,7 +31218,12 @@
         ],
         "Lambda.UpdateFunctionEventInvokeConfig": [
             {
-                "action": "lambda:UpdateFunctionEventInvokeConfig"
+                "action": "lambda:UpdateFunctionEventInvokeConfig",
+                "resource_mappings": {
+                    "FunctionName": {
+                        "template": "%%regex%${FunctionName}%/^(?:^arn\\:aws\\:.+function\\:|^[0-9]{12}\\:function\\:)?([^:]+?)(?:\\:[^:]+)?$/g%%"
+                    }
+                }
             }
         ],
         "LexRuntime.DeleteSession": [
@@ -46424,7 +46625,7 @@
             {
                 "action": "iam:PassRole",
                 "arn_override": {
-                    "template": "arn:${Partition}:iam::${Account}:role/%%regex%${Role}%/(?:arn.*\/)?(.+)/g%%"
+                    "template": "arn:${Partition}:iam::${Account}:role/%%regex%${Role}%/(?:arn.*/)?(.+)/g%%"
                 }
             }
         ],
@@ -46458,7 +46659,7 @@
             {
                 "action": "iam:PassRole",
                 "arn_override": {
-                    "template": "arn:${Partition}:iam::${Account}:role/%%regex%${Role}%/(?:arn.*\/)?(.+)/g%%"
+                    "template": "arn:${Partition}:iam::${Account}:role/%%regex%${Role}%/(?:arn.*/)?(.+)/g%%"
                 }
             }
         ],
@@ -46470,7 +46671,7 @@
             {
                 "action": "iam:PassRole",
                 "arn_override": {
-                    "template": "arn:${Partition}:iam::${Account}:role/%%regex%${Role}%/(?:arn.*\/)?(.+)/g%%"
+                    "template": "arn:${Partition}:iam::${Account}:role/%%regex%${Role}%/(?:arn.*/)?(.+)/g%%"
                 }
             }
         ],
@@ -47434,7 +47635,7 @@
             {
                 "action": "iam:PassRole",
                 "arn_override": {
-                    "template": "arn:${Partition}:iam::${Account}:role/%%regex%${Role}%/(?:arn.*\/)?(.+)/g%%"
+                    "template": "arn:${Partition}:iam::${Account}:role/%%regex%${Role}%/(?:arn.*/)?(.+)/g%%"
                 }
             }
         ],
@@ -47463,7 +47664,7 @@
             {
                 "action": "iam:PassRole",
                 "arn_override": {
-                    "template": "arn:${Partition}:iam::${Account}:role/%%regex%${JobUpdate.Role}%/(?:arn.*\/)?(.+)/g%%"
+                    "template": "arn:${Partition}:iam::${Account}:role/%%regex%${JobUpdate.Role}%/(?:arn.*/)?(.+)/g%%"
                 }
             }
         ],
@@ -47479,7 +47680,7 @@
             {
                 "action": "iam:PassRole",
                 "arn_override": {
-                    "template": "arn:${Partition}:iam::${Account}:role/%%regex%${Role}%/(?:arn.*\/)?(.+)/g%%"
+                    "template": "arn:${Partition}:iam::${Account}:role/%%regex%${Role}%/(?:arn.*/)?(.+)/g%%"
                 }
             }
         ],
