@@ -31,4 +31,3 @@ Template checking notes: check for `/{` or `""` or `\`` or `" ` or `"%m` or `"%$
 TODO: Handle ${aws:username} in iamlive
 TODO: WAFV2.Check* crash
 TODO: Check LexModelsV2 mapped correctly
-TODO: PassRole additions - resources without existing resource_mappings
