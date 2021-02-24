@@ -1890,7 +1890,12 @@
         ],
         "Lambda.Invoke": [
             {
-                "action": "lambda:InvokeFunction"
+                "action": "lambda:InvokeFunction",
+                "resource_mappings": {
+                    "FunctionName": {
+                        "template": "%%regex%${FunctionName}%/^(?:^arn\\:aws\\:.+function\\:|^[0-9]{12}\\:function\\:)?([^:]+?)(?:\\:[^:]+)?$/g%%"
+                    }
+                }
             }
         ],
         "Lightsail.AttachCertificateToDistribution": [
@@ -12050,7 +12055,15 @@
         ],
         "CodeDeploy.UpdateDeploymentGroup": [
             {
-                "action": "codedeploy:UpdateDeploymentGroup"
+                "action": "codedeploy:UpdateDeploymentGroup",
+                "resource_mappings": {
+                    "ApplicationName": {
+                        "template": "${applicationName}"
+                    },
+                    "DeploymentGroupName": {
+                        "template": "%many:${currentDeploymentGroupName}:${newDeploymentGroupName}%"
+                    }
+                }
             },
             {
                 "action": "iam:PassRole",
@@ -13983,7 +13996,12 @@
         ],
         "ConfigService.PutConfigurationAggregator": [
             {
-                "action": "config:PutConfigurationAggregator"
+                "action": "config:PutConfigurationAggregator",
+                "resource_mappings": {
+                    "AggregatorId": {
+                        "template": "*"
+                    }
+                }
             },
             {
                 "action": "iam:PassRole",
@@ -17743,7 +17761,21 @@
         ],
         "EC2.CreateFlowLogs": [
             {
-                "action": "ec2:CreateFlowLogs"
+                "action": "ec2:CreateFlowLogs",
+                "resource_mappings": {
+                    "VpcFlowLogId": {
+                        "template": "*"
+                    },
+                    "NetworkInterfaceId": {
+                        "template": "*"
+                    },
+                    "SubnetId": {
+                        "template": "*"
+                    },
+                    "VpcId": {
+                        "template": "*"
+                    }
+                }
             },
             {
                 "action": "iam:PassRole",
@@ -21349,7 +21381,126 @@
         ],
         "EC2.RunInstances": [
             {
-                "action": "ec2:RunInstances"
+                "action": "ec2:RunInstances",
+                "resource_mappings": {
+                    "ImageId": {
+                        "template": "${ImageId}"
+                    },
+                    "InstanceId": {
+                        "template": "*"
+                    },
+                    "NetworkInterfaceId": {
+                        "template": "${NetworkInterfaces[].NetworkInterfaceId}"
+                    },
+                    "SecurityGroupId": {
+                        "template": "${SecurityGroupIds}[]"
+                    },
+                    "SubnetId": {
+                        "template": "${SubnetId}"
+                    },
+                    "VolumeId": {
+                        "template": "*"
+                    },
+                    "CapacityReservationId": {
+                        "template": "${CapacityReservationSpecification.CapacityReservationTarget.CapacityReservationId}"
+                    },
+                    "ElasticGpuId": {
+                        "template": "%%iftruthy%${ElasticGpuSpecification[].Type}%*%%%"
+                    },
+                    "ElasticInferenceAcceleratorId": {
+                        "template": "%%iftruthy%${ElasticInferenceAccelerators[].Type}%*%%%"
+                    },
+                    "KeyPairName": {
+                        "template": "${KeyName}"
+                    },
+                    "LaunchTemplateId": {
+                        "template": "${LaunchTemplate.LaunchTemplateId}"
+                    },
+                    "PlacementGroupName": {
+                        "template": "${Placement.GroupName}"
+                    },
+                    "SnapshotId": {
+                        "template": "${BlockDeviceMappings[].Ebs.SnapshotId}"
+                    }
+                }
+            },
+            {
+                "action": "ec2:RunInstances",
+                "arn_override": {
+                    "template": "%%iftruthy%${LaunchTemplate.LaunchTemplateId}%arn:${Partition}:ec2:${Region}::image/*%%%"
+                }
+            },
+            {
+                "action": "ec2:RunInstances",
+                "arn_override": {
+                    "template": "%%iftruthy%${LaunchTemplate.LaunchTemplateId}%arn:${Partition}:ec2:${Region}::instance/*%%%"
+                }
+            },
+            {
+                "action": "ec2:RunInstances",
+                "arn_override": {
+                    "template": "%%iftruthy%${LaunchTemplate.LaunchTemplateId}%arn:${Partition}:ec2:${Region}::network-interface/*%%%"
+                }
+            },
+            {
+                "action": "ec2:RunInstances",
+                "arn_override": {
+                    "template": "%%iftruthy%${LaunchTemplate.LaunchTemplateId}%arn:${Partition}:ec2:${Region}::security-group/*%%%"
+                }
+            },
+            {
+                "action": "ec2:RunInstances",
+                "arn_override": {
+                    "template": "%%iftruthy%${LaunchTemplate.LaunchTemplateId}%arn:${Partition}:ec2:${Region}::subnet/*%%%"
+                }
+            },
+            {
+                "action": "ec2:RunInstances",
+                "arn_override": {
+                    "template": "%%iftruthy%${LaunchTemplate.LaunchTemplateId}%arn:${Partition}:ec2:${Region}::volume/*%%%"
+                }
+            },
+            {
+                "action": "ec2:RunInstances",
+                "arn_override": {
+                    "template": "%%iftruthy%${LaunchTemplate.LaunchTemplateId}%arn:${Partition}:ec2:${Region}::capacity-reservation/*%%%"
+                }
+            },
+            {
+                "action": "ec2:RunInstances",
+                "arn_override": {
+                    "template": "%%iftruthy%${LaunchTemplate.LaunchTemplateId}%arn:${Partition}:ec2:${Region}::elastic-gpu/*%%%"
+                }
+            },
+            {
+                "action": "ec2:RunInstances",
+                "arn_override": {
+                    "template": "%%iftruthy%${LaunchTemplate.LaunchTemplateId}%arn:${Partition}:elastic-inference:${Region}::elastic-inference-accelerator/*%%%"
+                }
+            },
+            {
+                "action": "ec2:RunInstances",
+                "arn_override": {
+                    "template": "%%iftruthy%${LaunchTemplate.LaunchTemplateId}%arn:${Partition}:ec2:${Region}::key-pair/*%%%"
+                }
+            },
+            {
+                "action": "ec2:RunInstances",
+                "arn_override": {
+                    "template": "%%iftruthy%${LaunchTemplate.LaunchTemplateId}%arn:${Partition}:ec2:${Region}::launch-template/*%%%"
+                }
+            },
+            {
+                "action": "ec2:RunInstances",
+                "arn_override": {
+                    "template": "%%iftruthy%${LaunchTemplate.LaunchTemplateId}%arn:${Partition}:ec2:${Region}::placement-group/*%%%"
+                }
+            },
+            {
+                "action": "ec2:RunInstances",
+                "arn_override": {
+                    "template": "%%iftruthy%${LaunchTemplate.LaunchTemplateId}%arn:${Partition}:ec2:${Region}::snapshot/*%%%"
+                }
             },
             {
                 "action": "iam:PassRole",
@@ -21378,7 +21529,30 @@
         ],
         "EC2.RunScheduledInstances": [
             {
-                "action": "ec2:RunScheduledInstances"
+                "action": "ec2:RunScheduledInstances",
+                "resource_mappings": {
+                    "ImageId": {
+                        "template": "${LaunchSpecification.ImageId}"
+                    },
+                    "KeyPairName": {
+                        "template": "${LaunchSpecification.KeyName}"
+                    },
+                    "NetworkInterfaceId": {
+                        "template": "%%iftruthy%${LaunchSpecification.NetworkInterfaces[].NetworkInterfaceId}%${LaunchSpecification.NetworkInterfaces[].NetworkInterfaceId}%*%%"
+                    },
+                    "PlacementGroupName": {
+                        "template": "${LaunchSpecification.Placement.GroupName}"
+                    },
+                    "SecurityGroupId": {
+                        "template": "%%many%${LaunchSpecification.SecurityGroupIds}[]%${LaunchSpecification.NetworkInterfaces[].Groups}[]%%"
+                    },
+                    "SnapshotId": {
+                        "template": "${LaunchSpecification.BlockDeviceMappings[].Ebs.SnapshotId}"
+                    },
+                    "SubnetId": {
+                        "template": "%%many%${LaunchSpecification.SubnetId}%${LaunchSpecification.NetworkInterfaces[].SubnetId}%%"
+                    }
+                }
             },
             {
                 "action": "iam:PassRole",
@@ -22097,23 +22271,51 @@
         ],
         "ECS.RunTask": [
             {
-                "action": "ecs:RunTask"
+                "action": "ecs:RunTask",
+                "resource_mappings": {
+                    "TaskDefinitionFamilyName": {
+                        "template": "%%regex%${taskDefinition}%/(?:.*\\/)?([^:]+)(?:\\:[^:]+)?$/g%%"
+                    },
+                    "TaskDefinitionRevisionNumber": {
+                        "template": "%%regex%${taskDefinition}%/\\:([^:]+)$/g%%"
+                    }
+                }
             },
             {
                 "action": "iam:PassRole",
                 "arn_override": {
-                    "template": "*"
+                    "template": "%%iftruthy%${overrides.executionRoleArn}%${overrides.executionRoleArn}%*%%"
+                }
+            },
+            {
+                "action": "iam:PassRole",
+                "arn_override": {
+                    "template": "%%iftruthy%${overrides.taskRoleArn}%${overrides.taskRoleArn}%*%%"
                 }
             }
         ],
         "ECS.StartTask": [
             {
-                "action": "ecs:StartTask"
+                "action": "ecs:StartTask",
+                "resource_mappings": {
+                    "TaskDefinitionFamilyName": {
+                        "template": "%%regex%${taskDefinition}%/(?:.*\\/)?([^:]+)(?:\\:[^:]+)?$/g%%"
+                    },
+                    "TaskDefinitionRevisionNumber": {
+                        "template": "%%regex%${taskDefinition}%/\\:([^:]+)$/g%%"
+                    }
+                }
             },
             {
                 "action": "iam:PassRole",
                 "arn_override": {
-                    "template": "*"
+                    "template": "%%iftruthy%${overrides.executionRoleArn}%${overrides.executionRoleArn}%*%%"
+                }
+            },
+            {
+                "action": "iam:PassRole",
+                "arn_override": {
+                    "template": "%%iftruthy%${overrides.taskRoleArn}%${overrides.taskRoleArn}%*%%"
                 }
             }
         ],
@@ -24463,7 +24665,8 @@
         ],
         "EMR.RunJobFlow": [
             {
-                "action": "elasticmapreduce:RunJobFlow"
+                "action": "elasticmapreduce:RunJobFlow",
+                "resource_mappings": {}
             },
             {
                 "action": "iam:PassRole",
@@ -27843,7 +28046,16 @@
         ],
         "Iot.CreateJob": [
             {
-                "action": "iot:CreateJob"
+                "action": "iot:CreateJob",
+                "resource_mappings": {
+                    "JobId": {
+                        "template": "${jobId}"
+                    }
+                },
+                "resourcearn_mappings": {
+                    "thing": "%%iftemplatematch%${targets}[]%%",
+                    "thinggroup": "%%iftemplatematch%${targets}[]%%"
+                }
             },
             {
                 "action": "iam:PassRole",
@@ -30494,7 +30706,12 @@
         ],
         "Lambda.CreateFunction": [
             {
-                "action": "lambda:CreateFunction"
+                "action": "lambda:CreateFunction",
+                "resource_mappings": {
+                    "FunctionName": {
+                        "template": "%%regex%${FunctionName}%/^(?:^arn\\:aws\\:.+function\\:|^[0-9]{12}\\:function\\:)?([^:]+?)(?:\\:[^:]+)?$/g%%"
+                    }
+                }
             },
             {
                 "action": "iam:PassRole",
@@ -30789,7 +31006,12 @@
         ],
         "Lambda.UpdateFunctionConfiguration": [
             {
-                "action": "lambda:UpdateFunctionConfiguration"
+                "action": "lambda:UpdateFunctionConfiguration",
+                "resource_mappings": {
+                    "FunctionName": {
+                        "template": "%%regex%${FunctionName}%/^(?:^arn\\:aws\\:.+function\\:|^[0-9]{12}\\:function\\:)?([^:]+?)(?:\\:[^:]+)?$/g%%"
+                    }
+                }
             },
             {
                 "action": "iam:PassRole",
