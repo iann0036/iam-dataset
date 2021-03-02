@@ -2408,14 +2408,18 @@
         ],
         "S3.DeleteBucketReplication": [
             {
-                "action": "iam:PassRole",
-                "documented_dependant_action": true
-            },
-            {
                 "action": "s3:PutReplicationConfiguration",
                 "resource_mappings": {
                     "BucketName": {
                         "template": "${Bucket}"
+                    }
+                }
+            },
+            {
+                "action": "iam:PassRole",
+                "resource_mappings": {
+                    "RoleNameWithPath": {
+                        "template": "*"
                     }
                 }
             }
@@ -9580,14 +9584,21 @@
         ],
         "CloudTrail.CreateTrail": [
             {
-                "action": "s3:PutObject",
-                "documented_dependant_action": true
-            },
-            {
                 "action": "cloudtrail:CreateTrail",
                 "resource_mappings": {
                     "TrailName": {
                         "template": "${Name}"
+                    }
+                }
+            },
+            {
+                "action": "s3:PutObject",
+                "resource_mappings": {
+                    "BucketName": {
+                        "template": "${S3BucketName}"
+                    },
+                    "ObjectName": {
+                        "template": "${S3KeyPrefix}*"
                     }
                 }
             },
@@ -15991,29 +16002,91 @@
         ],
         "DirectoryService.AddIpRoutes": [
             {
-                "action": "ec2:AuthorizeSecurityGroupEgress",
-                "documented_dependant_action": true
-            },
-            {
                 "action": "ds:AddIpRoutes",
                 "resource_mappings": {
                     "DirectoryId": {
                         "template": "${DirectoryId}"
                     }
                 }
+            },
+            {
+                "action": "ec2:AuthorizeSecurityGroupEgress",
+                "resource_mappings": {
+                    "SecurityGroupId": {
+                        "template": "*"
+                    }
+                }
             }
         ],
         "DirectoryService.AddTagsToResource": [
-            {
-                "action": "ec2:CreateTags",
-                "documented_dependant_action": true
-            },
             {
                 "action": "ds:AddTagsToResource",
                 "resource_mappings": {
                     "DirectoryId": {
                         "template": "${ResourceId}"
                     }
+                }
+            },
+            {
+                "action": "ec2:CreateTags",
+                "resource_mappings": {},
+                "resourcearn_mappings": {
+                    "capacity-reservation": "%%iftemplatematch%${ResourceId}%%",
+                    "client-vpn-endpoint": "%%iftemplatematch%${ResourceId}%%",
+                    "customer-gateway": "%%iftemplatematch%${ResourceId}%%",
+                    "dedicated-host": "%%iftemplatematch%${ResourceId}%%",
+                    "dhcp-options": "%%iftemplatematch%${ResourceId}%%",
+                    "egress-only-internet-gateway": "%%iftemplatematch%${ResourceId}%%",
+                    "elastic-gpu": "%%iftemplatematch%${ResourceId}%%",
+                    "elastic-ip": "%%iftemplatematch%${ResourceId}%%",
+                    "export-image-task": "%%iftemplatematch%${ResourceId}%%",
+                    "export-instance-task": "%%iftemplatematch%${ResourceId}%%",
+                    "fleet": "%%iftemplatematch%${ResourceId}%%",
+                    "fpga-image": "%%iftemplatematch%${ResourceId}%%",
+                    "host-reservation": "%%iftemplatematch%${ResourceId}%%",
+                    "image": "%%iftemplatematch%${ResourceId}%%",
+                    "import-image-task": "%%iftemplatematch%${ResourceId}%%",
+                    "import-snapshot-task": "%%iftemplatematch%${ResourceId}%%",
+                    "instance": "%%iftemplatematch%${ResourceId}%%",
+                    "internet-gateway": "%%iftemplatematch%${ResourceId}%%",
+                    "ipv4pool-ec2": "%%iftemplatematch%${ResourceId}%%",
+                    "ipv6pool-ec2": "%%iftemplatematch%${ResourceId}%%",
+                    "key-pair": "%%iftemplatematch%${ResourceId}%%",
+                    "launch-template": "%%iftemplatematch%${ResourceId}%%",
+                    "local-gateway": "%%iftemplatematch%${ResourceId}%%",
+                    "local-gateway-route-table": "%%iftemplatematch%${ResourceId}%%",
+                    "local-gateway-route-table-virtual-interface-group-association": "%%iftemplatematch%${ResourceId}%%",
+                    "local-gateway-route-table-vpc-association": "%%iftemplatematch%${ResourceId}%%",
+                    "local-gateway-virtual-interface": "%%iftemplatematch%${ResourceId}%%",
+                    "local-gateway-virtual-interface-group": "%%iftemplatematch%${ResourceId}%%",
+                    "natgateway": "%%iftemplatematch%${ResourceId}%%",
+                    "network-acl": "%%iftemplatematch%${ResourceId}%%",
+                    "network-interface": "%%iftemplatematch%${ResourceId}%%",
+                    "placement-group": "%%iftemplatematch%${ResourceId}%%",
+                    "prefix-list": "%%iftemplatematch%${ResourceId}%%",
+                    "reserved-instances": "%%iftemplatematch%${ResourceId}%%",
+                    "route-table": "%%iftemplatematch%${ResourceId}%%",
+                    "security-group": "%%iftemplatematch%${ResourceId}%%",
+                    "snapshot": "%%iftemplatematch%${ResourceId}%%",
+                    "spot-fleet-request": "%%iftemplatematch%${ResourceId}%%",
+                    "spot-instances-request": "%%iftemplatematch%${ResourceId}%%",
+                    "subnet": "%%iftemplatematch%${ResourceId}%%",
+                    "traffic-mirror-filter": "%%iftemplatematch%${ResourceId}%%",
+                    "traffic-mirror-session": "%%iftemplatematch%${ResourceId}%%",
+                    "traffic-mirror-target": "%%iftemplatematch%${ResourceId}%%",
+                    "transit-gateway": "%%iftemplatematch%${ResourceId}%%",
+                    "transit-gateway-attachment": "%%iftemplatematch%${ResourceId}%%",
+                    "transit-gateway-connect-peer": "%%iftemplatematch%${ResourceId}%%",
+                    "transit-gateway-multicast-domain": "%%iftemplatematch%${ResourceId}%%",
+                    "transit-gateway-route-table": "%%iftemplatematch%${ResourceId}%%",
+                    "volume": "%%iftemplatematch%${ResourceId}%%",
+                    "vpc": "%%iftemplatematch%${ResourceId}%%",
+                    "vpc-endpoint": "%%iftemplatematch%${ResourceId}%%",
+                    "vpc-endpoint-service": "%%iftemplatematch%${ResourceId}%%",
+                    "vpc-flow-log": "%%iftemplatematch%${ResourceId}%%",
+                    "vpc-peering-connection": "%%iftemplatematch%${ResourceId}%%",
+                    "vpn-connection": "%%iftemplatematch%${ResourceId}%%",
+                    "vpn-gateway": "%%iftemplatematch%${ResourceId}%%"
                 }
             }
         ],
@@ -16029,12 +16102,16 @@
         ],
         "DirectoryService.ConnectDirectory": [
             {
-                "action": "ec2:AuthorizeSecurityGroupEgress",
-                "documented_dependant_action": true
-            },
-            {
                 "action": "ds:ConnectDirectory",
                 "resource_mappings": {}
+            },
+            {
+                "action": "ec2:AuthorizeSecurityGroupEgress",
+                "resource_mappings": {
+                    "SecurityGroupId": {
+                        "template": "*"
+                    }
+                }
             }
         ],
         "DirectoryService.CreateAlias": [
@@ -16069,12 +16146,16 @@
         ],
         "DirectoryService.CreateDirectory": [
             {
-                "action": "ec2:AuthorizeSecurityGroupEgress",
-                "documented_dependant_action": true
-            },
-            {
                 "action": "ds:CreateDirectory",
                 "resource_mappings": {}
+            },
+            {
+                "action": "ec2:AuthorizeSecurityGroupEgress",
+                "resource_mappings": {
+                    "SecurityGroupId": {
+                        "template": "*"
+                    }
+                }
             }
         ],
         "DirectoryService.CreateLogSubscription": [
@@ -16089,12 +16170,16 @@
         ],
         "DirectoryService.CreateMicrosoftAD": [
             {
-                "action": "ec2:AuthorizeSecurityGroupEgress",
-                "documented_dependant_action": true
-            },
-            {
                 "action": "ds:CreateMicrosoftAD",
                 "resource_mappings": {}
+            },
+            {
+                "action": "ec2:AuthorizeSecurityGroupEgress",
+                "resource_mappings": {
+                    "SecurityGroupId": {
+                        "template": "*"
+                    }
+                }
             }
         ],
         "DirectoryService.CreateSnapshot": [
@@ -16129,14 +16214,18 @@
         ],
         "DirectoryService.DeleteDirectory": [
             {
-                "action": "ec2:DeleteNetworkInterface",
-                "documented_dependant_action": true
-            },
-            {
                 "action": "ds:DeleteDirectory",
                 "resource_mappings": {
                     "DirectoryId": {
                         "template": "${DirectoryId}"
+                    }
+                }
+            },
+            {
+                "action": "ec2:DeleteNetworkInterface",
+                "resource_mappings": {
+                    "NetworkInterfaceId": {
+                        "template": "*"
                     }
                 }
             }
@@ -16404,13 +16493,9 @@
         "DirectoryService.RegisterEventTopic": [
             {
                 "action": "sns:GetTopicAttributes",
-                "documented_dependant_action": true
-            },
-            {
-                "action": "ds:RegisterEventTopic",
                 "resource_mappings": {
-                    "DirectoryId": {
-                        "template": "${DirectoryId}"
+                    "TopicName": {
+                        "template": "${TopicName}"
                     }
                 }
             }
@@ -16437,15 +16522,73 @@
         ],
         "DirectoryService.RemoveTagsFromResource": [
             {
-                "action": "ec2:DeleteTags",
-                "documented_dependant_action": true
-            },
-            {
                 "action": "ds:RemoveTagsFromResource",
                 "resource_mappings": {
                     "DirectoryId": {
                         "template": "${ResourceId}"
                     }
+                }
+            },
+            {
+                "action": "ec2:DeleteTags",
+                "resource_mappings": {},
+                "resourcearn_mappings": {
+                    "capacity-reservation": "%%iftemplatematch%${ResourceId}%%",
+                    "client-vpn-endpoint": "%%iftemplatematch%${ResourceId}%%",
+                    "customer-gateway": "%%iftemplatematch%${ResourceId}%%",
+                    "dedicated-host": "%%iftemplatematch%${ResourceId}%%",
+                    "dhcp-options": "%%iftemplatematch%${ResourceId}%%",
+                    "egress-only-internet-gateway": "%%iftemplatematch%${ResourceId}%%",
+                    "elastic-gpu": "%%iftemplatematch%${ResourceId}%%",
+                    "elastic-ip": "%%iftemplatematch%${ResourceId}%%",
+                    "export-image-task": "%%iftemplatematch%${ResourceId}%%",
+                    "export-instance-task": "%%iftemplatematch%${ResourceId}%%",
+                    "fleet": "%%iftemplatematch%${ResourceId}%%",
+                    "fpga-image": "%%iftemplatematch%${ResourceId}%%",
+                    "host-reservation": "%%iftemplatematch%${ResourceId}%%",
+                    "image": "%%iftemplatematch%${ResourceId}%%",
+                    "import-image-task": "%%iftemplatematch%${ResourceId}%%",
+                    "import-snapshot-task": "%%iftemplatematch%${ResourceId}%%",
+                    "instance": "%%iftemplatematch%${ResourceId}%%",
+                    "internet-gateway": "%%iftemplatematch%${ResourceId}%%",
+                    "ipv4pool-ec2": "%%iftemplatematch%${ResourceId}%%",
+                    "ipv6pool-ec2": "%%iftemplatematch%${ResourceId}%%",
+                    "key-pair": "%%iftemplatematch%${ResourceId}%%",
+                    "launch-template": "%%iftemplatematch%${ResourceId}%%",
+                    "local-gateway": "%%iftemplatematch%${ResourceId}%%",
+                    "local-gateway-route-table": "%%iftemplatematch%${ResourceId}%%",
+                    "local-gateway-route-table-virtual-interface-group-association": "%%iftemplatematch%${ResourceId}%%",
+                    "local-gateway-route-table-vpc-association": "%%iftemplatematch%${ResourceId}%%",
+                    "local-gateway-virtual-interface": "%%iftemplatematch%${ResourceId}%%",
+                    "local-gateway-virtual-interface-group": "%%iftemplatematch%${ResourceId}%%",
+                    "natgateway": "%%iftemplatematch%${ResourceId}%%",
+                    "network-acl": "%%iftemplatematch%${ResourceId}%%",
+                    "network-interface": "%%iftemplatematch%${ResourceId}%%",
+                    "placement-group": "%%iftemplatematch%${ResourceId}%%",
+                    "prefix-list": "%%iftemplatematch%${ResourceId}%%",
+                    "reserved-instances": "%%iftemplatematch%${ResourceId}%%",
+                    "route-table": "%%iftemplatematch%${ResourceId}%%",
+                    "security-group": "%%iftemplatematch%${ResourceId}%%",
+                    "snapshot": "%%iftemplatematch%${ResourceId}%%",
+                    "spot-fleet-request": "%%iftemplatematch%${ResourceId}%%",
+                    "spot-instances-request": "%%iftemplatematch%${ResourceId}%%",
+                    "subnet": "%%iftemplatematch%${ResourceId}%%",
+                    "traffic-mirror-filter": "%%iftemplatematch%${ResourceId}%%",
+                    "traffic-mirror-session": "%%iftemplatematch%${ResourceId}%%",
+                    "traffic-mirror-target": "%%iftemplatematch%${ResourceId}%%",
+                    "transit-gateway": "%%iftemplatematch%${ResourceId}%%",
+                    "transit-gateway-attachment": "%%iftemplatematch%${ResourceId}%%",
+                    "transit-gateway-connect-peer": "%%iftemplatematch%${ResourceId}%%",
+                    "transit-gateway-multicast-domain": "%%iftemplatematch%${ResourceId}%%",
+                    "transit-gateway-route-table": "%%iftemplatematch%${ResourceId}%%",
+                    "volume": "%%iftemplatematch%${ResourceId}%%",
+                    "vpc": "%%iftemplatematch%${ResourceId}%%",
+                    "vpc-endpoint": "%%iftemplatematch%${ResourceId}%%",
+                    "vpc-endpoint-service": "%%iftemplatematch%${ResourceId}%%",
+                    "vpc-flow-log": "%%iftemplatematch%${ResourceId}%%",
+                    "vpc-peering-connection": "%%iftemplatematch%${ResourceId}%%",
+                    "vpn-connection": "%%iftemplatematch%${ResourceId}%%",
+                    "vpn-gateway": "%%iftemplatematch%${ResourceId}%%"
                 }
             }
         ],
@@ -18914,14 +19057,6 @@
         ],
         "EC2.CreateVpcEndpoint": [
             {
-                "action": "ec2:DescribeVpcs",
-                "documented_dependant_action": true
-            },
-            {
-                "action": "route53:AssociateVPCWithHostedZone",
-                "documented_dependant_action": true
-            },
-            {
                 "action": "ec2:CreateVpcEndpoint",
                 "resource_mappings": {
                     "VpcId": {
@@ -18940,6 +19075,21 @@
                         "template": "${SubnetIds[]}"
                     }
                 }
+            },
+            {
+                "action": "route53:AssociateVPCWithHostedZone",
+                "resource_mappings": {
+                    "VpcId": {
+                        "template": "${VpcId}"
+                    },
+                    "Id": {
+                        "template": "*"
+                    }
+                }
+            },
+            {
+                "action": "ec2:DescribeVpcs",
+                "resource_mappings": {}
             }
         ],
         "EC2.CreateVpcEndpointConnectionNotification": [
@@ -23372,23 +23522,23 @@
         ],
         "ElastiCache.AuthorizeCacheSecurityGroupIngress": [
             {
-                "action": "ec2:AuthorizeSecurityGroupIngress",
-                "documented_dependant_action": true
-            },
-            {
                 "action": "elasticache:AuthorizeCacheSecurityGroupIngress",
                 "resource_mappings": {
                     "CacheSecurityGroupName": {
                         "template": "${CacheSecurityGroupName}"
                     }
                 }
+            },
+            {
+                "action": "ec2:AuthorizeSecurityGroupIngress",
+                "resource_mappings": {
+                    "SecurityGroupId": {
+                        "template": "*"
+                    }
+                }
             }
         ],
         "ElastiCache.BatchApplyUpdateAction": [
-            {
-                "action": "ec2:CreateNetworkInterface",
-                "documented_dependant_action": true
-            },
             {
                 "action": "elasticache:BatchApplyUpdateAction",
                 "resource_mappings": {
@@ -23397,6 +23547,20 @@
                     },
                     "ReplicationGroupId": {
                         "template": "${ReplicationGroupIds[]}"
+                    }
+                }
+            },
+            {
+                "action": "ec2:CreateNetworkInterface",
+                "resource_mappings": {
+                    "NetworkInterfaceId": {
+                        "template": "*"
+                    },
+                    "SubnetId": {
+                        "template": "*"
+                    },
+                    "SecurityGroupId": {
+                        "template": "*"
                     }
                 }
             }
@@ -23429,12 +23593,19 @@
         ],
         "ElastiCache.CopySnapshot": [
             {
-                "action": "elasticache:AddTagsToResource",
-                "documented_dependant_action": true
-            },
-            {
                 "action": "elasticache:CopySnapshot",
                 "resource_mappings": {
+                    "SnapshotName": {
+                        "template": "%%many%${SourceSnapshotName}%${TargetSnapshotName}%%"
+                    }
+                }
+            },
+            {
+                "action": "elasticache:AddTagsToResource",
+                "resource_mappings": {
+                    "CacheClusterId": {
+                        "template": "*"
+                    },
                     "SnapshotName": {
                         "template": "%%many%${SourceSnapshotName}%${TargetSnapshotName}%%"
                     }
@@ -23442,10 +23613,6 @@
             }
         ],
         "ElastiCache.CreateCacheCluster": [
-            {
-                "action": "ec2:CreateNetworkInterface",
-                "documented_dependant_action": true
-            },
             {
                 "action": "elasticache:CreateCacheCluster",
                 "resource_mappings": {
@@ -23468,13 +23635,23 @@
                         "template": "${CacheSubnetGroupName}"
                     }
                 }
+            },
+            {
+                "action": "ec2:CreateNetworkInterface",
+                "resource_mappings": {
+                    "NetworkInterfaceId": {
+                        "template": "*"
+                    },
+                    "SubnetId": {
+                        "template": "*"
+                    },
+                    "SecurityGroupId": {
+                        "template": "${SecurityGroupIds}[]"
+                    }
+                }
             }
         ],
         "ElastiCache.CreateCacheParameterGroup": [
-            {
-                "action": "elasticache:AddTagsToResource",
-                "documented_dependant_action": true
-            },
             {
                 "action": "elasticache:CreateCacheParameterGroup",
                 "resource_mappings": {
@@ -23482,13 +23659,20 @@
                         "template": "${CacheParameterGroupName}"
                     }
                 }
+            },
+            {
+                "action": "elasticache:AddTagsToResource",
+                "resource_mappings": {
+                    "CacheClusterId": {
+                        "template": "*"
+                    },
+                    "SnapshotName": {
+                        "template": "*"
+                    }
+                }
             }
         ],
         "ElastiCache.CreateCacheSecurityGroup": [
-            {
-                "action": "elasticache:AddTagsToResource",
-                "documented_dependant_action": true
-            },
             {
                 "action": "elasticache:CreateCacheSecurityGroup",
                 "resource_mappings": {
@@ -23496,18 +23680,36 @@
                         "template": "${CacheSecurityGroupName}"
                     }
                 }
+            },
+            {
+                "action": "elasticache:AddTagsToResource",
+                "resource_mappings": {
+                    "CacheClusterId": {
+                        "template": "*"
+                    },
+                    "SnapshotName": {
+                        "template": "*"
+                    }
+                }
             }
         ],
         "ElastiCache.CreateCacheSubnetGroup": [
-            {
-                "action": "elasticache:AddTagsToResource",
-                "documented_dependant_action": true
-            },
             {
                 "action": "elasticache:CreateCacheSubnetGroup",
                 "resource_mappings": {
                     "CacheSubnetGroupName": {
                         "template": "${CacheSubnetGroupName}"
+                    }
+                }
+            },
+            {
+                "action": "elasticache:AddTagsToResource",
+                "resource_mappings": {
+                    "CacheClusterId": {
+                        "template": "*"
+                    },
+                    "SnapshotName": {
+                        "template": "*"
                     }
                 }
             }
@@ -23526,10 +23728,6 @@
             }
         ],
         "ElastiCache.CreateReplicationGroup": [
-            {
-                "action": "ec2:CreateNetworkInterface",
-                "documented_dependant_action": true
-            },
             {
                 "action": "elasticache:CreateReplicationGroup",
                 "resource_mappings": {
@@ -23558,13 +23756,23 @@
                 "resourcearn_mappings": {
                     "snapshot": "${SnapshotArns[]}"
                 }
+            },
+            {
+                "action": "ec2:CreateNetworkInterface",
+                "resource_mappings": {
+                    "NetworkInterfaceId": {
+                        "template": "*"
+                    },
+                    "SubnetId": {
+                        "template": "*"
+                    },
+                    "SecurityGroupId": {
+                        "template": "${SecurityGroupIds}[]"
+                    }
+                }
             }
         ],
         "ElastiCache.CreateSnapshot": [
-            {
-                "action": "elasticache:AddTagsToResource",
-                "documented_dependant_action": true
-            },
             {
                 "action": "elasticache:CreateSnapshot",
                 "resource_mappings": {
@@ -23576,6 +23784,17 @@
                     },
                     "ReplicationGroupId": {
                         "template": "${ReplicationGroupId}"
+                    }
+                }
+            },
+            {
+                "action": "elasticache:AddTagsToResource",
+                "resource_mappings": {
+                    "CacheClusterId": {
+                        "template": "${CacheClusterId}"
+                    },
+                    "SnapshotName": {
+                        "template": "${SnapshotName}"
                     }
                 }
             }
@@ -23615,23 +23834,29 @@
         ],
         "ElastiCache.DecreaseReplicaCount": [
             {
-                "action": "ec2:CreateNetworkInterface",
-                "documented_dependant_action": true
-            },
-            {
                 "action": "elasticache:DecreaseReplicaCount",
                 "resource_mappings": {
                     "ReplicationGroupId": {
                         "template": "${ReplicationGroupId}"
                     }
                 }
+            },
+            {
+                "action": "ec2:CreateNetworkInterface",
+                "resource_mappings": {
+                    "NetworkInterfaceId": {
+                        "template": "*"
+                    },
+                    "SubnetId": {
+                        "template": "*"
+                    },
+                    "SecurityGroupId": {
+                        "template": "*"
+                    }
+                }
             }
         ],
         "ElastiCache.DeleteCacheCluster": [
-            {
-                "action": "ec2:CreateNetworkInterface",
-                "documented_dependant_action": true
-            },
             {
                 "action": "elasticache:DeleteCacheCluster",
                 "resource_mappings": {
@@ -23640,6 +23865,20 @@
                     },
                     "SnapshotName": {
                         "template": "${FinalSnapshotIdentifier}"
+                    }
+                }
+            },
+            {
+                "action": "ec2:CreateNetworkInterface",
+                "resource_mappings": {
+                    "NetworkInterfaceId": {
+                        "template": "*"
+                    },
+                    "SubnetId": {
+                        "template": "*"
+                    },
+                    "SecurityGroupId": {
+                        "template": "*"
                     }
                 }
             }
@@ -23666,14 +23905,24 @@
         ],
         "ElastiCache.DeleteCacheSubnetGroup": [
             {
-                "action": "ec2:CreateNetworkInterface",
-                "documented_dependant_action": true
-            },
-            {
                 "action": "elasticache:DeleteCacheSubnetGroup",
                 "resource_mappings": {
                     "CacheSubnetGroupName": {
                         "template": "${CacheSubnetGroupName}"
+                    }
+                }
+            },
+            {
+                "action": "ec2:CreateNetworkInterface",
+                "resource_mappings": {
+                    "NetworkInterfaceId": {
+                        "template": "*"
+                    },
+                    "SubnetId": {
+                        "template": "*"
+                    },
+                    "SecurityGroupId": {
+                        "template": "*"
                     }
                 }
             }
@@ -23690,10 +23939,6 @@
         ],
         "ElastiCache.DeleteReplicationGroup": [
             {
-                "action": "ec2:CreateNetworkInterface",
-                "documented_dependant_action": true
-            },
-            {
                 "action": "elasticache:DeleteReplicationGroup",
                 "resource_mappings": {
                     "ReplicationGroupId": {
@@ -23701,6 +23946,20 @@
                     },
                     "SnapshotName": {
                         "template": "${FinalSnapshotIdentifier}"
+                    }
+                }
+            },
+            {
+                "action": "ec2:CreateNetworkInterface",
+                "resource_mappings": {
+                    "NetworkInterfaceId": {
+                        "template": "*"
+                    },
+                    "SubnetId": {
+                        "template": "*"
+                    },
+                    "SecurityGroupId": {
+                        "template": "*"
                     }
                 }
             }
@@ -23920,14 +24179,24 @@
         ],
         "ElastiCache.IncreaseReplicaCount": [
             {
-                "action": "ec2:CreateNetworkInterface",
-                "documented_dependant_action": true
-            },
-            {
                 "action": "elasticache:IncreaseReplicaCount",
                 "resource_mappings": {
                     "ReplicationGroupId": {
                         "template": "${ReplicationGroupId}"
+                    }
+                }
+            },
+            {
+                "action": "ec2:CreateNetworkInterface",
+                "resource_mappings": {
+                    "NetworkInterfaceId": {
+                        "template": "*"
+                    },
+                    "SubnetId": {
+                        "template": "*"
+                    },
+                    "SecurityGroupId": {
+                        "template": "*"
                     }
                 }
             }
@@ -24003,10 +24272,6 @@
         ],
         "ElastiCache.ModifyReplicationGroup": [
             {
-                "action": "ec2:CreateNetworkInterface",
-                "documented_dependant_action": true
-            },
-            {
                 "action": "elasticache:ModifyReplicationGroup",
                 "resource_mappings": {
                     "ReplicationGroupId": {
@@ -24022,18 +24287,42 @@
                         "template": "%%many%${UserGroupIdsToAdd[]}%${UserGroupIdsToRemove[]}%%"
                     }
                 }
+            },
+            {
+                "action": "ec2:CreateNetworkInterface",
+                "resource_mappings": {
+                    "NetworkInterfaceId": {
+                        "template": "*"
+                    },
+                    "SubnetId": {
+                        "template": "*"
+                    },
+                    "SecurityGroupId": {
+                        "template": "${SecurityGroupIds}[]"
+                    }
+                }
             }
         ],
         "ElastiCache.ModifyReplicationGroupShardConfiguration": [
-            {
-                "action": "ec2:CreateNetworkInterface",
-                "documented_dependant_action": true
-            },
             {
                 "action": "elasticache:ModifyReplicationGroupShardConfiguration",
                 "resource_mappings": {
                     "ReplicationGroupId": {
                         "template": "${ReplicationGroupId}"
+                    }
+                }
+            },
+            {
+                "action": "ec2:CreateNetworkInterface",
+                "resource_mappings": {
+                    "NetworkInterfaceId": {
+                        "template": "*"
+                    },
+                    "SubnetId": {
+                        "template": "*"
+                    },
+                    "SecurityGroupId": {
+                        "template": "*"
                     }
                 }
             }
@@ -24063,14 +24352,21 @@
         ],
         "ElastiCache.PurchaseReservedCacheNodesOffering": [
             {
-                "action": "elasticache:AddTagsToResource",
-                "documented_dependant_action": true
-            },
-            {
                 "action": "elasticache:PurchaseReservedCacheNodesOffering",
                 "resource_mappings": {
                     "ReservedCacheNodeId": {
                         "template": "${ReservedCacheNodeId}"
+                    }
+                }
+            },
+            {
+                "action": "elasticache:AddTagsToResource",
+                "resource_mappings": {
+                    "CacheClusterId": {
+                        "template": "*"
+                    },
+                    "SnapshotName": {
+                        "template": "*"
                     }
                 }
             }
@@ -24137,14 +24433,24 @@
         ],
         "ElastiCache.TestFailover": [
             {
-                "action": "ec2:CreateNetworkInterface",
-                "documented_dependant_action": true
-            },
-            {
                 "action": "elasticache:TestFailover",
                 "resource_mappings": {
                     "ReplicationGroupId": {
                         "template": "${ReplicationGroupId}"
+                    }
+                }
+            },
+            {
+                "action": "ec2:CreateNetworkInterface",
+                "resource_mappings": {
+                    "NetworkInterfaceId": {
+                        "template": "*"
+                    },
+                    "SubnetId": {
+                        "template": "*"
+                    },
+                    "SecurityGroupId": {
+                        "template": "*"
                     }
                 }
             }
@@ -27352,11 +27658,11 @@
         ],
         "Health.DescribeAffectedAccountsForOrganization": [
             {
-                "action": "organizations:ListAccounts",
-                "documented_dependant_action": true
+                "action": "health:DescribeAffectedAccountsForOrganization",
+                "resource_mappings": {}
             },
             {
-                "action": "health:DescribeAffectedAccountsForOrganization",
+                "action": "organizations:ListAccounts",
                 "resource_mappings": {}
             }
         ],
@@ -27371,11 +27677,11 @@
         ],
         "Health.DescribeAffectedEntitiesForOrganization": [
             {
-                "action": "organizations:ListAccounts",
-                "documented_dependant_action": true
+                "action": "health:DescribeAffectedEntitiesForOrganization",
+                "resource_mappings": {}
             },
             {
-                "action": "health:DescribeAffectedEntitiesForOrganization",
+                "action": "organizations:ListAccounts",
                 "resource_mappings": {}
             }
         ],
@@ -27402,11 +27708,11 @@
         ],
         "Health.DescribeEventDetailsForOrganization": [
             {
-                "action": "organizations:ListAccounts",
-                "documented_dependant_action": true
+                "action": "health:DescribeEventDetailsForOrganization",
+                "resource_mappings": {}
             },
             {
-                "action": "health:DescribeEventDetailsForOrganization",
+                "action": "organizations:ListAccounts",
                 "resource_mappings": {}
             }
         ],
@@ -27424,42 +27730,46 @@
         ],
         "Health.DescribeEventsForOrganization": [
             {
-                "action": "organizations:ListAccounts",
-                "documented_dependant_action": true
+                "action": "health:DescribeEventsForOrganization",
+                "resource_mappings": {}
             },
             {
-                "action": "health:DescribeEventsForOrganization",
+                "action": "organizations:ListAccounts",
                 "resource_mappings": {}
             }
         ],
         "Health.DescribeHealthServiceStatusForOrganization": [
             {
-                "action": "organizations:ListAccounts",
-                "documented_dependant_action": true
+                "action": "health:DescribeHealthServiceStatusForOrganization",
+                "resource_mappings": {}
             },
             {
-                "action": "health:DescribeHealthServiceStatusForOrganization",
+                "action": "organizations:ListAccounts",
                 "resource_mappings": {}
             }
         ],
         "Health.DisableHealthServiceAccessForOrganization": [
             {
-                "action": "organizations:DisableAWSServiceAccess",
-                "documented_dependant_action": true
+                "action": "health:DisableHealthServiceAccessForOrganization",
+                "resource_mappings": {}
             },
             {
-                "action": "health:DisableHealthServiceAccessForOrganization",
+                "action": "organizations:DisableAWSServiceAccess",
                 "resource_mappings": {}
             }
         ],
         "Health.EnableHealthServiceAccessForOrganization": [
             {
-                "action": "iam:CreateServiceLinkedRole",
-                "documented_dependant_action": true
-            },
-            {
                 "action": "health:EnableHealthServiceAccessForOrganization",
                 "resource_mappings": {}
+            },
+            {
+                "action": "iam:CreateServiceLinkedRole",
+                "resource_mappings": {
+                    "RoleNameWithPath": {
+                        "template": "*"
+                    }
+                }
             }
         ],
         "IAM.AddClientIDToOpenIDConnectProvider": [
@@ -27954,14 +28264,27 @@
         ],
         "IAM.GenerateOrganizationsAccessReport": [
             {
-                "action": "organizations:DescribePolicy",
-                "documented_dependant_action": true
-            },
-            {
                 "action": "iam:GenerateOrganizationsAccessReport",
                 "resource_mappings": {
                     "EntityPath": {
                         "template": "${EntityPath}"
+                    }
+                }
+            },
+            {
+                "action": "organizations:DescribePolicy",
+                "resource_mappings": {
+                    "MasterAccountId": {
+                        "template": "*"
+                    },
+                    "OrganizationId": {
+                        "template": "*"
+                    },
+                    "PolicyType": {
+                        "template": "*"
+                    },
+                    "PolicyId": {
+                        "template": "%%regex%${OrganizationsPolicyId}%/^(?:p-)?(.+)$/g%%"
                     }
                 }
             }
@@ -31527,11 +31850,11 @@
         ],
         "KMS.CreateCustomKeyStore": [
             {
-                "action": "cloudhsm:DescribeClusters",
-                "documented_dependant_action": true
+                "action": "kms:CreateCustomKeyStore",
+                "resource_mappings": {}
             },
             {
-                "action": "kms:CreateCustomKeyStore",
+                "action": "cloudhsm:DescribeClusters",
                 "resource_mappings": {}
             }
         ],
@@ -36946,14 +37269,21 @@
         ],
         "Polly.StartSpeechSynthesisTask": [
             {
-                "action": "s3:PutObject",
-                "documented_dependant_action": true
-            },
-            {
                 "action": "polly:StartSpeechSynthesisTask",
                 "resource_mappings": {
                     "LexiconName": {
                         "template": "${LexiconNames[]}"
+                    }
+                }
+            },
+            {
+                "action": "s3:PutObject",
+                "resource_mappings": {
+                    "BucketName": {
+                        "template": "${OutputS3BucketName}"
+                    },
+                    "ObjectName": {
+                        "template": "${OutputS3KeyPrefix}*"
                     }
                 }
             }
@@ -39832,10 +40162,6 @@
         ],
         "Route53.AssociateVPCWithHostedZone": [
             {
-                "action": "ec2:DescribeVpcs",
-                "documented_dependant_action": true
-            },
-            {
                 "action": "route53:AssociateVPCWithHostedZone",
                 "resource_mappings": {
                     "VpcId": {
@@ -39845,6 +40171,10 @@
                         "template": "${HostedZoneId}"
                     }
                 }
+            },
+            {
+                "action": "ec2:DescribeVpcs",
+                "resource_mappings": {}
             }
         ],
         "Route53.ChangeResourceRecordSets": [
@@ -39875,16 +40205,16 @@
         ],
         "Route53.CreateHostedZone": [
             {
-                "action": "ec2:DescribeVpcs",
-                "documented_dependant_action": true
-            },
-            {
                 "action": "route53:CreateHostedZone",
                 "resource_mappings": {
                     "VpcId": {
                         "template": "${VPC.VPCId}"
                     }
                 }
+            },
+            {
+                "action": "ec2:DescribeVpcs",
+                "resource_mappings": {}
             }
         ],
         "Route53.CreateQueryLoggingConfig": [
@@ -40011,10 +40341,6 @@
         ],
         "Route53.DisassociateVPCFromHostedZone": [
             {
-                "action": "ec2:DescribeVpcs",
-                "documented_dependant_action": true
-            },
-            {
                 "action": "route53:DisassociateVPCFromHostedZone",
                 "resource_mappings": {
                     "Id": {
@@ -40024,6 +40350,10 @@
                         "template": "${VPC.VPCId}"
                     }
                 }
+            },
+            {
+                "action": "ec2:DescribeVpcs",
+                "resource_mappings": {}
             }
         ],
         "Route53.GetAccountLimit": [
@@ -40198,16 +40528,16 @@
         ],
         "Route53.ListHostedZonesByVPC": [
             {
-                "action": "ec2:DescribeVpcs",
-                "documented_dependant_action": true
-            },
-            {
                 "action": "route53:ListHostedZonesByVPC",
                 "resource_mappings": {
                     "VpcId": {
                         "template": "${VPCId}"
                     }
                 }
+            },
+            {
+                "action": "ec2:DescribeVpcs",
+                "resource_mappings": {}
             }
         ],
         "Route53.ListQueryLoggingConfigs": [
@@ -42207,12 +42537,15 @@
         ],
         "Shield.AssociateDRTRole": [
             {
-                "action": "iam:GetRole",
-                "documented_dependant_action": true
-            },
-            {
                 "action": "shield:AssociateDRTRole",
                 "resource_mappings": {}
+            },
+            {
+                "action": "iam:GetRole",
+                "resource_mappings": {},
+                "resourcearn_mappings": {
+                    "role": "${RoleArn}"
+                }
             },
             {
                 "action": "iam:PassRole",
@@ -42293,12 +42626,16 @@
         ],
         "Shield.DisassociateDRTLogBucket": [
             {
-                "action": "s3:DeleteBucketPolicy",
-                "documented_dependant_action": true
-            },
-            {
                 "action": "shield:DisassociateDRTLogBucket",
                 "resource_mappings": {}
+            },
+            {
+                "action": "s3:DeleteBucketPolicy",
+                "resource_mappings": {
+                    "BucketName": {
+                        "template": "${LogBucket}"
+                    }
+                }
             }
         ],
         "Shield.DisassociateDRTRole": [
@@ -42831,12 +43168,16 @@
         ],
         "SNS.CreatePlatformApplication": [
             {
-                "action": "iam:PassRole",
-                "documented_dependant_action": true
-            },
-            {
                 "action": "sns:CreatePlatformApplication",
                 "resource_mappings": {}
+            },
+            {
+                "action": "iam:PassRole",
+                "resource_mappings": {
+                    "RoleNameWithPath": {
+                        "template": "*"
+                    }
+                }
             }
         ],
         "SNS.CreatePlatformEndpoint": [
@@ -42847,14 +43188,18 @@
         ],
         "SNS.CreateTopic": [
             {
-                "action": "iam:PassRole",
-                "documented_dependant_action": true
-            },
-            {
                 "action": "sns:CreateTopic",
                 "resource_mappings": {
                     "TopicName": {
                         "template": "${Name}"
+                    }
+                }
+            },
+            {
+                "action": "iam:PassRole",
+                "resource_mappings": {
+                    "RoleNameWithPath": {
+                        "template": "*"
                     }
                 }
             }
@@ -42993,12 +43338,16 @@
         ],
         "SNS.SetPlatformApplicationAttributes": [
             {
-                "action": "iam:PassRole",
-                "documented_dependant_action": true
-            },
-            {
                 "action": "sns:SetPlatformApplicationAttributes",
                 "resource_mappings": {}
+            },
+            {
+                "action": "iam:PassRole",
+                "resource_mappings": {
+                    "RoleNameWithPath": {
+                        "template": "*"
+                    }
+                }
             }
         ],
         "SNS.SetSMSAttributes": [
@@ -43015,14 +43364,18 @@
         ],
         "SNS.SetTopicAttributes": [
             {
-                "action": "iam:PassRole",
-                "documented_dependant_action": true
-            },
-            {
                 "action": "sns:SetTopicAttributes",
                 "resource_mappings": {},
                 "resourcearn_mappings": {
                     "topic": "${TopicArn}"
+                }
+            },
+            {
+                "action": "iam:PassRole",
+                "resource_mappings": {
+                    "RoleNameWithPath": {
+                        "template": "*"
+                    }
                 }
             }
         ],
@@ -46190,14 +46543,21 @@
         ],
         "WAF.CreateWebACLMigrationStack": [
             {
-                "action": "s3:PutObject",
-                "documented_dependant_action": true
-            },
-            {
                 "action": "waf:CreateWebACLMigrationStack",
                 "resource_mappings": {
                     "Id": {
                         "template": "${WebACLId}"
+                    }
+                }
+            },
+            {
+                "action": "s3:PutObject",
+                "resource_mappings": {
+                    "BucketName": {
+                        "template": "${S3BucketName}"
+                    },
+                    "ObjectName": {
+                        "template": "*"
                     }
                 }
             }
@@ -46624,14 +46984,18 @@
         ],
         "WAF.PutLoggingConfiguration": [
             {
-                "action": "iam:CreateServiceLinkedRole",
-                "documented_dependant_action": true
-            },
-            {
                 "action": "waf:PutLoggingConfiguration",
                 "resource_mappings": {},
                 "resourcearn_mappings": {
                     "webacl": "%%iftemplatematch%${LoggingConfiguration.ResourceArn}%%"
+                }
+            },
+            {
+                "action": "iam:CreateServiceLinkedRole",
+                "resource_mappings": {
+                    "RoleNameWithPath": {
+                        "template": "*"
+                    }
                 }
             }
         ],
@@ -46913,14 +47277,21 @@
         ],
         "WAFRegional.CreateWebACLMigrationStack": [
             {
-                "action": "s3:PutObject",
-                "documented_dependant_action": true
-            },
-            {
                 "action": "waf-regional:CreateWebACLMigrationStack",
                 "resource_mappings": {
                     "Id": {
                         "template": "${WebACLId}"
+                    }
+                }
+            },
+            {
+                "action": "s3:PutObject",
+                "resource_mappings": {
+                    "BucketName": {
+                        "template": "${S3BucketName}"
+                    },
+                    "ObjectName": {
+                        "template": "*"
                     }
                 }
             }
@@ -47375,14 +47746,18 @@
         ],
         "WAFRegional.PutLoggingConfiguration": [
             {
-                "action": "iam:CreateServiceLinkedRole",
-                "documented_dependant_action": true
-            },
-            {
                 "action": "waf-regional:PutLoggingConfiguration",
                 "resource_mappings": {},
                 "resourcearn_mappings": {
                     "webacl": "${LoggingConfiguration.ResourceArn}"
+                }
+            },
+            {
+                "action": "iam:CreateServiceLinkedRole",
+                "resource_mappings": {
+                    "RoleNameWithPath": {
+                        "template": "*"
+                    }
                 }
             }
         ],
@@ -49040,14 +49415,18 @@
         ],
         "Greengrass.CreateDeployment": [
             {
-                "action": "iot:CancelJob",
-                "documented_dependant_action": true
-            },
-            {
                 "action": "greengrass:CreateDeployment",
                 "resource_mappings": {
                     "GroupId": {
                         "template": "${GroupId}"
+                    }
+                }
+            },
+            {
+                "action": "iot:CancelJob",
+                "resource_mappings": {
+                    "JobId": {
+                        "template": "*"
                     }
                 }
             }
@@ -49572,14 +49951,18 @@
         ],
         "Greengrass.ListDeployments": [
             {
-                "action": "iot:DescribeJob",
-                "documented_dependant_action": true
-            },
-            {
                 "action": "greengrass:ListDeployments",
                 "resource_mappings": {
                     "GroupId": {
                         "template": "${GroupId}"
+                    }
+                }
+            },
+            {
+                "action": "iot:DescribeJob",
+                "resource_mappings": {
+                    "JobId": {
+                        "template": "*"
                     }
                 }
             }
@@ -49887,16 +50270,16 @@
         ],
         "DAX.CreateCluster": [
             {
-                "action": "dax:CreateParameterGroup",
-                "documented_dependant_action": true
-            },
-            {
                 "action": "dax:CreateCluster",
                 "resource_mappings": {
                     "ClusterName": {
                         "template": "${ClusterName}"
                     }
                 }
+            },
+            {
+                "action": "dax:CreateParameterGroup",
+                "resource_mappings": {}
             },
             {
                 "action": "iam:PassRole",
@@ -52828,12 +53211,15 @@
         ],
         "AppSync.CreateGraphqlApi": [
             {
-                "action": "iam:CreateServiceLinkedRole",
-                "documented_dependant_action": true
-            },
-            {
                 "action": "appsync:CreateGraphqlApi",
                 "resource_mappings": {}
+            },
+            {
+                "action": "iam:CreateServiceLinkedRole",
+                "resource_mappings": {},
+                "resourcearn_mappings": {
+                    "role": "*"
+                }
             },
             {
                 "action": "iam:PassRole",
@@ -53041,14 +53427,18 @@
         ],
         "AppSync.UpdateGraphqlApi": [
             {
-                "action": "iam:CreateServiceLinkedRole",
-                "documented_dependant_action": true
-            },
-            {
                 "action": "appsync:UpdateGraphqlApi",
                 "resource_mappings": {
                     "GraphQLAPIId": {
                         "template": "${apiId}"
+                    }
+                }
+            },
+            {
+                "action": "iam:CreateServiceLinkedRole",
+                "resource_mappings": {
+                    "RoleNameWithPath": {
+                        "template": "*"
                     }
                 }
             },
@@ -53129,14 +53519,21 @@
         ],
         "GuardDuty.CreatePublishingDestination": [
             {
-                "action": "s3:GetObject",
-                "documented_dependant_action": true
-            },
-            {
                 "action": "guardduty:CreatePublishingDestination",
                 "resource_mappings": {
                     "DetectorId": {
                         "template": "${DetectorId}"
+                    }
+                }
+            },
+            {
+                "action": "s3:GetObject",
+                "resource_mappings": {
+                    "BucketName": {
+                        "template": "*"
+                    },
+                    "ObjectName": {
+                        "template": "*"
                     }
                 }
             }
@@ -53607,10 +54004,6 @@
         ],
         "GuardDuty.UpdatePublishingDestination": [
             {
-                "action": "s3:GetObject",
-                "documented_dependant_action": true
-            },
-            {
                 "action": "guardduty:UpdatePublishingDestination",
                 "resource_mappings": {
                     "DetectorId": {
@@ -53618,6 +54011,17 @@
                     },
                     "PublishingDestinationId": {
                         "template": "${DestinationId}"
+                    }
+                }
+            },
+            {
+                "action": "s3:GetObject",
+                "resource_mappings": {
+                    "BucketName": {
+                        "template": "*"
+                    },
+                    "ObjectName": {
+                        "template": "*"
                     }
                 }
             }
@@ -53637,17 +54041,29 @@
         ],
         "MQ.CreateBroker": [
             {
-                "action": "ec2:CreateNetworkInterface",
-                "documented_dependant_action": true
-            },
-            {
                 "action": "mq:CreateBroker",
                 "resource_mappings": {}
             },
             {
                 "action": "iam:PassRole",
-                "arn_override": {
-                    "template": "%%many%${LdapServerMetadata.RoleBase}%${LdapServerMetadata.RoleName}%${LdapServerMetadata.RoleSearchMatching}%${LdapServerMetadata.RoleSearchSubtree}%${LdapServerMetadata.UserRoleName}%%"
+                "resource_mappings": {
+                    "RoleNameWithPath": {
+                        "template": "*"
+                    }
+                }
+            },
+            {
+                "action": "ec2:CreateNetworkInterface",
+                "resource_mappings": {
+                    "NetworkInterfaceId": {
+                        "template": "*"
+                    },
+                    "SubnetId": {
+                        "template": "${SubnetIds}[]"
+                    },
+                    "SecurityGroupId": {
+                        "template": "${SecurityGroups}[]"
+                    }
                 }
             }
         ],
@@ -53679,14 +54095,18 @@
         ],
         "MQ.DeleteBroker": [
             {
-                "action": "ec2:DeleteNetworkInterface",
-                "documented_dependant_action": true
-            },
-            {
                 "action": "mq:DeleteBroker",
                 "resource_mappings": {
                     "broker-id": {
                         "template": "${BrokerId}"
+                    }
+                }
+            },
+            {
+                "action": "ec2:DeleteNetworkInterface",
+                "resource_mappings": {
+                    "NetworkInterfaceId": {
+                        "template": "*"
                     }
                 }
             }
@@ -54816,23 +55236,22 @@
         ],
         "SageMaker.CreateDataQualityJobDefinition": [
             {
-                "action": "iam:PassRole",
-                "documented_dependant_action": true
-            },
-            {
                 "action": "sagemaker:CreateDataQualityJobDefinition",
                 "resource_mappings": {
                     "DataQualityJobDefinitionName": {
                         "template": "${JobDefinitionName}"
                     }
                 }
+            },
+            {
+                "action": "iam:PassRole",
+                "resource_mappings": {},
+                "resourcearn_mappings": {
+                    "role": "${RoleArn}"
+                }
             }
         ],
         "SageMaker.CreateDeviceFleet": [
-            {
-                "action": "iam:PassRole",
-                "documented_dependant_action": true
-            },
             {
                 "action": "sagemaker:CreateDeviceFleet",
                 "resource_mappings": {
@@ -54840,17 +55259,28 @@
                         "template": "${DeviceFleetName}"
                     }
                 }
+            },
+            {
+                "action": "iam:PassRole",
+                "resource_mappings": {},
+                "resourcearn_mappings": {
+                    "role": "${RoleArn}"
+                }
             }
         ],
         "SageMaker.CreateDomain": [
             {
-                "action": "iam:CreateServiceLinkedRole",
-                "documented_dependant_action": true
-            },
-            {
                 "action": "sagemaker:CreateDomain",
                 "resource_mappings": {
                     "DomainId": {
+                        "template": "*"
+                    }
+                }
+            },
+            {
+                "action": "iam:CreateServiceLinkedRole",
+                "resource_mappings": {
+                    "RoleNameWithPath": {
                         "template": "*"
                     }
                 }
@@ -54864,15 +55294,18 @@
         ],
         "SageMaker.CreateEdgePackagingJob": [
             {
-                "action": "iam:PassRole",
-                "documented_dependant_action": true
-            },
-            {
                 "action": "sagemaker:CreateEdgePackagingJob",
                 "resource_mappings": {
                     "EdgePackagingJobName": {
                         "template": "${EdgePackagingJobName}"
                     }
+                }
+            },
+            {
+                "action": "iam:PassRole",
+                "resource_mappings": {},
+                "resourcearn_mappings": {
+                    "role": "${RoleArn}"
                 }
             }
         ],
@@ -54908,15 +55341,18 @@
         ],
         "SageMaker.CreateFeatureGroup": [
             {
-                "action": "iam:PassRole",
-                "documented_dependant_action": true
-            },
-            {
                 "action": "sagemaker:CreateFeatureGroup",
                 "resource_mappings": {
                     "FeatureGroupName": {
                         "template": "${FeatureGroupName}"
                     }
+                }
+            },
+            {
+                "action": "iam:PassRole",
+                "resource_mappings": {},
+                "resourcearn_mappings": {
+                    "role": "${RoleArn}"
                 }
             }
         ],
@@ -54964,15 +55400,18 @@
         ],
         "SageMaker.CreateImage": [
             {
-                "action": "iam:PassRole",
-                "documented_dependant_action": true
-            },
-            {
                 "action": "sagemaker:CreateImage",
                 "resource_mappings": {
                     "ImageName": {
                         "template": "${ImageName}"
                     }
+                }
+            },
+            {
+                "action": "iam:PassRole",
+                "resource_mappings": {},
+                "resourcearn_mappings": {
+                    "role": "${RoleArn}"
                 }
             }
         ],
@@ -55020,29 +55459,35 @@
         ],
         "SageMaker.CreateModelBiasJobDefinition": [
             {
-                "action": "iam:PassRole",
-                "documented_dependant_action": true
-            },
-            {
                 "action": "sagemaker:CreateModelBiasJobDefinition",
                 "resource_mappings": {
                     "ModelBiasJobDefinitionName": {
                         "template": "${JobDefinitionName}"
                     }
                 }
+            },
+            {
+                "action": "iam:PassRole",
+                "resource_mappings": {},
+                "resourcearn_mappings": {
+                    "role": "${RoleArn}"
+                }
             }
         ],
         "SageMaker.CreateModelExplainabilityJobDefinition": [
-            {
-                "action": "iam:PassRole",
-                "documented_dependant_action": true
-            },
             {
                 "action": "sagemaker:CreateModelExplainabilityJobDefinition",
                 "resource_mappings": {
                     "ModelExplainabilityJobDefinitionName": {
                         "template": "${JobDefinitionName}"
                     }
+                }
+            },
+            {
+                "action": "iam:PassRole",
+                "resource_mappings": {},
+                "resourcearn_mappings": {
+                    "role": "${RoleArn}"
                 }
             }
         ],
@@ -55077,15 +55522,18 @@
         ],
         "SageMaker.CreateModelQualityJobDefinition": [
             {
-                "action": "iam:PassRole",
-                "documented_dependant_action": true
-            },
-            {
                 "action": "sagemaker:CreateModelQualityJobDefinition",
                 "resource_mappings": {
                     "ModelQualityJobDefinitionName": {
                         "template": "${JobDefinitionName}"
                     }
+                }
+            },
+            {
+                "action": "iam:PassRole",
+                "resource_mappings": {},
+                "resourcearn_mappings": {
+                    "role": "${RoleArn}"
                 }
             }
         ],
@@ -55133,15 +55581,18 @@
         ],
         "SageMaker.CreatePipeline": [
             {
-                "action": "iam:PassRole",
-                "documented_dependant_action": true
-            },
-            {
                 "action": "sagemaker:CreatePipeline",
                 "resource_mappings": {
                     "PipelineName": {
                         "template": "${PipelineName}"
                     }
+                }
+            },
+            {
+                "action": "iam:PassRole",
+                "resource_mappings": {},
+                "resourcearn_mappings": {
+                    "role": "${RoleArn}"
                 }
             }
         ],
@@ -56929,15 +57380,18 @@
         ],
         "SageMaker.UpdateImage": [
             {
-                "action": "iam:PassRole",
-                "documented_dependant_action": true
-            },
-            {
                 "action": "sagemaker:UpdateImage",
                 "resource_mappings": {
                     "ImageName": {
                         "template": "${ImageName}"
                     }
+                }
+            },
+            {
+                "action": "iam:PassRole",
+                "resource_mappings": {},
+                "resourcearn_mappings": {
+                    "role": "${RoleArn}"
                 }
             }
         ],
@@ -56994,15 +57448,18 @@
         ],
         "SageMaker.UpdatePipeline": [
             {
-                "action": "iam:PassRole",
-                "documented_dependant_action": true
-            },
-            {
                 "action": "sagemaker:UpdatePipeline",
                 "resource_mappings": {
                     "PipelineName": {
                         "template": "${PipelineName}"
                     }
+                }
+            },
+            {
+                "action": "iam:PassRole",
+                "resource_mappings": {},
+                "resourcearn_mappings": {
+                    "role": "${RoleArn}"
                 }
             }
         ],
@@ -57241,14 +57698,21 @@
         ],
         "ResourceGroups.ListGroupResources": [
             {
-                "action": "cloudformation:DescribeStacks",
-                "documented_dependant_action": true
-            },
-            {
                 "action": "resource-groups:ListGroupResources",
                 "resource_mappings": {
                     "GroupName": {
                         "template": "%%regex%${Group}%/^(?:.+\\/)?(.+)$/g%%"
+                    }
+                }
+            },
+            {
+                "action": "cloudformation:DescribeStacks",
+                "resource_mappings": {
+                    "StackName": {
+                        "template": "*"
+                    },
+                    "Id": {
+                        "template": "*"
                     }
                 }
             }
@@ -57261,12 +57725,19 @@
         ],
         "ResourceGroups.SearchResources": [
             {
-                "action": "cloudformation:DescribeStacks",
-                "documented_dependant_action": true
-            },
-            {
                 "action": "resource-groups:SearchResources",
                 "resource_mappings": {}
+            },
+            {
+                "action": "cloudformation:DescribeStacks",
+                "resource_mappings": {
+                    "StackName": {
+                        "template": "*"
+                    },
+                    "Id": {
+                        "template": "*"
+                    }
+                }
             }
         ],
         "ResourceGroups.Tag": [
@@ -57944,11 +58415,11 @@
         ],
         "Cloud9.CreateEnvironmentEC2": [
             {
-                "action": "ec2:DescribeSubnets",
-                "documented_dependant_action": true
+                "action": "cloud9:CreateEnvironmentEC2",
+                "resource_mappings": {}
             },
             {
-                "action": "cloud9:CreateEnvironmentEC2",
+                "action": "ec2:DescribeSubnets",
                 "resource_mappings": {}
             }
         ],
@@ -57964,14 +58435,18 @@
         ],
         "Cloud9.DeleteEnvironment": [
             {
-                "action": "iam:CreateServiceLinkedRole",
-                "documented_dependant_action": true
-            },
-            {
                 "action": "cloud9:DeleteEnvironment",
                 "resource_mappings": {
                     "ResourceId": {
                         "template": "${environmentId}"
+                    }
+                }
+            },
+            {
+                "action": "iam:CreateServiceLinkedRole",
+                "resource_mappings": {
+                    "RoleNameWithPath": {
+                        "template": "*"
                     }
                 }
             }
@@ -58894,42 +59369,70 @@
         ],
         "TranscribeService.CreateLanguageModel": [
             {
-                "action": "s3:GetObject",
-                "documented_dependant_action": true
-            },
-            {
                 "action": "transcribe:CreateLanguageModel",
                 "resource_mappings": {}
+            },
+            {
+                "action": "s3:GetObject",
+                "resource_mappings": {
+                    "BucketName": {
+                        "template": "*"
+                    },
+                    "ObjectName": {
+                        "template": "*"
+                    }
+                }
             }
         ],
         "TranscribeService.CreateMedicalVocabulary": [
             {
-                "action": "s3:GetObject",
-                "documented_dependant_action": true
-            },
-            {
                 "action": "transcribe:CreateMedicalVocabulary",
                 "resource_mappings": {}
+            },
+            {
+                "action": "s3:GetObject",
+                "resource_mappings": {
+                    "BucketName": {
+                        "template": "*"
+                    },
+                    "ObjectName": {
+                        "template": "*"
+                    }
+                }
             }
         ],
         "TranscribeService.CreateVocabulary": [
             {
-                "action": "s3:GetObject",
-                "documented_dependant_action": true
-            },
-            {
                 "action": "transcribe:CreateVocabulary",
                 "resource_mappings": {}
+            },
+            {
+                "action": "s3:GetObject",
+                "resource_mappings": {
+                    "BucketName": {
+                        "template": "*"
+                    },
+                    "ObjectName": {
+                        "template": "*"
+                    }
+                }
             }
         ],
         "TranscribeService.CreateVocabularyFilter": [
             {
-                "action": "s3:GetObject",
-                "documented_dependant_action": true
-            },
-            {
                 "action": "transcribe:CreateVocabularyFilter",
                 "resource_mappings": {}
+            },
+            {
+                "action": "s3:GetObject",
+                "resource_mappings": {
+                    "BucketName": {
+                        "template": "*"
+                    },
+                    "ObjectName": {
+                        "template": "*"
+                    }
+                }
             }
         ],
         "TranscribeService.DeleteLanguageModel": [
@@ -59042,52 +59545,87 @@
         ],
         "TranscribeService.StartMedicalTranscriptionJob": [
             {
-                "action": "s3:GetObject",
-                "documented_dependant_action": true
-            },
-            {
                 "action": "transcribe:StartMedicalTranscriptionJob",
                 "resource_mappings": {}
+            },
+            {
+                "action": "s3:GetObject",
+                "resource_mappings": {
+                    "BucketName": {
+                        "template": "*"
+                    },
+                    "ObjectName": {
+                        "template": "*"
+                    }
+                }
             }
         ],
         "TranscribeService.StartTranscriptionJob": [
             {
-                "action": "s3:GetObject",
-                "documented_dependant_action": true
-            },
-            {
                 "action": "transcribe:StartTranscriptionJob",
                 "resource_mappings": {}
+            },
+            {
+                "action": "s3:GetObject",
+                "resource_mappings": {
+                    "BucketName": {
+                        "template": "*"
+                    },
+                    "ObjectName": {
+                        "template": "*"
+                    }
+                }
             }
         ],
         "TranscribeService.UpdateMedicalVocabulary": [
             {
-                "action": "s3:GetObject",
-                "documented_dependant_action": true
-            },
-            {
                 "action": "transcribe:UpdateMedicalVocabulary",
                 "resource_mappings": {}
+            },
+            {
+                "action": "s3:GetObject",
+                "resource_mappings": {
+                    "BucketName": {
+                        "template": "*"
+                    },
+                    "ObjectName": {
+                        "template": "*"
+                    }
+                }
             }
         ],
         "TranscribeService.UpdateVocabulary": [
             {
-                "action": "s3:GetObject",
-                "documented_dependant_action": true
-            },
-            {
                 "action": "transcribe:UpdateVocabulary",
                 "resource_mappings": {}
+            },
+            {
+                "action": "s3:GetObject",
+                "resource_mappings": {
+                    "BucketName": {
+                        "template": "*"
+                    },
+                    "ObjectName": {
+                        "template": "*"
+                    }
+                }
             }
         ],
         "TranscribeService.UpdateVocabularyFilter": [
             {
-                "action": "s3:GetObject",
-                "documented_dependant_action": true
-            },
-            {
                 "action": "transcribe:UpdateVocabularyFilter",
                 "resource_mappings": {}
+            },
+            {
+                "action": "s3:GetObject",
+                "resource_mappings": {
+                    "BucketName": {
+                        "template": "*"
+                    },
+                    "ObjectName": {
+                        "template": "*"
+                    }
+                }
             }
         ],
         "Connect.AssociateApprovedOrigin": [
@@ -59102,23 +59640,19 @@
         ],
         "Connect.AssociateInstanceStorageConfig": [
             {
-                "action": "ds:DescribeDirectories",
-                "documented_dependant_action": true
-            },
-            {
                 "action": "connect:AssociateInstanceStorageConfig",
                 "resource_mappings": {
                     "InstanceId": {
                         "template": "${InstanceId}"
                     }
                 }
+            },
+            {
+                "action": "ds:DescribeDirectories",
+                "resource_mappings": {}
             }
         ],
         "Connect.AssociateLambdaFunction": [
-            {
-                "action": "lambda:AddPermission",
-                "documented_dependant_action": true
-            },
             {
                 "action": "connect:AssociateLambdaFunction",
                 "resource_mappings": {
@@ -59126,18 +59660,29 @@
                         "template": "${InstanceId}"
                     }
                 }
+            },
+            {
+                "action": "lambda:AddPermission",
+                "resource_mappings": {},
+                "resourcearn_mappings": {
+                    "function": "${FunctionArn}"
+                }
             }
         ],
         "Connect.AssociateLexBot": [
-            {
-                "action": "iam:AttachRolePolicy",
-                "documented_dependant_action": true
-            },
             {
                 "action": "connect:AssociateLexBot",
                 "resource_mappings": {
                     "InstanceId": {
                         "template": "${InstanceId}"
+                    }
+                }
+            },
+            {
+                "action": "iam:AttachRolePolicy",
+                "resource_mappings": {
+                    "RoleNameWithPath": {
+                        "template": "*"
                     }
                 }
             }
@@ -59199,12 +59744,16 @@
         ],
         "Connect.CreateInstance": [
             {
-                "action": "ds:AuthorizeApplication",
-                "documented_dependant_action": true
-            },
-            {
                 "action": "connect:CreateInstance",
                 "resource_mappings": {}
+            },
+            {
+                "action": "ds:AuthorizeApplication",
+                "resource_mappings": {
+                    "DirectoryId": {
+                        "template": "${DirectoryId}"
+                    }
+                }
             }
         ],
         "Connect.CreateQueue": [
@@ -59307,18 +59856,26 @@
         ],
         "Connect.DeleteInstance": [
             {
-                "action": "ec2:DeleteNetworkInterface",
-                "documented_dependant_action": true
-            },
-            {
-                "action": "ds:DeleteDirectory",
-                "documented_dependant_action": true
-            },
-            {
                 "action": "connect:DeleteInstance",
                 "resource_mappings": {
                     "InstanceId": {
                         "template": "${InstanceId}"
+                    }
+                }
+            },
+            {
+                "action": "ds:DeleteDirectory",
+                "resource_mappings": {
+                    "DirectoryId": {
+                        "template": "*"
+                    }
+                }
+            },
+            {
+                "action": "ec2:DeleteNetworkInterface",
+                "resource_mappings": {
+                    "NetworkInterfaceId": {
+                        "template": "*"
                     }
                 }
             }
@@ -59390,16 +59947,16 @@
         ],
         "Connect.DescribeInstance": [
             {
-                "action": "ds:DescribeDirectories",
-                "documented_dependant_action": true
-            },
-            {
                 "action": "connect:DescribeInstance",
                 "resource_mappings": {
                     "InstanceId": {
                         "template": "${InstanceId}"
                     }
                 }
+            },
+            {
+                "action": "ds:DescribeDirectories",
+                "resource_mappings": {}
             }
         ],
         "Connect.DescribeInstanceAttribute": [
@@ -59519,28 +60076,35 @@
         ],
         "Connect.DisassociateLambdaFunction": [
             {
-                "action": "lambda:RemovePermission",
-                "documented_dependant_action": true
-            },
-            {
                 "action": "connect:DisassociateLambdaFunction",
                 "resource_mappings": {
                     "InstanceId": {
                         "template": "${InstanceId}"
                     }
                 }
+            },
+            {
+                "action": "lambda:RemovePermission",
+                "resource_mappings": {},
+                "resourcearn_mappings": {
+                    "function": "${FunctionArn}"
+                }
             }
         ],
         "Connect.DisassociateLexBot": [
-            {
-                "action": "iam:AttachRolePolicy",
-                "documented_dependant_action": true
-            },
             {
                 "action": "connect:DisassociateLexBot",
                 "resource_mappings": {
                     "InstanceId": {
                         "template": "${InstanceId}"
+                    }
+                }
+            },
+            {
+                "action": "iam:AttachRolePolicy",
+                "resource_mappings": {
+                    "RoleNameWithPath": {
+                        "template": "*"
                     }
                 }
             }
@@ -59685,11 +60249,11 @@
         ],
         "Connect.ListInstances": [
             {
-                "action": "ds:DescribeDirectories",
-                "documented_dependant_action": true
+                "action": "connect:ListInstances",
+                "resource_mappings": {}
             },
             {
-                "action": "connect:ListInstances",
+                "action": "ds:DescribeDirectories",
                 "resource_mappings": {}
             }
         ],
@@ -60013,23 +60577,19 @@
         ],
         "Connect.UpdateInstanceAttribute": [
             {
-                "action": "ds:DescribeDirectories",
-                "documented_dependant_action": true
-            },
-            {
                 "action": "connect:UpdateInstanceAttribute",
                 "resource_mappings": {
                     "InstanceId": {
                         "template": "${InstanceId}"
                     }
                 }
+            },
+            {
+                "action": "ds:DescribeDirectories",
+                "resource_mappings": {}
             }
         ],
         "Connect.UpdateInstanceStorageConfig": [
-            {
-                "action": "ds:DescribeDirectories",
-                "documented_dependant_action": true
-            },
             {
                 "action": "connect:UpdateInstanceStorageConfig",
                 "resource_mappings": {
@@ -60037,6 +60597,10 @@
                         "template": "${InstanceId}"
                     }
                 }
+            },
+            {
+                "action": "ds:DescribeDirectories",
+                "resource_mappings": {}
             }
         ],
         "Connect.UpdateQueueHoursOfOperation": [
@@ -61640,10 +62204,6 @@
         ],
         "Neptune.CreateDBCluster": [
             {
-                "action": "iam:PassRole",
-                "documented_dependant_action": true
-            },
-            {
                 "action": "rds:CreateDBCluster",
                 "resource_mappings": {
                     "DbClusterInstanceName": {
@@ -61657,6 +62217,14 @@
                     },
                     "SubnetGroupName": {
                         "template": "${DBSubnetGroupName}"
+                    }
+                }
+            },
+            {
+                "action": "iam:PassRole",
+                "resource_mappings": {
+                    "RoleNameWithPath": {
+                        "template": "*"
                     }
                 }
             }
@@ -61699,10 +62267,6 @@
         ],
         "Neptune.CreateDBInstance": [
             {
-                "action": "iam:PassRole",
-                "documented_dependant_action": true
-            },
-            {
                 "action": "rds:CreateDBInstance",
                 "resource_mappings": {
                     "DbInstanceName": {
@@ -61719,6 +62283,14 @@
                     },
                     "SubnetGroupName": {
                         "template": "${DBSubnetGroupName}"
+                    }
+                }
+            },
+            {
+                "action": "iam:PassRole",
+                "resource_mappings": {
+                    "RoleNameWithPath": {
+                        "template": "*"
                     }
                 }
             }
@@ -62035,10 +62607,6 @@
         ],
         "Neptune.ModifyDBCluster": [
             {
-                "action": "iam:PassRole",
-                "documented_dependant_action": true
-            },
-            {
                 "action": "rds:ModifyDBCluster",
                 "resource_mappings": {
                     "DbClusterInstanceName": {
@@ -62049,6 +62617,14 @@
                     },
                     "OptionGroupName": {
                         "template": "${OptionGroupName}"
+                    }
+                }
+            },
+            {
+                "action": "iam:PassRole",
+                "resource_mappings": {
+                    "RoleNameWithPath": {
+                        "template": "*"
                     }
                 }
             }
@@ -62085,10 +62661,6 @@
         ],
         "Neptune.ModifyDBInstance": [
             {
-                "action": "iam:PassRole",
-                "documented_dependant_action": true
-            },
-            {
                 "action": "rds:ModifyDBInstance",
                 "resource_mappings": {
                     "DbInstanceName": {
@@ -62102,6 +62674,14 @@
                     },
                     "SecurityGroupName": {
                         "template": "${DBSecurityGroups[]}"
+                    }
+                }
+            },
+            {
+                "action": "iam:PassRole",
+                "resource_mappings": {
+                    "RoleNameWithPath": {
+                        "template": "*"
                     }
                 }
             }
@@ -62222,10 +62802,6 @@
         ],
         "Neptune.RestoreDBClusterFromSnapshot": [
             {
-                "action": "iam:PassRole",
-                "documented_dependant_action": true
-            },
-            {
                 "action": "rds:RestoreDBClusterFromSnapshot",
                 "resource_mappings": {
                     "DbClusterInstanceName": {
@@ -62238,13 +62814,17 @@
                         "template": "${OptionGroupName}"
                     }
                 }
+            },
+            {
+                "action": "iam:PassRole",
+                "resource_mappings": {
+                    "RoleNameWithPath": {
+                        "template": "*"
+                    }
+                }
             }
         ],
         "Neptune.RestoreDBClusterToPointInTime": [
-            {
-                "action": "iam:PassRole",
-                "documented_dependant_action": true
-            },
             {
                 "action": "rds:RestoreDBClusterToPointInTime",
                 "resource_mappings": {
@@ -62256,6 +62836,14 @@
                     },
                     "SubnetGroupName": {
                         "template": "${DBSubnetGroupName}"
+                    }
+                }
+            },
+            {
+                "action": "iam:PassRole",
+                "resource_mappings": {
+                    "RoleNameWithPath": {
+                        "template": "*"
                     }
                 }
             }
@@ -64053,11 +64641,11 @@
         ],
         "Chime.PutVoiceConnectorLoggingConfiguration": [
             {
-                "action": "logs:CreateLogDelivery",
-                "documented_dependant_action": true
+                "action": "chime:PutVoiceConnectorLoggingConfiguration",
+                "resource_mappings": {}
             },
             {
-                "action": "chime:PutVoiceConnectorLoggingConfiguration",
+                "action": "logs:CreateLogDelivery",
                 "resource_mappings": {}
             }
         ],
@@ -65348,11 +65936,15 @@
         ],
         "QuickSight.CreateDataSet": [
             {
-                "action": "quicksight:PassDataSource",
-                "documented_dependant_action": true
+                "action": "quicksight:CreateDataSet",
+                "resource_mappings": {
+                    "ResourceId": {
+                        "template": "*"
+                    }
+                }
             },
             {
-                "action": "quicksight:CreateDataSet",
+                "action": "quicksight:PassDataSource",
                 "resource_mappings": {
                     "ResourceId": {
                         "template": "*"
@@ -66158,11 +66750,15 @@
         ],
         "QuickSight.UpdateDataSet": [
             {
-                "action": "quicksight:PassDataSource",
-                "documented_dependant_action": true
+                "action": "quicksight:UpdateDataSet",
+                "resource_mappings": {
+                    "ResourceId": {
+                        "template": "*"
+                    }
+                }
             },
             {
-                "action": "quicksight:UpdateDataSet",
+                "action": "quicksight:PassDataSource",
                 "resource_mappings": {
                     "ResourceId": {
                         "template": "*"
@@ -66303,11 +66899,11 @@
         ],
         "RDSDataService.CommitTransaction": [
             {
-                "action": "rds-data:BeginTransaction",
-                "documented_dependant_action": true
+                "action": "rds-data:CommitTransaction",
+                "resource_mappings": {}
             },
             {
-                "action": "rds-data:CommitTransaction",
+                "action": "rds-data:BeginTransaction",
                 "resource_mappings": {}
             }
         ],
@@ -66324,11 +66920,11 @@
         ],
         "RDSDataService.RollbackTransaction": [
             {
-                "action": "rds-data:BeginTransaction",
-                "documented_dependant_action": true
+                "action": "rds-data:RollbackTransaction",
+                "resource_mappings": {}
             },
             {
-                "action": "rds-data:RollbackTransaction",
+                "action": "rds-data:BeginTransaction",
                 "resource_mappings": {}
             }
         ],
@@ -67030,12 +67626,16 @@
         ],
         "RoboMaker.CreateDeploymentJob": [
             {
-                "action": "iam:CreateServiceLinkedRole",
-                "documented_dependant_action": true
-            },
-            {
                 "action": "robomaker:CreateDeploymentJob",
                 "resource_mappings": {}
+            },
+            {
+                "action": "iam:CreateServiceLinkedRole",
+                "resource_mappings": {
+                    "RoleNameWithPath": {
+                        "template": "*"
+                    }
+                }
             }
         ],
         "RoboMaker.CreateFleet": [
@@ -67046,12 +67646,16 @@
         ],
         "RoboMaker.CreateRobot": [
             {
-                "action": "iam:CreateServiceLinkedRole",
-                "documented_dependant_action": true
-            },
-            {
                 "action": "robomaker:CreateRobot",
                 "resource_mappings": {}
+            },
+            {
+                "action": "iam:CreateServiceLinkedRole",
+                "resource_mappings": {
+                    "RoleNameWithPath": {
+                        "template": "*"
+                    }
+                }
             }
         ],
         "RoboMaker.CreateRobotApplication": [
@@ -67062,14 +67666,21 @@
         ],
         "RoboMaker.CreateRobotApplicationVersion": [
             {
-                "action": "s3:GetObject",
-                "documented_dependant_action": true
-            },
-            {
                 "action": "robomaker:CreateRobotApplicationVersion",
                 "resource_mappings": {},
                 "resourcearn_mappings": {
                     "robotApplication": "%%iftemplatematch%${application}%%"
+                }
+            },
+            {
+                "action": "s3:GetObject",
+                "resource_mappings": {
+                    "BucketName": {
+                        "template": "*"
+                    },
+                    "ObjectName": {
+                        "template": "*"
+                    }
                 }
             }
         ],
@@ -67081,25 +67692,36 @@
         ],
         "RoboMaker.CreateSimulationApplicationVersion": [
             {
-                "action": "s3:GetObject",
-                "documented_dependant_action": true
-            },
-            {
                 "action": "robomaker:CreateSimulationApplicationVersion",
                 "resource_mappings": {},
                 "resourcearn_mappings": {
                     "simulationApplication": "%%iftemplatematch%${application}%%"
                 }
+            },
+            {
+                "action": "s3:GetObject",
+                "resource_mappings": {
+                    "BucketName": {
+                        "template": "*"
+                    },
+                    "ObjectName": {
+                        "template": "*"
+                    }
+                }
             }
         ],
         "RoboMaker.CreateSimulationJob": [
             {
-                "action": "iam:CreateServiceLinkedRole",
-                "documented_dependant_action": true
-            },
-            {
                 "action": "robomaker:CreateSimulationJob",
                 "resource_mappings": {}
+            },
+            {
+                "action": "iam:CreateServiceLinkedRole",
+                "resource_mappings": {
+                    "RoleNameWithPath": {
+                        "template": "*"
+                    }
+                }
             },
             {
                 "action": "iam:PassRole",
@@ -67409,24 +68031,32 @@
         ],
         "RoboMaker.StartSimulationJobBatch": [
             {
-                "action": "iam:CreateServiceLinkedRole",
-                "documented_dependant_action": true
-            },
-            {
                 "action": "robomaker:StartSimulationJobBatch",
                 "resource_mappings": {}
+            },
+            {
+                "action": "iam:CreateServiceLinkedRole",
+                "resource_mappings": {
+                    "RoleNameWithPath": {
+                        "template": "*"
+                    }
+                }
             }
         ],
         "RoboMaker.SyncDeploymentJob": [
-            {
-                "action": "iam:CreateServiceLinkedRole",
-                "documented_dependant_action": true
-            },
             {
                 "action": "robomaker:SyncDeploymentJob",
                 "resource_mappings": {},
                 "resourcearn_mappings": {
                     "deploymentFleet": "%%iftemplatematch%${fleet}%%"
+                }
+            },
+            {
+                "action": "iam:CreateServiceLinkedRole",
+                "resource_mappings": {
+                    "RoleNameWithPath": {
+                        "template": "*"
+                    }
                 }
             }
         ],
@@ -69804,11 +70434,11 @@
         ],
         "Kafka.CreateCluster": [
             {
-                "action": "ec2:DescribeSecurityGroups",
-                "documented_dependant_action": true
+                "action": "kafka:CreateCluster",
+                "resource_mappings": {}
             },
             {
-                "action": "kafka:CreateCluster",
+                "action": "ec2:DescribeSecurityGroups",
                 "resource_mappings": {}
             }
         ],
@@ -69856,12 +70486,16 @@
         ],
         "Kafka.BatchDisassociateScramSecret": [
             {
-                "action": "kms:RetireGrant",
-                "documented_dependant_action": true
-            },
-            {
                 "action": "kafka:BatchDisassociateScramSecret",
                 "resource_mappings": {}
+            },
+            {
+                "action": "kms:RetireGrant",
+                "resource_mappings": {
+                    "KeyId": {
+                        "template": "*"
+                    }
+                }
             }
         ],
         "Kafka.GetBootstrapBrokers": [
@@ -70037,10 +70671,6 @@
         ],
         "DocDB.CreateDBCluster": [
             {
-                "action": "iam:PassRole",
-                "documented_dependant_action": true
-            },
-            {
                 "action": "rds:CreateDBCluster",
                 "resource_mappings": {
                     "DbClusterInstanceName": {
@@ -70054,6 +70684,14 @@
                     },
                     "SubnetGroupName": {
                         "template": "${DBSubnetGroupName}"
+                    }
+                }
+            },
+            {
+                "action": "iam:PassRole",
+                "resource_mappings": {
+                    "RoleNameWithPath": {
+                        "template": "*"
                     }
                 }
             }
@@ -70083,10 +70721,6 @@
         ],
         "DocDB.CreateDBInstance": [
             {
-                "action": "iam:PassRole",
-                "documented_dependant_action": true
-            },
-            {
                 "action": "rds:CreateDBInstance",
                 "resource_mappings": {
                     "DbInstanceName": {
@@ -70102,6 +70736,14 @@
                         "template": "*"
                     },
                     "SubnetGroupName": {
+                        "template": "*"
+                    }
+                }
+            },
+            {
+                "action": "iam:PassRole",
+                "resource_mappings": {
+                    "RoleNameWithPath": {
                         "template": "*"
                     }
                 }
@@ -70316,10 +70958,6 @@
         ],
         "DocDB.ModifyDBCluster": [
             {
-                "action": "iam:PassRole",
-                "documented_dependant_action": true
-            },
-            {
                 "action": "rds:ModifyDBCluster",
                 "resource_mappings": {
                     "DbClusterInstanceName": {
@@ -70330,6 +70968,14 @@
                     },
                     "OptionGroupName": {
                         "template": "%%regex%%/.*/g%%"
+                    }
+                }
+            },
+            {
+                "action": "iam:PassRole",
+                "resource_mappings": {
+                    "RoleNameWithPath": {
+                        "template": "*"
                     }
                 }
             }
@@ -70356,10 +71002,6 @@
         ],
         "DocDB.ModifyDBInstance": [
             {
-                "action": "iam:PassRole",
-                "documented_dependant_action": true
-            },
-            {
                 "action": "rds:ModifyDBInstance",
                 "resource_mappings": {
                     "DbInstanceName": {
@@ -70372,6 +71014,14 @@
                         "template": "*"
                     },
                     "SecurityGroupName": {
+                        "template": "*"
+                    }
+                }
+            },
+            {
+                "action": "iam:PassRole",
+                "resource_mappings": {
+                    "RoleNameWithPath": {
                         "template": "*"
                     }
                 }
@@ -70427,10 +71077,6 @@
         ],
         "DocDB.RestoreDBClusterFromSnapshot": [
             {
-                "action": "iam:PassRole",
-                "documented_dependant_action": true
-            },
-            {
                 "action": "rds:RestoreDBClusterFromSnapshot",
                 "resource_mappings": {
                     "DbClusterInstanceName": {
@@ -70443,13 +71089,17 @@
                         "template": "%%regex%%/.*/g%%"
                     }
                 }
+            },
+            {
+                "action": "iam:PassRole",
+                "resource_mappings": {
+                    "RoleNameWithPath": {
+                        "template": "*"
+                    }
+                }
             }
         ],
         "DocDB.RestoreDBClusterToPointInTime": [
-            {
-                "action": "iam:PassRole",
-                "documented_dependant_action": true
-            },
             {
                 "action": "rds:RestoreDBClusterToPointInTime",
                 "resource_mappings": {
@@ -70461,6 +71111,14 @@
                     },
                     "SubnetGroupName": {
                         "template": "${DBSubnetGroupName}"
+                    }
+                }
+            },
+            {
+                "action": "iam:PassRole",
+                "resource_mappings": {
+                    "RoleNameWithPath": {
+                        "template": "*"
                     }
                 }
             }
@@ -71215,22 +71873,36 @@
         ],
         "Textract.AnalyzeDocument": [
             {
-                "action": "s3:GetObject",
-                "documented_dependant_action": true
-            },
-            {
                 "action": "textract:AnalyzeDocument",
                 "resource_mappings": {}
+            },
+            {
+                "action": "s3:GetObject",
+                "resource_mappings": {
+                    "BucketName": {
+                        "template": "${Document.S3Object.Bucket}"
+                    },
+                    "ObjectName": {
+                        "template": "${Document.S3Object.Name}"
+                    }
+                }
             }
         ],
         "Textract.DetectDocumentText": [
             {
-                "action": "s3:GetObject",
-                "documented_dependant_action": true
-            },
-            {
                 "action": "textract:DetectDocumentText",
                 "resource_mappings": {}
+            },
+            {
+                "action": "s3:GetObject",
+                "resource_mappings": {
+                    "BucketName": {
+                        "template": "${Document.S3Object.Bucket}"
+                    },
+                    "ObjectName": {
+                        "template": "${Document.S3Object.Name}"
+                    }
+                }
             }
         ],
         "Textract.GetDocumentAnalysis": [
@@ -71247,29 +71919,39 @@
         ],
         "Textract.StartDocumentAnalysis": [
             {
-                "action": "s3:GetObject",
-                "documented_dependant_action": true
-            },
-            {
                 "action": "textract:StartDocumentAnalysis",
                 "resource_mappings": {}
+            },
+            {
+                "action": "s3:GetObject",
+                "resource_mappings": {
+                    "BucketName": {
+                        "template": "%%many%${DocumentLocation.S3Object.Bucket}%${OutputConfig.S3Bucket}%%"
+                    },
+                    "ObjectName": {
+                        "template": "%%many%${DocumentLocation.S3Object.Name}%${OutputConfig.S3Prefix}*%%"
+                    }
+                }
             }
         ],
         "Textract.StartDocumentTextDetection": [
             {
-                "action": "s3:GetObject",
-                "documented_dependant_action": true
-            },
-            {
                 "action": "textract:StartDocumentTextDetection",
                 "resource_mappings": {}
+            },
+            {
+                "action": "s3:GetObject",
+                "resource_mappings": {
+                    "BucketName": {
+                        "template": "%%many%${DocumentLocation.S3Object.Bucket}%${OutputConfig.S3Bucket}%%"
+                    },
+                    "ObjectName": {
+                        "template": "%%many%${DocumentLocation.S3Object.Name}%${OutputConfig.S3Prefix}*%%"
+                    }
+                }
             }
         ],
         "ManagedBlockchain.CreateMember": [
-            {
-                "action": "iam:CreateServiceLinkedRole",
-                "documented_dependant_action": true
-            },
             {
                 "action": "managedblockchain:CreateMember",
                 "resource_mappings": {
@@ -71277,23 +71959,31 @@
                         "template": "${NetworkId}"
                     }
                 }
+            },
+            {
+                "action": "iam:CreateServiceLinkedRole",
+                "resource_mappings": {
+                    "RoleNameWithPath": {
+                        "template": "*"
+                    }
+                }
             }
         ],
         "ManagedBlockchain.CreateNetwork": [
             {
-                "action": "iam:CreateServiceLinkedRole",
-                "documented_dependant_action": true
-            },
-            {
                 "action": "managedblockchain:CreateNetwork",
                 "resource_mappings": {}
+            },
+            {
+                "action": "iam:CreateServiceLinkedRole",
+                "resource_mappings": {
+                    "RoleNameWithPath": {
+                        "template": "*"
+                    }
+                }
             }
         ],
         "ManagedBlockchain.CreateNode": [
-            {
-                "action": "iam:CreateServiceLinkedRole",
-                "documented_dependant_action": true
-            },
             {
                 "action": "managedblockchain:CreateNode",
                 "resource_mappings": {
@@ -71302,6 +71992,14 @@
                     },
                     "NetworkId": {
                         "template": "${NetworkId}"
+                    }
+                }
+            },
+            {
+                "action": "iam:CreateServiceLinkedRole",
+                "resource_mappings": {
+                    "RoleNameWithPath": {
+                        "template": "*"
                     }
                 }
             }
@@ -71482,28 +72180,36 @@
         ],
         "ManagedBlockchain.UpdateMember": [
             {
-                "action": "iam:CreateServiceLinkedRole",
-                "documented_dependant_action": true
-            },
-            {
                 "action": "managedblockchain:UpdateMember",
                 "resource_mappings": {
                     "MemberId": {
                         "template": "${MemberId}"
                     }
                 }
+            },
+            {
+                "action": "iam:CreateServiceLinkedRole",
+                "resource_mappings": {
+                    "RoleNameWithPath": {
+                        "template": "*"
+                    }
+                }
             }
         ],
         "ManagedBlockchain.UpdateNode": [
-            {
-                "action": "iam:CreateServiceLinkedRole",
-                "documented_dependant_action": true
-            },
             {
                 "action": "managedblockchain:UpdateNode",
                 "resource_mappings": {
                     "NodeId": {
                         "template": "${NodeId}"
+                    }
+                }
+            },
+            {
+                "action": "iam:CreateServiceLinkedRole",
+                "resource_mappings": {
+                    "RoleNameWithPath": {
+                        "template": "*"
                     }
                 }
             }
@@ -71888,12 +72594,16 @@
         ],
         "IoTThingsGraph.AssociateEntityToThing": [
             {
-                "action": "iot:DescribeThing",
-                "documented_dependant_action": true
-            },
-            {
                 "action": "iotthingsgraph:AssociateEntityToThing",
                 "resource_mappings": {}
+            },
+            {
+                "action": "iot:DescribeThing",
+                "resource_mappings": {
+                    "ThingName": {
+                        "template": "${thingName}"
+                    }
+                }
             }
         ],
         "IoTThingsGraph.CreateFlowTemplate": [
@@ -71994,12 +72704,16 @@
         ],
         "IoTThingsGraph.DissociateEntityFromThing": [
             {
-                "action": "iot:DescribeThing",
-                "documented_dependant_action": true
-            },
-            {
                 "action": "iotthingsgraph:DissociateEntityFromThing",
                 "resource_mappings": {}
+            },
+            {
+                "action": "iot:DescribeThing",
+                "resource_mappings": {
+                    "ThingName": {
+                        "template": "${thingName}"
+                    }
+                }
             }
         ],
         "IoTThingsGraph.GetEntities": [
@@ -75954,14 +76668,18 @@
         ],
         "WAFV2.PutLoggingConfiguration": [
             {
-                "action": "iam:CreateServiceLinkedRole",
-                "documented_dependant_action": true
-            },
-            {
                 "action": "wafv2:PutLoggingConfiguration",
                 "resource_mappings": {},
                 "resourcearn_mappings": {
                     "webacl": "${LoggingConfiguration.ResourceArn}"
+                }
+            },
+            {
+                "action": "iam:CreateServiceLinkedRole",
+                "resource_mappings": {
+                    "RoleNameWithPath": {
+                        "template": "*"
+                    }
                 }
             }
         ],
@@ -76092,10 +76810,6 @@
         ],
         "Imagebuilder.CreateContainerRecipe": [
             {
-                "action": "imagebuilder:GetComponent",
-                "documented_dependant_action": true
-            },
-            {
                 "action": "imagebuilder:CreateContainerRecipe",
                 "resource_mappings": {
                     "ContainerRecipeName": {
@@ -76104,6 +76818,13 @@
                     "ContainerRecipeVersion": {
                         "template": "${semanticVersion}"
                     }
+                }
+            },
+            {
+                "action": "imagebuilder:GetComponent",
+                "resource_mappings": {},
+                "resourcearn_mappings": {
+                    "component": "${components[].componentArn}"
                 }
             }
         ],
@@ -76119,10 +76840,6 @@
         ],
         "Imagebuilder.CreateImage": [
             {
-                "action": "imagebuilder:GetImageRecipe",
-                "documented_dependant_action": true
-            },
-            {
                 "action": "imagebuilder:CreateImage",
                 "resource_mappings": {
                     "ImageName": {
@@ -76135,13 +76852,16 @@
                         "template": "*"
                     }
                 }
+            },
+            {
+                "action": "imagebuilder:GetImageRecipe",
+                "resource_mappings": {},
+                "resourcearn_mappings": {
+                    "imageRecipe": "${imageRecipeArn}"
+                }
             }
         ],
         "Imagebuilder.CreateImagePipeline": [
-            {
-                "action": "imagebuilder:GetImageRecipe",
-                "documented_dependant_action": true
-            },
             {
                 "action": "imagebuilder:CreateImagePipeline",
                 "resource_mappings": {
@@ -76149,13 +76869,16 @@
                         "template": "${name}"
                     }
                 }
+            },
+            {
+                "action": "imagebuilder:GetImageRecipe",
+                "resource_mappings": {},
+                "resourcearn_mappings": {
+                    "imageRecipe": "${imageRecipeArn}"
+                }
             }
         ],
         "Imagebuilder.CreateImageRecipe": [
-            {
-                "action": "imagebuilder:GetComponent",
-                "documented_dependant_action": true
-            },
             {
                 "action": "imagebuilder:CreateImageRecipe",
                 "resource_mappings": {
@@ -76165,6 +76888,13 @@
                     "ImageRecipeVersion": {
                         "template": "${semanticVersion}"
                     }
+                }
+            },
+            {
+                "action": "imagebuilder:GetComponent",
+                "resource_mappings": {},
+                "resourcearn_mappings": {
+                    "component": "${components[].componentArn}"
                 }
             }
         ],
@@ -76467,11 +77197,14 @@
         ],
         "Imagebuilder.StartImagePipelineExecution": [
             {
-                "action": "imagebuilder:GetImagePipeline",
-                "documented_dependant_action": true
+                "action": "imagebuilder:StartImagePipelineExecution",
+                "resource_mappings": {},
+                "resourcearn_mappings": {
+                    "imagePipeline": "${imagePipelineArn}"
+                }
             },
             {
-                "action": "imagebuilder:StartImagePipelineExecution",
+                "action": "imagebuilder:GetImagePipeline",
                 "resource_mappings": {},
                 "resourcearn_mappings": {
                     "imagePipeline": "${imagePipelineArn}"
@@ -76897,14 +77630,18 @@
         ],
         "AccessAnalyzer.CreateAnalyzer": [
             {
-                "action": "iam:CreateServiceLinkedRole",
-                "documented_dependant_action": true
-            },
-            {
                 "action": "access-analyzer:CreateAnalyzer",
                 "resource_mappings": {
                     "analyzerName": {
                         "template": "${analyzerName}"
+                    }
+                }
+            },
+            {
+                "action": "iam:CreateServiceLinkedRole",
+                "resource_mappings": {
+                    "RoleNameWithPath": {
+                        "template": "*"
                     }
                 }
             }
@@ -77080,16 +77817,16 @@
         ],
         "CodeGuruReviewer.AssociateRepository": [
             {
-                "action": "codecommit:ListRepositories",
-                "documented_dependant_action": true
-            },
-            {
                 "action": "codeguru-reviewer:AssociateRepository",
                 "resource_mappings": {
                     "RepositoryName": {
                         "template": "*"
                     }
                 }
+            },
+            {
+                "action": "codecommit:ListRepositories",
+                "resource_mappings": {}
             }
         ],
         "CodeGuruReviewer.DescribeCodeReview": [
@@ -77121,14 +77858,18 @@
         ],
         "CodeGuruReviewer.DisassociateRepository": [
             {
-                "action": "codecommit:UntagResource",
-                "documented_dependant_action": true
-            },
-            {
                 "action": "codeguru-reviewer:DisassociateRepository",
                 "resource_mappings": {},
                 "resourcearn_mappings": {
                     "association": "${AssociationArn}"
+                }
+            },
+            {
+                "action": "codecommit:UntagResource",
+                "resource_mappings": {
+                    "RepositoryName": {
+                        "template": "*"
+                    }
                 }
             }
         ],
@@ -77398,65 +78139,65 @@
         ],
         "ComputeOptimizer.ExportAutoScalingGroupRecommendations": [
             {
-                "action": "autoscaling:DescribeAutoScalingGroups",
-                "documented_dependant_action": true
+                "action": "compute-optimizer:ExportAutoScalingGroupRecommendations",
+                "resource_mappings": {}
             },
             {
-                "action": "compute-optimizer:ExportAutoScalingGroupRecommendations",
+                "action": "autoscaling:DescribeAutoScalingGroups",
                 "resource_mappings": {}
             }
         ],
         "ComputeOptimizer.ExportEC2InstanceRecommendations": [
             {
-                "action": "ec2:DescribeInstances",
-                "documented_dependant_action": true
+                "action": "compute-optimizer:ExportEC2InstanceRecommendations",
+                "resource_mappings": {}
             },
             {
                 "action": "compute-optimizer:GetEC2InstanceRecommendations",
                 "documented_dependant_action": true
             },
             {
-                "action": "compute-optimizer:ExportEC2InstanceRecommendations",
+                "action": "ec2:DescribeInstances",
                 "resource_mappings": {}
             }
         ],
         "ComputeOptimizer.GetAutoScalingGroupRecommendations": [
             {
-                "action": "autoscaling:DescribeAutoScalingGroups",
-                "documented_dependant_action": true
+                "action": "compute-optimizer:GetAutoScalingGroupRecommendations",
+                "resource_mappings": {}
             },
             {
-                "action": "compute-optimizer:GetAutoScalingGroupRecommendations",
+                "action": "autoscaling:DescribeAutoScalingGroups",
                 "resource_mappings": {}
             }
         ],
         "ComputeOptimizer.GetEBSVolumeRecommendations": [
             {
-                "action": "ec2:DescribeVolumes",
-                "documented_dependant_action": true
+                "action": "compute-optimizer:GetEBSVolumeRecommendations",
+                "resource_mappings": {}
             },
             {
-                "action": "compute-optimizer:GetEBSVolumeRecommendations",
+                "action": "ec2:DescribeVolumes",
                 "resource_mappings": {}
             }
         ],
         "ComputeOptimizer.GetEC2InstanceRecommendations": [
             {
-                "action": "ec2:DescribeInstances",
-                "documented_dependant_action": true
+                "action": "compute-optimizer:GetEC2InstanceRecommendations",
+                "resource_mappings": {}
             },
             {
-                "action": "compute-optimizer:GetEC2InstanceRecommendations",
+                "action": "ec2:DescribeInstances",
                 "resource_mappings": {}
             }
         ],
         "ComputeOptimizer.GetEC2RecommendationProjectedMetrics": [
             {
-                "action": "ec2:DescribeInstances",
-                "documented_dependant_action": true
+                "action": "compute-optimizer:GetEC2RecommendationProjectedMetrics",
+                "resource_mappings": {}
             },
             {
-                "action": "compute-optimizer:GetEC2RecommendationProjectedMetrics",
+                "action": "ec2:DescribeInstances",
                 "resource_mappings": {}
             }
         ],
@@ -77468,11 +78209,11 @@
         ],
         "ComputeOptimizer.GetLambdaFunctionRecommendations": [
             {
-                "action": "lambda:ListFunctions",
-                "documented_dependant_action": true
+                "action": "compute-optimizer:GetLambdaFunctionRecommendations",
+                "resource_mappings": {}
             },
             {
-                "action": "compute-optimizer:GetLambdaFunctionRecommendations",
+                "action": "lambda:ListFunctions",
                 "resource_mappings": {}
             }
         ],
@@ -78460,12 +79201,16 @@
         ],
         "NetworkManager.CreateGlobalNetwork": [
             {
-                "action": "iam:CreateServiceLinkedRole",
-                "documented_dependant_action": true
-            },
-            {
                 "action": "networkmanager:CreateGlobalNetwork",
                 "resource_mappings": {}
+            },
+            {
+                "action": "iam:CreateServiceLinkedRole",
+                "resource_mappings": {
+                    "RoleNameWithPath": {
+                        "template": "*"
+                    }
+                }
             }
         ],
         "NetworkManager.CreateLink": [
@@ -79390,11 +80135,11 @@
         ],
         "IoTSiteWise.CreatePortal": [
             {
-                "action": "sso:CreateManagedApplicationInstance",
-                "documented_dependant_action": true
+                "action": "iotsitewise:CreatePortal",
+                "resource_mappings": {}
             },
             {
-                "action": "iotsitewise:CreatePortal",
+                "action": "sso:CreateManagedApplicationInstance",
                 "resource_mappings": {}
             },
             {
@@ -79466,16 +80211,16 @@
         ],
         "IoTSiteWise.DeletePortal": [
             {
-                "action": "sso:DeleteManagedApplicationInstance",
-                "documented_dependant_action": true
-            },
-            {
                 "action": "iotsitewise:DeletePortal",
                 "resource_mappings": {
                     "PortalId": {
                         "template": "${portalId}"
                     }
                 }
+            },
+            {
+                "action": "sso:DeleteManagedApplicationInstance",
+                "resource_mappings": {}
             }
         ],
         "IoTSiteWise.DeleteProject": [
@@ -82490,10 +83235,6 @@
         ],
         "NetworkFirewall.CreateFirewall": [
             {
-                "action": "iam:CreateServiceLinkedRole",
-                "documented_dependant_action": true
-            },
-            {
                 "action": "network-firewall:CreateFirewall",
                 "resource_mappings": {
                     "Name": {
@@ -82502,6 +83243,14 @@
                 },
                 "resourcearn_mappings": {
                     "FirewallPolicy": "${FirewallPolicyArn}"
+                }
+            },
+            {
+                "action": "iam:CreateServiceLinkedRole",
+                "resource_mappings": {
+                    "RoleNameWithPath": {
+                        "template": "*"
+                    }
                 }
             }
         ],
@@ -83198,11 +83947,14 @@
         ],
         "DevOpsGuru.AddNotificationChannel": [
             {
-                "action": "sns:GetTopicAttributes",
-                "documented_dependant_action": true
+                "action": "devops-guru:AddNotificationChannel",
+                "resource_mappings": {},
+                "resourcearn_mappings": {
+                    "topic": "${Config.Sns.TopicArn}"
+                }
             },
             {
-                "action": "devops-guru:AddNotificationChannel",
+                "action": "sns:GetTopicAttributes",
                 "resource_mappings": {},
                 "resourcearn_mappings": {
                     "topic": "${Config.Sns.TopicArn}"
@@ -83289,11 +84041,15 @@
         ],
         "DevOpsGuru.RemoveNotificationChannel": [
             {
-                "action": "sns:GetTopicAttributes",
-                "documented_dependant_action": true
+                "action": "devops-guru:RemoveNotificationChannel",
+                "resource_mappings": {
+                    "TopicName": {
+                        "template": "*"
+                    }
+                }
             },
             {
-                "action": "devops-guru:RemoveNotificationChannel",
+                "action": "sns:GetTopicAttributes",
                 "resource_mappings": {
                     "TopicName": {
                         "template": "*"
@@ -84573,14 +85329,18 @@
         ],
         "GreengrassV2.CancelDeployment": [
             {
-                "action": "iot:CancelJob",
-                "documented_dependant_action": true
-            },
-            {
                 "action": "greengrass:CancelDeployment",
                 "resource_mappings": {
                     "DeploymentId": {
                         "template": "${deploymentId}"
+                    }
+                }
+            },
+            {
+                "action": "iot:CancelJob",
+                "resource_mappings": {
+                    "JobId": {
+                        "template": "*"
                     }
                 }
             }
@@ -84597,14 +85357,18 @@
         ],
         "GreengrassV2.CreateDeployment": [
             {
-                "action": "iot:CancelJob",
-                "documented_dependant_action": true
-            },
-            {
                 "action": "greengrass:CreateDeployment",
                 "resource_mappings": {},
                 "resourcearn_mappings": {
                     "group": "%%iftemplatematch%${targetArn}%%"
+                }
+            },
+            {
+                "action": "iot:CancelJob",
+                "resource_mappings": {
+                    "JobId": {
+                        "template": "*"
+                    }
                 }
             }
         ],
@@ -84619,13 +85383,20 @@
         ],
         "GreengrassV2.DeleteCoreDevice": [
             {
-                "action": "iot:DescribeJobExecution",
-                "documented_dependant_action": true
-            },
-            {
                 "action": "greengrass:DeleteCoreDevice",
                 "resource_mappings": {
                     "CoreDeviceThingName": {
+                        "template": "${coreDeviceThingName}"
+                    }
+                }
+            },
+            {
+                "action": "iot:DescribeJobExecution",
+                "resource_mappings": {
+                    "JobId": {
+                        "template": "*"
+                    },
+                    "ThingName": {
                         "template": "${coreDeviceThingName}"
                     }
                 }
@@ -84661,14 +85432,18 @@
         ],
         "GreengrassV2.GetDeployment": [
             {
-                "action": "iot:DescribeJob",
-                "documented_dependant_action": true
-            },
-            {
                 "action": "greengrass:GetDeployment",
                 "resource_mappings": {
                     "DeploymentId": {
                         "template": "${deploymentId}"
+                    }
+                }
+            },
+            {
+                "action": "iot:DescribeJob",
+                "resource_mappings": {
+                    "JobId": {
+                        "template": "*"
                     }
                 }
             }
@@ -84696,27 +85471,35 @@
         ],
         "GreengrassV2.ListDeployments": [
             {
-                "action": "iot:DescribeJob",
-                "documented_dependant_action": true
-            },
-            {
                 "action": "greengrass:ListDeployments",
                 "resource_mappings": {},
                 "resourcearn_mappings": {
                     "group": "%%iftemplatematch%${targetArn}%%"
                 }
+            },
+            {
+                "action": "iot:DescribeJob",
+                "resource_mappings": {
+                    "JobId": {
+                        "template": "*"
+                    }
+                }
             }
         ],
         "GreengrassV2.ListEffectiveDeployments": [
-            {
-                "action": "iot:DescribeJob",
-                "documented_dependant_action": true
-            },
             {
                 "action": "greengrass:ListEffectiveDeployments",
                 "resource_mappings": {
                     "CoreDeviceThingName": {
                         "template": "${coreDeviceThingName}"
+                    }
+                }
+            },
+            {
+                "action": "iot:DescribeJob",
+                "resource_mappings": {
+                    "JobId": {
+                        "template": "*"
                     }
                 }
             }
@@ -84916,19 +85699,15 @@
         ],
         "IoTFleetHub.CreateApplication": [
             {
-                "action": "sso:CreateManagedApplicationInstance",
-                "documented_dependant_action": true
+                "action": "iotfleethub:CreateApplication",
+                "resource_mappings": {}
             },
             {
-                "action": "iotfleethub:CreateApplication",
+                "action": "sso:CreateManagedApplicationInstance",
                 "resource_mappings": {}
             }
         ],
         "IoTFleetHub.DeleteApplication": [
-            {
-                "action": "sso:DeleteManagedApplicationInstance",
-                "documented_dependant_action": true
-            },
             {
                 "action": "iotfleethub:DeleteApplication",
                 "resource_mappings": {
@@ -84936,6 +85715,10 @@
                         "template": "${applicationId}"
                     }
                 }
+            },
+            {
+                "action": "sso:DeleteManagedApplicationInstance",
+                "resource_mappings": {}
             }
         ],
         "IoTFleetHub.DescribeApplication": [
@@ -85002,16 +85785,19 @@
         ],
         "IoTWireless.AssociateWirelessDeviceWithThing": [
             {
-                "action": "iot:DescribeThing",
-                "documented_dependant_action": true
-            },
-            {
                 "action": "iotwireless:AssociateWirelessDeviceWithThing",
                 "resource_mappings": {
                     "WirelessDeviceId": {
                         "template": "${Id}"
                     }
                 },
+                "resourcearn_mappings": {
+                    "thing": "${ThingArn}"
+                }
+            },
+            {
+                "action": "iot:DescribeThing",
+                "resource_mappings": {},
                 "resourcearn_mappings": {
                     "thing": "${ThingArn}"
                 }
@@ -85032,16 +85818,19 @@
         ],
         "IoTWireless.AssociateWirelessGatewayWithThing": [
             {
-                "action": "iot:DescribeThing",
-                "documented_dependant_action": true
-            },
-            {
                 "action": "iotwireless:AssociateWirelessGatewayWithThing",
                 "resource_mappings": {
                     "WirelessGatewayId": {
                         "template": "${Id}"
                     }
                 },
+                "resourcearn_mappings": {
+                    "thing": "${ThingArn}"
+                }
+            },
+            {
+                "action": "iot:DescribeThing",
+                "resource_mappings": {},
                 "resourcearn_mappings": {
                     "thing": "${ThingArn}"
                 }
@@ -85190,15 +85979,19 @@
         ],
         "IoTWireless.DisassociateWirelessDeviceFromThing": [
             {
-                "action": "iot:DescribeThing",
-                "documented_dependant_action": true
-            },
-            {
                 "action": "iotwireless:DisassociateWirelessDeviceFromThing",
                 "resource_mappings": {
                     "WirelessDeviceId": {
                         "template": "${Id}"
                     },
+                    "ThingName": {
+                        "template": "*"
+                    }
+                }
+            },
+            {
+                "action": "iot:DescribeThing",
+                "resource_mappings": {
                     "ThingName": {
                         "template": "*"
                     }
@@ -85220,15 +86013,19 @@
         ],
         "IoTWireless.DisassociateWirelessGatewayFromThing": [
             {
-                "action": "iot:DescribeThing",
-                "documented_dependant_action": true
-            },
-            {
                 "action": "iotwireless:DisassociateWirelessGatewayFromThing",
                 "resource_mappings": {
                     "WirelessGatewayId": {
                         "template": "${Id}"
                     },
+                    "ThingName": {
+                        "template": "*"
+                    }
+                }
+            },
+            {
+                "action": "iot:DescribeThing",
+                "resource_mappings": {
                     "ThingName": {
                         "template": "*"
                     }
