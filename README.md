@@ -29,8 +29,5 @@ Mapping tool hosted version: [https://iann0036.github.io/sdk-iam-map/index.html#
 Template checking notes: check for `/{` or `""` or `\`` or `" ` or `"%m` or `"%$` or `}%"` or `}[]` mistakes after full mapping.
 
 TODO: Handle ${aws:username} in iamlive
-TODO: WAFV2.Check* crash
+
 TODO: Check LexModelsV2 mapped correctly
-TODO: DataBrew iam:PassRole
-TODO: OpsWorks stack ARN trailing /
-TODO: Dependant actions in map
