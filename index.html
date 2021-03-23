@@ -159,17 +159,30 @@
                 var shortname = sdkmetadataservice['prefix'] || sdkmetadataservice['identifier'];
                 var version = sdkmetadataservice['versions'][sdkmetadataservice['versions'].length - 1];
 
-                var sdkdatatxt = await fetch(`https://raw.githubusercontent.com/aws/aws-sdk-js/master/apis/${shortname}-${version}.min.json`);
-                var sdkdata = await sdkdatatxt.json();
+                try {
+                    var sdkdatatxt = await fetch(`https://raw.githubusercontent.com/aws/aws-sdk-js/master/apis/${shortname}-${version}.min.json`);
+                    var sdkdata = await sdkdatatxt.json();
 
-                for (var op of Object.keys(sdkdata["operations"])) {
-                    var actionname = svcname + "." + op;
+                    for (var op of Object.keys(sdkdata["operations"])) {
+                        var actionname = svcname + "." + op;
 
-                    if (!map['sdk_method_iam_mappings'][actionname]) {
-                        map['sdk_method_iam_mappings'][actionname] = [];
-                        console.log(actionname);
+                        if (!map['sdk_method_iam_mappings'][actionname]) {
+                            map['sdk_method_iam_mappings'][actionname] = [];
+
+                            console.log(actionname);
+                            
+                            iamdef.forEach(iamdefservice => {
+                                if (iamdefservice['prefix'] == resolveService(shortname.toLowerCase())) {
+                                    iamdefservice['privileges'].forEach(priv => {
+                                        if (priv['privilege'].toLowerCase() == op.toLowerCase()) {
+                                            console.log(priv);
+                                        }
+                                    });
+                                }
+                            });
+                        }
                     }
-                }
+                } catch(err) {}
             }
         }
 
