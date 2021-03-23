@@ -154,14 +154,24 @@
         }
 
         async function preseed() {
-            for (var sdkmetadataservice of sdkmetadata['services']) {
-                var svcname = sdkmetadataservice['name'].split(".")[1];
-                var shortname = sdkmetadataservice['prefix'] || sdkmetadataservice['identifier'];
-                var version = sdkmetadataservice['versions'][sdkmetadataservice['versions'].length - 1];
+            var refmastertxt = await fetch("https://api.github.com/repos/aws/aws-sdk-js/git/ref/heads/master");
+            var refmaster = await refmastertxt.json();
+            var sha = refmaster["object"]["sha"];
 
-                try {
-                    var sdkdatatxt = await fetch(`https://raw.githubusercontent.com/aws/aws-sdk-js/master/apis/${shortname}-${version}.min.json`);
+            var treetxt = await fetch(`https://api.github.com/repos/aws/aws-sdk-js/git/trees/${sha}?recursive=true`);
+            var tree = await treetxt.json();
+
+            for (var treeitem of tree['tree']) {
+
+                if (treeitem["path"].startswith("apis/") && treeitem["path"].endswith(".min.json")) {
+                    var svcname = sdkmetadataservice['name'].split(".")[1];
+                    var shortname = sdkmetadataservice['prefix'] || sdkmetadataservice['identifier'];
+                    var version = sdkmetadataservice['versions'][sdkmetadataservice['versions'].length - 1];
+
+                    var sdkdatatxt = await fetch(`https://raw.githubusercontent.com/aws/aws-sdk-js/master/${treeitem["path"]}`);
                     var sdkdata = await sdkdatatxt.json();
+
+                    var svcname = sdkdata["metadata"]["endpointPrefix"];
 
                     for (var op of Object.keys(sdkdata["operations"])) {
                         var actionname = svcname + "." + op;
@@ -197,7 +207,7 @@
                             }
                         }
                     }
-                } catch(err) {}
+                }
             }
         }
 
