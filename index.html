@@ -154,20 +154,14 @@
         }
 
         async function preseed() {
-            var refmastertxt = await fetch("https://api.github.com/repos/aws/aws-sdk-js/git/ref/heads/master");
-            var refmaster = await refmastertxt.json();
-            var sha = refmaster["object"]["sha"];
+            for (var sdkmetadataservice of sdkmetadata['services']) {
+                var svcname = sdkmetadataservice['name'].split(".")[1];
+                var shortname = sdkmetadataservice['prefix'] || sdkmetadataservice['identifier'];
+                var version = sdkmetadataservice['versions'][sdkmetadataservice['versions'].length - 1];
 
-            var treetxt = await fetch(`https://api.github.com/repos/aws/aws-sdk-js/git/trees/${sha}?recursive=true`);
-            var tree = await treetxt.json();
-
-            for (var treeitem of tree['tree']) {
-
-                if (treeitem["path"].startsWith("apis/") && treeitem["path"].endsWith(".min.json")) {
-                    var sdkdatatxt = await fetch(`https://raw.githubusercontent.com/aws/aws-sdk-js/master/${treeitem["path"]}`);
+                try {
+                    var sdkdatatxt = await fetch(`https://raw.githubusercontent.com/aws/aws-sdk-js/master/apis/${shortname}-${version}.min.json`);
                     var sdkdata = await sdkdatatxt.json();
-
-                    var svcname = sdkdata["metadata"]["endpointPrefix"];
 
                     for (var op of Object.keys(sdkdata["operations"])) {
                         var actionname = svcname + "." + op;
@@ -176,7 +170,7 @@
                             map['sdk_method_iam_mappings'][actionname] = [];
                             
                             iamdef.forEach(iamdefservice => {
-                                if (iamdefservice['prefix'] == resolveService(svcname.toLowerCase())) {
+                                if (iamdefservice['prefix'] == resolveService(shortname.toLowerCase())) {
                                     iamdefservice['privileges'].forEach(priv => {
                                         if (priv['privilege'].toLowerCase() == op.toLowerCase()) {
                                             map['sdk_method_iam_mappings'][actionname].push({
@@ -203,7 +197,7 @@
                             }
                         }
                     }
-                }
+                } catch(err) {}
             }
         }
 
