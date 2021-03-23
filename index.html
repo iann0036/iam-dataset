@@ -155,15 +155,21 @@
 
         async function preseed() {
             for (var sdkmetadataservice of sdkmetadata['services']) {
+                var svcname = sdkmetadataservice['name'].split(".")[1];
                 var shortname = sdkmetadataservice['prefix'] || sdkmetadataservice['identifier'];
                 var version = sdkmetadataservice['versions'][sdkmetadataservice['versions'].length - 1];
 
                 var sdkdatatxt = await fetch(`https://raw.githubusercontent.com/aws/aws-sdk-js/master/apis/${shortname}-${version}.min.json`);
                 var sdkdata = await sdkdatatxt.json();
 
-                console.log(Object.keys(sdkdata["operations"]));
+                for (var op of Object.keys(sdkdata["operations"])) {
+                    var actionname = svcname + "." + op;
 
-                console.log(map['sdk_method_iam_mappings']);
+                    if (!map['sdk_method_iam_mappings'][actionname]) {
+                        map['sdk_method_iam_mappings'][actionname] = [];
+                        console.log(actionname);
+                    }
+                }
             }
         }
 
