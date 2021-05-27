@@ -1,0 +1,29 @@
+name: Update SAR source
+
+on:
+  schedule:
+    - cron: '12 * * * *'
+  workflow_dispatch:
+
+jobs:
+  update:
+    name: Update
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v1
+      - name: Manual
+        run: |
+          curl https://raw.githubusercontent.com/duo-labs/parliament/main/utils/update_iam_data.py
+          python3 update_iam_data.py > js/iam_definition.json
+      - name: Commit files
+        env:
+          BOT_GITHUB_TOKEN: ${{ secrets.BOT_GITHUB_TOKEN }}
+        run: |
+          set -eux
+          git config --local user.email "githubbot@ian.mn"
+          git config --local user.name "Ian Mckay [bot]"
+          git add .
+          git commit -m "Update SAR data" -a || exit 0
+          remote_repo="https://iann0036-bot:${BOT_GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
+          git push "${remote_repo}" HEAD:master
