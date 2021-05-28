@@ -39,6 +39,7 @@ for policyname in os.listdir("MAMIP/policies/"):
         malformed = True
 
     access_levels = []
+    unknown_actions = False
     for statement in policy['PolicyVersion']['Document']['Statement']:
         if 'Action' in statement:
             if not isinstance(statement['Action'], list):
@@ -52,7 +53,7 @@ for policyname in os.listdir("MAMIP/policies/"):
                         access_levels.append(allactions[potentialaction])
                         foundmatch = True
                 if not foundmatch:
-                    malformed = True
+                    unknown_actions = True
 
         elif 'NotAction' in statement:
             print("Missing Action in " + policyname)
@@ -68,6 +69,7 @@ for policyname in os.listdir("MAMIP/policies/"):
         'updatedate': updatedate,
         'version': policy['PolicyVersion']['VersionId'],
         'malformed': malformed,
+        'unknown_actions': unknown_actions,
         'access_levels': access_levels
     })
 
