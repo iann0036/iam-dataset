@@ -2,6 +2,16 @@
 
 import os
 import json
+import re
+
+iam_def = []
+with open("js/iam_definition.json", "r") as f:
+    iam_def = json.loads(f.read())
+
+allactions = {}
+for service in iam_def:
+    for privilege in service['privileges']:
+        allactions[service['prefix'] + ":" + privilege['privilege']] = privilege['access_level']
 
 deprecated_policies = []
 with open("MAMIP/DEPRECATED.json", "r") as f:
@@ -23,14 +33,42 @@ for policyname in os.listdir("MAMIP/policies/"):
         if policieslistitem['PolicyName'] == policyname:
             updatedate = policieslistitem['UpdateDate']
 
-    # policy['PolicyVersion']['Document']
+    malformed = False
+    if not isinstance(policy['PolicyVersion']['Document']['Statement'], list):
+        policy['PolicyVersion']['Document']['Statement'] = [policy['PolicyVersion']['Document']['Statement']]
+        malformed = True
+
+    access_levels = []
+    for statement in policy['PolicyVersion']['Document']['Statement']:
+        if 'Action' in statement:
+            if not isinstance(statement['Action'], list):
+                statement['Action'] = [statement['Action']]
+
+            for action in statement['Action']:
+                foundmatch = False
+                matchexpression = "^" + action.replace("*", ".*").replace("?", ".{{1}}") + "$"
+                for potentialaction in allactions.keys():
+                    if re.search(matchexpression, potentialaction):
+                        access_levels.append(allactions[potentialaction])
+                        foundmatch = True
+                if not foundmatch:
+                    malformed = True
+
+        elif 'NotAction' in statement:
+            print("Missing Action in " + policyname)
+        else:
+            malformed = True
+
+    access_levels = list(set(access_levels))
 
     policies.append({
         'name': policyname,
         'deprecated': (policyname in deprecated_policies),
         'createdate': policy['PolicyVersion']['CreateDate'],
         'updatedate': updatedate,
-        'version': policy['PolicyVersion']['VersionId']
+        'version': policy['PolicyVersion']['VersionId'],
+        'malformed': malformed,
+        'access_levels': access_levels
     })
 
 with open("managed_policies.json", "w") as f:
