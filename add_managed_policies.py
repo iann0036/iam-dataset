@@ -36,7 +36,6 @@ for policyname in os.listdir("MAMIP/policies/"):
     malformed = False
     if not isinstance(policy['PolicyVersion']['Document']['Statement'], list):
         policy['PolicyVersion']['Document']['Statement'] = [policy['PolicyVersion']['Document']['Statement']]
-        malformed = True
 
     access_levels = []
     unknown_actions = False
