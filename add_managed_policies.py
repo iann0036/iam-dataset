@@ -48,7 +48,7 @@ for policyname in os.listdir("MAMIP/policies/"):
                 foundmatch = False
                 matchexpression = "^" + action.replace("*", ".*").replace("?", ".{{1}}") + "$"
                 for potentialaction in allactions.keys():
-                    if re.search(matchexpression, potentialaction):
+                    if re.search(matchexpression.lower(), potentialaction.lower()):
                         access_levels.append(allactions[potentialaction])
                         foundmatch = True
                 if not foundmatch:
