@@ -1,4 +1,6 @@
-# SDK Actions to IAM Mapping
+# IAM Dataset
+
+> (currently a bit of a mess)
 
 A series of tools to develop a comprehensive map (`map.json`) from SDK calls to IAM actions.
 
