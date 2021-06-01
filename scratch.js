@@ -1,9 +1,9 @@
 // add dependants
 
-var mapdata = await fetch('https://raw.githubusercontent.com/iann0036/sdk-iam-map/main/map.json');
+var mapdata = await fetch('https://raw.githubusercontent.com/iann0036/iam-dataset/main/map.json');
 map = await mapdata.json();
 
-var iamdefdata = await fetch('https://raw.githubusercontent.com/iann0036/sdk-iam-map/main/js/iam_definition.json');
+var iamdefdata = await fetch('https://raw.githubusercontent.com/iann0036/iam-dataset/main/js/iam_definition.json');
 iamdef = await iamdefdata.json();
 
 for (var iamdefitem of iamdef) {
@@ -30,10 +30,10 @@ for (var iamdefitem of iamdef) {
 
 // find dependency chains
 
-var mapdata = await fetch('https://raw.githubusercontent.com/iann0036/sdk-iam-map/main/map.json');
+var mapdata = await fetch('https://raw.githubusercontent.com/iann0036/iam-dataset/main/map.json');
 map = await mapdata.json();
 
-var iamdefdata = await fetch('https://raw.githubusercontent.com/iann0036/sdk-iam-map/main/js/iam_definition.json');
+var iamdefdata = await fetch('https://raw.githubusercontent.com/iann0036/iam-dataset/main/js/iam_definition.json');
 iamdef = await iamdefdata.json();
 
 var chains = [];

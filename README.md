@@ -10,7 +10,7 @@ It is currently being used to support:
 * [https://github.com/iann0036/iamfast](https://github.com/iann0036/iamfast)
 * [https://github.com/iann0036/permissions.cloud](https://github.com/iann0036/permissions.cloud)
 
-Mapping tool hosted version: [https://iann0036.github.io/sdk-iam-map/index.html#](https://iann0036.github.io/sdk-iam-map/index.html#).
+Mapping tool hosted version: [https://iann0036.github.io/iam-dataset/index.html#](https://iann0036.github.io/iam-dataset/index.html#).
 
 ## Syntax Definition
 
