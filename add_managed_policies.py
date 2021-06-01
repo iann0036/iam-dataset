@@ -68,7 +68,14 @@ for policyname in os.listdir("MAMIP/policies/"):
                         })
 
                 if not foundmatch:
-                    unknown_actions.append(action)
+                    condition = None
+                    if 'Condition' in statement:
+                        condition = statement['Condition']
+                        
+                    unknown_actions.append({
+                        'action': action,
+                        'condition': condition
+                    })
 
         elif 'NotAction' in statement:
             print("Missing Action in " + policyname)
