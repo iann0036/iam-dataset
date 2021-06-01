@@ -2,7 +2,7 @@
 
 > (currently a bit of a mess)
 
-A series of tools to develop a comprehensive map (`map.json`) from SDK calls to IAM actions.
+A series of tools to develop a comprehensive map (`map.json`) from SDK calls to IAM actions, and evaluation of managed policies.
 
 It is currently being used to support:
 
@@ -12,7 +12,7 @@ It is currently being used to support:
 
 Mapping tool hosted version: [https://iann0036.github.io/iam-dataset/index.html#](https://iann0036.github.io/iam-dataset/index.html#).
 
-## Syntax Definition
+## map.json Syntax Definition
 
 `${PropertyName}` - Variable substitution for the `PropertyName` property
 
