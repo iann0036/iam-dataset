@@ -63,7 +63,7 @@ for policyname in os.listdir("MAMIP/policies/"):
                         effective_actions.append({
                             'action': action,
                             'effective_action': potentialaction,
-                            'access_levels': allactions[potentialaction],
+                            'access_level': allactions[potentialaction],
                             'condition': condition
                         })
 
