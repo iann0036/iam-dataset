@@ -82,7 +82,15 @@ for policyname in os.listdir("MAMIP/policies/"):
         else:
             malformed = True
 
+    access_level_order = {
+        "List": 1,
+        "Read": 2,
+        "Tagging": 3,
+        "Write": 4,
+        "Permissions management": 5
+    }
     access_levels = list(set(access_levels))
+    access_levels.sort(key=lambda x: access_level_order[x])
 
     policies.append({
         'name': policyname,
