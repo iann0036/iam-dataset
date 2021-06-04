@@ -1,3 +1,5 @@
+const fetch = require('node-fetch');
+
 async function x() {
     var packagedata = await fetch('https://raw.githubusercontent.com/aws/aws-sdk-js/master/package.json');
     var package = await packagedata.json();
