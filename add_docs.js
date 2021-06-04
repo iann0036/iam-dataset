@@ -1,4 +1,5 @@
 const fetch = require('node-fetch');
+const fs = require('fs');
 
 async function x() {
     var packagedata = await fetch('https://raw.githubusercontent.com/aws/aws-sdk-js/master/package.json');
@@ -114,8 +115,8 @@ async function x() {
             console.log(err);
         }
     }
-
-    console.log(JSON.stringify(out));
+    
+    fs.writeFileSync('docs.json', JSON.stringify(out))
 }
 
 x();
