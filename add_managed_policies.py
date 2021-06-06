@@ -4,6 +4,23 @@ import os
 import json
 import re
 
+PRIVESC_ACTIONS = [
+    "iam:PassRole",
+    "iam:CreatePolicyVersion",
+    "iam:SetDefaultPolicyVersion",
+    "iam:CreateAccessKey",
+    "iam:CreateLoginProfile",
+    "iam:UpdateLoginProfile",
+    "iam:AttachUserPolicy",
+    "iam:AttachGroupPolicy",
+    "iam:AttachRolePolicy",
+    "iam:PutUserPolicy",
+    "iam:PutGroupPolicy",
+    "iam:PutRolePolicy",
+    "iam:AddUserToGroup",
+    "iam:UpdateAssumeRolePolicy"
+]
+
 iam_def = []
 with open("js/iam_definition.json", "r") as f:
     iam_def = json.loads(f.read())
@@ -35,6 +52,7 @@ for policyname in os.listdir("MAMIP/policies/"):
         if policieslistitem['PolicyName'] == policyname:
             updatedate = policieslistitem['UpdateDate']
 
+    privesc = False
     malformed = False
     if not isinstance(policy['PolicyVersion']['Document']['Statement'], list):
         policy['PolicyVersion']['Document']['Statement'] = [policy['PolicyVersion']['Document']['Statement']]
@@ -44,7 +62,7 @@ for policyname in os.listdir("MAMIP/policies/"):
 
     unknown_actions = []
     for statement in policy['PolicyVersion']['Document']['Statement']:
-        if 'Action' in statement:
+        if 'Action' in statement and statement['Effect'] == "Allow":
             if not isinstance(statement['Action'], list):
                 statement['Action'] = [statement['Action']]
 
@@ -59,6 +77,9 @@ for policyname in os.listdir("MAMIP/policies/"):
                         condition = None
                         if 'Condition' in statement:
                             condition = statement['Condition']
+
+                        if potentialaction in PRIVESC_ACTIONS:
+                            privesc = True
 
                         effective_actions.append({
                             'action': action,
@@ -78,7 +99,29 @@ for policyname in os.listdir("MAMIP/policies/"):
                     })
 
         elif 'NotAction' in statement:
-            print("Missing Action in " + policyname)
+            if not isinstance(statement['NotAction'], list):
+                statement['NotAction'] = [statement['NotAction']]
+
+            for action in statement['NotAction']:
+                foundmatch = True
+                matchexpression = "^" + action.replace("*", ".*").replace("?", ".{{1}}") + "$"
+                for potentialaction in allactions.keys():
+                    if not re.search(matchexpression.lower(), potentialaction.lower()):
+                        access_levels.append(allactions[potentialaction])
+
+                        condition = None
+                        if 'Condition' in statement:
+                            condition = statement['Condition']
+
+                        if potentialaction in PRIVESC_ACTIONS:
+                            privesc = True
+
+                        effective_actions.append({
+                            'action': action,
+                            'effective_action': potentialaction,
+                            'access_level': allactions[potentialaction],
+                            'condition': condition
+                        })
         else:
             malformed = True
 
@@ -100,7 +143,8 @@ for policyname in os.listdir("MAMIP/policies/"):
         'version': policy['PolicyVersion']['VersionId'],
         'malformed': malformed,
         'unknown_actions': (len(unknown_actions) > 0),
-        'access_levels': access_levels
+        'access_levels': access_levels,
+        'privesc': privesc
     })
 
     detailed_policy = {
@@ -112,6 +156,7 @@ for policyname in os.listdir("MAMIP/policies/"):
         'malformed': malformed,
         'unknown_actions': unknown_actions,
         'access_levels': access_levels,
+        'privesc': privesc,
         'document': policy['PolicyVersion']['Document'],
         'effective_actions': effective_actions,
         'unknown_actions': unknown_actions
