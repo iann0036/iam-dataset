@@ -99,7 +99,7 @@ for policyname in os.listdir("MAMIP/policies/"):
                     })
         elif 'Action' in statement and statement['Effect'] == "Deny":
             pass
-        elif 'NotAction' in statement:
+        elif 'NotAction' in statement and statement['Effect'] == "Allow":
             if not isinstance(statement['NotAction'], list):
                 statement['NotAction'] = [statement['NotAction']]
 
