@@ -18,7 +18,11 @@ PRIVESC_ACTIONS = [
     "iam:PutGroupPolicy",
     "iam:PutRolePolicy",
     "iam:AddUserToGroup",
-    "iam:UpdateAssumeRolePolicy"
+    "iam:UpdateAssumeRolePolicy",
+    "iam:CreateServiceLinkedRole",
+    "iam:CreateVirtualMFADevice",
+    "iam:ResyncMFADevice",
+    "iam:EnableMFADevice"
 ]
 
 iam_def = []
