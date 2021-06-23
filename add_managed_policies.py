@@ -85,7 +85,8 @@ for policyname in os.listdir("MAMIP/policies/"):
                             'action': action,
                             'effective_action': potentialaction,
                             'access_level': allactions[potentialaction],
-                            'condition': condition
+                            'condition': condition,
+                            'privesc': (potentialaction in PRIVESC_ACTIONS)
                         })
 
                 if not foundmatch:
@@ -121,7 +122,8 @@ for policyname in os.listdir("MAMIP/policies/"):
                             'action': action,
                             'effective_action': potentialaction,
                             'access_level': allactions[potentialaction],
-                            'condition': condition
+                            'condition': condition,
+                            'privesc': (potentialaction in PRIVESC_ACTIONS)
                         })
         else:
             malformed = True
