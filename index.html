@@ -353,6 +353,12 @@
         async function nextMethod() {
             var mappingkeys = Object.keys(map['sdk_method_iam_mappings']);
 
+            if (mappingkeys.length == 0) {
+                document.getElementById("submitbutton").innerHTML += "<no more mappings remaining>";
+                document.getElementById("skipbutton").innerHTML += "<no more mappings remaining>";
+                return;
+            }
+
             call = mappingkeys.shift();
 
             if (["WAFV2.CheckCapacity", "WAFV2.CreateRuleGroup", "WAFV2.CreateWebACL", "WAFV2.UpdateRuleGroup", "WAFV2.UpdateWebACL"].includes(call)) {
@@ -365,7 +371,6 @@
 
             if (!existingmappings) {
                 delete map['sdk_method_iam_mappings'][call];
-                document.getElementById("skipped").innerHTML += call + "\n";
                 nextMethod();
                 return;
             }
