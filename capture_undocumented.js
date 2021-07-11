@@ -250,6 +250,8 @@ async function go() {
             let complete = false;
             let params = {};
             let iterations = 0;
+            let last_param = null;
+
             while (!complete) {
                 try {
                     console.log("--\n" + method);
@@ -274,6 +276,15 @@ async function go() {
                             if (err.message.includes("Missing required key '")) {
                                 let paramname = err.message.match(/Missing required key '(.+)'/)[1];
                                 params[paramname] = "PN"+paramname+"XX";
+                                last_param = paramname;
+                            } else if (err.message.includes(" to be an Array")) {
+                                params[last_param] = [];
+                            } else if (err.message.includes(" to be a structure")) {
+                                params[last_param] = {};
+                            } else if (err.message.includes(" to be a number")) {
+                                params[last_param] = 1;
+                            } else if (err.message.includes(" to be a boolean")) {
+                                params[last_param] = false;
                             } else {
                                 console.log(err.message);
                                 complete = true;
@@ -303,6 +314,11 @@ async function go() {
         } else {
             if (!known_permissions[item['permission']]) {
                 console.log("Invalid hit: " + item['permission']);
+            } else {
+                res[item['service'] + "." + item['method']] = [{
+                    "action": item['permission'],
+                    "undocumented": true
+                }];
             }
         }
     }
