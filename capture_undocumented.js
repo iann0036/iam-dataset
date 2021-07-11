@@ -231,13 +231,13 @@ var found_permissions = [];
 
 function transformArn(arn) {
     return arn
-        .replace(/PN/g, "\{")
+        .replace(/PN/g, "$\{")
         .replace(/XX/g, "}")
-        .replace(/pn/g, "\{")
+        .replace(/pn/g, "$\{")
         .replace(/xx/g, "}")
-        .replace(/774857101424/g, "{Account}")
-        .replace(/us-east-1/g, "{Region}")
-        .replace(/arn:aws/g, "arn:{Partition}");
+        .replace(/774857101424/g, "${Account}")
+        .replace(/us-east-1/g, "${Region}")
+        .replace(/arn:aws/g, "arn:${Partition}");
 }
 
 async function go() {
