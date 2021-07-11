@@ -229,6 +229,17 @@ CostExplorer.UpdateCostCategoryDefinition {1}
 
 var found_permissions = [];
 
+function transformArn(arn) {
+    return arn
+        .replace(/PN/g, "\{")
+        .replace(/XX/g, "}")
+        .replace(/pn/g, "\{")
+        .replace(/xx/g, "}")
+        .replace(/774857101424/g, "{Account}")
+        .replace(/us-east-1/g, "{Region}")
+        .replace(/arn:aws/g, "arn:{Partition}");
+}
+
 async function go() {
     var known_permissions = {};
     var iamdefdata = await fetch('https://raw.githubusercontent.com/iann0036/iam-dataset/main/iam_definition.json');
@@ -261,7 +272,8 @@ async function go() {
                 } catch (err) {
                     if (err.message) {
                         if (err.message.includes("not authorized to perform: ")) {
-                            let match = err.message.match(/not authorized to perform: ([a-zA-Z0-9:]+)(?: on resource: (.+))?/);
+                            console.log(err.message);
+                            let match = err.message.match(/not authorized to perform: ([a-zA-Z0-9-:]+)(?: on resource: (.+))?/);
                             let permission = match[1];
                             let resource = match[2];
 
@@ -311,6 +323,11 @@ async function go() {
                 "action": item['permission'],
                 "undocumented": true
             }];
+            if (item['resource']) {
+                res[item['service'] + "." + item['method']][0]['arn_override'] = {
+                    "template": transformArn(item['resource'])
+                };
+            }
         } else {
             if (!known_permissions[item['permission']]) {
                 console.log("Invalid hit: " + item['permission']);
@@ -319,6 +336,11 @@ async function go() {
                     "action": item['permission'],
                     "undocumented": true
                 }];
+                if (item['resource']) {
+                    res[item['service'] + "." + item['method']][0]['arn_override'] = {
+                        "template": transformArn(item['resource'])
+                    };
+                }
             }
         }
     }
