@@ -8,411 +8,223 @@ AWS.config.credentials = credentials;
 AWS.config.region = 'us-east-1';
 
 var long_undocumented_test_list = `
-AppStream.CreateUpdatedImage
-AutoScaling.GetPredictiveScalingForecast
-CloudDirectory.GetAppliedSchemaVersion
-CloudDirectory.UpgradeAppliedSchema
-CloudDirectory.UpgradePublishedSchema
-CloudFormation.ActivateType
-CloudFormation.BatchDescribeTypeConfigurations
-CloudFormation.DeactivateType
-CloudFormation.DescribePublisher
-CloudFormation.PublishType
-CloudFormation.RegisterPublisher
-CloudFormation.SetTypeConfiguration
-CloudFormation.TestType
-CloudFront.AssociateAlias
-CloudFront.ListConflictingAliases
-CloudWatchEvents.CreateApiDestination
-CloudWatchEvents.CreateConnection
-CloudWatchEvents.DeauthorizeConnection
-CloudWatchEvents.DeleteApiDestination
-CloudWatchEvents.DeleteConnection
-CloudWatchEvents.DescribeApiDestination
-CloudWatchEvents.DescribeConnection
-CloudWatchEvents.ListApiDestinations
-CloudWatchEvents.ListConnections
-CloudWatchEvents.UpdateApiDestination
-CloudWatchEvents.UpdateConnection
-CloudWatchLogs.DeleteQueryDefinition
-CloudWatchLogs.DescribeQueryDefinitions
-CloudWatchLogs.PutQueryDefinition
-CodePipeline.GetActionType
-CodePipeline.UpdateActionType
-CognitoIdentityServiceProvider.RevokeToken
-ConfigService.DescribeAggregateComplianceByConformancePacks
-ConfigService.GetAggregateConformancePackComplianceSummary
-DirectConnect.AssociateMacSecKey
-DirectConnect.DisassociateMacSecKey
-DirectConnect.UpdateConnection
-DirectoryService.AddRegion
-DirectoryService.DescribeRegions
-DirectoryService.DisableClientAuthentication
-DirectoryService.EnableClientAuthentication
-DirectoryService.RemoveRegion
-DMS.DescribeEndpointSettings
-DMS.DescribePendingMaintenanceActions
-DynamoDB.DescribeEndpoints
-EC2.AssociateTrunkInterface
-EC2.DescribeSecurityGroupRules
-EC2.DescribeTrunkInterfaceAssociations
-EC2.DisassociateTrunkInterface
-EC2.ModifySecurityGroupRules
-EFS.DescribeAccountPreferences
-EFS.PutAccountPreferences
-ElasticBeanstalk.UpdateTagsForResource
-EMR.CreateStudio
-EMR.CreateStudioSessionMapping
-EMR.DeleteStudio
-EMR.DeleteStudioSessionMapping
-EMR.DescribeNotebookExecution
-EMR.DescribeStudio
-EMR.GetStudioSessionMapping
-EMR.ListNotebookExecutions
-EMR.ListStudioSessionMappings
-EMR.ListStudios
-EMR.SetVisibleToAllUsers
-EMR.StartNotebookExecution
-EMR.StopNotebookExecution
-EMR.UpdateStudio
-EMR.UpdateStudioSessionMapping
-ES.DescribeDomainAutoTunes
-Pinpoint.GetApplicationDateRangeKpi
-Pinpoint.GetCampaignDateRangeKpi
-Pinpoint.GetJourneyDateRangeKpi
-Pinpoint.GetJourneyExecutionActivityMetrics
-Pinpoint.GetJourneyExecutionMetrics
-Pinpoint.PhoneNumberValidate
-Redshift.AddPartner
-Redshift.AuthorizeEndpointAccess
-Redshift.CreateEndpointAccess
-Redshift.DeleteEndpointAccess
-Redshift.DeletePartner
-Redshift.DescribeEndpointAccess
-Redshift.DescribeEndpointAuthorization
-Redshift.DescribePartners
-Redshift.ModifyEndpointAccess
-Redshift.RevokeEndpointAccess
-Redshift.UpdatePartnerStatus
-S3.DeleteBucketIntelligentTieringConfiguration
-S3.ListBucketIntelligentTieringConfigurations
-S3.WriteGetObjectResponse
-S3Control.CreateAccessPointForObjectLambda
-S3Control.CreateJob
-S3Control.DeleteAccessPointForObjectLambda
-S3Control.DeleteAccessPointPolicyForObjectLambda
-S3Control.DeletePublicAccessBlock
-S3Control.DescribeJob
-S3Control.GetAccessPointConfigurationForObjectLambda
-S3Control.GetAccessPointForObjectLambda
-S3Control.GetAccessPointPolicyForObjectLambda
-S3Control.GetAccessPointPolicyStatusForObjectLambda
-S3Control.GetPublicAccessBlock
-S3Control.ListAccessPointsForObjectLambda
-S3Control.ListJobs
-S3Control.PutAccessPointConfigurationForObjectLambda
-S3Control.PutAccessPointPolicyForObjectLambda
-S3Control.PutBucketLifecycleConfiguration
-S3Control.PutPublicAccessBlock
-Snowball.CreateLongTermPricing
-Snowball.ListLongTermPricing
-Snowball.UpdateLongTermPricing
-SSM.UnlabelParameterVersion
-MigrationHub.ListApplicationStates
-CloudHSMV2.ModifyBackupAttributes
-CloudHSMV2.ModifyCluster
-Glue.UpdateColumnStatisticsForPartition
-Glue.UpdateColumnStatisticsForTable
-MediaLive.CreatePartnerInput
-SageMaker.SendPipelineExecutionStepFailure
-SageMaker.SendPipelineExecutionStepSuccess
-AlexaForBusiness.AssociateDeviceWithNetworkProfile
-AlexaForBusiness.CreateGatewayGroup
-AlexaForBusiness.CreateNetworkProfile
-AlexaForBusiness.DeleteDeviceUsageData
-AlexaForBusiness.DeleteGatewayGroup
-AlexaForBusiness.DeleteNetworkProfile
-AlexaForBusiness.GetGateway
-AlexaForBusiness.GetGatewayGroup
-AlexaForBusiness.GetInvitationConfiguration
-AlexaForBusiness.ListGatewayGroups
-AlexaForBusiness.ListGateways
-AlexaForBusiness.PutInvitationConfiguration
-AlexaForBusiness.SendAnnouncement
-AlexaForBusiness.UpdateGateway
-AlexaForBusiness.UpdateGatewayGroup
-AlexaForBusiness.UpdateNetworkProfile
-ServiceDiscovery.UpdateHttpNamespace
-ServiceDiscovery.UpdatePrivateDnsNamespace
-ServiceDiscovery.UpdatePublicDnsNamespace
-MediaTailor.CreateChannel
-MediaTailor.CreateProgram
-MediaTailor.CreateSourceLocation
-MediaTailor.CreateVodSource
-MediaTailor.DeleteChannel
-MediaTailor.DeleteChannelPolicy
-MediaTailor.DeleteProgram
-MediaTailor.DeleteSourceLocation
-MediaTailor.DeleteVodSource
-MediaTailor.DescribeChannel
-MediaTailor.DescribeProgram
-MediaTailor.DescribeSourceLocation
-MediaTailor.DescribeVodSource
-MediaTailor.GetChannelPolicy
-MediaTailor.GetChannelSchedule
-MediaTailor.ListAlerts
-MediaTailor.ListChannels
-MediaTailor.ListSourceLocations
-MediaTailor.ListVodSources
-MediaTailor.PutChannelPolicy
-MediaTailor.StartChannel
-MediaTailor.StopChannel
-MediaTailor.UpdateChannel
-MediaTailor.UpdateSourceLocation
-MediaTailor.UpdateVodSource
-PinpointEmail.GetDomainDeliverabilityCampaign
-PinpointEmail.ListDomainDeliverabilityCampaigns
-QuickSight.CreateFolder
-QuickSight.CreateFolderMembership
-QuickSight.DeleteFolder
-QuickSight.DeleteFolderMembership
-QuickSight.DescribeFolder
-QuickSight.DescribeFolderPermissions
-QuickSight.DescribeFolderResolvedPermissions
-QuickSight.ListFolderMembers
-QuickSight.ListFolders
-QuickSight.SearchFolders
-QuickSight.UpdateFolder
-QuickSight.UpdateFolderPermissions
-RDSDataService.BatchExecuteStatement
-RDSDataService.BeginTransaction
-RDSDataService.CommitTransaction
-RDSDataService.ExecuteSql
-RDSDataService.ExecuteStatement
-RDSDataService.RollbackTransaction
-DataSync.UpdateLocationNfs
-DataSync.UpdateLocationObjectStorage
-DataSync.UpdateLocationSmb
-Transfer.CreateAccess
-Transfer.DeleteAccess
-Transfer.DescribeAccess
-Transfer.ListAccesses
-Transfer.UpdateAccess
-KinesisAnalyticsV2.CreateApplicationPresignedUrl
-KinesisAnalyticsV2.DescribeApplicationVersion
-KinesisAnalyticsV2.ListApplicationVersions
-KinesisAnalyticsV2.RollbackApplication
-KinesisAnalyticsV2.UpdateApplicationMaintenanceConfiguration
-ApiGatewayManagementApi.DeleteConnection
-ApiGatewayManagementApi.GetConnection
-ApiGatewayManagementApi.PostToConnection
-DocDB.AddSourceIdentifierToSubscription
-DocDB.CreateEventSubscription
-DocDB.CreateGlobalCluster
-DocDB.DeleteEventSubscription
-DocDB.DeleteGlobalCluster
-DocDB.DescribeEventSubscriptions
-DocDB.DescribeGlobalClusters
-DocDB.ModifyEventSubscription
-DocDB.ModifyGlobalCluster
-DocDB.RemoveFromGlobalCluster
-DocDB.RemoveSourceIdentifierFromSubscription
-MediaPackageVod.ConfigureLogs
-IoTEvents.DescribeDetectorModelAnalysis
-IoTEvents.GetDetectorModelAnalysisResults
-IoTEvents.StartDetectorModelAnalysis
-IoTEventsData.BatchAcknowledgeAlarm
-IoTEventsData.BatchDisableAlarm
-IoTEventsData.BatchEnableAlarm
-IoTEventsData.BatchResetAlarm
-IoTEventsData.BatchSnoozeAlarm
-IoTEventsData.DescribeAlarm
-IoTEventsData.ListAlarms
-Personalize.CreateDatasetExportJob
-Personalize.DescribeDatasetExportJob
-Personalize.ListDatasetExportJobs
-Personalize.StopSolutionVersionCreation
-EventBridge.CreateApiDestination
-EventBridge.CreateConnection
-EventBridge.DeauthorizeConnection
-EventBridge.DeleteApiDestination
-EventBridge.DeleteConnection
-EventBridge.DescribeApiDestination
-EventBridge.DescribeConnection
-EventBridge.ListApiDestinations
-EventBridge.ListConnections
-EventBridge.UpdateApiDestination
-EventBridge.UpdateConnection
-LakeFormation.AddLFTagsToResource
-LakeFormation.CreateLFTag
-LakeFormation.DeleteLFTag
-LakeFormation.GetLFTag
-LakeFormation.GetResourceLFTags
-LakeFormation.ListLFTags
-LakeFormation.RemoveLFTagsFromResource
-LakeFormation.SearchDatabasesByLFTags
-LakeFormation.SearchTablesByLFTags
-LakeFormation.UpdateLFTag
-ForecastService.DeleteResourceTree
-ForecastService.StopResource
-WorkMailMessageFlow.PutRawMessageContent
-SSO.GetRoleCredentials
-SSO.ListAccountRoles
-SSO.ListAccounts
-SSO.Logout
-SSOOIDC.CreateToken
-SSOOIDC.RegisterClient
-SSOOIDC.StartDeviceAuthorization
-SESV2.CreateContact
-SESV2.CreateContactList
-SESV2.CreateCustomVerificationEmailTemplate
-SESV2.CreateEmailIdentityPolicy
-SESV2.CreateEmailTemplate
-SESV2.CreateImportJob
-SESV2.DeleteContact
-SESV2.DeleteContactList
-SESV2.DeleteEmailIdentityPolicy
-SESV2.DeleteEmailTemplate
-SESV2.DeleteSuppressedDestination
-SESV2.GetContact
-SESV2.GetContactList
-SESV2.GetDomainDeliverabilityCampaign
-SESV2.GetEmailIdentityPolicies
-SESV2.GetEmailTemplate
-SESV2.GetImportJob
-SESV2.GetSuppressedDestination
-SESV2.ListContactLists
-SESV2.ListContacts
-SESV2.ListDomainDeliverabilityCampaigns
-SESV2.ListEmailTemplates
-SESV2.ListImportJobs
-SESV2.ListSuppressedDestinations
-SESV2.PutAccountDetails
-SESV2.PutAccountSuppressionAttributes
-SESV2.PutConfigurationSetSuppressionOptions
-SESV2.PutEmailIdentityConfigurationSetAttributes
-SESV2.PutEmailIdentityDkimSigningAttributes
-SESV2.PutSuppressedDestination
-SESV2.SendBulkEmail
-SESV2.TestRenderEmailTemplate
-SESV2.UpdateContact
-SESV2.UpdateContactList
-SESV2.UpdateEmailIdentityPolicy
-SESV2.UpdateEmailTemplate
-ConnectParticipant.CompleteAttachmentUpload
-ConnectParticipant.CreateParticipantConnection
-ConnectParticipant.DisconnectParticipant
-ConnectParticipant.GetAttachment
-ConnectParticipant.GetTranscript
-ConnectParticipant.SendEvent
-ConnectParticipant.SendMessage
-ConnectParticipant.StartAttachmentUpload
-Kendra.BatchGetDocumentStatus
-IoTSiteWise.DescribeStorageConfiguration
-IoTSiteWise.GetInterpolatedAssetPropertyValues
-IoTSiteWise.PutStorageConfiguration
-ServiceCatalogAppRegistry.CreateApplication
-ServiceCatalogAppRegistry.UpdateApplication
-AmplifyBackend.ImportBackendAuth
-ConnectContactLens.ListRealtimeContactAnalysisSegments
-SageMakerFeatureStoreRuntime.BatchGetRecord
-CustomerProfiles.GetMatches
-CustomerProfiles.MergeProfiles
-GreengrassV2.BatchAssociateClientDeviceWithCoreDevice
-GreengrassV2.BatchDisassociateClientDeviceFromCoreDevice
-GreengrassV2.GetComponentVersionArtifact
-GreengrassV2.ListClientDevicesAssociatedWithCoreDevice
-GreengrassV2.ResolveComponentCandidates
-Location.BatchDeleteDevicePositionHistory
-Location.CalculateRoute
-Location.CreateRouteCalculator
-Location.DeleteRouteCalculator
-Location.DescribeRouteCalculator
-Location.ListDevicePositions
-Location.ListRouteCalculators
-Location.ListTagsForResource
-Location.TagResource
-Location.UntagResource
-LexModelsV2.CreateExport
-LexModelsV2.CreateResourcePolicy
-LexModelsV2.CreateResourcePolicyStatement
-LexModelsV2.CreateUploadUrl
-LexModelsV2.DeleteExport
-LexModelsV2.DeleteImport
-LexModelsV2.DeleteResourcePolicy
-LexModelsV2.DeleteResourcePolicyStatement
-LexModelsV2.DescribeExport
-LexModelsV2.DescribeImport
-LexModelsV2.DescribeResourcePolicy
-LexModelsV2.ListExports
-LexModelsV2.ListImports
-LexModelsV2.StartImport
-LexModelsV2.UpdateExport
-LexModelsV2.UpdateResourcePolicy
-LexRuntimeV2.RecognizeUtterance
-Finspace.CreateEnvironment
-Finspace.DeleteEnvironment
-Finspace.GetEnvironment
-Finspace.ListEnvironments
-Finspace.ListTagsForResource
-Finspace.TagResource
-Finspace.UntagResource
-Finspace.UpdateEnvironment
-Finspacedata.CreateChangeset
-Finspacedata.GetProgrammaticAccessCredentials
-Finspacedata.GetWorkingLocation
-SSMContacts.GetContactPolicy
-SSMContacts.ListTagsForResource
-SSMContacts.TagResource
-SSMContacts.UntagResource
-Proton.AcceptEnvironmentAccountConnection
-Proton.CancelEnvironmentDeployment
-Proton.CancelServiceInstanceDeployment
-Proton.CancelServicePipelineDeployment
-Proton.CreateEnvironmentAccountConnection
-Proton.CreateEnvironmentTemplateVersion
-Proton.CreateServiceTemplateVersion
-Proton.DeleteEnvironmentAccountConnection
-Proton.DeleteEnvironmentTemplateVersion
-Proton.DeleteServiceTemplateVersion
-Proton.GetAccountSettings
-Proton.GetEnvironmentAccountConnection
-Proton.GetEnvironmentTemplateVersion
-Proton.GetServiceTemplateVersion
-Proton.ListEnvironmentAccountConnections
-Proton.ListEnvironmentTemplateVersions
-Proton.ListServiceTemplateVersions
-Proton.RejectEnvironmentAccountConnection
-Proton.UpdateAccountSettings
-Proton.UpdateEnvironmentAccountConnection
-Proton.UpdateEnvironmentTemplateVersion
-Proton.UpdateServiceTemplateVersion
-EMR.AddInstanceFleet
-EMR.AddInstanceGroups
-EMR.ModifyInstanceGroups
-SSM.GetInventory
-SSM.GetOpsSummary
-CostExplorer.CreateAnomalyMonitor
-CostExplorer.CreateCostCategoryDefinition
-CostExplorer.GetCostAndUsage
-CostExplorer.GetCostAndUsageWithResources
-CostExplorer.GetCostCategories
-CostExplorer.GetCostForecast
-CostExplorer.GetDimensionValues
-CostExplorer.GetReservationCoverage
-CostExplorer.GetReservationPurchaseRecommendation
-CostExplorer.GetReservationUtilization
-CostExplorer.GetRightsizingRecommendation
-CostExplorer.GetSavingsPlansCoverage
-CostExplorer.GetSavingsPlansPurchaseRecommendation
-CostExplorer.GetSavingsPlansUtilization
-CostExplorer.GetSavingsPlansUtilizationDetails
-CostExplorer.GetTags
-CostExplorer.GetUsageForecast
-CostExplorer.UpdateCostCategoryDefinition
-SageMaker.Search
-Kendra.Query
-EMRcontainers.StartJobRun
+AppStream.CreateUpdatedImage {2} - appstream
+AutoScaling.GetPredictiveScalingForecast {2} - autoscaling
+CloudDirectory.GetAppliedSchemaVersion {2} - clouddirectory
+CloudDirectory.UpgradeAppliedSchema {2} - clouddirectory
+CloudDirectory.UpgradePublishedSchema {2} - clouddirectory
+CloudFormation.ActivateType {2} - cloudformation
+CloudFormation.BatchDescribeTypeConfigurations {2} - cloudformation
+CloudFormation.DeactivateType {2} - cloudformation
+CloudFormation.DescribePublisher {2} - cloudformation
+CloudFormation.PublishType {2} - cloudformation
+CloudFormation.RegisterPublisher {2} - cloudformation
+CloudFormation.SetTypeConfiguration {2} - cloudformation
+CloudFormation.TestType {2} - cloudformation
+CloudFront.AssociateAlias {2} - cloudfront
+CloudFront.ListConflictingAliases {2} - cloudfront
+CodePipeline.GetActionType {2} - codepipeline
+CodePipeline.UpdateActionType {2} - codepipeline
+CognitoIdentityServiceProvider.RevokeToken {2} - cognitoidp
+DirectConnect.AssociateMacSecKey {2} - directconnect
+DirectConnect.DisassociateMacSecKey {2} - directconnect
+DirectConnect.UpdateConnection {2} - directconnect
+DMS.DescribeEndpointSettings {2} - dms
+DMS.DescribePendingMaintenanceActions {2} - dms
+DynamoDB.DescribeEndpoints {2} - dynamodb
+EC2.AssociateTrunkInterface {2} - ec2
+EC2.DescribeSecurityGroupRules {2} - ec2
+EC2.DescribeTrunkInterfaceAssociations {2} - ec2
+EC2.DisassociateTrunkInterface {2} - ec2
+EC2.ModifySecurityGroupRules {2} - ec2
+ElasticBeanstalk.UpdateTagsForResource {2} - elasticbeanstalk
+EMR.SetVisibleToAllUsers {2} - elasticmapreduce
+ES.DescribeDomainAutoTunes {2} - es
+Redshift.AddPartner {2} - redshift
+Redshift.AuthorizeEndpointAccess {2} - redshift
+Redshift.CreateEndpointAccess {2} - redshift
+Redshift.DeleteEndpointAccess {2} - redshift
+Redshift.DeletePartner {2} - redshift
+Redshift.DescribeEndpointAccess {2} - redshift
+Redshift.DescribeEndpointAuthorization {2} - redshift
+Redshift.DescribePartners {2} - redshift
+Redshift.ModifyEndpointAccess {2} - redshift
+Redshift.RevokeEndpointAccess {2} - redshift
+Redshift.UpdatePartnerStatus {2} - redshift
+S3.DeleteBucketIntelligentTieringConfiguration {2} - s3
+S3.ListBucketIntelligentTieringConfigurations {2} - s3
+S3.WriteGetObjectResponse {2} - s3
+S3Control.CreateAccessPointForObjectLambda {2} - s3outposts
+S3Control.CreateJob {2} - s3outposts
+S3Control.DeleteAccessPointForObjectLambda {2} - s3outposts
+S3Control.DeleteAccessPointPolicyForObjectLambda {2} - s3outposts
+S3Control.DeletePublicAccessBlock {2} - s3outposts
+S3Control.DescribeJob {2} - s3outposts
+S3Control.GetAccessPointConfigurationForObjectLambda {2} - s3outposts
+S3Control.GetAccessPointForObjectLambda {2} - s3outposts
+S3Control.GetAccessPointPolicyForObjectLambda {2} - s3outposts
+S3Control.GetAccessPointPolicyStatusForObjectLambda {2} - s3outposts
+S3Control.GetPublicAccessBlock {2} - s3outposts
+S3Control.ListAccessPointsForObjectLambda {2} - s3outposts
+S3Control.ListJobs {2} - s3outposts
+S3Control.PutAccessPointConfigurationForObjectLambda {2} - s3outposts
+S3Control.PutAccessPointPolicyForObjectLambda {2} - s3outposts
+S3Control.PutBucketLifecycleConfiguration {2} - s3outposts
+S3Control.PutPublicAccessBlock {2} - s3outposts
+Snowball.CreateLongTermPricing {2} - snowball
+Snowball.ListLongTermPricing {2} - snowball
+Snowball.UpdateLongTermPricing {2} - snowball
+SSM.UnlabelParameterVersion {2} - ssm
+Glue.UpdateColumnStatisticsForPartition {2} - glue
+Glue.UpdateColumnStatisticsForTable {2} - glue
+MediaLive.CreatePartnerInput {2} - medialive
+SageMaker.SendPipelineExecutionStepFailure {2} - sagemaker
+SageMaker.SendPipelineExecutionStepSuccess {2} - sagemaker
+ServiceDiscovery.UpdateHttpNamespace {2} - servicediscovery
+ServiceDiscovery.UpdatePrivateDnsNamespace {2} - servicediscovery
+ServiceDiscovery.UpdatePublicDnsNamespace {2} - servicediscovery
+MediaTailor.CreateChannel {2} - mediatailor
+MediaTailor.CreateProgram {2} - mediatailor
+MediaTailor.CreateSourceLocation {2} - mediatailor
+MediaTailor.CreateVodSource {2} - mediatailor
+MediaTailor.DeleteChannel {2} - mediatailor
+MediaTailor.DeleteChannelPolicy {2} - mediatailor
+MediaTailor.DeleteProgram {2} - mediatailor
+MediaTailor.DeleteSourceLocation {2} - mediatailor
+MediaTailor.DeleteVodSource {2} - mediatailor
+MediaTailor.DescribeChannel {2} - mediatailor
+MediaTailor.DescribeProgram {2} - mediatailor
+MediaTailor.DescribeSourceLocation {2} - mediatailor
+MediaTailor.DescribeVodSource {2} - mediatailor
+MediaTailor.GetChannelPolicy {2} - mediatailor
+MediaTailor.GetChannelSchedule {2} - mediatailor
+MediaTailor.ListAlerts {2} - mediatailor
+MediaTailor.ListChannels {2} - mediatailor
+MediaTailor.ListSourceLocations {2} - mediatailor
+MediaTailor.ListVodSources {2} - mediatailor
+MediaTailor.PutChannelPolicy {2} - mediatailor
+MediaTailor.StartChannel {2} - mediatailor
+MediaTailor.StopChannel {2} - mediatailor
+MediaTailor.UpdateChannel {2} - mediatailor
+MediaTailor.UpdateSourceLocation {2} - mediatailor
+MediaTailor.UpdateVodSource {2} - mediatailor
+QuickSight.CreateFolder {2} - quicksight
+QuickSight.CreateFolderMembership {2} - quicksight
+QuickSight.DeleteFolder {2} - quicksight
+QuickSight.DeleteFolderMembership {2} - quicksight
+QuickSight.DescribeFolder {2} - quicksight
+QuickSight.DescribeFolderPermissions {2} - quicksight
+QuickSight.DescribeFolderResolvedPermissions {2} - quicksight
+QuickSight.ListFolderMembers {2} - quicksight
+QuickSight.ListFolders {2} - quicksight
+QuickSight.SearchFolders {2} - quicksight
+QuickSight.UpdateFolder {2} - quicksight
+QuickSight.UpdateFolderPermissions {2} - quicksight
+DataSync.UpdateLocationNfs {2} - datasync
+DataSync.UpdateLocationObjectStorage {2} - datasync
+DataSync.UpdateLocationSmb {2} - datasync
+Transfer.CreateAccess {2} - transfer
+Transfer.DeleteAccess {2} - transfer
+Transfer.DescribeAccess {2} - transfer
+Transfer.ListAccesses {2} - transfer
+Transfer.UpdateAccess {2} - transfer
+KinesisAnalyticsV2.DescribeApplicationVersion {2} - kinesisanalytics
+KinesisAnalyticsV2.ListApplicationVersions {2} - kinesisanalytics
+KinesisAnalyticsV2.RollbackApplication {2} - kinesisanalytics
+KinesisAnalyticsV2.UpdateApplicationMaintenanceConfiguration {2} - kinesisanalytics
+ApiGatewayManagementApi.DeleteConnection {2} - apigateway
+ApiGatewayManagementApi.GetConnection {2} - apigateway
+ApiGatewayManagementApi.PostToConnection {2} - apigateway
+MediaPackageVod.ConfigureLogs {2} - mediapackagevod
+IoTEvents.DescribeDetectorModelAnalysis {2} - iotevents
+IoTEvents.GetDetectorModelAnalysisResults {2} - iotevents
+IoTEvents.StartDetectorModelAnalysis {2} - iotevents
+Personalize.CreateDatasetExportJob {2} - personalize
+Personalize.DescribeDatasetExportJob {2} - personalize
+Personalize.ListDatasetExportJobs {2} - personalize
+Personalize.StopSolutionVersionCreation {2} - personalize
+LakeFormation.AddLFTagsToResource {2} - lakeformation
+LakeFormation.CreateLFTag {2} - lakeformation
+LakeFormation.DeleteLFTag {2} - lakeformation
+LakeFormation.GetLFTag {2} - lakeformation
+LakeFormation.GetResourceLFTags {2} - lakeformation
+LakeFormation.ListLFTags {2} - lakeformation
+LakeFormation.RemoveLFTagsFromResource {2} - lakeformation
+LakeFormation.SearchDatabasesByLFTags {2} - lakeformation
+LakeFormation.SearchTablesByLFTags {2} - lakeformation
+LakeFormation.UpdateLFTag {2} - lakeformation
+WorkMailMessageFlow.PutRawMessageContent {2} - workmailmessageflow
+SSO.GetRoleCredentials {2} - sso
+SSO.ListAccountRoles {2} - sso
+SSO.ListAccounts {2} - sso
+SSO.Logout {2} - sso
+SSOOIDC.CreateToken {2} - ssodirectory
+SSOOIDC.RegisterClient {2} - ssodirectory
+SSOOIDC.StartDeviceAuthorization {2} - ssodirectory
+ConnectParticipant.CompleteAttachmentUpload {2} - executeapi
+ConnectParticipant.CreateParticipantConnection {2} - executeapi
+ConnectParticipant.DisconnectParticipant {2} - executeapi
+ConnectParticipant.GetAttachment {2} - executeapi
+ConnectParticipant.GetTranscript {2} - executeapi
+ConnectParticipant.SendEvent {2} - executeapi
+ConnectParticipant.SendMessage {2} - executeapi
+ConnectParticipant.StartAttachmentUpload {2} - executeapi
+Kendra.BatchGetDocumentStatus {2} - kendra
+IoTSiteWise.DescribeStorageConfiguration {2} - iotsitewise
+IoTSiteWise.GetInterpolatedAssetPropertyValues {2} - iotsitewise
+IoTSiteWise.PutStorageConfiguration {2} - iotsitewise
+AmplifyBackend.ImportBackendAuth {2} - amplifybackend
+CustomerProfiles.GetMatches {2} - profile
+CustomerProfiles.MergeProfiles {2} - profile
+GreengrassV2.BatchAssociateClientDeviceWithCoreDevice {2} - greengrass
+GreengrassV2.BatchDisassociateClientDeviceFromCoreDevice {2} - greengrass
+GreengrassV2.ListClientDevicesAssociatedWithCoreDevice {2} - greengrass
+LexModelsV2.CreateResourcePolicyStatement {2} - lex
+LexModelsV2.DeleteResourcePolicyStatement {2} - lex
+LexRuntimeV2.RecognizeUtterance {2} - lex
+Finspace.CreateEnvironment {2} - finspace
+Finspace.DeleteEnvironment {2} - finspace
+Finspace.GetEnvironment {2} - finspace
+Finspace.ListEnvironments {2} - finspace
+Finspace.ListTagsForResource {2} - finspace
+Finspace.TagResource {2} - finspace
+Finspace.UntagResource {2} - finspace
+Finspace.UpdateEnvironment {2} - finspace
+Finspacedata.CreateChangeset {2} - finspacedata
+Finspacedata.GetProgrammaticAccessCredentials {2} - finspacedata
+Finspacedata.GetWorkingLocation {2} - finspacedata
+SSMContacts.GetContactPolicy {2} - ssmcontacts
+SSMContacts.ListTagsForResource {2} - ssmcontacts
+SSMContacts.TagResource {2} - ssmcontacts
+SSMContacts.UntagResource {2} - ssmcontacts
+Proton.AcceptEnvironmentAccountConnection {2} - proton
+Proton.CancelEnvironmentDeployment {2} - proton
+Proton.CancelServiceInstanceDeployment {2} - proton
+Proton.CancelServicePipelineDeployment {2} - proton
+Proton.CreateEnvironmentAccountConnection {2} - proton
+Proton.CreateEnvironmentTemplateVersion {2} - proton
+Proton.CreateServiceTemplateVersion {2} - proton
+Proton.DeleteEnvironmentAccountConnection {2} - proton
+Proton.DeleteEnvironmentTemplateVersion {2} - proton
+Proton.DeleteServiceTemplateVersion {2} - proton
+Proton.GetAccountSettings {2} - proton
+Proton.GetEnvironmentAccountConnection {2} - proton
+Proton.GetEnvironmentTemplateVersion {2} - proton
+Proton.GetServiceTemplateVersion {2} - proton
+Proton.ListEnvironmentAccountConnections {2} - proton
+Proton.ListEnvironmentTemplateVersions {2} - proton
+Proton.ListServiceTemplateVersions {2} - proton
+Proton.RejectEnvironmentAccountConnection {2} - proton
+Proton.UpdateAccountSettings {2} - proton
+Proton.UpdateEnvironmentAccountConnection {2} - proton
+Proton.UpdateEnvironmentTemplateVersion {2} - proton
+Proton.UpdateServiceTemplateVersion {2} - proton
+EMR.AddInstanceFleet {1}
+EMR.AddInstanceGroups {1}
+EMR.ModifyInstanceGroups {1}
+CostExplorer.CreateAnomalyMonitor {1}
+CostExplorer.CreateCostCategoryDefinition {1}
+CostExplorer.UpdateCostCategoryDefinition {1}
 `;
 
 var found_permissions = [];
