@@ -40,5 +40,5 @@ for k, v in mapdata['sdk_method_iam_mappings'].items():
 
                         iam_def[i]['privileges'].sort(key=lambda x: x['privilege'])
 
-with open("js/iam_definition.json", "w") as f:
+with open("iam_definition.json", "w") as f:
     f.write(json.dumps(iam_def, indent=2, sort_keys=True))
