@@ -375,11 +375,15 @@
                 return;
             }
 
-            console.debug(existingmappings);
-
-            while (existingmappings && (existingmappings[0]['resource_mappings'] || existingmappings[0]['arn_override'] || existingmappings[0]['undocumented'] || existingmappings[0]['conditions'])) {
+            while (existingmappings[0]['resource_mappings'] || existingmappings[0]['arn_override'] || existingmappings[0]['undocumented'] || existingmappings[0]['conditions']) {
                 call = mappingkeys.shift();
                 existingmappings = map['sdk_method_iam_mappings'][call];
+
+                if (!existingmappings) {
+                    delete map['sdk_method_iam_mappings'][call];
+                    nextMethod();
+                    return;
+                }
             }
 
             var splitcall = call.split(".");
