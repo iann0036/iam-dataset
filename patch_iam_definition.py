@@ -15,7 +15,7 @@ undocumented_roots = [
         "prefix": "finspace",
         "privileges": [],
         "resources": [],
-        "service_name": "Amazon Finspace"
+        "service_name": "Amazon FinSpace"
     }
 ]
 

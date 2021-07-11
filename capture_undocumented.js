@@ -252,6 +252,8 @@ async function go() {
             let iterations = 0;
             while (!complete) {
                 try {
+                    console.log("--\n" + method);
+                    console.log(params);
                     await svc[method].call(svc, params).promise();
                     complete = true;
                 } catch (err) {
