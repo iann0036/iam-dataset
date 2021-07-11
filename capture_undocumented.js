@@ -418,13 +418,13 @@ EMRcontainers.StartJobRun
 var found_permissions = [];
 
 async function go() {
-    var known_permissions = [];
-    var iamdefdata = await fetch('https://raw.githubusercontent.com/iann0036/iam-dataset/main/js/iam_definition.json');
+    var known_permissions = {};
+    var iamdefdata = await fetch('https://raw.githubusercontent.com/iann0036/iam-dataset/main/iam_definition.json');
     iamdef = await iamdefdata.json();
 
     for (var iamdefitem of iamdef) {
         for (var priv of iamdefitem.privileges) {
-            known_permissions.push(iamdefitem.prefix+":"+priv.privilege);
+            known_permissions[iamdefitem.prefix+":"+priv.privilege] = (priv.access_level == "Unknown");
         }
     }
     
@@ -480,13 +480,15 @@ async function go() {
 
     let res = {};
     for (let item of found_permissions) {
-        if (!known_permissions.includes(item['permission'])) {
+        if (!Object.keys(known_permissions).includes(item['permission'])) {
             res[item['service'] + "." + item['method']] = [{
                 "action": item['permission'],
                 "undocumented": true
             }];
         } else {
-            console.log("Invalid hit: " + item['permission']);
+            if (!known_permissions[item['permission']]) {
+                console.log("Invalid hit: " + item['permission']);
+            }
         }
     }
 
