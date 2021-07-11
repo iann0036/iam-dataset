@@ -1,6 +1,7 @@
 // a fuzzer for undocumented params
 
 const AWS = require('aws-sdk');
+const fetch = require('node-fetch');
 
 var credentials = new AWS.SharedIniFileCredentials({profile: 'nothing'});
 AWS.config.credentials = credentials;
@@ -417,6 +418,16 @@ EMRcontainers.StartJobRun
 var found_permissions = [];
 
 async function go() {
+    var known_permissions = [];
+    var iamdefdata = await fetch('https://raw.githubusercontent.com/iann0036/iam-dataset/main/js/iam_definition.json');
+    iamdef = await iamdefdata.json();
+
+    for (var iamdefitem of iamdef) {
+        for (var priv of iamdefitem.privileges) {
+            known_permissions.push(iamdefitem.prefix+":"+priv.privilege);
+        }
+    }
+    
     for (let test_item of long_undocumented_test_list.split("\n")) {
         if (test_item != "") {
             let split_test_item = test_item.split(".");
@@ -466,13 +477,17 @@ async function go() {
     }
 
     console.log(found_permissions);
-    
+
     let res = {};
     for (let item of found_permissions) {
-        res[item['service'] + "." + item['method']] = [{
-            "action": item['permission'],
-            "undocumented": true
-        }];
+        if (!known_permissions.includes(item['permission'])) {
+            res[item['service'] + "." + item['method']] = [{
+                "action": item['permission'],
+                "undocumented": true
+            }];
+        } else {
+            console.log("Invalid hit: " + item['permission']);
+        }
     }
 
     console.log(JSON.stringify(res, null, 4));
