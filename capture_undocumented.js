@@ -429,6 +429,7 @@ async function go() {
     }
     
     for (let test_item of long_undocumented_test_list.split("\n")) {
+        test_item = test_item.split(" ")[0];
         if (test_item != "") {
             let split_test_item = test_item.split(".");
             let svc = new AWS[split_test_item[0]]({});
