@@ -9,10 +9,28 @@ mapdata = {}
 with open("map.json", "r") as f:
     mapdata = json.loads(f.read())
 
+undocumented_roots = [
+    {
+        "conditions": [],
+        "prefix": "finspace",
+        "privileges": [],
+        "resources": [],
+        "service_name": "Amazon Finspace"
+    }
+]
+
+for root in undocumented_roots:
+    found = False
+    for resource in iam_def:
+        if resource["prefix"] == root["prefix"]:
+            found = True
+
+    if not found:
+        iam_def.append(root)
+
 for k, v in mapdata['sdk_method_iam_mappings'].items():
     for mappingitem in v:
         if 'undocumented' in mappingitem:
-            print(k)
             servicename = mappingitem['action'].split(":")[0]
             methodname = mappingitem['action'].split(":")[1]
 
