@@ -8,225 +8,116 @@ AWS.config.credentials = credentials;
 AWS.config.region = 'us-east-1';
 
 var long_undocumented_test_list = `
-AppStream.CreateUpdatedImage {2} - appstream
-AutoScaling.GetPredictiveScalingForecast {2} - autoscaling
-CloudDirectory.GetAppliedSchemaVersion {2} - clouddirectory
-CloudDirectory.UpgradeAppliedSchema {2} - clouddirectory
-CloudDirectory.UpgradePublishedSchema {2} - clouddirectory
-CloudFormation.ActivateType {2} - cloudformation
-CloudFormation.BatchDescribeTypeConfigurations {2} - cloudformation
-CloudFormation.DeactivateType {2} - cloudformation
-CloudFormation.DescribePublisher {2} - cloudformation
-CloudFormation.PublishType {2} - cloudformation
-CloudFormation.RegisterPublisher {2} - cloudformation
-CloudFormation.SetTypeConfiguration {2} - cloudformation
-CloudFormation.TestType {2} - cloudformation
-CodePipeline.GetActionType {2} - codepipeline
-CodePipeline.UpdateActionType {2} - codepipeline
-CognitoIdentityServiceProvider.RevokeToken {2} - cognitoidp
-DirectConnect.AssociateMacSecKey {2} - directconnect
-DirectConnect.DisassociateMacSecKey {2} - directconnect
-DirectConnect.UpdateConnection {2} - directconnect
-DMS.DescribeEndpointSettings {2} - dms
-DMS.DescribePendingMaintenanceActions {2} - dms
-DynamoDB.DescribeEndpoints {2} - dynamodb
-EC2.AssociateInstanceEventWindow {2} - ec2
-EC2.AssociateTrunkInterface {2} - ec2
-EC2.CreateInstanceEventWindow {2} - ec2
-EC2.DeleteInstanceEventWindow {2} - ec2
-EC2.DescribeInstanceEventWindows {2} - ec2
-EC2.DescribeTrunkInterfaceAssociations {2} - ec2
-EC2.DisassociateInstanceEventWindow {2} - ec2
-EC2.DisassociateTrunkInterface {2} - ec2
-EC2.ModifyInstanceEventWindow {2} - ec2
-ElasticBeanstalk.UpdateTagsForResource {2} - elasticbeanstalk
-EMR.SetVisibleToAllUsers {2} - elasticmapreduce
-ES.DescribeDomainAutoTunes {2} - es
-Lightsail.CreateBucket {2} - lightsail
-Lightsail.CreateBucketAccessKey {2} - lightsail
-Lightsail.DeleteBucket {2} - lightsail
-Lightsail.DeleteBucketAccessKey {2} - lightsail
-Lightsail.GetBucketAccessKeys {2} - lightsail
-Lightsail.GetBucketBundles {2} - lightsail
-Lightsail.GetBucketMetricData {2} - lightsail
-Lightsail.GetBuckets {2} - lightsail
-Lightsail.SetResourceAccessForBucket {2} - lightsail
-Lightsail.UpdateBucket {2} - lightsail
-Lightsail.UpdateBucketBundle {2} - lightsail
-Redshift.AddPartner {2} - redshift
-Redshift.AuthorizeEndpointAccess {2} - redshift
-Redshift.CreateAuthenticationProfile {2} - redshift
-Redshift.CreateEndpointAccess {2} - redshift
-Redshift.DeleteAuthenticationProfile {2} - redshift
-Redshift.DeleteEndpointAccess {2} - redshift
-Redshift.DeletePartner {2} - redshift
-Redshift.DescribeAuthenticationProfiles {2} - redshift
-Redshift.DescribeEndpointAccess {2} - redshift
-Redshift.DescribeEndpointAuthorization {2} - redshift
-Redshift.DescribePartners {2} - redshift
-Redshift.ModifyAuthenticationProfile {2} - redshift
-Redshift.ModifyEndpointAccess {2} - redshift
-Redshift.RevokeEndpointAccess {2} - redshift
-Redshift.UpdatePartnerStatus {2} - redshift
-S3.DeleteBucketIntelligentTieringConfiguration {2} - s3
-S3.ListBucketIntelligentTieringConfigurations {2} - s3
-S3.WriteGetObjectResponse {2} - s3
-S3Control.CreateAccessPointForObjectLambda {2} - s3outposts
-S3Control.CreateJob {2} - s3outposts
-S3Control.DeleteAccessPointForObjectLambda {2} - s3outposts
-S3Control.DeleteAccessPointPolicyForObjectLambda {2} - s3outposts
-S3Control.DeletePublicAccessBlock {2} - s3outposts
-S3Control.DescribeJob {2} - s3outposts
-S3Control.GetAccessPointConfigurationForObjectLambda {2} - s3outposts
-S3Control.GetAccessPointForObjectLambda {2} - s3outposts
-S3Control.GetAccessPointPolicyForObjectLambda {2} - s3outposts
-S3Control.GetAccessPointPolicyStatusForObjectLambda {2} - s3outposts
-S3Control.GetPublicAccessBlock {2} - s3outposts
-S3Control.ListAccessPointsForObjectLambda {2} - s3outposts
-S3Control.ListJobs {2} - s3outposts
-S3Control.PutAccessPointConfigurationForObjectLambda {2} - s3outposts
-S3Control.PutAccessPointPolicyForObjectLambda {2} - s3outposts
-S3Control.PutBucketLifecycleConfiguration {2} - s3outposts
-S3Control.PutPublicAccessBlock {2} - s3outposts
-Snowball.CreateLongTermPricing {2} - snowball
-Snowball.ListLongTermPricing {2} - snowball
-Snowball.UpdateLongTermPricing {2} - snowball
-SSM.UnlabelParameterVersion {2} - ssm
-LexModelBuildingService.GetMigration {2} - lex
-LexModelBuildingService.GetMigrations {2} - lex
-LexModelBuildingService.StartMigration {2} - lex
-Glue.UpdateColumnStatisticsForPartition {2} - glue
-Glue.UpdateColumnStatisticsForTable {2} - glue
-MediaLive.CreatePartnerInput {2} - medialive
-SageMaker.SendPipelineExecutionStepFailure {2} - sagemaker
-SageMaker.SendPipelineExecutionStepSuccess {2} - sagemaker
-ServiceDiscovery.UpdateHttpNamespace {2} - servicediscovery
-ServiceDiscovery.UpdatePrivateDnsNamespace {2} - servicediscovery
-ServiceDiscovery.UpdatePublicDnsNamespace {2} - servicediscovery
-MediaTailor.CreateChannel {2} - mediatailor
-MediaTailor.CreateProgram {2} - mediatailor
-MediaTailor.CreateSourceLocation {2} - mediatailor
-MediaTailor.CreateVodSource {2} - mediatailor
-MediaTailor.DeleteChannel {2} - mediatailor
-MediaTailor.DeleteChannelPolicy {2} - mediatailor
-MediaTailor.DeleteProgram {2} - mediatailor
-MediaTailor.DeleteSourceLocation {2} - mediatailor
-MediaTailor.DeleteVodSource {2} - mediatailor
-MediaTailor.DescribeChannel {2} - mediatailor
-MediaTailor.DescribeProgram {2} - mediatailor
-MediaTailor.DescribeSourceLocation {2} - mediatailor
-MediaTailor.DescribeVodSource {2} - mediatailor
-MediaTailor.GetChannelPolicy {2} - mediatailor
-MediaTailor.GetChannelSchedule {2} - mediatailor
-MediaTailor.ListAlerts {2} - mediatailor
-MediaTailor.ListChannels {2} - mediatailor
-MediaTailor.ListSourceLocations {2} - mediatailor
-MediaTailor.ListVodSources {2} - mediatailor
-MediaTailor.PutChannelPolicy {2} - mediatailor
-MediaTailor.StartChannel {2} - mediatailor
-MediaTailor.StopChannel {2} - mediatailor
-MediaTailor.UpdateChannel {2} - mediatailor
-MediaTailor.UpdateSourceLocation {2} - mediatailor
-MediaTailor.UpdateVodSource {2} - mediatailor
-QuickSight.CreateFolder {2} - quicksight
-QuickSight.CreateFolderMembership {2} - quicksight
-QuickSight.DeleteFolder {2} - quicksight
-QuickSight.DeleteFolderMembership {2} - quicksight
-QuickSight.DescribeFolder {2} - quicksight
-QuickSight.DescribeFolderPermissions {2} - quicksight
-QuickSight.DescribeFolderResolvedPermissions {2} - quicksight
-QuickSight.ListFolderMembers {2} - quicksight
-QuickSight.ListFolders {2} - quicksight
-QuickSight.SearchFolders {2} - quicksight
-QuickSight.UpdateFolder {2} - quicksight
-QuickSight.UpdateFolderPermissions {2} - quicksight
-DataSync.UpdateLocationNfs {2} - datasync
-DataSync.UpdateLocationObjectStorage {2} - datasync
-DataSync.UpdateLocationSmb {2} - datasync
-Transfer.CreateAccess {2} - transfer
-Transfer.DeleteAccess {2} - transfer
-Transfer.DescribeAccess {2} - transfer
-Transfer.ListAccesses {2} - transfer
-Transfer.UpdateAccess {2} - transfer
-KinesisAnalyticsV2.DescribeApplicationVersion {2} - kinesisanalytics
-KinesisAnalyticsV2.ListApplicationVersions {2} - kinesisanalytics
-KinesisAnalyticsV2.RollbackApplication {2} - kinesisanalytics
-KinesisAnalyticsV2.UpdateApplicationMaintenanceConfiguration {2} - kinesisanalytics
-ApiGatewayManagementApi.DeleteConnection {2} - apigateway
-ApiGatewayManagementApi.GetConnection {2} - apigateway
-ApiGatewayManagementApi.PostToConnection {2} - apigateway
-MediaPackageVod.ConfigureLogs {2} - mediapackagevod
-IoTEvents.DescribeDetectorModelAnalysis {2} - iotevents
-IoTEvents.GetDetectorModelAnalysisResults {2} - iotevents
-IoTEvents.StartDetectorModelAnalysis {2} - iotevents
-Personalize.CreateDatasetExportJob {2} - personalize
-Personalize.DescribeDatasetExportJob {2} - personalize
-Personalize.ListDatasetExportJobs {2} - personalize
-Personalize.StopSolutionVersionCreation {2} - personalize
-LakeFormation.AddLFTagsToResource {2} - lakeformation
-LakeFormation.CreateLFTag {2} - lakeformation
-LakeFormation.DeleteLFTag {2} - lakeformation
-LakeFormation.GetLFTag {2} - lakeformation
-LakeFormation.GetResourceLFTags {2} - lakeformation
-LakeFormation.ListLFTags {2} - lakeformation
-LakeFormation.RemoveLFTagsFromResource {2} - lakeformation
-LakeFormation.SearchDatabasesByLFTags {2} - lakeformation
-LakeFormation.SearchTablesByLFTags {2} - lakeformation
-LakeFormation.UpdateLFTag {2} - lakeformation
-WorkMailMessageFlow.PutRawMessageContent {2} - workmailmessageflow
-SSO.GetRoleCredentials {2} - sso
-SSO.ListAccountRoles {2} - sso
-SSO.ListAccounts {2} - sso
-SSO.Logout {2} - sso
-SSOOIDC.CreateToken {2} - ssodirectory
-SSOOIDC.RegisterClient {2} - ssodirectory
-SSOOIDC.StartDeviceAuthorization {2} - ssodirectory
-ConnectParticipant.CompleteAttachmentUpload {2} - executeapi
-ConnectParticipant.CreateParticipantConnection {2} - executeapi
-ConnectParticipant.DisconnectParticipant {2} - executeapi
-ConnectParticipant.GetAttachment {2} - executeapi
-ConnectParticipant.GetTranscript {2} - executeapi
-ConnectParticipant.SendEvent {2} - executeapi
-ConnectParticipant.SendMessage {2} - executeapi
-ConnectParticipant.StartAttachmentUpload {2} - executeapi
-Kendra.BatchGetDocumentStatus {2} - kendra
-Kendra.DeletePrincipalMapping {2} - kendra
-Kendra.DescribePrincipalMapping {2} - kendra
-Kendra.ListGroupsOlderThanOrderingId {2} - kendra
-Kendra.PutPrincipalMapping {2} - kendra
-IoTSiteWise.DescribeStorageConfiguration {2} - iotsitewise
-IoTSiteWise.GetInterpolatedAssetPropertyValues {2} - iotsitewise
-IoTSiteWise.PutStorageConfiguration {2} - iotsitewise
-AmplifyBackend.ImportBackendAuth {2} - amplifybackend
-CustomerProfiles.GetMatches {2} - profile
-CustomerProfiles.MergeProfiles {2} - profile
-GreengrassV2.BatchAssociateClientDeviceWithCoreDevice {2} - greengrass
-GreengrassV2.BatchDisassociateClientDeviceFromCoreDevice {2} - greengrass
-GreengrassV2.ListClientDevicesAssociatedWithCoreDevice {2} - greengrass
-LexModelsV2.CreateResourcePolicyStatement {2} - lex
-LexModelsV2.DeleteResourcePolicyStatement {2} - lex
-LexRuntimeV2.RecognizeUtterance {2} - lex
-Finspace.CreateEnvironment {2} - finspace
-Finspace.DeleteEnvironment {2} - finspace
-Finspace.GetEnvironment {2} - finspace
-Finspace.ListEnvironments {2} - finspace
-Finspace.ListTagsForResource {2} - finspace
-Finspace.TagResource {2} - finspace
-Finspace.UntagResource {2} - finspace
-Finspace.UpdateEnvironment {2} - finspace
-Finspacedata.CreateChangeset {2} - finspacedata
-Finspacedata.GetProgrammaticAccessCredentials {2} - finspacedata
-Finspacedata.GetWorkingLocation {2} - finspacedata
-SSMContacts.GetContactPolicy {2} - ssmcontacts
-SSMContacts.ListTagsForResource {2} - ssmcontacts
-SSMContacts.TagResource {2} - ssmcontacts
-SSMContacts.UntagResource {2} - ssmcontacts
+AutoScaling.GetPredictiveScalingForecast {3} - autoscaling
+CloudDirectory.GetAppliedSchemaVersion {3} - clouddirectory
+CloudDirectory.UpgradeAppliedSchema {3} - clouddirectory
+CloudDirectory.UpgradePublishedSchema {3} - clouddirectory
+CloudFormation.ActivateType {3} - cloudformation
+CloudFormation.BatchDescribeTypeConfigurations {3} - cloudformation
+CodePipeline.GetActionType {3} - codepipeline
+CodePipeline.UpdateActionType {3} - codepipeline
+CognitoIdentityServiceProvider.RevokeToken {3} - cognitoidp
+DynamoDB.DescribeEndpoints {3} - dynamodb
+EC2.AssociateInstanceEventWindow {3} - ec2
+EC2.AssociateTrunkInterface {3} - ec2
+EC2.CreateInstanceEventWindow {3} - ec2
+EC2.DeleteInstanceEventWindow {3} - ec2
+EC2.DescribeInstanceEventWindows {3} - ec2
+EC2.DescribeTrunkInterfaceAssociations {3} - ec2
+EC2.DisassociateInstanceEventWindow {3} - ec2
+EC2.DisassociateTrunkInterface {3} - ec2
+EC2.ModifyInstanceEventWindow {3} - ec2
+ElasticBeanstalk.UpdateTagsForResource {3} - elasticbeanstalk
+EMR.SetVisibleToAllUsers {3} - elasticmapreduce
+Lightsail.GetBucketMetricData {3} - lightsail
+S3.DeleteBucketIntelligentTieringConfiguration {3} - s3
+S3.ListBucketIntelligentTieringConfigurations {3} - s3
+S3.WriteGetObjectResponse {3} - s3
+S3Control.CreateAccessPointForObjectLambda {3} - s3outposts
+S3Control.DeleteAccessPointForObjectLambda {3} - s3outposts
+S3Control.DeleteAccessPointPolicyForObjectLambda {3} - s3outposts
+S3Control.DeletePublicAccessBlock {3} - s3outposts
+S3Control.DescribeJob {3} - s3outposts
+S3Control.GetAccessPointConfigurationForObjectLambda {3} - s3outposts
+S3Control.GetAccessPointForObjectLambda {3} - s3outposts
+S3Control.GetAccessPointPolicyForObjectLambda {3} - s3outposts
+S3Control.GetAccessPointPolicyStatusForObjectLambda {3} - s3outposts
+S3Control.GetPublicAccessBlock {3} - s3outposts
+S3Control.ListAccessPointsForObjectLambda {3} - s3outposts
+S3Control.ListJobs {3} - s3outposts
+S3Control.PutAccessPointConfigurationForObjectLambda {3} - s3outposts
+S3Control.PutAccessPointPolicyForObjectLambda {3} - s3outposts
+S3Control.PutBucketLifecycleConfiguration {3} - s3outposts
+S3Control.PutPublicAccessBlock {3} - s3outposts
+SSM.UnlabelParameterVersion {3} - ssm
+LexModelBuildingService.StartMigration {3} - lex
+Glue.UpdateColumnStatisticsForPartition {3} - glue
+Glue.UpdateColumnStatisticsForTable {3} - glue
+SageMaker.SendPipelineExecutionStepFailure {3} - sagemaker
+SageMaker.SendPipelineExecutionStepSuccess {3} - sagemaker
+ServiceDiscovery.UpdateHttpNamespace {3} - servicediscovery
+QuickSight.CreateFolderMembership {3} - quicksight
+QuickSight.DeleteFolder {3} - quicksight
+QuickSight.DeleteFolderMembership {3} - quicksight
+QuickSight.DescribeFolder {3} - quicksight
+QuickSight.DescribeFolderPermissions {3} - quicksight
+QuickSight.DescribeFolderResolvedPermissions {3} - quicksight
+QuickSight.ListFolderMembers {3} - quicksight
+QuickSight.UpdateFolder {3} - quicksight
+QuickSight.UpdateFolderPermissions {3} - quicksight
+DataSync.UpdateLocationNfs {3} - datasync
+DataSync.UpdateLocationObjectStorage {3} - datasync
+DataSync.UpdateLocationSmb {3} - datasync
+KinesisAnalyticsV2.UpdateApplicationMaintenanceConfiguration {3} - kinesisanalytics
+ApiGatewayManagementApi.DeleteConnection {3} - apigateway
+ApiGatewayManagementApi.GetConnection {3} - apigateway
+ApiGatewayManagementApi.PostToConnection {3} - apigateway
+IoTEvents.StartDetectorModelAnalysis {3} - iotevents
+WorkMailMessageFlow.PutRawMessageContent {3} - workmailmessageflow
+SSO.GetRoleCredentials {3} - sso
+SSO.ListAccountRoles {3} - sso
+SSO.ListAccounts {3} - sso
+SSO.Logout {3} - sso
+SSOOIDC.CreateToken {3} - ssodirectory
+SSOOIDC.RegisterClient {3} - ssodirectory
+SSOOIDC.StartDeviceAuthorization {3} - ssodirectory
+ConnectParticipant.CompleteAttachmentUpload {3} - executeapi
+ConnectParticipant.CreateParticipantConnection {3} - executeapi
+ConnectParticipant.DisconnectParticipant {3} - executeapi
+ConnectParticipant.GetAttachment {3} - executeapi
+ConnectParticipant.GetTranscript {3} - executeapi
+ConnectParticipant.SendEvent {3} - executeapi
+ConnectParticipant.SendMessage {3} - executeapi
+ConnectParticipant.StartAttachmentUpload {3} - executeapi
+IoTSiteWise.GetInterpolatedAssetPropertyValues {3} - iotsitewise
+IoTSiteWise.PutStorageConfiguration {3} - iotsitewise
+LexModelsV2.CreateResourcePolicyStatement {3} - lex
+LexModelsV2.DeleteResourcePolicyStatement {3} - lex
+LexRuntimeV2.RecognizeUtterance {3} - lex
 EMR.AddInstanceFleet {1}
 EMR.AddInstanceGroups {1}
 EMR.ModifyInstanceGroups {1}
 CostExplorer.CreateAnomalyMonitor {1}
 CostExplorer.CreateCostCategoryDefinition {1}
 CostExplorer.UpdateCostCategoryDefinition {1}
+SSM.GetInventory {1}
+SSM.GetOpsSummary {1}
+CostExplorer.GetCostAndUsage {1}
+CostExplorer.GetCostAndUsageWithResources {1}
+CostExplorer.GetCostCategories {1}
+CostExplorer.GetCostForecast {1}
+CostExplorer.GetDimensionValues {1}
+CostExplorer.GetReservationCoverage {1}
+CostExplorer.GetReservationPurchaseRecommendation {1}
+CostExplorer.GetReservationUtilization {1}
+CostExplorer.GetRightsizingRecommendation {1}
+CostExplorer.GetSavingsPlansCoverage {1}
+CostExplorer.GetSavingsPlansPurchaseRecommendation {1}
+CostExplorer.GetSavingsPlansUtilization {1}
+CostExplorer.GetSavingsPlansUtilizationDetails {1}
+CostExplorer.GetTags {1}
+CostExplorer.GetUsageForecast {1}
+SageMaker.Search {1}
 `;
 
 var found_permissions = [];
@@ -290,6 +181,9 @@ async function go() {
                             if (err.message.includes("Missing required key '")) {
                                 let paramname = err.message.match(/Missing required key '(.+)'/)[1];
                                 params[paramname] = "PN"+paramname+"XX";
+                                if (paramname.toLowerCase().includes("accountid")) {
+                                    params[paramname] = "774857101424";
+                                }
                                 last_param = paramname;
                             } else if (err.message.includes(" to be an Array")) {
                                 params[last_param] = [];
