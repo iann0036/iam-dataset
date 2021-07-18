@@ -8,16 +8,10 @@ AWS.config.credentials = credentials;
 AWS.config.region = 'us-east-1';
 
 var long_undocumented_test_list = `
-AutoScaling.GetPredictiveScalingForecast {3} - autoscaling
 CloudDirectory.GetAppliedSchemaVersion {3} - clouddirectory
 CloudDirectory.UpgradeAppliedSchema {3} - clouddirectory
 CloudDirectory.UpgradePublishedSchema {3} - clouddirectory
-CloudFormation.ActivateType {3} - cloudformation
-CloudFormation.BatchDescribeTypeConfigurations {3} - cloudformation
-CodePipeline.GetActionType {3} - codepipeline
-CodePipeline.UpdateActionType {3} - codepipeline
 CognitoIdentityServiceProvider.RevokeToken {3} - cognitoidp
-DynamoDB.DescribeEndpoints {3} - dynamodb
 EC2.AssociateInstanceEventWindow {3} - ec2
 EC2.AssociateTrunkInterface {3} - ec2
 EC2.CreateInstanceEventWindow {3} - ec2
@@ -27,9 +21,7 @@ EC2.DescribeTrunkInterfaceAssociations {3} - ec2
 EC2.DisassociateInstanceEventWindow {3} - ec2
 EC2.DisassociateTrunkInterface {3} - ec2
 EC2.ModifyInstanceEventWindow {3} - ec2
-ElasticBeanstalk.UpdateTagsForResource {3} - elasticbeanstalk
 EMR.SetVisibleToAllUsers {3} - elasticmapreduce
-Lightsail.GetBucketMetricData {3} - lightsail
 S3.DeleteBucketIntelligentTieringConfiguration {3} - s3
 S3.ListBucketIntelligentTieringConfigurations {3} - s3
 S3.WriteGetObjectResponse {3} - s3
@@ -49,31 +41,22 @@ S3Control.PutAccessPointConfigurationForObjectLambda {3} - s3outposts
 S3Control.PutAccessPointPolicyForObjectLambda {3} - s3outposts
 S3Control.PutBucketLifecycleConfiguration {3} - s3outposts
 S3Control.PutPublicAccessBlock {3} - s3outposts
-SSM.UnlabelParameterVersion {3} - ssm
 LexModelBuildingService.StartMigration {3} - lex
-Glue.UpdateColumnStatisticsForPartition {3} - glue
-Glue.UpdateColumnStatisticsForTable {3} - glue
 SageMaker.SendPipelineExecutionStepFailure {3} - sagemaker
 SageMaker.SendPipelineExecutionStepSuccess {3} - sagemaker
 ServiceDiscovery.UpdateHttpNamespace {3} - servicediscovery
 QuickSight.CreateFolderMembership {3} - quicksight
-QuickSight.DeleteFolder {3} - quicksight
 QuickSight.DeleteFolderMembership {3} - quicksight
-QuickSight.DescribeFolder {3} - quicksight
 QuickSight.DescribeFolderPermissions {3} - quicksight
 QuickSight.DescribeFolderResolvedPermissions {3} - quicksight
 QuickSight.ListFolderMembers {3} - quicksight
-QuickSight.UpdateFolder {3} - quicksight
+QuickSight.SearchFolders {3} - quicksight
 QuickSight.UpdateFolderPermissions {3} - quicksight
-DataSync.UpdateLocationNfs {3} - datasync
-DataSync.UpdateLocationObjectStorage {3} - datasync
-DataSync.UpdateLocationSmb {3} - datasync
 KinesisAnalyticsV2.UpdateApplicationMaintenanceConfiguration {3} - kinesisanalytics
 ApiGatewayManagementApi.DeleteConnection {3} - apigateway
 ApiGatewayManagementApi.GetConnection {3} - apigateway
 ApiGatewayManagementApi.PostToConnection {3} - apigateway
 IoTEvents.StartDetectorModelAnalysis {3} - iotevents
-WorkMailMessageFlow.PutRawMessageContent {3} - workmailmessageflow
 SSO.GetRoleCredentials {3} - sso
 SSO.ListAccountRoles {3} - sso
 SSO.ListAccounts {3} - sso
@@ -89,10 +72,6 @@ ConnectParticipant.GetTranscript {3} - executeapi
 ConnectParticipant.SendEvent {3} - executeapi
 ConnectParticipant.SendMessage {3} - executeapi
 ConnectParticipant.StartAttachmentUpload {3} - executeapi
-IoTSiteWise.GetInterpolatedAssetPropertyValues {3} - iotsitewise
-IoTSiteWise.PutStorageConfiguration {3} - iotsitewise
-LexModelsV2.CreateResourcePolicyStatement {3} - lex
-LexModelsV2.DeleteResourcePolicyStatement {3} - lex
 LexRuntimeV2.RecognizeUtterance {3} - lex
 EMR.AddInstanceFleet {1}
 EMR.AddInstanceGroups {1}
