@@ -8,11 +8,7 @@ AWS.config.credentials = credentials;
 AWS.config.region = 'us-east-1';
 
 var long_undocumented_test_list = `
-CloudDirectory.GetAppliedSchemaVersion {3} - clouddirectory
-CloudDirectory.UpgradeAppliedSchema {3} - clouddirectory
-CloudDirectory.UpgradePublishedSchema {3} - clouddirectory
 CognitoIdentityServiceProvider.RevokeToken {3} - cognitoidp
-DynamoDB.DescribeEndpoints {3} - dynamodb
 EC2.AssociateInstanceEventWindow {3} - ec2
 EC2.AssociateTrunkInterface {3} - ec2
 EC2.CreateInstanceEventWindow {3} - ec2
@@ -24,8 +20,6 @@ EC2.DisassociateTrunkInterface {3} - ec2
 EC2.ModifyInstanceEventWindow {3} - ec2
 S3.DeleteBucketIntelligentTieringConfiguration {3} - s3
 S3.ListBucketIntelligentTieringConfigurations {3} - s3
-S3.WriteGetObjectResponse {3} - s3
-LexModelBuildingService.StartMigration {3} - lex
 SageMaker.SendPipelineExecutionStepFailure {3} - sagemaker
 SageMaker.SendPipelineExecutionStepSuccess {3} - sagemaker
 ServiceDiscovery.UpdateHttpNamespace {3} - servicediscovery
@@ -36,27 +30,8 @@ QuickSight.DescribeFolderResolvedPermissions {3} - quicksight
 QuickSight.ListFolderMembers {3} - quicksight
 QuickSight.UpdateFolderPermissions {3} - quicksight
 KinesisAnalyticsV2.UpdateApplicationMaintenanceConfiguration {3} - kinesisanalytics
-ApiGatewayManagementApi.DeleteConnection {3} - apigateway
-ApiGatewayManagementApi.GetConnection {3} - apigateway
-ApiGatewayManagementApi.PostToConnection {3} - apigateway
-SSO.GetRoleCredentials {3} - sso
-SSO.ListAccountRoles {3} - sso
-SSO.ListAccounts {3} - sso
-SSO.Logout {3} - sso
-SSOOIDC.CreateToken {3} - ssodirectory
-SSOOIDC.RegisterClient {3} - ssodirectory
-SSOOIDC.StartDeviceAuthorization {3} - ssodirectory
-ConnectParticipant.CompleteAttachmentUpload {3} - executeapi
-ConnectParticipant.CreateParticipantConnection {3} - executeapi
-ConnectParticipant.DisconnectParticipant {3} - executeapi
-ConnectParticipant.GetAttachment {3} - executeapi
-ConnectParticipant.GetTranscript {3} - executeapi
-ConnectParticipant.SendEvent {3} - executeapi
-ConnectParticipant.SendMessage {3} - executeapi
-ConnectParticipant.StartAttachmentUpload {3} - executeapi
 LexRuntimeV2.RecognizeUtterance {3} - lex
-CostExplorer.CreateAnomalyMonitor {1}
-CostExplorer.CreateCostCategoryDefinition {1}
+LexModelsV2.StartImport {1}
 `;
 
 var found_permissions = [];
