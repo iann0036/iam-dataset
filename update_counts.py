@@ -23,11 +23,14 @@ historic_counts['iam'].append({
 })
 
 api_count = 0
+servicecounts = {}
 for filename in os.listdir('node_modules/aws-sdk/apis/'):
     if filename.endswith('.min.json'):
         with open('node_modules/aws-sdk/apis/' + filename, "r") as f:
             api_def = json.loads(f.read())
-            api_count += len(api_def['operations'].keys())
+            servicecounts[api_def['metadata']['serviceId']] = len(api_def['operations'].keys())
+for v in servicecounts.values():
+    api_count += v
 historic_counts['api'].append({
     'count': api_count,
     'date': now
