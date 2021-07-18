@@ -68,43 +68,36 @@
         }
 
         function resolveObj(sdkdata, obj, parentstr) {
-            try {
-                if (parentstr.length > 300) {
-                    return "MEMLIMIT";
-                }
+            if (parentstr.length > 300) {
+                return "MEMLIMIT";
+            }
 
-                if (obj['shape']) {
-                    return resolveObj(sdkdata, sdkdata['shapes'][obj['shape']], parentstr);
-                }
+            if (obj['shape']) {
+                return resolveObj(sdkdata, sdkdata['shapes'][obj['shape']], parentstr);
+            }
 
-                if (obj['type'] && obj['type'] == "list") {
-                    var out = resolveObj(sdkdata, obj['member'], parentstr + "[]");
+            if (obj['type'] && obj['type'] == "list") {
+                var out = resolveObj(sdkdata, obj['member'], parentstr + "[]");
+
+                //out = `<a href="#" class="dc" data-map="\$\{${out}\}">${out}</a>`;
+
+                return "," + out;
+            }
+
+            if (obj['type'] && obj['type'] == "structure") {
+                var outarray = [];
+
+                for (var member of Object.keys(obj['members'])) {
+                    var out = parentstr + "." + member + resolveObj(sdkdata, obj['members'][member], parentstr + "." + member);
 
                     //out = `<a href="#" class="dc" data-map="\$\{${out}\}">${out}</a>`;
-
-                    return "," + out;
+                    outarray.push(out);
                 }
 
-                if (obj['type'] && obj['type'] == "structure") {
-                    var outarray = [];
-
-                    for (var member of Object.keys(obj['members'])) {
-                        var out = parentstr + "." + member + resolveObj(sdkdata, obj['members'][member], parentstr + "." + member);
-
-                        //out = `<a href="#" class="dc" data-map="\$\{${out}\}">${out}</a>`;
-                        if (outarray.length > 100) {
-                            return "," + outarray.join(",") + "MEMLIM";
-                        }
-                        outarray.push(out);
-                    }
-
-                    return "," + outarray.join(",");
-                }
-
-                return "";
-            } catch (e) {
-                return "ERR";
+                return "," + outarray.join(",");
             }
+
+            return "";
         }
 
         async function getDocsForCall(service, method) {
