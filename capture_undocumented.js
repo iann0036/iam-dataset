@@ -57,25 +57,6 @@ ConnectParticipant.StartAttachmentUpload {3} - executeapi
 LexRuntimeV2.RecognizeUtterance {3} - lex
 CostExplorer.CreateAnomalyMonitor {1}
 CostExplorer.CreateCostCategoryDefinition {1}
-CostExplorer.UpdateCostCategoryDefinition {1}
-CostExplorer.GetCostAndUsage {1}
-CostExplorer.GetCostAndUsageWithResources {1}
-CostExplorer.GetCostCategories {1}
-CostExplorer.GetCostForecast {1}
-CostExplorer.GetDimensionValues {1}
-CostExplorer.GetReservationCoverage {1}
-CostExplorer.GetReservationPurchaseRecommendation {1}
-CostExplorer.GetReservationUtilization {1}
-CostExplorer.GetRightsizingRecommendation {1}
-CostExplorer.GetSavingsPlansCoverage {1}
-CostExplorer.GetSavingsPlansPurchaseRecommendation {1}
-CostExplorer.GetSavingsPlansUtilization {1}
-CostExplorer.GetSavingsPlansUtilizationDetails {1}
-CostExplorer.GetTags {1}
-CostExplorer.GetUsageForecast {1}
-RDSDataService.BatchExecuteStatement {1}
-RDSDataService.ExecuteStatement {1}
-Kendra.Query {1}
 `;
 
 var found_permissions = [];
