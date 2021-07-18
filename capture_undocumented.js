@@ -12,6 +12,7 @@ CloudDirectory.GetAppliedSchemaVersion {3} - clouddirectory
 CloudDirectory.UpgradeAppliedSchema {3} - clouddirectory
 CloudDirectory.UpgradePublishedSchema {3} - clouddirectory
 CognitoIdentityServiceProvider.RevokeToken {3} - cognitoidp
+DynamoDB.DescribeEndpoints {3} - dynamodb
 EC2.AssociateInstanceEventWindow {3} - ec2
 EC2.AssociateTrunkInterface {3} - ec2
 EC2.CreateInstanceEventWindow {3} - ec2
@@ -21,26 +22,9 @@ EC2.DescribeTrunkInterfaceAssociations {3} - ec2
 EC2.DisassociateInstanceEventWindow {3} - ec2
 EC2.DisassociateTrunkInterface {3} - ec2
 EC2.ModifyInstanceEventWindow {3} - ec2
-EMR.SetVisibleToAllUsers {3} - elasticmapreduce
 S3.DeleteBucketIntelligentTieringConfiguration {3} - s3
 S3.ListBucketIntelligentTieringConfigurations {3} - s3
 S3.WriteGetObjectResponse {3} - s3
-S3Control.CreateAccessPointForObjectLambda {3} - s3outposts
-S3Control.DeleteAccessPointForObjectLambda {3} - s3outposts
-S3Control.DeleteAccessPointPolicyForObjectLambda {3} - s3outposts
-S3Control.DeletePublicAccessBlock {3} - s3outposts
-S3Control.DescribeJob {3} - s3outposts
-S3Control.GetAccessPointConfigurationForObjectLambda {3} - s3outposts
-S3Control.GetAccessPointForObjectLambda {3} - s3outposts
-S3Control.GetAccessPointPolicyForObjectLambda {3} - s3outposts
-S3Control.GetAccessPointPolicyStatusForObjectLambda {3} - s3outposts
-S3Control.GetPublicAccessBlock {3} - s3outposts
-S3Control.ListAccessPointsForObjectLambda {3} - s3outposts
-S3Control.ListJobs {3} - s3outposts
-S3Control.PutAccessPointConfigurationForObjectLambda {3} - s3outposts
-S3Control.PutAccessPointPolicyForObjectLambda {3} - s3outposts
-S3Control.PutBucketLifecycleConfiguration {3} - s3outposts
-S3Control.PutPublicAccessBlock {3} - s3outposts
 LexModelBuildingService.StartMigration {3} - lex
 SageMaker.SendPipelineExecutionStepFailure {3} - sagemaker
 SageMaker.SendPipelineExecutionStepSuccess {3} - sagemaker
@@ -50,13 +34,11 @@ QuickSight.DeleteFolderMembership {3} - quicksight
 QuickSight.DescribeFolderPermissions {3} - quicksight
 QuickSight.DescribeFolderResolvedPermissions {3} - quicksight
 QuickSight.ListFolderMembers {3} - quicksight
-QuickSight.SearchFolders {3} - quicksight
 QuickSight.UpdateFolderPermissions {3} - quicksight
 KinesisAnalyticsV2.UpdateApplicationMaintenanceConfiguration {3} - kinesisanalytics
 ApiGatewayManagementApi.DeleteConnection {3} - apigateway
 ApiGatewayManagementApi.GetConnection {3} - apigateway
 ApiGatewayManagementApi.PostToConnection {3} - apigateway
-IoTEvents.StartDetectorModelAnalysis {3} - iotevents
 SSO.GetRoleCredentials {3} - sso
 SSO.ListAccountRoles {3} - sso
 SSO.ListAccounts {3} - sso
@@ -73,14 +55,9 @@ ConnectParticipant.SendEvent {3} - executeapi
 ConnectParticipant.SendMessage {3} - executeapi
 ConnectParticipant.StartAttachmentUpload {3} - executeapi
 LexRuntimeV2.RecognizeUtterance {3} - lex
-EMR.AddInstanceFleet {1}
-EMR.AddInstanceGroups {1}
-EMR.ModifyInstanceGroups {1}
 CostExplorer.CreateAnomalyMonitor {1}
 CostExplorer.CreateCostCategoryDefinition {1}
 CostExplorer.UpdateCostCategoryDefinition {1}
-SSM.GetInventory {1}
-SSM.GetOpsSummary {1}
 CostExplorer.GetCostAndUsage {1}
 CostExplorer.GetCostAndUsageWithResources {1}
 CostExplorer.GetCostCategories {1}
@@ -96,7 +73,9 @@ CostExplorer.GetSavingsPlansUtilization {1}
 CostExplorer.GetSavingsPlansUtilizationDetails {1}
 CostExplorer.GetTags {1}
 CostExplorer.GetUsageForecast {1}
-SageMaker.Search {1}
+RDSDataService.BatchExecuteStatement {1}
+RDSDataService.ExecuteStatement {1}
+Kendra.Query {1}
 `;
 
 var found_permissions = [];
