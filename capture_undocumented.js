@@ -9,7 +9,6 @@ AWS.config.region = 'us-east-1';
 
 var long_undocumented_test_list = `
 CognitoIdentityServiceProvider.RevokeToken {3} - cognitoidp
-DynamoDB.DescribeEndpoints {3} - dynamodb
 EC2.AssociateInstanceEventWindow {3} - ec2
 EC2.AssociateTrunkInterface {3} - ec2
 EC2.CreateInstanceEventWindow {3} - ec2
