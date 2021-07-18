@@ -11,7 +11,7 @@ with open("historic-counts.json", "r") as f:
     historic_counts = json.loads(f.read())
 
 iam_def = []
-with open("js/iam_definition.json", "r") as f:
+with open("iam_definition.json", "r") as f:
     iam_def = json.loads(f.read())
 
 iam_count = 0
@@ -34,4 +34,4 @@ historic_counts['api'].append({
 })
 
 with open("historic-counts.json", "w") as f:
-    f.write(json.dumps(historic_counts))
+    f.write(json.dumps(historic_counts, skipkeys=False, indent=2))
