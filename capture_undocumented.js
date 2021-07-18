@@ -9,6 +9,7 @@ AWS.config.region = 'us-east-1';
 
 var long_undocumented_test_list = `
 CognitoIdentityServiceProvider.RevokeToken {3} - cognitoidp
+DynamoDB.DescribeEndpoints {3} - dynamodb
 EC2.AssociateInstanceEventWindow {3} - ec2
 EC2.AssociateTrunkInterface {3} - ec2
 EC2.CreateInstanceEventWindow {3} - ec2
@@ -23,13 +24,6 @@ S3.ListBucketIntelligentTieringConfigurations {3} - s3
 SageMaker.SendPipelineExecutionStepFailure {3} - sagemaker
 SageMaker.SendPipelineExecutionStepSuccess {3} - sagemaker
 ServiceDiscovery.UpdateHttpNamespace {3} - servicediscovery
-QuickSight.CreateFolderMembership {3} - quicksight
-QuickSight.DeleteFolderMembership {3} - quicksight
-QuickSight.DescribeFolderPermissions {3} - quicksight
-QuickSight.DescribeFolderResolvedPermissions {3} - quicksight
-QuickSight.ListFolderMembers {3} - quicksight
-QuickSight.UpdateFolderPermissions {3} - quicksight
-KinesisAnalyticsV2.UpdateApplicationMaintenanceConfiguration {3} - kinesisanalytics
 LexRuntimeV2.RecognizeUtterance {3} - lex
 LexModelsV2.StartImport {1}
 `;
