@@ -347,6 +347,15 @@ async function go() {
         }
     }
 
+    var mapdata = await fetch('https://raw.githubusercontent.com/iann0036/iam-dataset/main/map.json');
+    var map = await mapdata.json();
+
+    for (let reskey of Object.keys(res)) {
+        if (Object.keys(map['sdk_method_iam_mappings']).includes(reskey)) {
+            delete res[reskey];
+        }
+    }
+
     console.log(JSON.stringify(res, null, 4));
 }
 
