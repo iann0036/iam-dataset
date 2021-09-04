@@ -10,7 +10,6 @@ AWS.config.region = 'us-east-1';
 var long_undocumented_test_list = `
 CognitoIdentityServiceProvider.RevokeToken {3} - cognitoidp
 DirectoryService.DescribeClientAuthenticationSettings {3} - ds
-DynamoDB.DescribeEndpoints {3} - dynamodb
 S3Control.CreateMultiRegionAccessPoint {3} - s3
 S3Control.DeleteMultiRegionAccessPoint {3} - s3
 S3Control.DescribeMultiRegionAccessPointOperation {3} - s3
@@ -19,14 +18,11 @@ S3Control.GetMultiRegionAccessPointPolicy {3} - s3
 S3Control.GetMultiRegionAccessPointPolicyStatus {3} - s3
 S3Control.ListMultiRegionAccessPoints {3} - s3
 S3Control.PutMultiRegionAccessPointPolicy {3} - s3
-Glue.BatchGetBlueprints {3} - glue
-Glue.ListBlueprints {3} - glue
 TranscribeService.ListTagsForResource {3} - transcribe
 TranscribeService.TagResource {3} - transcribe
 TranscribeService.UntagResource {3} - transcribe
 Chime.StartMeetingTranscription {3} - chime
 Chime.StopMeetingTranscription {3} - chime
-Textract.AnalyzeExpense {3} - textract
 WAFV2.GetManagedRuleSet {3} - wafv2
 WAFV2.ListAvailableManagedRuleGroupVersions {3} - wafv2
 WAFV2.ListManagedRuleSets {3} - wafv2
