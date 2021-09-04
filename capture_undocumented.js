@@ -9,22 +9,30 @@ AWS.config.region = 'us-east-1';
 
 var long_undocumented_test_list = `
 CognitoIdentityServiceProvider.RevokeToken {3} - cognitoidp
-EC2.AssociateInstanceEventWindow {3} - ec2
-EC2.AssociateTrunkInterface {3} - ec2
-EC2.CreateInstanceEventWindow {3} - ec2
-EC2.DeleteInstanceEventWindow {3} - ec2
-EC2.DescribeInstanceEventWindows {3} - ec2
-EC2.DescribeTrunkInterfaceAssociations {3} - ec2
-EC2.DisassociateInstanceEventWindow {3} - ec2
-EC2.DisassociateTrunkInterface {3} - ec2
-EC2.ModifyInstanceEventWindow {3} - ec2
-S3.DeleteBucketIntelligentTieringConfiguration {3} - s3
-S3.ListBucketIntelligentTieringConfigurations {3} - s3
-SageMaker.SendPipelineExecutionStepFailure {3} - sagemaker
-SageMaker.SendPipelineExecutionStepSuccess {3} - sagemaker
-ServiceDiscovery.UpdateHttpNamespace {3} - servicediscovery
-LexRuntimeV2.RecognizeUtterance {3} - lex
-LexModelsV2.StartImport {1}
+DirectoryService.DescribeClientAuthenticationSettings {3} - ds
+DynamoDB.DescribeEndpoints {3} - dynamodb
+S3Control.CreateMultiRegionAccessPoint {3} - s3
+S3Control.DeleteMultiRegionAccessPoint {3} - s3
+S3Control.DescribeMultiRegionAccessPointOperation {3} - s3
+S3Control.GetMultiRegionAccessPoint {3} - s3
+S3Control.GetMultiRegionAccessPointPolicy {3} - s3
+S3Control.GetMultiRegionAccessPointPolicyStatus {3} - s3
+S3Control.ListMultiRegionAccessPoints {3} - s3
+S3Control.PutMultiRegionAccessPointPolicy {3} - s3
+Glue.BatchGetBlueprints {3} - glue
+Glue.ListBlueprints {3} - glue
+TranscribeService.ListTagsForResource {3} - transcribe
+TranscribeService.TagResource {3} - transcribe
+TranscribeService.UntagResource {3} - transcribe
+Chime.StartMeetingTranscription {3} - chime
+Chime.StopMeetingTranscription {3} - chime
+Textract.AnalyzeExpense {3} - textract
+WAFV2.GetManagedRuleSet {3} - wafv2
+WAFV2.ListAvailableManagedRuleGroupVersions {3} - wafv2
+WAFV2.ListManagedRuleSets {3} - wafv2
+WAFV2.PutManagedRuleSetVersions {3} - wafv2
+WAFV2.UpdateManagedRuleSetVersionExpiryDate {3} - wafv2
+Outposts.CreateOrder {3} - outposts
 `;
 
 var found_permissions = [];

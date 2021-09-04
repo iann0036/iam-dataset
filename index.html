@@ -37,7 +37,7 @@
     </div>
     <div class="row">
         <div class="column">
-            <h4>Skipped:</h4>
+            <h4>Skipped (possibly undocumented):</h4>
             <pre id="skipped"></pre>
         </div>
     </div>
@@ -253,8 +253,13 @@
                         sdkshortname = REPLACESHORTNAME[shortname];
                     }
 
-                    var sdkdatatxt = await fetch(`https://raw.githubusercontent.com/aws/aws-sdk-js/master/apis/${sdkshortname}-${version}.min.json`);
-                    var sdkdata = await sdkdatatxt.json();
+                    try {
+                        var sdkdatatxt = await fetch(`https://raw.githubusercontent.com/aws/aws-sdk-js/master/apis/${sdkshortname}-${version}.min.json`);
+                        var sdkdata = await sdkdatatxt.json();
+                    } catch(err) {
+                        document.getElementById("skipped").innerHTML += sdkshortname + " (datasource)\n";
+                        throw err;
+                    }
 
                     for (var op of Object.keys(sdkdata["operations"])) {
                         var actionname = svcname + "." + op;
