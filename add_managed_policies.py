@@ -108,27 +108,33 @@ for policyname in os.listdir("MAMIP/policies/"):
             if not isinstance(statement['NotAction'], list):
                 statement['NotAction'] = [statement['NotAction']]
 
-            for action in statement['NotAction']:
-                foundmatch = True
-                matchexpression = "^" + action.replace("*", ".*").replace("?", ".{{1}}") + "$"
-                for potentialaction in allactions.keys():
-                    if not re.search(matchexpression.lower(), potentialaction.lower()):
-                        access_levels.append(allactions[potentialaction])
+            for potentialaction in allactions.keys():
+                matched = False
+                for action in statement['NotAction']:
+                    matchexpression = "^" + action.replace("*", ".*").replace("?", ".{{1}}") + "$"
+                    if re.search(matchexpression.lower(), potentialaction.lower()):
+                        matched = True
+                        break
 
-                        condition = None
-                        if 'Condition' in statement:
-                            condition = statement['Condition']
+                if matched:
+                    continue
+                
+                access_levels.append(allactions[potentialaction])
 
-                        if potentialaction in PRIVESC_ACTIONS:
-                            privesc = True
+                condition = None
+                if 'Condition' in statement:
+                    condition = statement['Condition']
 
-                        effective_actions.append({
-                            'action': action,
-                            'effective_action': potentialaction,
-                            'access_level': allactions[potentialaction],
-                            'condition': condition,
-                            'privesc': (potentialaction in PRIVESC_ACTIONS)
-                        })
+                if potentialaction in PRIVESC_ACTIONS:
+                    privesc = True
+
+                effective_actions.append({
+                    'action': "NotAction",
+                    'effective_action': potentialaction,
+                    'access_level': allactions[potentialaction],
+                    'condition': condition,
+                    'privesc': (potentialaction in PRIVESC_ACTIONS)
+                })
         else:
             malformed = True
 
