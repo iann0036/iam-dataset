@@ -113,9 +113,13 @@ for i in range(len(iam_def)):
     if iam_def[i]['prefix'] == 'lex':
         iam_def[i]['service_name'] = 'Amazon Lex'
     if iam_def[i]['prefix'] == 'ses':
-        iam_def[i]['service_name'] = 'Amazon SES & Pinpoint'
+        iam_def[i]['service_name'] = 'Amazon SES & Pinpoint Email'
     if iam_def[i]['prefix'] == 'greengrass':
         iam_def[i]['service_name'] = 'AWS IoT Greengrass'
+    if iam_def[i]['prefix'] == 'datasync':
+        iam_def[i]['service_name'] = 'AWS DataSync'
+    if iam_def[i]['prefix'] == 'backup-storage':
+        iam_def[i]['service_name'] = 'AWS Backup Storage'
 
 # Undocumented method tagging
 for k, v in mapdata['sdk_method_iam_mappings'].items():
