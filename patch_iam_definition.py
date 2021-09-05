@@ -48,10 +48,11 @@ while i < len(iam_def):
                     iam_def[i]['conditions'].append(merge_condition)
 
             # merge privileges
-            k = 0
-            while k < len(iam_def[i]['privileges']):
+            privileges_length = len(iam_def[i]['privileges'])
+            for merge_privilege in iam_def[j]['privileges']:
                 found = False
-                for merge_privilege in iam_def[j]['privileges']:
+                k = 0
+                while k < privileges_length:
                     if iam_def[i]['privileges'][k]['privilege'] == merge_privilege['privilege']:
                         for merge_resource_type in merge_privilege['resource_types']:
                             found2 = False
@@ -63,22 +64,29 @@ while i < len(iam_def):
                                 iam_def[i]['privileges'][k]['resource_types'].append(merge_resource_type)
                         found = True
                         break
+                    k += 1
                 if not found:
                     iam_def[i]['privileges'].append(merge_privilege)
-                k += 1
 
             # merge resources
-            k = 0
-            while k < len(iam_def[i]['resources']):
+            resources_length = len(iam_def[i]['resources'])
+            for merge_resource in iam_def[j]['resources']:
                 found = False
-                for merge_resource in iam_def[j]['resources']:
-                    if iam_def[i]['resources'][k]['arn'] == merge_resource['arn']:
+                k = 0
+                while k < resources_length:
+                    if iam_def[i]['resources'][k]['resource'] == merge_resource['resource']:
+
+                        #tmp
+                        if merge_resource['resource'] == 'subscriptionDefinition':
+                            print(merge_resource)
+                        ####
+
                         iam_def[i]['resources'][k]['condition_keys'] = list(set(iam_def[i]['resources'][k]['condition_keys'] + merge_resource['condition_keys']))
                         found = True
                         break
+                    k += 1
                 if not found:
                     iam_def[i]['resources'].append(merge_resource)
-                k += 1
 
             print("Merged " + iam_def[j]['service_name'] + " (" + iam_def[j]['prefix'] + ")")
             iam_def.pop(j)
