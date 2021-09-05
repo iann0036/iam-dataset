@@ -62,7 +62,10 @@ while i < len(iam_def):
                                     break
                             if not found2:
                                 iam_def[i]['privileges'][k]['resource_types'].append(merge_resource_type)
-                                iam_def[i]['privileges'][k]['resource_types'].sort(key=lambda x: "zzz" if x['resource_type'] == "" else x['resource_type'])
+                        for l in range(len(iam_def[i]['privileges'][k]['resource_types'])): # send empty to end always
+                            if iam_def[i]['privileges'][k]['resource_types'][l]['resource_type'] == "":
+                                iam_def[i]['privileges'][k]['resource_types'].append(iam_def[i]['privileges'][k]['resource_types'][l])
+                                iam_def[i]['privileges'][k]['resource_types'].pop(l)
                         found = True
                         break
                     k += 1
