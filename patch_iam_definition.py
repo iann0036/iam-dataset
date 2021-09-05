@@ -9,6 +9,7 @@ mapdata = {}
 with open("map.json", "r") as f:
     mapdata = json.loads(f.read())
 
+# Undocumented roots
 undocumented_roots = [
     {
         "conditions": [],
@@ -18,7 +19,6 @@ undocumented_roots = [
         "service_name": "Amazon FinSpace"
     }
 ]
-
 for root in undocumented_roots:
     found = False
     for resource in iam_def:
@@ -31,10 +31,20 @@ for root in undocumented_roots:
                 iam_def.insert(i, root)
                 break
 
+# APIGW Merge
+for i in range(len(iam_def)):
+    if iam_def[i]['service_name'] == 'Amazon API Gateway Management V2':
+        iam_def.pop(i)
+        break
+
+# Renames
 for i in range(len(iam_def)):
     if iam_def[i]['prefix'] == 'rds':
         iam_def[i]['service_name'] = 'Amazon RDS, Neptune & DocumentDB'
+    if iam_def[i]['prefix'] == 'apigateway':
+        iam_def[i]['service_name'] = 'Amazon API Gateway Management'
 
+# Undocumented method tagging
 for k, v in mapdata['sdk_method_iam_mappings'].items():
     for mappingitem in v:
         if 'undocumented' in mappingitem:
