@@ -26,7 +26,14 @@ for root in undocumented_roots:
             found = True
 
     if not found:
-        iam_def.append(root)
+        for i in range(len(iam_def)):
+            if iam_def[i]['prefix'] > root['prefix']:
+                iam_def.insert(i, root)
+                break
+
+for i in range(len(iam_def)):
+    if iam_def[i]['prefix'] == 'rds':
+        iam_def[i]['service_name'] = 'Amazon RDS, Neptune & DocumentDB'
 
 for k, v in mapdata['sdk_method_iam_mappings'].items():
     for mappingitem in v:
