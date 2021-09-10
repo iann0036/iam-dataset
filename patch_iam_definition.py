@@ -120,6 +120,8 @@ for i in range(len(iam_def)):
         iam_def[i]['service_name'] = 'AWS DataSync'
     if iam_def[i]['prefix'] == 'backup-storage':
         iam_def[i]['service_name'] = 'AWS Backup Storage'
+    if iam_def[i]['prefix'] == 'es':
+        iam_def[i]['service_name'] = 'Amazon OpenSearch Service (successor to Amazon Elasticsearch Service)'
 
 # Undocumented method tagging
 for k, v in mapdata['sdk_method_iam_mappings'].items():
