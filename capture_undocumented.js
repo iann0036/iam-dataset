@@ -8,27 +8,51 @@ AWS.config.credentials = credentials;
 AWS.config.region = 'us-east-1';
 
 var long_undocumented_test_list = `
+APIGateway.CreateAuthorizer {3} - apigateway
+APIGateway.CreateDocumentationPart {3} - apigateway
+APIGateway.ImportRestApi {3} - apigateway
+APIGateway.PutRestApi {3} - apigateway
+APIGateway.TagResource {3} - apigateway
+APIGateway.UpdateRestApi {3} - apigateway
 CognitoIdentityServiceProvider.RevokeToken {3} - cognitoidp
 DirectoryService.DescribeClientAuthenticationSettings {3} - ds
-S3Control.CreateMultiRegionAccessPoint {3} - s3
-S3Control.DeleteMultiRegionAccessPoint {3} - s3
-S3Control.DescribeMultiRegionAccessPointOperation {3} - s3
-S3Control.GetMultiRegionAccessPoint {3} - s3
-S3Control.GetMultiRegionAccessPointPolicy {3} - s3
-S3Control.GetMultiRegionAccessPointPolicyStatus {3} - s3
-S3Control.ListMultiRegionAccessPoints {3} - s3
-S3Control.PutMultiRegionAccessPointPolicy {3} - s3
+DynamoDB.DescribeEndpoints {3} - dynamodb
+EC2.GetVpnConnectionDeviceSampleConfiguration {3} - ec2
+EC2.GetVpnConnectionDeviceTypes {3} - ec2
+Iot.PutVerificationStateOnViolation {3} - iot
+WorkSpaces.CreateUpdatedWorkspaceImage {3} - workspaces
+SageMaker.CreateStudioLifecycleConfig {3} - sagemaker
+SageMaker.RetryPipelineExecution {3} - sagemaker
+WorkMail.DeleteMobileDeviceAccessOverride {3} - workmail
+WorkMail.GetMobileDeviceAccessOverride {3} - workmail
+WorkMail.ListMobileDeviceAccessOverrides {3} - workmail
+WorkMail.PutMobileDeviceAccessOverride {3} - workmail
 TranscribeService.ListTagsForResource {3} - transcribe
 TranscribeService.TagResource {3} - transcribe
 TranscribeService.UntagResource {3} - transcribe
-Chime.StartMeetingTranscription {3} - chime
-Chime.StopMeetingTranscription {3} - chime
+MediaTailor.ConfigureLogsForPlaybackConfiguration {3} - mediatailor
+EKS.RegisterCluster {3} - eks
+ApiGatewayV2.CreateAuthorizer {3} - apigateway
+ApiGatewayV2.CreateVpcLink {3} - apigateway
 WAFV2.GetManagedRuleSet {3} - wafv2
 WAFV2.ListAvailableManagedRuleGroupVersions {3} - wafv2
 WAFV2.ListManagedRuleSets {3} - wafv2
 WAFV2.PutManagedRuleSetVersions {3} - wafv2
 WAFV2.UpdateManagedRuleSetVersionExpiryDate {3} - wafv2
 Outposts.CreateOrder {3} - outposts
+LexModelsV2.ListAggregatedUtterances {3} - lex
+CloudControl.CancelResourceRequest {3} - cloudcontrol
+CloudControl.CreateResource {3} - cloudcontrol
+CloudControl.DeleteResource {3} - cloudcontrol
+CloudControl.GetResource {3} - cloudcontrol
+CloudControl.GetResourceRequestStatus {3} - cloudcontrol
+CloudControl.ListResourceRequests {3} - cloudcontrol
+CloudControl.ListResources {3} - cloudcontrol
+CloudControl.UpdateResource {3} - cloudcontrol
+SSMContacts.GetContactPolicy {1}
+SSMContacts.ListTagsForResource {1}
+SSMContacts.TagResource {1}
+SSMContacts.UntagResource {1}
 `;
 
 var found_permissions = [];
