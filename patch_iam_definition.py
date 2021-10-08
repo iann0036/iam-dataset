@@ -2,12 +2,14 @@ import os
 import json
 import time
 
+print("Loading IAM data")
 time.sleep(1)
 
 iam_def = []
 with open("js/iam_definition.json", "r") as f:
     iam_def = json.loads(f.read())
 
+print("Loading map data")
 time.sleep(1)
 
 mapdata = {}
@@ -36,6 +38,7 @@ for root in undocumented_roots:
                 iam_def.insert(i, root)
                 break
 
+print("Merging APIGW")
 time.sleep(1)
 
 # APIGW Merge
@@ -99,6 +102,7 @@ while i < len(iam_def):
         j += 1
     i += 1
 
+print("Service renames")
 time.sleep(1)
 
 # Renames
@@ -126,6 +130,7 @@ for i in range(len(iam_def)):
     if iam_def[i]['prefix'] == 'es':
         iam_def[i]['service_name'] = 'Amazon OpenSearch Service (successor to Amazon Elasticsearch Service)'
 
+print("Undocumented method tagging")
 time.sleep(1)
 
 # Undocumented method tagging
@@ -159,6 +164,7 @@ for k, v in mapdata['sdk_method_iam_mappings'].items():
 
                         iam_def[i]['privileges'].sort(key=lambda x: x['privilege'])
 
+print("Outputting")
 time.sleep(1)
 
 with open("iam_definition.json", "w") as f:
