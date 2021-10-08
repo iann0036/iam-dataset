@@ -1,35 +1,42 @@
 import os
 import json
+import time
+
+time.sleep(1)
 
 iam_def = []
 with open("js/iam_definition.json", "r") as f:
     iam_def = json.loads(f.read())
+
+time.sleep(1)
 
 mapdata = {}
 with open("map.json", "r") as f:
     mapdata = json.loads(f.read())
 
 # Undocumented roots
-# undocumented_roots = [
-#     {
-#         "conditions": [],
-#         "prefix": "finspace",
-#         "privileges": [],
-#         "resources": [],
-#         "service_name": "Amazon FinSpace"
-#     }
-# ]
-# for root in undocumented_roots:
-#     found = False
-#     for resource in iam_def:
-#         if resource["prefix"] == root["prefix"]:
-#             found = True
+undocumented_roots = [
+    {
+        "conditions": [],
+        "prefix": "finspace",
+        "privileges": [],
+        "resources": [],
+        "service_name": "Amazon FinSpace"
+    }
+]
+for root in undocumented_roots:
+    found = False
+    for resource in iam_def:
+        if resource["prefix"] == root["prefix"]:
+            found = True
 
-#     if not found:
-#         for i in range(len(iam_def)):
-#             if iam_def[i]['prefix'] > root['prefix']:
-#                 iam_def.insert(i, root)
-#                 break
+    if not found:
+        for i in range(len(iam_def)):
+            if iam_def[i]['prefix'] > root['prefix']:
+                iam_def.insert(i, root)
+                break
+
+time.sleep(1)
 
 # APIGW Merge
 i = 0
@@ -79,12 +86,6 @@ while i < len(iam_def):
                 k = 0
                 while k < resources_length:
                     if iam_def[i]['resources'][k]['resource'] == merge_resource['resource']:
-
-                        #tmp
-                        if merge_resource['resource'] == 'subscriptionDefinition':
-                            print(merge_resource)
-                        ####
-
                         iam_def[i]['resources'][k]['condition_keys'] = list(set(iam_def[i]['resources'][k]['condition_keys'] + merge_resource['condition_keys']))
                         found = True
                         break
@@ -97,6 +98,8 @@ while i < len(iam_def):
             j -= 1
         j += 1
     i += 1
+
+time.sleep(1)
 
 # Renames
 for i in range(len(iam_def)):
@@ -122,6 +125,8 @@ for i in range(len(iam_def)):
         iam_def[i]['service_name'] = 'AWS Backup Storage'
     if iam_def[i]['prefix'] == 'es':
         iam_def[i]['service_name'] = 'Amazon OpenSearch Service (successor to Amazon Elasticsearch Service)'
+
+time.sleep(1)
 
 # Undocumented method tagging
 for k, v in mapdata['sdk_method_iam_mappings'].items():
@@ -153,6 +158,8 @@ for k, v in mapdata['sdk_method_iam_mappings'].items():
                         })
 
                         iam_def[i]['privileges'].sort(key=lambda x: x['privilege'])
+
+time.sleep(1)
 
 with open("iam_definition.json", "w") as f:
     f.write(json.dumps(iam_def, indent=2, sort_keys=True))
