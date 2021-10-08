@@ -10,26 +10,26 @@ with open("map.json", "r") as f:
     mapdata = json.loads(f.read())
 
 # Undocumented roots
-undocumented_roots = [
-    {
-        "conditions": [],
-        "prefix": "finspace",
-        "privileges": [],
-        "resources": [],
-        "service_name": "Amazon FinSpace"
-    }
-]
-for root in undocumented_roots:
-    found = False
-    for resource in iam_def:
-        if resource["prefix"] == root["prefix"]:
-            found = True
+# undocumented_roots = [
+#     {
+#         "conditions": [],
+#         "prefix": "finspace",
+#         "privileges": [],
+#         "resources": [],
+#         "service_name": "Amazon FinSpace"
+#     }
+# ]
+# for root in undocumented_roots:
+#     found = False
+#     for resource in iam_def:
+#         if resource["prefix"] == root["prefix"]:
+#             found = True
 
-    if not found:
-        for i in range(len(iam_def)):
-            if iam_def[i]['prefix'] > root['prefix']:
-                iam_def.insert(i, root)
-                break
+#     if not found:
+#         for i in range(len(iam_def)):
+#             if iam_def[i]['prefix'] > root['prefix']:
+#                 iam_def.insert(i, root)
+#                 break
 
 # APIGW Merge
 i = 0
