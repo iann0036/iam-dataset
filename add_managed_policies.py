@@ -23,7 +23,9 @@ PRIVESC_ACTIONS = [ # https://cloudsplaining.readthedocs.io/en/latest/glossary/p
     "iam:CreateVirtualMFADevice",
     "iam:ResyncMFADevice",
     "iam:EnableMFADevice",
-    "glue:UpdateDevEndpoint"
+    "glue:UpdateDevEndpoint",
+    "codestar:CreateProject",
+    "codestar:AssociateTeamMember"
 ]
 
 RESEXPOSURE_ACTIONS = [ # https://cloudsplaining.readthedocs.io/en/latest/glossary/privilege-escalation/
