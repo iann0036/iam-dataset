@@ -357,7 +357,7 @@ CREDEXPOSURE_ACTIONS = [ # https://cloudsplaining.readthedocs.io/en/latest/gloss
 ]
 
 iam_def = []
-with open("js/iam_definition.json", "r") as f:
+with open("iam_definition.json", "r") as f:
     iam_def = json.loads(f.read())
 
 allactions = {}
@@ -391,6 +391,7 @@ for policyname in os.listdir("MAMIP/policies/"):
     resource_exposure = False
     credentials_exposure = False
     malformed = False
+    undocumented = False
     if not isinstance(policy['PolicyVersion']['Document']['Statement'], list):
         policy['PolicyVersion']['Document']['Statement'] = [policy['PolicyVersion']['Document']['Statement']]
 
@@ -423,6 +424,9 @@ for policyname in os.listdir("MAMIP/policies/"):
 
                         if potentialaction in CREDEXPOSURE_ACTIONS:
                             credentials_exposure = True
+
+                        if allactions[potentialaction] == "Unknown":
+                            undocumented = True
 
                         effective_actions.append({
                             'action': action,
@@ -508,7 +512,8 @@ for policyname in os.listdir("MAMIP/policies/"):
         'access_levels': access_levels,
         'privesc': privesc,
         'resource_exposure': resource_exposure,
-        'credentials_exposure': credentials_exposure
+        'credentials_exposure': credentials_exposure,
+        'undocumented_actions': undocumented
     })
 
     detailed_policy = {
@@ -523,9 +528,9 @@ for policyname in os.listdir("MAMIP/policies/"):
         'privesc': privesc,
         'resource_exposure': resource_exposure,
         'credentials_exposure': credentials_exposure,
+        'undocumented_actions': undocumented,
         'document': policy['PolicyVersion']['Document'],
-        'effective_actions': effective_actions,
-        'unknown_actions': unknown_actions
+        'effective_actions': effective_actions
     }
 
     with open("managedpolicies/{}.json".format(policyname), "w") as f:
