@@ -535,9 +535,9 @@ for policyname in os.listdir("MAMIP/policies/"):
     }
 
     with open("managedpolicies/{}.json".format(policyname), "w") as f:
-        f.write(json.dumps(detailed_policy))
+        f.write(json.dumps(detailed_policy, indent=2, sort_keys=True))
 
 with open("managed_policies.json", "w") as f:
     f.write(json.dumps({
         "policies": policies
-    }))
+    }, indent=2, sort_keys=True))

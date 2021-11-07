@@ -164,6 +164,12 @@ for k, v in mapdata['sdk_method_iam_mappings'].items():
 
                         iam_def[i]['privileges'].sort(key=lambda x: x['privilege'])
 
+# Sort condition keys
+print("Sorting condition keys")
+for i in range(len(iam_def)):
+    for j in range(len(iam_def[i]['resources'])):
+        iam_def[i]['resources'][j]['condition_keys'].sort()
+
 print("Outputting")
 time.sleep(1)
 
