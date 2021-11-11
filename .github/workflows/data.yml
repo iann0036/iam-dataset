@@ -12,6 +12,17 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v1
+      - name: Azure Login
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+      - name: Azure CLI script
+        uses: azure/CLI@v1
+        with:
+          azcliversion: 2.0.72
+          inlineScript: |
+            az account show
+            az provider operation list > azure-provider-operations.json
       - name: Manual
         run: |
           curl https://raw.githubusercontent.com/duo-labs/parliament/main/utils/update_iam_data.py -o update_iam_data.py
