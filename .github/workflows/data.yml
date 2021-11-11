@@ -16,15 +16,10 @@ jobs:
         uses: azure/login@v1
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
-      - name: Azure CLI script
-        uses: azure/CLI@v1
-        with:
-          azcliversion: 2.0.72
-          inlineScript: |
-            az account show
-            az provider operation list > azure-provider-operations.json
       - name: Manual
         run: |
+          az account show
+          az provider operation list > azure-provider-operations.json
           curl https://raw.githubusercontent.com/duo-labs/parliament/main/utils/update_iam_data.py -o update_iam_data.py
           pip3 install bs4 requests
           python3 update_iam_data.py > js/iam_definition.json
