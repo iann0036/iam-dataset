@@ -24,10 +24,10 @@ jobs:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
       - name: Manual
         run: |
-          mkdir -p gcloud/roles/
-          gcloud iam roles list --show-deleted --format json | jq -r '.[]|[.name] | @tsv' |
+          mkdir -p gcp/roles/
+          gcloud iam roles list --show-deleted --format json | jq -r '.[]|[.name] | @tsv | split("/")[-1]' |
           while IFS=$'\t' read -r name; do
-              gcloud iam roles describe "$name" --format json > gcloud/$name.json
+              gcloud iam roles describe "$name" --format json > gcp/roles/$name.json
               echo "Wrote $name.json"
           done
           az provider operation list > azure-provider-operations.json
