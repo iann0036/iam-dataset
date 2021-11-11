@@ -12,12 +12,25 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v1
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@master
+        with:
+          project_id: ${{ secrets.GCP_PROJECT_ID }}
+          service_account_key: ${{ secrets.GCP_SA_KEY }}
+          export_default_credentials: true
       - name: Azure Login
         uses: azure/login@v1
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
       - name: Manual
         run: |
+          gcloud info
+          mkdir -p gcloud/roles/
+          gcloud iam roles list --show-deleted --format json | jq -r '.[]|[.name] | @tsv' |
+          while IFS=$'\t' read -r name; do
+              gcloud iam roles describe "$name" --format json > gcloud/$name.json
+              echo "Wrote $name.json"
+          done
           az provider operation list > azure-provider-operations.json
           az role definition list --query '[?roleType == `BuiltInRole`].{assignableScopes: assignableScopes, description: description, permissions: permissions, roleName: roleName, roleType: roleType, type: type}' > azure-built-in-roles.json
           curl https://raw.githubusercontent.com/duo-labs/parliament/main/utils/update_iam_data.py -o update_iam_data.py
