@@ -25,10 +25,10 @@ jobs:
       - name: Manual
         run: |
           mkdir -p gcp/roles/
-          gcloud iam roles list --show-deleted --format json | jq -r '.[]|[.name] | @tsv | split("/")[-1]' |
-          while IFS=$'\t' read -r name; do
-              gcloud iam roles describe "$name" --format json > gcp/roles/$name.json
-              echo "Wrote $name.json"
+          gcloud iam roles list --show-deleted --format json | jq -r '.[]|[.name,(.name | split("/")[-1])] | @tsv' |
+          while IFS=$'\t' read -r name shortname; do
+              gcloud iam roles describe "$name" --format json > gcp/roles/$shortname.json
+              echo "Wrote $shortname.json"
           done
           az provider operation list > azure-provider-operations.json
           az role definition list --query '[?roleType == `BuiltInRole`].{assignableScopes: assignableScopes, description: description, permissions: permissions, roleName: roleName, roleType: roleType, type: type}' > azure-built-in-roles.json
