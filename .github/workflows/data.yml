@@ -25,17 +25,18 @@ jobs:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
       - name: Manual
         run: |
+          curl https://raw.githubusercontent.com/duo-labs/parliament/main/utils/update_iam_data.py -o update_iam_data.py
+          pip3 install bs4 requests
           mkdir -p gcp/roles/
           gcloud iam roles list --show-deleted --format json | jq -r '.[]|[.name,(.name | split("/")[-1])] | @tsv' |
           while IFS=$'\t' read -r name shortname; do
               echo "Writing $shortname.json"
               gcloud iam roles describe "$name" --format json > gcp/roles/$shortname.json || echo "Failure to write $shortname.json"
           done
+          python3 gcp_get_permissions.py
           rm gcreds
           az provider operation list > azure-provider-operations.json
           az role definition list --query '[?roleType == `BuiltInRole`].{assignableScopes: assignableScopes, description: description, permissions: permissions, roleName: roleName, roleType: roleType, type: type}' > azure-built-in-roles.json
-          curl https://raw.githubusercontent.com/duo-labs/parliament/main/utils/update_iam_data.py -o update_iam_data.py
-          pip3 install bs4 requests
           python3 update_iam_data.py > js/iam_definition.json
           sleep 1
           python3 patch_iam_definition.py
