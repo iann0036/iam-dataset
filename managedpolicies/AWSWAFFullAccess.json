@@ -6,7 +6,7 @@
     "Write",
     "Permissions management"
   ],
-  "createdate": "2020-10-01T20:13:54Z",
+  "createdate": "2021-11-15T19:33:27Z",
   "credentials_exposure": false,
   "deprecated": false,
   "document": {
@@ -21,7 +21,43 @@
           "appsync:SetWebACL"
         ],
         "Effect": "Allow",
-        "Resource": "*"
+        "Resource": "*",
+        "Sid": "AllowUseOfAWSWAF"
+      },
+      {
+        "Action": [
+          "logs:CreateLogDelivery",
+          "logs:DeleteLogDelivery"
+        ],
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:s3:::aws-waf-logs-*",
+          "arn:aws:logs:*:*:aws-waf-logs-*"
+        ],
+        "Sid": "AllowLogDeliverySubscription"
+      },
+      {
+        "Action": [
+          "s3:PutBucketPolicy",
+          "s3:GetBucketPolicy"
+        ],
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:s3:::aws-waf-logs-*"
+        ],
+        "Sid": "GrantLogDeliveryPermissionForS3Bucket"
+      },
+      {
+        "Action": [
+          "logs:PutResourcePolicy",
+          "logs:DescribeResourcePolicies",
+          "logs:DescribeLogGroups"
+        ],
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:logs:*:*:aws-waf-logs-*"
+        ],
+        "Sid": "GrantLogDeliveryPermissionForCloudWatchLogGroup"
       }
     ],
     "Version": "2012-10-17"
@@ -1889,6 +1925,69 @@
       "effective_action": "appsync:SetWebACL",
       "privesc": false,
       "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "logs:CreateLogDelivery",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "logs:CreateLogDelivery",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "logs:DeleteLogDelivery",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "logs:DeleteLogDelivery",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Permissions management",
+      "action": "s3:PutBucketPolicy",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "s3:PutBucketPolicy",
+      "privesc": false,
+      "resource_exposure": true
+    },
+    {
+      "access_level": "Read",
+      "action": "s3:GetBucketPolicy",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "s3:GetBucketPolicy",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Permissions management",
+      "action": "logs:PutResourcePolicy",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "logs:PutResourcePolicy",
+      "privesc": false,
+      "resource_exposure": true
+    },
+    {
+      "access_level": "List",
+      "action": "logs:DescribeResourcePolicies",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "logs:DescribeResourcePolicies",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "logs:DescribeLogGroups",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "logs:DescribeLogGroups",
+      "privesc": false,
+      "resource_exposure": false
     }
   ],
   "malformed": false,
@@ -1897,6 +1996,6 @@
   "resource_exposure": true,
   "undocumented_actions": false,
   "unknown_actions": [],
-  "updatedate": "2020-10-01T20:13:54+00:00",
-  "version": "v5"
+  "updatedate": "2021-11-15T19:33:27+00:00",
+  "version": "v6"
 }
