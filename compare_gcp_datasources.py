@@ -9,7 +9,10 @@ with open("gcp/permissions.json", "r") as f:
 
 for filename in os.listdir("gcp/roles/"):
     with open("gcp/roles/" + filename) as f:
-        role_json = json.loads(f.read())
+        print(filename)
+        data = f.read()
+        print(data)
+        role_json = json.loads(data)
         if 'includedPermissions' not in role_json:
             role_json['includedPermissions'] = []
             print(filename)
