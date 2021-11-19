@@ -5,7 +5,7 @@
     "Tagging",
     "Write"
   ],
-  "createdate": "2021-06-30T18:23:37Z",
+  "createdate": "2021-11-18T19:37:52Z",
   "credentials_exposure": false,
   "deprecated": false,
   "document": {
@@ -110,6 +110,51 @@
         "Resource": [
           "*"
         ]
+      },
+      {
+        "Action": [
+          "secretsmanager:CreateSecret"
+        ],
+        "Effect": "Allow",
+        "Resource": "arn:aws:secretsmanager:*:*:secret:AwsGlueDataBrew-*"
+      },
+      {
+        "Action": [
+          "kms:GenerateRandom"
+        ],
+        "Effect": "Allow",
+        "Resource": "*"
+      },
+      {
+        "Action": [
+          "secretsmanager:GetSecretValue"
+        ],
+        "Condition": {
+          "ForAnyValue:StringEquals": {
+            "aws:CalledVia": [
+              "databrew.amazonaws.com"
+            ]
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:secretsmanager:*:*:secret:databrew!default-*"
+      },
+      {
+        "Action": [
+          "secretsmanager:CreateSecret"
+        ],
+        "Condition": {
+          "ForAnyValue:StringEquals": {
+            "aws:CalledVia": [
+              "databrew.amazonaws.com"
+            ]
+          },
+          "StringLike": {
+            "secretsmanager:Name": "databrew!default"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:secretsmanager:*:*:secret:databrew!default-*"
       },
       {
         "Action": [
@@ -873,6 +918,57 @@
     },
     {
       "access_level": "Write",
+      "action": "secretsmanager:CreateSecret",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "secretsmanager:CreateSecret",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "kms:GenerateRandom",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "kms:GenerateRandom",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "secretsmanager:GetSecretValue",
+      "condition": {
+        "ForAnyValue:StringEquals": {
+          "aws:CalledVia": [
+            "databrew.amazonaws.com"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "effective_action": "secretsmanager:GetSecretValue",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "secretsmanager:CreateSecret",
+      "condition": {
+        "ForAnyValue:StringEquals": {
+          "aws:CalledVia": [
+            "databrew.amazonaws.com"
+          ]
+        },
+        "StringLike": {
+          "secretsmanager:Name": "databrew!default"
+        }
+      },
+      "credentials_exposure": false,
+      "effective_action": "secretsmanager:CreateSecret",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
       "action": "iam:PassRole",
       "condition": {
         "StringEquals": {
@@ -893,6 +989,6 @@
   "resource_exposure": true,
   "undocumented_actions": false,
   "unknown_actions": [],
-  "updatedate": "2021-06-30T18:23:37+00:00",
-  "version": "v6"
+  "updatedate": "2021-11-18T19:37:52+00:00",
+  "version": "v7"
 }
