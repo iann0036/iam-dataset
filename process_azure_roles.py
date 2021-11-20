@@ -71,7 +71,8 @@ for raw_role in raw_roles:
         'name': raw_role['roleName'],
         'description': raw_role['description'],
         'permittedActions': permitted_actions,
-        'permittedDataActions': permitted_data_actions
+        'permittedDataActions': permitted_data_actions,
+        'rawPermissions': raw_role['permissions']
     })
 
 with open("azure/built-in-roles.json", "w") as f:
