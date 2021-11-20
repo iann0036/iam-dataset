@@ -22,9 +22,11 @@ for raw_role in raw_roles:
 
     permitted_actions = []
     permitted_data_actions = []
+    has_unknown = False
     
     for permission in raw_role['permissions']:
         for action in permission['actions']:
+            matched = False
             matchexpression = "^" + action.replace(".", "\\.").replace("*", ".*").replace("?", ".{{1}}") + "$"
             for provider in provider_ops:
                 for operation in provider['operations']:
@@ -36,9 +38,24 @@ for raw_role in raw_roles:
                             'providerName': provider['name'],
                             'providerDisplayName': provider['displayName']
                         })
+                        matched = True
+                for resource_type in provider['resourceTypes']:
+                    for operation in resource_type['operations']:
+                        if not operation['isDataAction'] and re.search(matchexpression.lower(), operation['name'].lower()):
+                            permitted_actions.append({
+                                'name': operation['name'],
+                                'description': operation['description'],
+                                'displayName': operation['displayName'],
+                                'providerName': provider['name'],
+                                'providerDisplayName': provider['displayName']
+                            })
+                            matched = True
+            if not matched:
+                has_unknown = True
     
     for permission in raw_role['permissions']:
         for action in permission['dataActions']:
+            matched = False
             matchexpression = "^" + action.replace(".", "\\.").replace("*", ".*").replace("?", ".{{1}}") + "$"
             for provider in provider_ops:
                 for operation in provider['operations']:
@@ -50,29 +67,62 @@ for raw_role in raw_roles:
                             'providerName': provider['name'],
                             'providerDisplayName': provider['displayName']
                         })
+                        matched = True
+                for resource_type in provider['resourceTypes']:
+                    for operation in resource_type['operations']:
+                        if operation['isDataAction'] and re.search(matchexpression.lower(), operation['name'].lower()):
+                            permitted_data_actions.append({
+                                'name': operation['name'],
+                                'description': operation['description'],
+                                'displayName': operation['displayName'],
+                                'providerName': provider['name'],
+                                'providerDisplayName': provider['displayName']
+                            })
+                            matched = True
+            if not matched:
+                has_unknown = True
     
     for permission in raw_role['permissions']:
         for action in permission['notActions']:
+            matched = False
             matchexpression = "^" + action.replace(".", "\\.").replace("*", ".*").replace("?", ".{{1}}") + "$"
             for provider in provider_ops:
                 for operation in provider['operations']:
                     if not operation['isDataAction'] and re.search(matchexpression.lower(), operation['name'].lower()):
                         permitted_actions = list(filter(lambda x: x['name'].lower() != operation['name'].lower(), permitted_actions))
+                        matched = True
+                for resource_type in provider['resourceTypes']:
+                    for operation in resource_type['operations']:
+                        if not operation['isDataAction'] and re.search(matchexpression.lower(), operation['name'].lower()):
+                            permitted_actions = list(filter(lambda x: x['name'].lower() != operation['name'].lower(), permitted_actions))
+                            matched = True
+            if not matched:
+                has_unknown = True
     
     for permission in raw_role['permissions']:
         for action in permission['notDataActions']:
+            matched = False
             matchexpression = "^" + action.replace(".", "\\.").replace("*", ".*").replace("?", ".{{1}}") + "$"
             for provider in provider_ops:
                 for operation in provider['operations']:
                     if operation['isDataAction'] and re.search(matchexpression.lower(), operation['name'].lower()):
                         permitted_data_actions = list(filter(lambda x: x['name'].lower() != operation['name'].lower(), permitted_data_actions))
+                        matched = True
+                for resource_type in provider['resourceTypes']:
+                    for operation in resource_type['operations']:
+                        if operation['isDataAction'] and re.search(matchexpression.lower(), operation['name'].lower()):
+                            permitted_data_actions = list(filter(lambda x: x['name'].lower() != operation['name'].lower(), permitted_data_actions))
+                            matched = True
+            if not matched:
+                has_unknown = True
 
     result['roles'].append({
         'name': raw_role['roleName'],
         'description': raw_role['description'],
         'permittedActions': permitted_actions,
         'permittedDataActions': permitted_data_actions,
-        'rawPermissions': raw_role['permissions']
+        'rawPermissions': raw_role['permissions'],
+        'hasUnknown': has_unknown
     })
 
 with open("azure/built-in-roles.json", "w") as f:
