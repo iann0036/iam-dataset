@@ -9,13 +9,11 @@ with open("gcp/permissions.json", "r") as f:
 
 for filename in os.listdir("gcp/roles/"):
     with open("gcp/roles/" + filename) as f:
-        print(filename)
         data = f.read()
-        print(data)
         role_json = json.loads(data)
         if 'includedPermissions' not in role_json:
             role_json['includedPermissions'] = []
-            print(filename)
+            print("Permissionless: " + filename)
         for includedPermission in role_json['includedPermissions']:
             includedPermission = includedPermission.replace("/", "-")
             if includedPermission not in roles_json:
@@ -24,9 +22,23 @@ for filename in os.listdir("gcp/roles/"):
                 role_json['title'] = role_json['title'][:-len(" (v1)")]
             if role_json['title'].endswith(" (beta)"):
                 role_json['title'] = role_json['title'][:-len(" (beta)")]
+
+            undocumented = False
+            if includedPermission not in permissions_json:
+                undocumented = True
+            else:
+                found = False
+                for item in permissions_json[includedPermission]:
+                    if item['id'] == role_json['name']:
+                        found = True
+                        break
+                if not found:
+                    undocumented = True
+
             roles_json[includedPermission].append({
                 'id': role_json['name'],
-                'name': role_json['title']
+                'name': role_json['title'],
+                'undocumented': undocumented
             })
 
 for k in permissions_json.keys():
