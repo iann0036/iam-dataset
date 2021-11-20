@@ -43,7 +43,8 @@ jobs:
           python3 compare_gcp_datasources.py
           rm gcreds
           az provider operation list > azure/provider-operations.json
-          az role definition list --query '[?roleType == `BuiltInRole`].{assignableScopes: assignableScopes, description: description, permissions: permissions, roleName: roleName, roleType: roleType, type: type}' > azure/built-in-roles.json
+          az role definition list --query '[?roleType == `BuiltInRole`].{assignableScopes: assignableScopes, description: description, permissions: permissions, roleName: roleName, roleType: roleType, type: type}' > azure/built-in-roles-raw.json
+          python3 process_azure_roles.py > azure/built-in-roles.json
           python3 update_iam_data.py > js/iam_definition.json
           sleep 1
           python3 patch_iam_definition.py
