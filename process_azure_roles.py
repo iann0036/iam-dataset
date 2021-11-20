@@ -53,7 +53,7 @@ for raw_role in raw_roles:
                             matched = True
             if not action.startswith("Microsoft."):
                 has_external = True
-            elif not matched:
+            if not matched:
                 has_unknown = True
     
     for permission in raw_role['permissions']:
@@ -84,7 +84,7 @@ for raw_role in raw_roles:
                             matched = True
             if not action.startswith("Microsoft."):
                 has_external = True
-            elif not matched:
+            if not matched:
                 has_unknown = True
     
     for permission in raw_role['permissions']:
@@ -103,7 +103,7 @@ for raw_role in raw_roles:
                             matched = True
             if not action.startswith("Microsoft."):
                 has_external = True
-            elif not matched:
+            if not matched:
                 has_unknown = True
     
     for permission in raw_role['permissions']:
@@ -122,7 +122,7 @@ for raw_role in raw_roles:
                             matched = True
             if not action.startswith("Microsoft."):
                 has_external = True
-            elif not matched:
+            if not matched:
                 has_unknown = True
 
     result['roles'].append({
