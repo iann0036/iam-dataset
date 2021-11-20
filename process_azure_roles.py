@@ -51,7 +51,7 @@ for raw_role in raw_roles:
                                 'providerDisplayName': provider['displayName']
                             })
                             matched = True
-            if not action.startswith("Microsoft."):
+            if not action.lower().startswith("microsoft."):
                 has_external = True
             if not matched:
                 has_unknown = True
@@ -82,7 +82,7 @@ for raw_role in raw_roles:
                                 'providerDisplayName': provider['displayName']
                             })
                             matched = True
-            if not action.startswith("Microsoft."):
+            if not action.lower().startswith("microsoft."):
                 has_external = True
             if not matched:
                 has_unknown = True
@@ -101,7 +101,7 @@ for raw_role in raw_roles:
                         if not operation['isDataAction'] and re.search(matchexpression.lower(), operation['name'].lower()):
                             permitted_actions = list(filter(lambda x: x['name'].lower() != operation['name'].lower(), permitted_actions))
                             matched = True
-            if not action.startswith("Microsoft."):
+            if not action.lower().startswith("microsoft."):
                 has_external = True
             if not matched:
                 has_unknown = True
@@ -120,7 +120,7 @@ for raw_role in raw_roles:
                         if operation['isDataAction'] and re.search(matchexpression.lower(), operation['name'].lower()):
                             permitted_data_actions = list(filter(lambda x: x['name'].lower() != operation['name'].lower(), permitted_data_actions))
                             matched = True
-            if not action.startswith("Microsoft."):
+            if not action.lower().startswith("microsoft."):
                 has_external = True
             if not matched:
                 has_unknown = True
