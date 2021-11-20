@@ -3,9 +3,13 @@ import json
 
 permissions_json = {}
 roles_json = {}
+predefined_roles_json = {}
 
 with open("gcp/permissions.json", "r") as f:
     permissions_json = json.loads(f.read())
+
+with open("gcp/predefined_roles.json", "r") as f:
+    predefined_roles_json = json.loads(f.read())
 
 for filename in os.listdir("gcp/roles/"):
     with open("gcp/roles/" + filename) as f:
@@ -35,6 +39,11 @@ for filename in os.listdir("gcp/roles/"):
                 if not found:
                     undocumented = True
 
+            if undocumented:
+                for i in range(len(predefined_roles_json)):
+                    if predefined_roles_json[i]['name'] == role_json['name']:
+                        predefined_roles_json[i]['has_undocumented'] = True
+
             roles_json[includedPermission].append({
                 'id': role_json['name'],
                 'name': role_json['title'],
@@ -50,3 +59,5 @@ with open("gcp/permissions_sorted.json", "w") as f:
     f.write(json.dumps(permissions_json, sort_keys=True, indent=2))
 with open("gcp/role_permissions.json", "w") as f:
     f.write(json.dumps(roles_json, sort_keys=True, indent=2))
+with open("gcp/predefined_roles.json", "w") as f:
+    f.write(json.dumps(predefined_roles_json, sort_keys=True, indent=2))
