@@ -23,6 +23,7 @@ for raw_role in raw_roles:
     permitted_actions = []
     permitted_data_actions = []
     has_unknown = False
+    has_external = False
     
     for permission in raw_role['permissions']:
         for action in permission['actions']:
@@ -50,7 +51,9 @@ for raw_role in raw_roles:
                                 'providerDisplayName': provider['displayName']
                             })
                             matched = True
-            if not matched:
+            if not action.startswith("Microsoft."):
+                has_external = True
+            elif not matched:
                 has_unknown = True
     
     for permission in raw_role['permissions']:
@@ -79,7 +82,9 @@ for raw_role in raw_roles:
                                 'providerDisplayName': provider['displayName']
                             })
                             matched = True
-            if not matched:
+            if not action.startswith("Microsoft."):
+                has_external = True
+            elif not matched:
                 has_unknown = True
     
     for permission in raw_role['permissions']:
@@ -96,7 +101,9 @@ for raw_role in raw_roles:
                         if not operation['isDataAction'] and re.search(matchexpression.lower(), operation['name'].lower()):
                             permitted_actions = list(filter(lambda x: x['name'].lower() != operation['name'].lower(), permitted_actions))
                             matched = True
-            if not matched:
+            if not action.startswith("Microsoft."):
+                has_external = True
+            elif not matched:
                 has_unknown = True
     
     for permission in raw_role['permissions']:
@@ -113,7 +120,9 @@ for raw_role in raw_roles:
                         if operation['isDataAction'] and re.search(matchexpression.lower(), operation['name'].lower()):
                             permitted_data_actions = list(filter(lambda x: x['name'].lower() != operation['name'].lower(), permitted_data_actions))
                             matched = True
-            if not matched:
+            if not action.startswith("Microsoft."):
+                has_external = True
+            elif not matched:
                 has_unknown = True
 
     result['roles'].append({
@@ -122,7 +131,8 @@ for raw_role in raw_roles:
         'permittedActions': permitted_actions,
         'permittedDataActions': permitted_data_actions,
         'rawPermissions': raw_role['permissions'],
-        'hasUnknown': has_unknown
+        'hasUnknown': has_unknown,
+        'hasExternal': has_external
     })
 
 with open("azure/built-in-roles.json", "w") as f:
