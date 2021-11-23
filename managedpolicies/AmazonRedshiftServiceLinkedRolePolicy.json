@@ -2,9 +2,10 @@
   "access_levels": [
     "List",
     "Read",
+    "Tagging",
     "Write"
   ],
-  "createdate": "2021-11-15T06:41:10Z",
+  "createdate": "2021-11-22T21:08:22Z",
   "credentials_exposure": false,
   "deprecated": false,
   "document": {
@@ -51,6 +52,96 @@
           "arn:aws:logs:*:*:log-group:/aws/redshift/*:log-stream:*"
         ],
         "Sid": "EnableCreationAndManagementOfRedshiftCloudwatchLogStreams"
+      },
+      {
+        "Action": [
+          "ec2:AuthorizeSecurityGroupEgress",
+          "ec2:AuthorizeSecurityGroupIngress",
+          "ec2:UpdateSecurityGroupRuleDescriptionsEgress",
+          "ec2:ReplaceRouteTableAssociation",
+          "ec2:CreateRouteTable",
+          "ec2:AttachInternetGateway",
+          "ec2:UpdateSecurityGroupRuleDescriptionsIngress",
+          "ec2:AssociateRouteTable",
+          "ec2:RevokeSecurityGroupIngress",
+          "ec2:CreateRoute",
+          "ec2:CreateSecurityGroup",
+          "ec2:RevokeSecurityGroupEgress",
+          "ec2:ModifyVpcAttribute",
+          "ec2:CreateSubnet"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceTag/Purpose": "RedshiftMigrateToVpc"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:ec2:*:*:subnet/*",
+          "arn:aws:ec2:*:*:route-table/*",
+          "arn:aws:ec2:*:*:security-group/*",
+          "arn:aws:ec2:*:*:vpc/*",
+          "arn:aws:ec2:*:*:internet-gateway/*"
+        ]
+      },
+      {
+        "Action": [
+          "ec2:CreateSecurityGroup",
+          "ec2:CreateInternetGateway",
+          "ec2:CreateVpc",
+          "ec2:CreateRouteTable",
+          "ec2:CreateSubnet"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:RequestTag/Purpose": "RedshiftMigrateToVpc"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:ec2:*:*:subnet/*",
+          "arn:aws:ec2:*:*:route-table/*",
+          "arn:aws:ec2:*:*:security-group/*",
+          "arn:aws:ec2:*:*:vpc/*",
+          "arn:aws:ec2:*:*:internet-gateway/*"
+        ]
+      },
+      {
+        "Action": [
+          "ec2:CreateTags"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "ec2:CreateAction": [
+              "CreateVpc",
+              "CreateSecurityGroup",
+              "CreateSubnet",
+              "CreateInternetGateway",
+              "CreateRouteTable"
+            ]
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:ec2:*:*:subnet/*",
+          "arn:aws:ec2:*:*:route-table/*",
+          "arn:aws:ec2:*:*:security-group/*",
+          "arn:aws:ec2:*:*:vpc/*",
+          "arn:aws:ec2:*:*:internet-gateway/*"
+        ]
+      },
+      {
+        "Action": [
+          "ec2:DescribeVpcAttribute",
+          "ec2:DescribeSecurityGroups",
+          "ec2:DescribeInternetGateways",
+          "ec2:DescribeSecurityGroupRules",
+          "ec2:DescribeAvailabilityZones",
+          "ec2:DescribeNetworkAcls",
+          "ec2:DescribeRouteTables"
+        ],
+        "Effect": "Allow",
+        "Resource": "*"
       }
     ],
     "Version": "2012-10-17"
@@ -226,6 +317,335 @@
       "effective_action": "logs:GetLogEvents",
       "privesc": false,
       "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:AuthorizeSecurityGroupEgress",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/Purpose": "RedshiftMigrateToVpc"
+        }
+      },
+      "credentials_exposure": false,
+      "effective_action": "ec2:AuthorizeSecurityGroupEgress",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:AuthorizeSecurityGroupIngress",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/Purpose": "RedshiftMigrateToVpc"
+        }
+      },
+      "credentials_exposure": false,
+      "effective_action": "ec2:AuthorizeSecurityGroupIngress",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:UpdateSecurityGroupRuleDescriptionsEgress",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/Purpose": "RedshiftMigrateToVpc"
+        }
+      },
+      "credentials_exposure": false,
+      "effective_action": "ec2:UpdateSecurityGroupRuleDescriptionsEgress",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:ReplaceRouteTableAssociation",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/Purpose": "RedshiftMigrateToVpc"
+        }
+      },
+      "credentials_exposure": false,
+      "effective_action": "ec2:ReplaceRouteTableAssociation",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:CreateRouteTable",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/Purpose": "RedshiftMigrateToVpc"
+        }
+      },
+      "credentials_exposure": false,
+      "effective_action": "ec2:CreateRouteTable",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:AttachInternetGateway",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/Purpose": "RedshiftMigrateToVpc"
+        }
+      },
+      "credentials_exposure": false,
+      "effective_action": "ec2:AttachInternetGateway",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:UpdateSecurityGroupRuleDescriptionsIngress",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/Purpose": "RedshiftMigrateToVpc"
+        }
+      },
+      "credentials_exposure": false,
+      "effective_action": "ec2:UpdateSecurityGroupRuleDescriptionsIngress",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:AssociateRouteTable",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/Purpose": "RedshiftMigrateToVpc"
+        }
+      },
+      "credentials_exposure": false,
+      "effective_action": "ec2:AssociateRouteTable",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:RevokeSecurityGroupIngress",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/Purpose": "RedshiftMigrateToVpc"
+        }
+      },
+      "credentials_exposure": false,
+      "effective_action": "ec2:RevokeSecurityGroupIngress",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:CreateRoute",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/Purpose": "RedshiftMigrateToVpc"
+        }
+      },
+      "credentials_exposure": false,
+      "effective_action": "ec2:CreateRoute",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:CreateSecurityGroup",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/Purpose": "RedshiftMigrateToVpc"
+        }
+      },
+      "credentials_exposure": false,
+      "effective_action": "ec2:CreateSecurityGroup",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:RevokeSecurityGroupEgress",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/Purpose": "RedshiftMigrateToVpc"
+        }
+      },
+      "credentials_exposure": false,
+      "effective_action": "ec2:RevokeSecurityGroupEgress",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:ModifyVpcAttribute",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/Purpose": "RedshiftMigrateToVpc"
+        }
+      },
+      "credentials_exposure": false,
+      "effective_action": "ec2:ModifyVpcAttribute",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:CreateSubnet",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/Purpose": "RedshiftMigrateToVpc"
+        }
+      },
+      "credentials_exposure": false,
+      "effective_action": "ec2:CreateSubnet",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:CreateSecurityGroup",
+      "condition": {
+        "StringEquals": {
+          "aws:RequestTag/Purpose": "RedshiftMigrateToVpc"
+        }
+      },
+      "credentials_exposure": false,
+      "effective_action": "ec2:CreateSecurityGroup",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:CreateInternetGateway",
+      "condition": {
+        "StringEquals": {
+          "aws:RequestTag/Purpose": "RedshiftMigrateToVpc"
+        }
+      },
+      "credentials_exposure": false,
+      "effective_action": "ec2:CreateInternetGateway",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:CreateVpc",
+      "condition": {
+        "StringEquals": {
+          "aws:RequestTag/Purpose": "RedshiftMigrateToVpc"
+        }
+      },
+      "credentials_exposure": false,
+      "effective_action": "ec2:CreateVpc",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:CreateRouteTable",
+      "condition": {
+        "StringEquals": {
+          "aws:RequestTag/Purpose": "RedshiftMigrateToVpc"
+        }
+      },
+      "credentials_exposure": false,
+      "effective_action": "ec2:CreateRouteTable",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:CreateSubnet",
+      "condition": {
+        "StringEquals": {
+          "aws:RequestTag/Purpose": "RedshiftMigrateToVpc"
+        }
+      },
+      "credentials_exposure": false,
+      "effective_action": "ec2:CreateSubnet",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Tagging",
+      "action": "ec2:CreateTags",
+      "condition": {
+        "StringEquals": {
+          "ec2:CreateAction": [
+            "CreateVpc",
+            "CreateSecurityGroup",
+            "CreateSubnet",
+            "CreateInternetGateway",
+            "CreateRouteTable"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "effective_action": "ec2:CreateTags",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "ec2:DescribeVpcAttribute",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "ec2:DescribeVpcAttribute",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "ec2:DescribeSecurityGroups",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "ec2:DescribeSecurityGroups",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "ec2:DescribeInternetGateways",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "ec2:DescribeInternetGateways",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "ec2:DescribeSecurityGroupRules",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "ec2:DescribeSecurityGroupRules",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "ec2:DescribeAvailabilityZones",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "ec2:DescribeAvailabilityZones",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "ec2:DescribeNetworkAcls",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "ec2:DescribeNetworkAcls",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "ec2:DescribeRouteTables",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "ec2:DescribeRouteTables",
+      "privesc": false,
+      "resource_exposure": false
     }
   ],
   "malformed": false,
@@ -234,6 +654,6 @@
   "resource_exposure": false,
   "undocumented_actions": false,
   "unknown_actions": [],
-  "updatedate": "2021-11-15T06:41:10+00:00",
-  "version": "v4"
+  "updatedate": "2021-11-22T21:08:22+00:00",
+  "version": "v5"
 }
