@@ -3,10 +3,11 @@
     "List",
     "Read",
     "Tagging",
-    "Write"
+    "Write",
+    "Permissions management"
   ],
-  "createdate": "2021-02-18T07:48:38Z",
-  "credentials_exposure": false,
+  "createdate": "2021-11-26T19:32:02Z",
+  "credentials_exposure": true,
   "deprecated": false,
   "document": {
     "Statement": [
@@ -14,10 +15,29 @@
         "Action": [
           "s3:GetObject",
           "s3:PutObject",
-          "s3:ListBucket"
+          "s3:ListBucket",
+          "s3:CreateBucket",
+          "s3:PutBucketPublicAccessBlock",
+          "s3:PutBucketPolicy"
         ],
         "Effect": "Allow",
         "Resource": "arn:aws:s3:::amazon-braket-*"
+      },
+      {
+        "Action": [
+          "ecr:GetDownloadUrlForLayer",
+          "ecr:BatchGetImage",
+          "ecr:BatchCheckLayerAvailability"
+        ],
+        "Effect": "Allow",
+        "Resource": "arn:aws:ecr:*:*:repository/amazon-braket*"
+      },
+      {
+        "Action": [
+          "ecr:GetAuthorizationToken"
+        ],
+        "Effect": "Allow",
+        "Resource": "*"
       },
       {
         "Action": [
@@ -30,7 +50,7 @@
           "logs:FilterLogEvents"
         ],
         "Effect": "Allow",
-        "Resource": "arn:aws:logs:*:*:log-group:/aws/braket:*"
+        "Resource": "arn:aws:logs:*:*:log-group:/aws/braket*"
       },
       {
         "Action": [
@@ -109,6 +129,50 @@
         },
         "Effect": "Allow",
         "Resource": "arn:aws:iam::*:role/service-role/AmazonBraketServiceSageMakerNotebookRole*"
+      },
+      {
+        "Action": [
+          "iam:PassRole"
+        ],
+        "Condition": {
+          "StringLike": {
+            "iam:PassedToService": [
+              "braket.amazonaws.com"
+            ]
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:iam::*:role/AmazonBraketJobsExecutionRole*"
+      },
+      {
+        "Action": [
+          "logs:GetQueryResults"
+        ],
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:logs:*:*:log-group:*"
+        ]
+      },
+      {
+        "Action": [
+          "logs:PutLogEvents",
+          "logs:CreateLogStream",
+          "logs:CreateLogGroup"
+        ],
+        "Effect": "Allow",
+        "Resource": "arn:aws:logs:*:*:log-group:/aws/braket*"
+      },
+      {
+        "Action": [
+          "cloudwatch:PutMetricData"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "cloudwatch:namespace": "/aws/braket"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "*"
       }
     ],
     "Version": "2012-10-17"
@@ -138,6 +202,69 @@
       "condition": null,
       "credentials_exposure": false,
       "effective_action": "s3:ListBucket",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "s3:CreateBucket",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "s3:CreateBucket",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Permissions management",
+      "action": "s3:PutBucketPublicAccessBlock",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "s3:PutBucketPublicAccessBlock",
+      "privesc": false,
+      "resource_exposure": true
+    },
+    {
+      "access_level": "Permissions management",
+      "action": "s3:PutBucketPolicy",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "s3:PutBucketPolicy",
+      "privesc": false,
+      "resource_exposure": true
+    },
+    {
+      "access_level": "Read",
+      "action": "ecr:GetDownloadUrlForLayer",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "ecr:GetDownloadUrlForLayer",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "ecr:BatchGetImage",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "ecr:BatchGetImage",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "ecr:BatchCheckLayerAvailability",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "ecr:BatchCheckLayerAvailability",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "ecr:GetAuthorizationToken",
+      "condition": null,
+      "credentials_exposure": true,
+      "effective_action": "ecr:GetAuthorizationToken",
       "privesc": false,
       "resource_exposure": false
     },
@@ -618,6 +745,70 @@
       "effective_action": "iam:PassRole",
       "privesc": true,
       "resource_exposure": true
+    },
+    {
+      "access_level": "Write",
+      "action": "iam:PassRole",
+      "condition": {
+        "StringLike": {
+          "iam:PassedToService": [
+            "braket.amazonaws.com"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "effective_action": "iam:PassRole",
+      "privesc": true,
+      "resource_exposure": true
+    },
+    {
+      "access_level": "Read",
+      "action": "logs:GetQueryResults",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "logs:GetQueryResults",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "logs:PutLogEvents",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "logs:PutLogEvents",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "logs:CreateLogStream",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "logs:CreateLogStream",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "logs:CreateLogGroup",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "logs:CreateLogGroup",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "cloudwatch:PutMetricData",
+      "condition": {
+        "StringEquals": {
+          "cloudwatch:namespace": "/aws/braket"
+        }
+      },
+      "credentials_exposure": false,
+      "effective_action": "cloudwatch:PutMetricData",
+      "privesc": false,
+      "resource_exposure": false
     }
   ],
   "malformed": false,
@@ -627,5 +818,5 @@
   "undocumented_actions": false,
   "unknown_actions": [],
   "updatedate": "2021-02-18T07:48:38+00:00",
-  "version": "v2"
+  "version": "v3"
 }
