@@ -376,6 +376,7 @@ for policyname in os.listdir("MAMIP/policies/"):
     detailed_policy = {}
 
     with open("MAMIP/policies/{}".format(policyname), "r") as f:
+        contents = ""
         try:
             contents = f.read()
             policy = json.loads(contents)
