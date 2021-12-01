@@ -6,7 +6,7 @@
     "Write",
     "Permissions management"
   ],
-  "createdate": "2021-11-18T21:26:51Z",
+  "createdate": "2021-11-30T18:04:10Z",
   "credentials_exposure": false,
   "deprecated": false,
   "document": {
@@ -18,6 +18,8 @@
           "ec2:DescribeVpcs",
           "ec2:DescribeSecurityGroups",
           "ec2:DescribeRouteTables",
+          "ec2:DescribeVpcEndpoints",
+          "ec2:DescribeVpcAttribute",
           "kms:DescribeKey",
           "kms:CreateGrant",
           "logs:CreateLogDelivery",
@@ -33,6 +35,61 @@
         ],
         "Effect": "Allow",
         "Resource": "*"
+      },
+      {
+        "Action": [
+          "ec2:CreateVpcEndpoint"
+        ],
+        "Effect": "Allow",
+        "Resource": [
+          "arn:*:ec2:*:*:vpc/*",
+          "arn:*:ec2:*:*:subnet/*",
+          "arn:*:ec2:*:*:security-group/*"
+        ]
+      },
+      {
+        "Action": [
+          "ec2:CreateVpcEndpoint"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:RequestTag/AWSMSKManaged": "true"
+          },
+          "StringLike": {
+            "aws:RequestTag/ClusterArn": "*"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:*:ec2:*:*:vpc-endpoint/*"
+        ]
+      },
+      {
+        "Action": [
+          "ec2:CreateTags"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "ec2:CreateAction": "CreateVpcEndpoint"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:*:ec2:*:*:vpc-endpoint/*"
+      },
+      {
+        "Action": [
+          "ec2:DeleteVpcEndpoints"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "ec2:ResourceTag/AWSMSKManaged": "true"
+          },
+          "StringLike": {
+            "ec2:ResourceTag/ClusterArn": "*"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:*:ec2:*:*:vpc-endpoint/*"
       },
       {
         "Action": [
@@ -395,6 +452,24 @@
       "resource_exposure": false
     },
     {
+      "access_level": "List",
+      "action": "ec2:DescribeVpcEndpoints",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "ec2:DescribeVpcEndpoints",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "ec2:DescribeVpcAttribute",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "ec2:DescribeVpcAttribute",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
       "access_level": "Read",
       "action": "kms:DescribeKey",
       "condition": null,
@@ -504,6 +579,60 @@
     },
     {
       "access_level": "Write",
+      "action": "ec2:CreateVpcEndpoint",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "ec2:CreateVpcEndpoint",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:CreateVpcEndpoint",
+      "condition": {
+        "StringEquals": {
+          "aws:RequestTag/AWSMSKManaged": "true"
+        },
+        "StringLike": {
+          "aws:RequestTag/ClusterArn": "*"
+        }
+      },
+      "credentials_exposure": false,
+      "effective_action": "ec2:CreateVpcEndpoint",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Tagging",
+      "action": "ec2:CreateTags",
+      "condition": {
+        "StringEquals": {
+          "ec2:CreateAction": "CreateVpcEndpoint"
+        }
+      },
+      "credentials_exposure": false,
+      "effective_action": "ec2:CreateTags",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:DeleteVpcEndpoints",
+      "condition": {
+        "StringEquals": {
+          "ec2:ResourceTag/AWSMSKManaged": "true"
+        },
+        "StringLike": {
+          "ec2:ResourceTag/ClusterArn": "*"
+        }
+      },
+      "credentials_exposure": false,
+      "effective_action": "ec2:DeleteVpcEndpoints",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
       "action": "iam:CreateServiceLinkedRole",
       "condition": {
         "StringLike": {
@@ -553,6 +682,6 @@
   "resource_exposure": true,
   "undocumented_actions": false,
   "unknown_actions": [],
-  "updatedate": "2021-11-18T21:26:51+00:00",
-  "version": "v4"
+  "updatedate": "2021-11-30T18:04:10+00:00",
+  "version": "v5"
 }
