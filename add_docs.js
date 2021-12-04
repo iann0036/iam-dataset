@@ -87,15 +87,26 @@ async function x() {
                 'servicequotas': 'service-quotas',
                 'ses': 'email',
                 'simpledb': 'sdb',
-                'ssmcontacts': 'sso-contacts',
-                'ssmincidents': 'sso-incidents',
+                'ssmcontacts': 'ssm-contacts',
+                'ssmincidents': 'ssm-incidents',
                 'ssoadmin': 'sso-admin',
                 'ssooidc': 'sso-oidc',
                 'stepfunctions': 'states',
                 'timestreamquery': 'timestream-query',
                 'timestreamwrite': 'timestream-write',
                 'transcribeservice': 'transcribe',
-                'wafregional': 'waf-regional'
+                'wafregional': 'waf-regional',
+                'route53recoverycluster': 'route53-recovery-cluster',
+                'route53recoverycontrolconfig': 'route53-recovery-control-config',
+                'route53recoveryreadiness': 'route53-recovery-readiness',
+                'chimesdkidentity': 'chime-sdk-identity',
+                'chimesdkmessaging': 'chime-sdk-messaging',
+                'snowdevicemanagement': 'snow-device-management',
+                'voiceid': 'voice-id',
+                'chimesdkmeetings': 'chime-sdk-meetings',
+                'migrationhubrefactorspaces': 'migration-hub-refactor-spaces',
+                'backupgateway': 'backup-gateway',
+                'workspacesweb': 'workspaces-web'
             };
             var sdkshortname = shortname;
             if (REPLACESHORTNAME[shortname]) {
