@@ -12,43 +12,46 @@ with open("gcp/predefined_roles.json", "r") as f:
     predefined_roles_json = json.loads(f.read())
 
 for filename in os.listdir("gcp/roles/"):
-    with open("gcp/roles/" + filename) as f:
-        data = f.read()
-        role_json = json.loads(data)
-        if 'includedPermissions' not in role_json:
-            role_json['includedPermissions'] = []
-            print("Permissionless: " + filename)
-        for includedPermission in role_json['includedPermissions']:
-            includedPermission = includedPermission.replace("/", "-")
-            if includedPermission not in roles_json:
-                roles_json[includedPermission] = []
-            if role_json['title'].endswith(" (v1)"):
-                role_json['title'] = role_json['title'][:-len(" (v1)")]
-            if role_json['title'].endswith(" (beta)"):
-                role_json['title'] = role_json['title'][:-len(" (beta)")]
+    try:
+        with open("gcp/roles/" + filename) as f:
+            data = f.read()
+            role_json = json.loads(data)
+            if 'includedPermissions' not in role_json:
+                role_json['includedPermissions'] = []
+                print("Permissionless: " + filename)
+            for includedPermission in role_json['includedPermissions']:
+                includedPermission = includedPermission.replace("/", "-")
+                if includedPermission not in roles_json:
+                    roles_json[includedPermission] = []
+                if role_json['title'].endswith(" (v1)"):
+                    role_json['title'] = role_json['title'][:-len(" (v1)")]
+                if role_json['title'].endswith(" (beta)"):
+                    role_json['title'] = role_json['title'][:-len(" (beta)")]
 
-            undocumented = False
-            if includedPermission not in permissions_json:
-                undocumented = True
-            else:
-                found = False
-                for item in permissions_json[includedPermission]:
-                    if item['id'] == role_json['name']:
-                        found = True
-                        break
-                if not found:
+                undocumented = False
+                if includedPermission not in permissions_json:
                     undocumented = True
+                else:
+                    found = False
+                    for item in permissions_json[includedPermission]:
+                        if item['id'] == role_json['name']:
+                            found = True
+                            break
+                    if not found:
+                        undocumented = True
 
-            if undocumented:
-                for i in range(len(predefined_roles_json)):
-                    if predefined_roles_json[i]['name'] == role_json['name']:
-                        predefined_roles_json[i]['has_undocumented'] = True
+                if undocumented:
+                    for i in range(len(predefined_roles_json)):
+                        if predefined_roles_json[i]['name'] == role_json['name']:
+                            predefined_roles_json[i]['has_undocumented'] = True
 
-            roles_json[includedPermission].append({
-                'id': role_json['name'],
-                'name': role_json['title'],
-                'undocumented': undocumented
-            })
+                roles_json[includedPermission].append({
+                    'id': role_json['name'],
+                    'name': role_json['title'],
+                    'undocumented': undocumented
+                })
+    except:
+        print("Skipped " + filename)
 
 for k in permissions_json.keys():
     permissions_json[k].sort(key=lambda x: x['id'])
