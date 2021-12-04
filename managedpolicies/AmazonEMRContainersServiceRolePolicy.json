@@ -1,9 +1,11 @@
 {
   "access_levels": [
     "List",
-    "Read"
+    "Read",
+    "Tagging",
+    "Write"
   ],
-  "createdate": "2020-12-09T00:38:19Z",
+  "createdate": "2021-12-03T19:55:44Z",
   "credentials_exposure": false,
   "deprecated": false,
   "document": {
@@ -17,6 +19,31 @@
           "elasticloadbalancing:DescribeInstanceHealth",
           "elasticloadbalancing:DescribeLoadBalancers"
         ],
+        "Effect": "Allow",
+        "Resource": "*"
+      },
+      {
+        "Action": [
+          "acm:ImportCertificate",
+          "acm:AddTagsToCertificate"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:RequestTag/emr-container:endpoint:managed-certificate": "true"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "*"
+      },
+      {
+        "Action": [
+          "acm:DeleteCertificate"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceTag/emr-container:endpoint:managed-certificate": "true"
+          }
+        },
         "Effect": "Allow",
         "Resource": "*"
       }
@@ -77,6 +104,45 @@
       "effective_action": "elasticloadbalancing:DescribeLoadBalancers",
       "privesc": false,
       "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "acm:ImportCertificate",
+      "condition": {
+        "StringEquals": {
+          "aws:RequestTag/emr-container:endpoint:managed-certificate": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "effective_action": "acm:ImportCertificate",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Tagging",
+      "action": "acm:AddTagsToCertificate",
+      "condition": {
+        "StringEquals": {
+          "aws:RequestTag/emr-container:endpoint:managed-certificate": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "effective_action": "acm:AddTagsToCertificate",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "acm:DeleteCertificate",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/emr-container:endpoint:managed-certificate": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "effective_action": "acm:DeleteCertificate",
+      "privesc": false,
+      "resource_exposure": false
     }
   ],
   "malformed": false,
@@ -85,6 +151,6 @@
   "resource_exposure": false,
   "undocumented_actions": false,
   "unknown_actions": [],
-  "updatedate": "2020-12-09T00:38:19+00:00",
-  "version": "v1"
+  "updatedate": "2021-12-03T19:55:44+00:00",
+  "version": "v2"
 }
