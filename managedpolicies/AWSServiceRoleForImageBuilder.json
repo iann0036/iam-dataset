@@ -6,7 +6,7 @@
     "Write",
     "Permissions management"
   ],
-  "createdate": "2021-08-11T18:07:10Z",
+  "createdate": "2021-12-06T20:55:41Z",
   "credentials_exposure": true,
   "deprecated": false,
   "document": {
@@ -48,7 +48,8 @@
           "StringEquals": {
             "iam:PassedToService": [
               "ec2.amazonaws.com",
-              "ec2.amazonaws.com.cn"
+              "ec2.amazonaws.com.cn",
+              "vmie.amazonaws.com"
             ]
           }
         },
@@ -82,7 +83,9 @@
           "ec2:DescribeInstanceTypes",
           "ec2:DescribeSubnets",
           "ec2:DescribeTags",
-          "ec2:ModifyImageAttribute"
+          "ec2:ModifyImageAttribute",
+          "ec2:DescribeImportImageTasks",
+          "ec2:DescribeExportImageTasks"
         ],
         "Effect": "Allow",
         "Resource": "*"
@@ -104,7 +107,10 @@
           "ec2:CreateTags"
         ],
         "Effect": "Allow",
-        "Resource": "arn:aws:ec2:*::image/*"
+        "Resource": [
+          "arn:aws:ec2:*::image/*",
+          "arn:aws:ec2:*:*:export-image-task/*"
+        ]
       },
       {
         "Action": [
@@ -263,6 +269,37 @@
       },
       {
         "Action": [
+          "ec2:ExportImage"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "ec2:ResourceTag/CreatedBy": "EC2 Image Builder"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:ec2:*::image/*"
+      },
+      {
+        "Action": [
+          "ec2:ExportImage"
+        ],
+        "Effect": "Allow",
+        "Resource": "arn:aws:ec2:*:*:export-image-task/*"
+      },
+      {
+        "Action": [
+          "ec2:CancelExportTask"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "ec2:ResourceTag/CreatedBy": "EC2 Image Builder"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:ec2:*:*:export-image-task/*"
+      },
+      {
+        "Action": [
           "iam:CreateServiceLinkedRole"
         ],
         "Condition": {
@@ -306,7 +343,8 @@
         "StringEquals": {
           "iam:PassedToService": [
             "ec2.amazonaws.com",
-            "ec2.amazonaws.com.cn"
+            "ec2.amazonaws.com.cn",
+            "vmie.amazonaws.com"
           ]
         }
       },
@@ -455,6 +493,24 @@
       "condition": null,
       "credentials_exposure": false,
       "effective_action": "ec2:ModifyImageAttribute",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "ec2:DescribeImportImageTasks",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "ec2:DescribeImportImageTasks",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "ec2:DescribeExportImageTasks",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "ec2:DescribeExportImageTasks",
       "privesc": false,
       "resource_exposure": false
     },
@@ -855,6 +911,41 @@
     },
     {
       "access_level": "Write",
+      "action": "ec2:ExportImage",
+      "condition": {
+        "StringEquals": {
+          "ec2:ResourceTag/CreatedBy": "EC2 Image Builder"
+        }
+      },
+      "credentials_exposure": false,
+      "effective_action": "ec2:ExportImage",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:ExportImage",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "ec2:ExportImage",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:CancelExportTask",
+      "condition": {
+        "StringEquals": {
+          "ec2:ResourceTag/CreatedBy": "EC2 Image Builder"
+        }
+      },
+      "credentials_exposure": false,
+      "effective_action": "ec2:CancelExportTask",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
       "action": "iam:CreateServiceLinkedRole",
       "condition": {
         "StringEquals": {
@@ -873,6 +964,6 @@
   "resource_exposure": true,
   "undocumented_actions": false,
   "unknown_actions": [],
-  "updatedate": "2021-08-11T18:07:10+00:00",
-  "version": "v13"
+  "updatedate": "2021-12-06T20:55:41+00:00",
+  "version": "v14"
 }
