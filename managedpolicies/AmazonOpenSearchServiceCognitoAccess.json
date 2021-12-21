@@ -4,7 +4,7 @@
     "Read",
     "Write"
   ],
-  "createdate": "2021-09-02T06:31:49Z",
+  "createdate": "2021-12-20T14:04:18Z",
   "credentials_exposure": false,
   "deprecated": false,
   "document": {
@@ -14,13 +14,13 @@
           "cognito-idp:DescribeUserPool",
           "cognito-idp:CreateUserPoolClient",
           "cognito-idp:DeleteUserPoolClient",
+          "cognito-idp:UpdateUserPoolClient",
           "cognito-idp:DescribeUserPoolClient",
           "cognito-idp:AdminInitiateAuth",
           "cognito-idp:AdminUserGlobalSignOut",
           "cognito-idp:ListUserPoolClients",
           "cognito-identity:DescribeIdentityPool",
           "cognito-identity:UpdateIdentityPool",
-          "cognito-identity:SetIdentityPoolRoles",
           "cognito-identity:GetIdentityPoolRoles"
         ],
         "Effect": "Allow",
@@ -35,11 +35,21 @@
         ],
         "Condition": {
           "StringLike": {
-            "iam:PassedToService": "cognito-identity.amazonaws.com"
+            "iam:PassedToService": [
+              "cognito-identity.amazonaws.com",
+              "cognito-identity-us-gov.amazonaws.com"
+            ]
           }
         },
         "Effect": "Allow",
         "Resource": "arn:aws:iam::*:role/*"
+      },
+      {
+        "Action": [
+          "cognito-identity:SetIdentityPoolRoles"
+        ],
+        "Effect": "Allow",
+        "Resource": "*"
       }
     ],
     "Version": "2012-10-17"
@@ -69,6 +79,15 @@
       "condition": null,
       "credentials_exposure": false,
       "effective_action": "cognito-idp:DeleteUserPoolClient",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "cognito-idp:UpdateUserPoolClient",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "cognito-idp:UpdateUserPoolClient",
       "privesc": false,
       "resource_exposure": false
     },
@@ -127,15 +146,6 @@
       "resource_exposure": true
     },
     {
-      "access_level": "Write",
-      "action": "cognito-identity:SetIdentityPoolRoles",
-      "condition": null,
-      "credentials_exposure": false,
-      "effective_action": "cognito-identity:SetIdentityPoolRoles",
-      "privesc": false,
-      "resource_exposure": true
-    },
-    {
       "access_level": "Read",
       "action": "cognito-identity:GetIdentityPoolRoles",
       "condition": null,
@@ -149,12 +159,24 @@
       "action": "iam:PassRole",
       "condition": {
         "StringLike": {
-          "iam:PassedToService": "cognito-identity.amazonaws.com"
+          "iam:PassedToService": [
+            "cognito-identity.amazonaws.com",
+            "cognito-identity-us-gov.amazonaws.com"
+          ]
         }
       },
       "credentials_exposure": false,
       "effective_action": "iam:PassRole",
       "privesc": true,
+      "resource_exposure": true
+    },
+    {
+      "access_level": "Write",
+      "action": "cognito-identity:SetIdentityPoolRoles",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "cognito-identity:SetIdentityPoolRoles",
+      "privesc": false,
       "resource_exposure": true
     }
   ],
@@ -164,6 +186,6 @@
   "resource_exposure": true,
   "undocumented_actions": false,
   "unknown_actions": [],
-  "updatedate": "2021-09-02T06:31:49+00:00",
-  "version": "v1"
+  "updatedate": "2021-12-20T14:04:18+00:00",
+  "version": "v2"
 }
