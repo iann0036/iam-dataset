@@ -1,0 +1,432 @@
+{
+  "access_levels": [
+    "List",
+    "Tagging",
+    "Write"
+  ],
+  "createdate": "2022-01-10T13:08:21Z",
+  "credentials_exposure": false,
+  "deprecated": false,
+  "document": {
+    "Statement": [
+      {
+        "Action": [
+          "ec2:RunInstances"
+        ],
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:ec2:*:*:subnet/*",
+          "arn:aws:ec2:*:*:network-interface/*",
+          "arn:aws:ec2:*::image/*",
+          "arn:aws:ec2:*:*:key-pair/*",
+          "arn:aws:ec2:*:*:security-group/*",
+          "arn:aws:ec2:*:*:launch-template/*"
+        ]
+      },
+      {
+        "Action": [
+          "ec2:RunInstances"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:RequestTag/CreatedBy": "EC2 Fast Launch"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:ec2:*:*:volume/*",
+          "arn:aws:ec2:*:*:instance/*"
+        ]
+      },
+      {
+        "Action": [
+          "iam:PassRole"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "iam:PassedToService": [
+              "ec2.amazonaws.com",
+              "ec2.amazonaws.com.cn"
+            ]
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "*"
+      },
+      {
+        "Action": [
+          "ec2:StopInstances",
+          "ec2:TerminateInstances"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceTag/CreatedBy": "EC2 Fast Launch"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:ec2:*:*:instance/*"
+        ]
+      },
+      {
+        "Action": [
+          "ec2:CreateSnapshot"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceTag/CreatedBy": "EC2 Fast Launch"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:ec2:*:*:volume/*"
+        ]
+      },
+      {
+        "Action": [
+          "ec2:CreateSnapshot"
+        ],
+        "Condition": {
+          "ForAnyValue:StringEquals": {
+            "aws:TagKeys": [
+              "CreatedByLaunchTemplateName",
+              "CreatedByLaunchTemplateId"
+            ]
+          },
+          "StringEquals": {
+            "aws:RequestTag/CreatedBy": "EC2 Fast Launch"
+          },
+          "StringLike": {
+            "aws:RequestTag/CreatedByLaunchTemplateVersion": "*"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:ec2:*:*:snapshot/*"
+        ],
+        "Sid": "AllowCreateTaggedSnapshot"
+      },
+      {
+        "Action": [
+          "ec2:CreateLaunchTemplate"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:RequestTag/CreatedBy": "EC2 Fast Launch"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:ec2:*:*:launch-template/*"
+      },
+      {
+        "Action": [
+          "ec2:CreateTags"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "ec2:CreateAction": [
+              "CreateSnapshot",
+              "RunInstances",
+              "CreateLaunchTemplate"
+            ]
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:ec2:*:*:volume/*",
+          "arn:aws:ec2:*:*:instance/*",
+          "arn:aws:ec2:*:*:snapshot/*",
+          "arn:aws:ec2:*:*:launch-template/*"
+        ]
+      },
+      {
+        "Action": [
+          "ec2:DeleteSnapshot"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceTag/CreatedBy": "EC2 Fast Launch"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:ec2:*:*:snapshot/*"
+        ]
+      },
+      {
+        "Action": [
+          "ec2:DescribeImages",
+          "ec2:DescribeSnapshots",
+          "ec2:DescribeSubnets",
+          "ec2:DescribeInstanceAttribute",
+          "ec2:DescribeInstanceStatus",
+          "ec2:DescribeInstances",
+          "ec2:DescribeInstanceTypeOfferings",
+          "ec2:DescribeLaunchTemplateVersions",
+          "ec2:DescribeLaunchTemplates"
+        ],
+        "Effect": "Allow",
+        "Resource": "*"
+      },
+      {
+        "Action": [
+          "cloudwatch:PutMetricData"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "cloudwatch:namespace": "AWS/EC2"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "*"
+      }
+    ],
+    "Version": "2012-10-17"
+  },
+  "effective_actions": [
+    {
+      "access_level": "Write",
+      "action": "ec2:RunInstances",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "ec2:RunInstances",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:RunInstances",
+      "condition": {
+        "StringEquals": {
+          "aws:RequestTag/CreatedBy": "EC2 Fast Launch"
+        }
+      },
+      "credentials_exposure": false,
+      "effective_action": "ec2:RunInstances",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "iam:PassRole",
+      "condition": {
+        "StringEquals": {
+          "iam:PassedToService": [
+            "ec2.amazonaws.com",
+            "ec2.amazonaws.com.cn"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "effective_action": "iam:PassRole",
+      "privesc": true,
+      "resource_exposure": true
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:StopInstances",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/CreatedBy": "EC2 Fast Launch"
+        }
+      },
+      "credentials_exposure": false,
+      "effective_action": "ec2:StopInstances",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:TerminateInstances",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/CreatedBy": "EC2 Fast Launch"
+        }
+      },
+      "credentials_exposure": false,
+      "effective_action": "ec2:TerminateInstances",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:CreateSnapshot",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/CreatedBy": "EC2 Fast Launch"
+        }
+      },
+      "credentials_exposure": false,
+      "effective_action": "ec2:CreateSnapshot",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:CreateSnapshot",
+      "condition": {
+        "ForAnyValue:StringEquals": {
+          "aws:TagKeys": [
+            "CreatedByLaunchTemplateName",
+            "CreatedByLaunchTemplateId"
+          ]
+        },
+        "StringEquals": {
+          "aws:RequestTag/CreatedBy": "EC2 Fast Launch"
+        },
+        "StringLike": {
+          "aws:RequestTag/CreatedByLaunchTemplateVersion": "*"
+        }
+      },
+      "credentials_exposure": false,
+      "effective_action": "ec2:CreateSnapshot",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:CreateLaunchTemplate",
+      "condition": {
+        "StringEquals": {
+          "aws:RequestTag/CreatedBy": "EC2 Fast Launch"
+        }
+      },
+      "credentials_exposure": false,
+      "effective_action": "ec2:CreateLaunchTemplate",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Tagging",
+      "action": "ec2:CreateTags",
+      "condition": {
+        "StringEquals": {
+          "ec2:CreateAction": [
+            "CreateSnapshot",
+            "RunInstances",
+            "CreateLaunchTemplate"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "effective_action": "ec2:CreateTags",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:DeleteSnapshot",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/CreatedBy": "EC2 Fast Launch"
+        }
+      },
+      "credentials_exposure": false,
+      "effective_action": "ec2:DeleteSnapshot",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "ec2:DescribeImages",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "ec2:DescribeImages",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "ec2:DescribeSnapshots",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "ec2:DescribeSnapshots",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "ec2:DescribeSubnets",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "ec2:DescribeSubnets",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "ec2:DescribeInstanceAttribute",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "ec2:DescribeInstanceAttribute",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "ec2:DescribeInstanceStatus",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "ec2:DescribeInstanceStatus",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "ec2:DescribeInstances",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "ec2:DescribeInstances",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "ec2:DescribeInstanceTypeOfferings",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "ec2:DescribeInstanceTypeOfferings",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "ec2:DescribeLaunchTemplateVersions",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "ec2:DescribeLaunchTemplateVersions",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "ec2:DescribeLaunchTemplates",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "ec2:DescribeLaunchTemplates",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "cloudwatch:PutMetricData",
+      "condition": {
+        "StringEquals": {
+          "cloudwatch:namespace": "AWS/EC2"
+        }
+      },
+      "credentials_exposure": false,
+      "effective_action": "cloudwatch:PutMetricData",
+      "privesc": false,
+      "resource_exposure": false
+    }
+  ],
+  "malformed": false,
+  "name": "EC2FastLaunchServiceRolePolicy",
+  "privesc": true,
+  "resource_exposure": true,
+  "undocumented_actions": false,
+  "unknown_actions": [],
+  "updatedate": "2022-01-10T13:08:21+00:00",
+  "version": "v1"
+}
