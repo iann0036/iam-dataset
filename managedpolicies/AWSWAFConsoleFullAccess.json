@@ -6,7 +6,7 @@
     "Write",
     "Permissions management"
   ],
-  "createdate": "2021-11-15T19:33:52Z",
+  "createdate": "2022-01-11T19:34:04Z",
   "credentials_exposure": false,
   "deprecated": false,
   "document": {
@@ -28,7 +28,10 @@
           "appsync:SetWebACL",
           "waf-regional:*",
           "waf:*",
-          "wafv2:*"
+          "wafv2:*",
+          "s3:ListAllMyBuckets",
+          "logs:DescribeResourcePolicies",
+          "logs:DescribeLogGroups"
         ],
         "Effect": "Allow",
         "Resource": "*",
@@ -40,10 +43,7 @@
           "logs:DeleteLogDelivery"
         ],
         "Effect": "Allow",
-        "Resource": [
-          "arn:aws:s3:::aws-waf-logs-*",
-          "arn:aws:logs:*:*:aws-waf-logs-*"
-        ],
+        "Resource": "*",
         "Sid": "AllowLogDeliverySubscription"
       },
       {
@@ -59,14 +59,17 @@
       },
       {
         "Action": [
-          "logs:PutResourcePolicy",
-          "logs:DescribeResourcePolicies",
-          "logs:DescribeLogGroups"
+          "logs:PutResourcePolicy"
         ],
+        "Condition": {
+          "ForAnyValue:StringEquals": {
+            "aws:CalledVia": [
+              "wafv2.amazonaws.com"
+            ]
+          }
+        },
         "Effect": "Allow",
-        "Resource": [
-          "arn:aws:logs:*:*:aws-waf-logs-*"
-        ],
+        "Resource": "*",
         "Sid": "GrantLogDeliveryPermissionForCloudWatchLogGroup"
       }
     ],
@@ -2027,6 +2030,33 @@
       "resource_exposure": true
     },
     {
+      "access_level": "List",
+      "action": "s3:ListAllMyBuckets",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "s3:ListAllMyBuckets",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "logs:DescribeResourcePolicies",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "logs:DescribeResourcePolicies",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "logs:DescribeLogGroups",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "logs:DescribeLogGroups",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
       "access_level": "Write",
       "action": "logs:CreateLogDelivery",
       "condition": null,
@@ -2065,29 +2095,17 @@
     {
       "access_level": "Permissions management",
       "action": "logs:PutResourcePolicy",
-      "condition": null,
+      "condition": {
+        "ForAnyValue:StringEquals": {
+          "aws:CalledVia": [
+            "wafv2.amazonaws.com"
+          ]
+        }
+      },
       "credentials_exposure": false,
       "effective_action": "logs:PutResourcePolicy",
       "privesc": false,
       "resource_exposure": true
-    },
-    {
-      "access_level": "List",
-      "action": "logs:DescribeResourcePolicies",
-      "condition": null,
-      "credentials_exposure": false,
-      "effective_action": "logs:DescribeResourcePolicies",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "logs:DescribeLogGroups",
-      "condition": null,
-      "credentials_exposure": false,
-      "effective_action": "logs:DescribeLogGroups",
-      "privesc": false,
-      "resource_exposure": false
     }
   ],
   "malformed": false,
@@ -2096,6 +2114,6 @@
   "resource_exposure": true,
   "undocumented_actions": false,
   "unknown_actions": [],
-  "updatedate": "2021-11-15T19:33:52+00:00",
-  "version": "v3"
+  "updatedate": "2022-01-11T19:34:04+00:00",
+  "version": "v4"
 }
