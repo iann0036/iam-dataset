@@ -353,7 +353,8 @@ CREDEXPOSURE_ACTIONS = [ # https://cloudsplaining.readthedocs.io/en/latest/gloss
     "sts:assumerolewithsaml",
     "sts:assumerolewithwebidentity",
     "sts:getfederationtoken",
-    "sts:getsessiontoken"
+    "sts:getsessiontoken",
+    "cognito-idp:describeuserpoolclient"
 ]
 
 iam_def = []
