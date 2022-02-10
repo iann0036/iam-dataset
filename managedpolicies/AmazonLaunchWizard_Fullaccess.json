@@ -6,7 +6,7 @@
     "Write",
     "Permissions management"
   ],
-  "createdate": "2021-08-25T17:24:45Z",
+  "createdate": "2022-02-10T00:28:41Z",
   "credentials_exposure": true,
   "deprecated": false,
   "document": {
@@ -251,15 +251,27 @@
       },
       {
         "Action": [
+          "ssm:GetDocument",
+          "ssm:SendCommand"
+        ],
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:ssm:*::document/AWS-RunShellScript"
+        ]
+      },
+      {
+        "Action": [
           "ssm:SendCommand"
         ],
         "Condition": {
-          "ForAllValues:StringLike": {
-            "aws:TagKeys": "LaunchWizard*"
+          "StringLike": {
+            "aws:ResourceTag/aws:cloudformation:stack-id": "arn:aws:cloudformation:*:*:stack/LaunchWizard-*/*"
           }
         },
         "Effect": "Allow",
-        "Resource": "*"
+        "Resource": [
+          "arn:aws:ec2:*:*:instance/*"
+        ]
       },
       {
         "Action": [
@@ -2460,11 +2472,29 @@
       "resource_exposure": false
     },
     {
+      "access_level": "Read",
+      "action": "ssm:GetDocument",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "ssm:GetDocument",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ssm:SendCommand",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "ssm:SendCommand",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
       "access_level": "Write",
       "action": "ssm:SendCommand",
       "condition": {
-        "ForAllValues:StringLike": {
-          "aws:TagKeys": "LaunchWizard*"
+        "StringLike": {
+          "aws:ResourceTag/aws:cloudformation:stack-id": "arn:aws:cloudformation:*:*:stack/LaunchWizard-*/*"
         }
       },
       "credentials_exposure": false,
@@ -6200,6 +6230,6 @@
   "resource_exposure": true,
   "undocumented_actions": false,
   "unknown_actions": [],
-  "updatedate": "2021-08-25T17:24:45+00:00",
-  "version": "v11"
+  "updatedate": "2022-02-10T00:28:41+00:00",
+  "version": "v12"
 }
