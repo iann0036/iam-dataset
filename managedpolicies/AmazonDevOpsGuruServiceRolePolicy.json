@@ -5,7 +5,7 @@
     "Tagging",
     "Write"
   ],
-  "createdate": "2021-11-24T01:23:43Z",
+  "createdate": "2022-02-07T19:30:10Z",
   "credentials_exposure": false,
   "deprecated": false,
   "document": {
@@ -35,7 +35,6 @@
           "organizations:ListRoots",
           "organizations:ListChildren",
           "organizations:ListDelegatedAdministrators",
-          "rds:DescribeDBInstances",
           "pi:GetResourceMetrics",
           "tag:GetResources",
           "lambda:GetFunction",
@@ -57,7 +56,13 @@
           "dynamodb:DescribeStream",
           "dynamodb:ListStreams",
           "elasticloadbalancing:DescribeLoadBalancers",
-          "elasticloadbalancing:DescribeLoadBalancerAttributes"
+          "elasticloadbalancing:DescribeLoadBalancerAttributes",
+          "rds:DescribeDBInstances",
+          "rds:DescribeDBClusters",
+          "rds:DescribeOptionGroups",
+          "rds:DescribeDBClusterParameters",
+          "rds:DescribeDBInstanceAutomatedBackups",
+          "rds:DescribeAccountAttributes"
         ],
         "Effect": "Allow",
         "Resource": "*"
@@ -100,6 +105,40 @@
         "Effect": "Allow",
         "Resource": "*",
         "Sid": "AllowAccessOpsItem"
+      },
+      {
+        "Action": [
+          "events:PutRule"
+        ],
+        "Effect": "Allow",
+        "Resource": "arn:aws:events:*:*:rule/DevOpsGuruManagedRule*",
+        "Sid": "AllowCreateManagedRule"
+      },
+      {
+        "Action": [
+          "events:DescribeRule",
+          "events:ListTargetsByRule"
+        ],
+        "Effect": "Allow",
+        "Resource": "arn:aws:events:*:*:rule/DevOpsGuruManagedRule*",
+        "Sid": "AllowAccessManagedRule"
+      },
+      {
+        "Action": [
+          "events:DeleteRule",
+          "events:EnableRule",
+          "events:DisableRule",
+          "events:PutTargets",
+          "events:RemoveTargets"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "events:ManagedBy": "devops-guru.amazonaws.com"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:events:*:*:rule/DevOpsGuruManagedRule*",
+        "Sid": "AllowOtherOperationsOnManagedRule"
       }
     ],
     "Version": "2012-10-17"
@@ -313,15 +352,6 @@
       "resource_exposure": false
     },
     {
-      "access_level": "List",
-      "action": "rds:DescribeDBInstances",
-      "condition": null,
-      "credentials_exposure": false,
-      "effective_action": "rds:DescribeDBInstances",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
       "access_level": "Read",
       "action": "pi:GetResourceMetrics",
       "condition": null,
@@ -520,6 +550,60 @@
       "resource_exposure": false
     },
     {
+      "access_level": "List",
+      "action": "rds:DescribeDBInstances",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "rds:DescribeDBInstances",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "rds:DescribeDBClusters",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "rds:DescribeDBClusters",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "rds:DescribeOptionGroups",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "rds:DescribeOptionGroups",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "rds:DescribeDBClusterParameters",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "rds:DescribeDBClusterParameters",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "rds:DescribeDBInstanceAutomatedBackups",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "rds:DescribeDBInstanceAutomatedBackups",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "rds:DescribeAccountAttributes",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "rds:DescribeAccountAttributes",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
       "access_level": "Write",
       "action": "events:PutTargets",
       "condition": null,
@@ -580,6 +664,98 @@
       "effective_action": "ssm:UpdateOpsItem",
       "privesc": false,
       "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "events:PutRule",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "events:PutRule",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "events:DescribeRule",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "events:DescribeRule",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "events:ListTargetsByRule",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "events:ListTargetsByRule",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "events:DeleteRule",
+      "condition": {
+        "StringEquals": {
+          "events:ManagedBy": "devops-guru.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "effective_action": "events:DeleteRule",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "events:EnableRule",
+      "condition": {
+        "StringEquals": {
+          "events:ManagedBy": "devops-guru.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "effective_action": "events:EnableRule",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "events:DisableRule",
+      "condition": {
+        "StringEquals": {
+          "events:ManagedBy": "devops-guru.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "effective_action": "events:DisableRule",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "events:PutTargets",
+      "condition": {
+        "StringEquals": {
+          "events:ManagedBy": "devops-guru.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "effective_action": "events:PutTargets",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "events:RemoveTargets",
+      "condition": {
+        "StringEquals": {
+          "events:ManagedBy": "devops-guru.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "effective_action": "events:RemoveTargets",
+      "privesc": false,
+      "resource_exposure": false
     }
   ],
   "malformed": false,
@@ -588,6 +764,6 @@
   "resource_exposure": false,
   "undocumented_actions": false,
   "unknown_actions": [],
-  "updatedate": "2021-11-24T01:23:43+00:00",
-  "version": "v5"
+  "updatedate": "2022-02-07T19:30:10+00:00",
+  "version": "v6"
 }
