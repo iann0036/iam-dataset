@@ -5,7 +5,7 @@
     "Tagging",
     "Write"
   ],
-  "createdate": "2021-09-24T14:22:21Z",
+  "createdate": "2022-02-23T17:03:58Z",
   "credentials_exposure": false,
   "deprecated": false,
   "document": {
@@ -36,6 +36,19 @@
       },
       {
         "Action": [
+          "tag:GetResources"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:CalledViaLast": "sqlworkbench.amazonaws.com"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "ResourceGroupsTaggingPermissions"
+      },
+      {
+        "Action": [
           "sqlworkbench:CreateFolder",
           "sqlworkbench:PutTab",
           "sqlworkbench:BatchDeleteFolder",
@@ -50,7 +63,8 @@
           "sqlworkbench:ListTabs",
           "sqlworkbench:UpdateFolder",
           "sqlworkbench:ListRedshiftClusters",
-          "sqlworkbench:DriverExecute"
+          "sqlworkbench:DriverExecute",
+          "sqlworkbench:ListTaggedResources"
         ],
         "Effect": "Allow",
         "Resource": "*",
@@ -121,7 +135,8 @@
           "sqlworkbench:GetConnection",
           "sqlworkbench:GetSavedQuery",
           "sqlworkbench:ListSavedQueryVersions",
-          "sqlworkbench:ListTagsForResource"
+          "sqlworkbench:ListTagsForResource",
+          "sqlworkbench:AssociateQueryWithTab"
         ],
         "Condition": {
           "StringEquals": {
@@ -227,6 +242,19 @@
       },
       "credentials_exposure": false,
       "effective_action": "secretsmanager:TagResource",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "tag:GetResources",
+      "condition": {
+        "StringEquals": {
+          "aws:CalledViaLast": "sqlworkbench.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "effective_action": "tag:GetResources",
       "privesc": false,
       "resource_exposure": false
     },
@@ -362,6 +390,15 @@
       "condition": null,
       "credentials_exposure": false,
       "effective_action": "sqlworkbench:DriverExecute",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "sqlworkbench:ListTaggedResources",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "sqlworkbench:ListTaggedResources",
       "privesc": false,
       "resource_exposure": false
     },
@@ -682,6 +719,19 @@
       "resource_exposure": false
     },
     {
+      "access_level": "Write",
+      "action": "sqlworkbench:AssociateQueryWithTab",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/sqlworkbench-team": "${aws:PrincipalTag/sqlworkbench-team}"
+        }
+      },
+      "credentials_exposure": false,
+      "effective_action": "sqlworkbench:AssociateQueryWithTab",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
       "access_level": "Tagging",
       "action": "sqlworkbench:TagResource",
       "condition": {
@@ -721,6 +771,6 @@
   "resource_exposure": false,
   "undocumented_actions": false,
   "unknown_actions": [],
-  "updatedate": "2021-09-24T14:22:21+00:00",
-  "version": "v1"
+  "updatedate": "2022-02-23T17:03:58+00:00",
+  "version": "v2"
 }
