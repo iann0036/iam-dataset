@@ -5,7 +5,7 @@
     "Tagging",
     "Write"
   ],
-  "createdate": "2018-08-08T21:11:59Z",
+  "createdate": "2022-03-04T17:05:09Z",
   "credentials_exposure": false,
   "deprecated": false,
   "document": {
@@ -38,8 +38,7 @@
         "Condition": {
           "StringEquals": {
             "iam:PassedToService": [
-              "ec2.amazonaws.com",
-              "ssm.amazonaws.com"
+              "ec2.amazonaws.com"
             ]
           }
         },
@@ -52,11 +51,7 @@
       {
         "Action": [
           "ssm:GetAutomationExecution",
-          "ssm:CreateDocument",
-          "ssm:StartAutomationExecution",
           "ssm:ListDocuments",
-          "ssm:UpdateDocument",
-          "ssm:UpdateDocumentDefaultVersion",
           "ssm:DescribeDocument",
           "ec2:DeregisterImage",
           "ec2:CopyImage",
@@ -102,6 +97,65 @@
         "Effect": "Allow",
         "Resource": [
           "arn:aws:sns:*:*:*image-build*"
+        ]
+      },
+      {
+        "Action": [
+          "ssm:StartAutomationExecution"
+        ],
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:ssm:eu-central-1:906690553262:automation-definition/*",
+          "arn:aws:ssm:us-east-1:058657716661:automation-definition/*",
+          "arn:aws:ssm:ap-northeast-1:340648487307:automation-definition/*",
+          "arn:aws:ssm:eu-west-1:564714592864:automation-definition/*",
+          "arn:aws:ssm:us-west-2:243045473901:automation-definition/*",
+          "arn:aws:ssm:ap-southeast-2:362149219987:automation-definition/*",
+          "arn:aws:ssm:eu-west-2:587945719687:automation-definition/*",
+          "arn:aws:ssm:us-east-2:134937423163:automation-definition/*"
+        ]
+      },
+      {
+        "Action": [
+          "iam:PassRole"
+        ],
+        "Condition": {
+          "StringLike": {
+            "iam:AssociatedResourceARN": [
+              "arn:aws:ssm:eu-central-1:906690553262:automation-definition/*",
+              "arn:aws:ssm:us-east-1:058657716661:automation-definition/*",
+              "arn:aws:ssm:ap-northeast-1:340648487307:automation-definition/*",
+              "arn:aws:ssm:eu-west-1:564714592864:automation-definition/*",
+              "arn:aws:ssm:us-west-2:243045473901:automation-definition/*",
+              "arn:aws:ssm:ap-southeast-2:362149219987:automation-definition/*",
+              "arn:aws:ssm:eu-west-2:587945719687:automation-definition/*",
+              "arn:aws:ssm:us-east-2:134937423163:automation-definition/*"
+            ],
+            "iam:PassedToService": [
+              "ssm.amazonaws.com"
+            ]
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "*"
+        ]
+      },
+      {
+        "Action": [
+          "ec2:CreateTags"
+        ],
+        "Condition": {
+          "StringLike": {
+            "aws:RequestTag/marketplace-image-build:build-id": "*"
+          },
+          "StringNotEquals": {
+            "ec2:CreateAction": "RunInstances"
+          }
+        },
+        "Effect": "Deny",
+        "Resource": [
+          "arn:aws:ec2:*:*:instance/*"
         ]
       }
     ],
@@ -154,8 +208,7 @@
       "condition": {
         "StringEquals": {
           "iam:PassedToService": [
-            "ec2.amazonaws.com",
-            "ssm.amazonaws.com"
+            "ec2.amazonaws.com"
           ]
         }
       },
@@ -174,47 +227,11 @@
       "resource_exposure": false
     },
     {
-      "access_level": "Write",
-      "action": "ssm:CreateDocument",
-      "condition": null,
-      "credentials_exposure": false,
-      "effective_action": "ssm:CreateDocument",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Write",
-      "action": "ssm:StartAutomationExecution",
-      "condition": null,
-      "credentials_exposure": false,
-      "effective_action": "ssm:StartAutomationExecution",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
       "access_level": "List",
       "action": "ssm:ListDocuments",
       "condition": null,
       "credentials_exposure": false,
       "effective_action": "ssm:ListDocuments",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Write",
-      "action": "ssm:UpdateDocument",
-      "condition": null,
-      "credentials_exposure": false,
-      "effective_action": "ssm:UpdateDocument",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Write",
-      "action": "ssm:UpdateDocumentDefaultVersion",
-      "condition": null,
-      "credentials_exposure": false,
-      "effective_action": "ssm:UpdateDocumentDefaultVersion",
       "privesc": false,
       "resource_exposure": false
     },
@@ -379,6 +396,40 @@
       "effective_action": "sns:Publish",
       "privesc": false,
       "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ssm:StartAutomationExecution",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "ssm:StartAutomationExecution",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "iam:PassRole",
+      "condition": {
+        "StringLike": {
+          "iam:AssociatedResourceARN": [
+            "arn:aws:ssm:eu-central-1:906690553262:automation-definition/*",
+            "arn:aws:ssm:us-east-1:058657716661:automation-definition/*",
+            "arn:aws:ssm:ap-northeast-1:340648487307:automation-definition/*",
+            "arn:aws:ssm:eu-west-1:564714592864:automation-definition/*",
+            "arn:aws:ssm:us-west-2:243045473901:automation-definition/*",
+            "arn:aws:ssm:ap-southeast-2:362149219987:automation-definition/*",
+            "arn:aws:ssm:eu-west-2:587945719687:automation-definition/*",
+            "arn:aws:ssm:us-east-2:134937423163:automation-definition/*"
+          ],
+          "iam:PassedToService": [
+            "ssm.amazonaws.com"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "effective_action": "iam:PassRole",
+      "privesc": true,
+      "resource_exposure": true
     }
   ],
   "malformed": false,
@@ -387,6 +438,6 @@
   "resource_exposure": true,
   "undocumented_actions": false,
   "unknown_actions": [],
-  "updatedate": "2018-08-08T21:11:59+00:00",
-  "version": "v2"
+  "updatedate": "2022-03-04T17:05:09+00:00",
+  "version": "v3"
 }
