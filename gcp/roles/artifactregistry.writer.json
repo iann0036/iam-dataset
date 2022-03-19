@@ -12,6 +12,8 @@
     "artifactregistry.repositories.downloadArtifacts",
     "artifactregistry.repositories.get",
     "artifactregistry.repositories.list",
+    "artifactregistry.repositories.listEffectiveTags",
+    "artifactregistry.repositories.listTagBindings",
     "artifactregistry.repositories.uploadArtifacts",
     "artifactregistry.tags.create",
     "artifactregistry.tags.get",
