@@ -6,7 +6,7 @@
     "Write",
     "Permissions management"
   ],
-  "createdate": "2022-02-16T18:35:29Z",
+  "createdate": "2022-03-28T21:09:12Z",
   "credentials_exposure": false,
   "deprecated": false,
   "document": {
@@ -331,6 +331,26 @@
       },
       {
         "Action": [
+          "ec2:CreateTags"
+        ],
+        "Condition": {
+          "ForAllValues:StringEquals": {
+            "aws:TagKeys": [
+              "Name",
+              "FMManaged"
+            ]
+          },
+          "StringEquals": {
+            "ec2:CreateAction": "CreateVpcEndpoint"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:ec2:*:*:vpc-endpoint/*"
+        ]
+      },
+      {
+        "Action": [
           "ec2:DeleteRouteTable"
         ],
         "Condition": {
@@ -364,6 +384,44 @@
         ],
         "Effect": "Allow",
         "Resource": "*"
+      },
+      {
+        "Action": [
+          "ec2:CreateVpcEndpoint"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:RequestTag/FMManaged": [
+              "true"
+            ]
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:ec2:*:*:vpc-endpoint/*"
+        ]
+      },
+      {
+        "Action": [
+          "ec2:CreateVpcEndpoint"
+        ],
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:ec2:*:*:subnet/*",
+          "arn:aws:ec2:*:*:vpc/*"
+        ]
+      },
+      {
+        "Action": [
+          "ec2:DeleteVpcEndpoints"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "ec2:ResourceTag/FMManaged": "true"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:ec2:*:*:vpc-endpoint/*"
       },
       {
         "Action": [
@@ -1671,6 +1729,25 @@
       "resource_exposure": false
     },
     {
+      "access_level": "Tagging",
+      "action": "ec2:CreateTags",
+      "condition": {
+        "ForAllValues:StringEquals": {
+          "aws:TagKeys": [
+            "Name",
+            "FMManaged"
+          ]
+        },
+        "StringEquals": {
+          "ec2:CreateAction": "CreateVpcEndpoint"
+        }
+      },
+      "credentials_exposure": false,
+      "effective_action": "ec2:CreateTags",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
       "access_level": "Write",
       "action": "ec2:DeleteRouteTable",
       "condition": {
@@ -1788,6 +1865,43 @@
       "condition": null,
       "credentials_exposure": false,
       "effective_action": "ec2:DescribeAvailabilityZones",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:CreateVpcEndpoint",
+      "condition": {
+        "StringEquals": {
+          "aws:RequestTag/FMManaged": [
+            "true"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "effective_action": "ec2:CreateVpcEndpoint",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:CreateVpcEndpoint",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "ec2:CreateVpcEndpoint",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:DeleteVpcEndpoints",
+      "condition": {
+        "StringEquals": {
+          "ec2:ResourceTag/FMManaged": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "effective_action": "ec2:DeleteVpcEndpoints",
       "privesc": false,
       "resource_exposure": false
     },
@@ -2299,6 +2413,6 @@
   "resource_exposure": true,
   "undocumented_actions": false,
   "unknown_actions": [],
-  "updatedate": "2022-02-16T18:35:29+00:00",
-  "version": "v23"
+  "updatedate": "2022-03-28T21:09:12+00:00",
+  "version": "v24"
 }
