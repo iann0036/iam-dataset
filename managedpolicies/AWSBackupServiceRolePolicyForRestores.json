@@ -6,7 +6,7 @@
     "Write",
     "Permissions management"
   ],
-  "createdate": "2021-11-23T22:00:41Z",
+  "createdate": "2022-03-31T18:21:27Z",
   "credentials_exposure": false,
   "deprecated": false,
   "document": {
@@ -143,6 +143,42 @@
         },
         "Effect": "Allow",
         "Resource": "*"
+      },
+      {
+        "Action": [
+          "ebs:CompleteSnapshot",
+          "ebs:StartSnapshot",
+          "ebs:PutSnapshotBlock"
+        ],
+        "Effect": "Allow",
+        "Resource": "arn:aws:ec2:*::snapshot/*"
+      },
+      {
+        "Action": [
+          "ec2:DeleteSnapshot",
+          "ec2:DeleteTags"
+        ],
+        "Condition": {
+          "Null": {
+            "aws:ResourceTag/aws:backup:source-resource": "false"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:ec2:*::snapshot/*"
+      },
+      {
+        "Action": [
+          "ec2:CreateTags"
+        ],
+        "Condition": {
+          "ForAllValues:StringEquals": {
+            "aws:TagKeys": [
+              "aws:backup:source-resource"
+            ]
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:ec2:*::snapshot/*"
       },
       {
         "Action": [
@@ -661,6 +697,74 @@
     },
     {
       "access_level": "Write",
+      "action": "ebs:CompleteSnapshot",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "ebs:CompleteSnapshot",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ebs:StartSnapshot",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "ebs:StartSnapshot",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ebs:PutSnapshotBlock",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "ebs:PutSnapshotBlock",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:DeleteSnapshot",
+      "condition": {
+        "Null": {
+          "aws:ResourceTag/aws:backup:source-resource": "false"
+        }
+      },
+      "credentials_exposure": false,
+      "effective_action": "ec2:DeleteSnapshot",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Tagging",
+      "action": "ec2:DeleteTags",
+      "condition": {
+        "Null": {
+          "aws:ResourceTag/aws:backup:source-resource": "false"
+        }
+      },
+      "credentials_exposure": false,
+      "effective_action": "ec2:DeleteTags",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Tagging",
+      "action": "ec2:CreateTags",
+      "condition": {
+        "ForAllValues:StringEquals": {
+          "aws:TagKeys": [
+            "aws:backup:source-resource"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "effective_action": "ec2:CreateTags",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
       "action": "ec2:RunInstances",
       "condition": null,
       "credentials_exposure": false,
@@ -773,6 +877,6 @@
   "resource_exposure": true,
   "undocumented_actions": false,
   "unknown_actions": [],
-  "updatedate": "2021-11-23T22:00:41+00:00",
-  "version": "v10"
+  "updatedate": "2022-03-31T18:21:27+00:00",
+  "version": "v11"
 }
