@@ -6,7 +6,7 @@
     "Write",
     "Permissions management"
   ],
-  "createdate": "2022-02-10T00:28:41Z",
+  "createdate": "2022-04-12T19:16:27Z",
   "credentials_exposure": true,
   "deprecated": false,
   "document": {
@@ -331,12 +331,23 @@
           "ssm:ListDocument*",
           "ssm:ListInstanceAssociations",
           "ssm:SendAutomationSignal",
-          "ssm:StartAutomationExecution",
-          "ssm:StopAutomationExecution",
           "tag:Get*"
         ],
         "Effect": "Allow",
         "Resource": "*"
+      },
+      {
+        "Action": [
+          "ssm:StartAutomationExecution",
+          "ssm:StopAutomationExecution"
+        ],
+        "Condition": {
+          "ForAnyValue:StringEquals": {
+            "aws:CalledVia": "launchwizard.amazonaws.com"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:ssm:*:*:automation-definition/LaunchWizard-*:*"
       },
       {
         "Action": [
@@ -5185,24 +5196,6 @@
       "resource_exposure": false
     },
     {
-      "access_level": "Write",
-      "action": "ssm:StartAutomationExecution",
-      "condition": null,
-      "credentials_exposure": false,
-      "effective_action": "ssm:StartAutomationExecution",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Write",
-      "action": "ssm:StopAutomationExecution",
-      "condition": null,
-      "credentials_exposure": false,
-      "effective_action": "ssm:StopAutomationExecution",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
       "access_level": "Read",
       "action": "tag:Get*",
       "condition": null,
@@ -5235,6 +5228,32 @@
       "condition": null,
       "credentials_exposure": false,
       "effective_action": "tag:GetTagValues",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ssm:StartAutomationExecution",
+      "condition": {
+        "ForAnyValue:StringEquals": {
+          "aws:CalledVia": "launchwizard.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "effective_action": "ssm:StartAutomationExecution",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ssm:StopAutomationExecution",
+      "condition": {
+        "ForAnyValue:StringEquals": {
+          "aws:CalledVia": "launchwizard.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "effective_action": "ssm:StopAutomationExecution",
       "privesc": false,
       "resource_exposure": false
     },
@@ -6257,6 +6276,6 @@
   "resource_exposure": true,
   "undocumented_actions": false,
   "unknown_actions": [],
-  "updatedate": "2022-02-10T00:28:41+00:00",
-  "version": "v12"
+  "updatedate": "2022-04-12T19:16:27+00:00",
+  "version": "v13"
 }
