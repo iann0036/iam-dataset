@@ -7,6 +7,8 @@
     "artifactregistry.dockerimages.list",
     "artifactregistry.files.get",
     "artifactregistry.files.list",
+    "artifactregistry.locations.get",
+    "artifactregistry.locations.list",
     "artifactregistry.packages.get",
     "artifactregistry.packages.list",
     "artifactregistry.repositories.downloadArtifacts",
