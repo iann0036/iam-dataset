@@ -6,7 +6,7 @@
     "Write",
     "Permissions management"
   ],
-  "createdate": "2022-03-31T18:21:27Z",
+  "createdate": "2022-05-17T17:36:12Z",
   "credentials_exposure": false,
   "deprecated": false,
   "document": {
@@ -231,6 +231,53 @@
         },
         "Effect": "Allow",
         "Resource": "arn:aws:fsx:*:*:file-system/*"
+      },
+      {
+        "Action": [
+          "fsx:DescribeVolumes"
+        ],
+        "Effect": "Allow",
+        "Resource": "arn:aws:fsx:*:*:volume/*"
+      },
+      {
+        "Action": [
+          "fsx:CreateVolumeFromBackup",
+          "fsx:TagResource"
+        ],
+        "Condition": {
+          "ForAllValues:StringEquals": {
+            "aws:TagKeys": [
+              "aws:backup:source-resource"
+            ]
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:fsx:*:*:volume/*"
+        ]
+      },
+      {
+        "Action": [
+          "fsx:CreateVolumeFromBackup"
+        ],
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:fsx:*:*:storage-virtual-machine/*",
+          "arn:aws:fsx:*:*:backup/*"
+        ]
+      },
+      {
+        "Action": [
+          "fsx:DeleteVolume",
+          "fsx:UntagResource"
+        ],
+        "Condition": {
+          "Null": {
+            "aws:ResourceTag/aws:backup:source-resource": "false"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:fsx:*:*:volume/*"
       },
       {
         "Action": [
@@ -844,6 +891,80 @@
       "resource_exposure": false
     },
     {
+      "access_level": "Read",
+      "action": "fsx:DescribeVolumes",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "fsx:DescribeVolumes",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "fsx:CreateVolumeFromBackup",
+      "condition": {
+        "ForAllValues:StringEquals": {
+          "aws:TagKeys": [
+            "aws:backup:source-resource"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "effective_action": "fsx:CreateVolumeFromBackup",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Tagging",
+      "action": "fsx:TagResource",
+      "condition": {
+        "ForAllValues:StringEquals": {
+          "aws:TagKeys": [
+            "aws:backup:source-resource"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "effective_action": "fsx:TagResource",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "fsx:CreateVolumeFromBackup",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "fsx:CreateVolumeFromBackup",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "fsx:DeleteVolume",
+      "condition": {
+        "Null": {
+          "aws:ResourceTag/aws:backup:source-resource": "false"
+        }
+      },
+      "credentials_exposure": false,
+      "effective_action": "fsx:DeleteVolume",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Tagging",
+      "action": "fsx:UntagResource",
+      "condition": {
+        "Null": {
+          "aws:ResourceTag/aws:backup:source-resource": "false"
+        }
+      },
+      "credentials_exposure": false,
+      "effective_action": "fsx:UntagResource",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
       "access_level": "List",
       "action": "ds:DescribeDirectories",
       "condition": null,
@@ -877,6 +998,6 @@
   "resource_exposure": true,
   "undocumented_actions": false,
   "unknown_actions": [],
-  "updatedate": "2022-03-31T18:21:27+00:00",
-  "version": "v11"
+  "updatedate": "2022-05-17T17:36:12+00:00",
+  "version": "v12"
 }
