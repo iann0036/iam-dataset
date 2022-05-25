@@ -5,7 +5,7 @@
     "Tagging",
     "Write"
   ],
-  "createdate": "2021-11-22T21:08:22Z",
+  "createdate": "2022-05-25T05:09:53Z",
   "credentials_exposure": false,
   "deprecated": false,
   "document": {
@@ -28,6 +28,34 @@
         ],
         "Effect": "Allow",
         "Resource": "*"
+      },
+      {
+        "Action": [
+          "ec2:AllocateAddress"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:RequestTag/Redshift": "true"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:ec2:*:*:elastic-ip/*"
+        ]
+      },
+      {
+        "Action": [
+          "ec2:ReleaseAddress"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceTag/Redshift": "true"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:ec2:*:*:elastic-ip/*"
+        ]
       },
       {
         "Action": [
@@ -103,7 +131,8 @@
           "arn:aws:ec2:*:*:route-table/*",
           "arn:aws:ec2:*:*:security-group/*",
           "arn:aws:ec2:*:*:vpc/*",
-          "arn:aws:ec2:*:*:internet-gateway/*"
+          "arn:aws:ec2:*:*:internet-gateway/*",
+          "arn:aws:ec2:*:*:elastic-ip/*"
         ]
       },
       {
@@ -117,7 +146,8 @@
               "CreateSecurityGroup",
               "CreateSubnet",
               "CreateInternetGateway",
-              "CreateRouteTable"
+              "CreateRouteTable",
+              "AllocateAddress"
             ]
           }
         },
@@ -140,6 +170,20 @@
           "ec2:DescribeNetworkAcls",
           "ec2:DescribeRouteTables"
         ],
+        "Effect": "Allow",
+        "Resource": "*"
+      },
+      {
+        "Action": [
+          "cloudwatch:PutMetricData"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "cloudwatch:namespace": [
+              "AWS/Redshift-Serverless"
+            ]
+          }
+        },
         "Effect": "Allow",
         "Resource": "*"
       }
@@ -261,6 +305,32 @@
       "condition": null,
       "credentials_exposure": false,
       "effective_action": "ec2:ModifyVpcEndpoint",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:AllocateAddress",
+      "condition": {
+        "StringEquals": {
+          "aws:RequestTag/Redshift": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "effective_action": "ec2:AllocateAddress",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:ReleaseAddress",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/Redshift": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "effective_action": "ec2:ReleaseAddress",
       "privesc": false,
       "resource_exposure": false
     },
@@ -575,7 +645,8 @@
             "CreateSecurityGroup",
             "CreateSubnet",
             "CreateInternetGateway",
-            "CreateRouteTable"
+            "CreateRouteTable",
+            "AllocateAddress"
           ]
         }
       },
@@ -646,6 +717,21 @@
       "effective_action": "ec2:DescribeRouteTables",
       "privesc": false,
       "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "cloudwatch:PutMetricData",
+      "condition": {
+        "StringEquals": {
+          "cloudwatch:namespace": [
+            "AWS/Redshift-Serverless"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "effective_action": "cloudwatch:PutMetricData",
+      "privesc": false,
+      "resource_exposure": false
     }
   ],
   "malformed": false,
@@ -654,6 +740,6 @@
   "resource_exposure": false,
   "undocumented_actions": false,
   "unknown_actions": [],
-  "updatedate": "2021-11-22T21:08:22+00:00",
-  "version": "v5"
+  "updatedate": "2022-05-25T05:09:53+00:00",
+  "version": "v6"
 }
