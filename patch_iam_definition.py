@@ -128,7 +128,7 @@ for i in range(len(iam_def)):
     if iam_def[i]['prefix'] == 'backup-storage':
         iam_def[i]['service_name'] = 'AWS Backup Storage'
     if iam_def[i]['prefix'] == 'es':
-        iam_def[i]['service_name'] = 'Amazon OpenSearch Service (successor to Amazon Elasticsearch Service)'
+        iam_def[i]['service_name'] = 'Amazon OpenSearch Service'
 
 print("Undocumented method tagging")
 time.sleep(1)
