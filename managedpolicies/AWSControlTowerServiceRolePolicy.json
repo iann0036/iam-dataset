@@ -5,7 +5,7 @@
     "Tagging",
     "Write"
   ],
-  "createdate": "2021-06-04T23:00:46Z",
+  "createdate": "2022-06-20T21:45:54Z",
   "credentials_exposure": true,
   "deprecated": false,
   "document": {
@@ -160,11 +160,27 @@
       },
       {
         "Action": [
-          "organizations:EnableAWSServiceAccess"
+          "organizations:EnableAWSServiceAccess",
+          "organizations:DisableAWSServiceAccess"
         ],
         "Condition": {
           "StringLike": {
-            "organizations:ServicePrincipal": "config.amazonaws.com"
+            "organizations:ServicePrincipal": [
+              "config.amazonaws.com",
+              "cloudtrail.amazonaws.com"
+            ]
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "*"
+      },
+      {
+        "Action": [
+          "iam:CreateServiceLinkedRole"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "iam:AWSServiceName": "cloudtrail.amazonaws.com"
           }
         },
         "Effect": "Allow",
@@ -830,13 +846,45 @@
       "action": "organizations:EnableAWSServiceAccess",
       "condition": {
         "StringLike": {
-          "organizations:ServicePrincipal": "config.amazonaws.com"
+          "organizations:ServicePrincipal": [
+            "config.amazonaws.com",
+            "cloudtrail.amazonaws.com"
+          ]
         }
       },
       "credentials_exposure": false,
       "effective_action": "organizations:EnableAWSServiceAccess",
       "privesc": false,
       "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "organizations:DisableAWSServiceAccess",
+      "condition": {
+        "StringLike": {
+          "organizations:ServicePrincipal": [
+            "config.amazonaws.com",
+            "cloudtrail.amazonaws.com"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "effective_action": "organizations:DisableAWSServiceAccess",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "iam:CreateServiceLinkedRole",
+      "condition": {
+        "StringEquals": {
+          "iam:AWSServiceName": "cloudtrail.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "effective_action": "iam:CreateServiceLinkedRole",
+      "privesc": true,
+      "resource_exposure": true
     }
   ],
   "malformed": false,
@@ -845,6 +893,6 @@
   "resource_exposure": true,
   "undocumented_actions": false,
   "unknown_actions": [],
-  "updatedate": "2021-06-04T23:00:46+00:00",
-  "version": "v7"
+  "updatedate": "2022-06-20T21:45:54+00:00",
+  "version": "v8"
 }
