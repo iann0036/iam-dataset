@@ -5,7 +5,7 @@
     "Tagging",
     "Write"
   ],
-  "createdate": "2021-11-17T10:56:17Z",
+  "createdate": "2022-07-10T12:44:41Z",
   "credentials_exposure": false,
   "deprecated": false,
   "document": {
@@ -19,11 +19,18 @@
       },
       {
         "Action": [
-          "drs:CreateRecoveryInstanceForDrs",
           "drs:TagResource"
         ],
         "Effect": "Allow",
         "Resource": "arn:aws:drs:*:*:recovery-instance/*"
+      },
+      {
+        "Action": [
+          "drs:CreateRecoveryInstanceForDrs",
+          "drs:TagResource"
+        ],
+        "Effect": "Allow",
+        "Resource": "arn:aws:drs:*:*:source-server/*"
       },
       {
         "Action": [
@@ -108,7 +115,8 @@
       },
       {
         "Action": [
-          "ec2:DeleteVolume"
+          "ec2:DeleteVolume",
+          "ec2:ModifyVolume"
         ],
         "Condition": {
           "Null": {
@@ -327,6 +335,13 @@
         "Resource": [
           "arn:aws:ec2:*:*:image/*"
         ]
+      },
+      {
+        "Action": [
+          "cloudwatch:GetMetricData"
+        ],
+        "Effect": "Allow",
+        "Resource": "*"
       }
     ],
     "Version": "2012-10-17"
@@ -338,6 +353,15 @@
       "condition": null,
       "credentials_exposure": false,
       "effective_action": "drs:ListTagsForResource",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Tagging",
+      "action": "drs:TagResource",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "drs:TagResource",
       "privesc": false,
       "resource_exposure": false
     },
@@ -609,6 +633,19 @@
       },
       "credentials_exposure": false,
       "effective_action": "ec2:DeleteVolume",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:ModifyVolume",
+      "condition": {
+        "Null": {
+          "aws:ResourceTag/AWSElasticDisasterRecoveryManaged": "false"
+        }
+      },
+      "credentials_exposure": false,
+      "effective_action": "ec2:ModifyVolume",
       "privesc": false,
       "resource_exposure": false
     },
@@ -917,6 +954,15 @@
       "effective_action": "ec2:CreateTags",
       "privesc": false,
       "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "cloudwatch:GetMetricData",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "cloudwatch:GetMetricData",
+      "privesc": false,
+      "resource_exposure": false
     }
   ],
   "malformed": false,
@@ -925,6 +971,6 @@
   "resource_exposure": true,
   "undocumented_actions": false,
   "unknown_actions": [],
-  "updatedate": "2021-11-17T10:56:17+00:00",
-  "version": "v1"
+  "updatedate": "2022-07-10T12:44:41+00:00",
+  "version": "v2"
 }
