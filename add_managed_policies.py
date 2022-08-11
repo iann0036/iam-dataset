@@ -391,9 +391,11 @@ for policyname in os.listdir("MAMIP/policies/"):
         policieslist = json.loads(f.read())
 
     updatedate = None
+    arn = None
     for policieslistitem in policieslist['Policies']:
         if policieslistitem['PolicyName'] == policyname:
             updatedate = policieslistitem['UpdateDate']
+            arn = policieslistitem['Arn']
 
     privesc = False
     resource_exposure = False
@@ -512,6 +514,7 @@ for policyname in os.listdir("MAMIP/policies/"):
 
     policies.append({
         'name': policyname,
+        'arn': arn,
         'deprecated': (policyname in deprecated_policies),
         'createdate': policy['PolicyVersion']['CreateDate'],
         'updatedate': updatedate,
@@ -527,6 +530,7 @@ for policyname in os.listdir("MAMIP/policies/"):
 
     detailed_policy = {
         'name': policyname,
+        'arn': arn,
         'deprecated': (policyname in deprecated_policies),
         'createdate': policy['PolicyVersion']['CreateDate'],
         'updatedate': updatedate,
