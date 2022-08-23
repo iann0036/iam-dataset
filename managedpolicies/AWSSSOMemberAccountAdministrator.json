@@ -7,7 +7,7 @@
     "Permissions management"
   ],
   "arn": "arn:aws:iam::aws:policy/AWSSSOMemberAccountAdministrator",
-  "createdate": "2022-04-28T18:53:46Z",
+  "createdate": "2022-08-22T17:18:20Z",
   "credentials_exposure": false,
   "deprecated": false,
   "document": {
@@ -28,6 +28,7 @@
           "organizations:ListParents",
           "organizations:ListChildren",
           "organizations:ListOrganizationalUnitsForParent",
+          "organizations:ListDelegatedAdministrators",
           "sso:*",
           "sso-directory:*",
           "identitystore:*",
@@ -37,6 +38,20 @@
         "Effect": "Allow",
         "Resource": "*",
         "Sid": "AWSSSOMemberAccountAdministrator"
+      },
+      {
+        "Action": [
+          "organizations:RegisterDelegatedAdministrator",
+          "organizations:DeregisterDelegatedAdministrator"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "organizations:ServicePrincipal": "sso.amazonaws.com"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "AWSSSOManageDelegatedAdministrator"
       }
     ],
     "Version": "2012-10-17"
@@ -165,6 +180,15 @@
       "condition": null,
       "credentials_exposure": false,
       "effective_action": "organizations:ListOrganizationalUnitsForParent",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "organizations:ListDelegatedAdministrators",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "organizations:ListDelegatedAdministrators",
       "privesc": false,
       "resource_exposure": false
     },
@@ -1490,6 +1514,32 @@
       "effective_action": "access-analyzer:ValidatePolicy",
       "privesc": false,
       "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "organizations:RegisterDelegatedAdministrator",
+      "condition": {
+        "StringEquals": {
+          "organizations:ServicePrincipal": "sso.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "effective_action": "organizations:RegisterDelegatedAdministrator",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "organizations:DeregisterDelegatedAdministrator",
+      "condition": {
+        "StringEquals": {
+          "organizations:ServicePrincipal": "sso.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "effective_action": "organizations:DeregisterDelegatedAdministrator",
+      "privesc": false,
+      "resource_exposure": false
     }
   ],
   "malformed": false,
@@ -1498,6 +1548,6 @@
   "resource_exposure": true,
   "undocumented_actions": false,
   "unknown_actions": [],
-  "updatedate": "2022-04-28T18:53:46+00:00",
-  "version": "v5"
+  "updatedate": "2022-08-22T17:18:20+00:00",
+  "version": "v6"
 }
