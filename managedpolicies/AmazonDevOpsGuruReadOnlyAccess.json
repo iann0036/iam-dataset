@@ -4,7 +4,7 @@
     "Read"
   ],
   "arn": "arn:aws:iam::aws:policy/AmazonDevOpsGuruReadOnlyAccess",
-  "createdate": "2022-03-04T02:37:19Z",
+  "createdate": "2022-08-25T18:11:21Z",
   "credentials_exposure": false,
   "deprecated": false,
   "document": {
@@ -24,6 +24,8 @@
           "devops-guru:ListAnomaliesForInsight",
           "devops-guru:ListEvents",
           "devops-guru:ListInsights",
+          "devops-guru:ListAnomalousLogGroups",
+          "devops-guru:ListMonitoredResources",
           "devops-guru:ListNotificationChannels",
           "devops-guru:ListRecommendations",
           "devops-guru:SearchInsights",
@@ -64,6 +66,19 @@
         "Effect": "Allow",
         "Resource": "*",
         "Sid": "RDSDescribeDBInstancesAccess"
+      },
+      {
+        "Action": [
+          "logs:FilterLogEvents"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceTag/DevOps-Guru-Analysis": "true"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:logs:*:*:log-group:*",
+        "Sid": "CloudWatchLogsFilterLogEventsAccess"
       }
     ],
     "Version": "2012-10-17"
@@ -188,6 +203,24 @@
     },
     {
       "access_level": "List",
+      "action": "devops-guru:ListAnomalousLogGroups",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "devops-guru:ListAnomalousLogGroups",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "devops-guru:ListMonitoredResources",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "devops-guru:ListMonitoredResources",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
       "action": "devops-guru:ListNotificationChannels",
       "condition": null,
       "credentials_exposure": false,
@@ -266,6 +299,19 @@
       "effective_action": "rds:DescribeDBInstances",
       "privesc": false,
       "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "logs:FilterLogEvents",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/DevOps-Guru-Analysis": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "effective_action": "logs:FilterLogEvents",
+      "privesc": false,
+      "resource_exposure": false
     }
   ],
   "malformed": false,
@@ -274,6 +320,6 @@
   "resource_exposure": false,
   "undocumented_actions": false,
   "unknown_actions": [],
-  "updatedate": "2022-03-04T02:37:19+00:00",
-  "version": "v5"
+  "updatedate": "2022-08-25T18:11:21+00:00",
+  "version": "v6"
 }

@@ -7,7 +7,7 @@
     "Permissions management"
   ],
   "arn": "arn:aws:iam::aws:policy/aws-service-role/AWSElasticBeanstalkManagedUpdatesServiceRolePolicy",
-  "createdate": "2020-12-11T18:21:32Z",
+  "createdate": "2022-08-23T18:07:08Z",
   "credentials_exposure": false,
   "deprecated": false,
   "document": {
@@ -71,7 +71,9 @@
           "elasticloadbalancing:Describe*",
           "logs:DescribeLogGroups",
           "sns:GetTopicAttributes",
-          "sns:ListSubscriptionsByTopic"
+          "sns:ListSubscriptionsByTopic",
+          "rds:DescribeDBEngineVersions",
+          "rds:DescribeDBInstances"
         ],
         "Effect": "Allow",
         "Resource": "*",
@@ -193,6 +195,30 @@
         "Effect": "Allow",
         "Resource": "arn:aws:sns:*:*:ElasticBeanstalkNotifications-Environment-*",
         "Sid": "SNS"
+      },
+      {
+        "Action": [
+          "ec2:CreateLaunchTemplate",
+          "ec2:DeleteLaunchTemplate",
+          "ec2:CreateLaunchTemplateVersion",
+          "ec2:DeleteLaunchTemplateVersions"
+        ],
+        "Effect": "Allow",
+        "Resource": "arn:aws:ec2:*:*:launch-template/*",
+        "Sid": "EC2LaunchTemplate"
+      },
+      {
+        "Action": [
+          "ec2:RunInstances"
+        ],
+        "Condition": {
+          "ArnLike": {
+            "ec2:LaunchTemplate": "arn:aws:ec2:*:*:launch-template/*"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "AllowLaunchTemplateRunInstances"
       }
     ],
     "Version": "2012-10-17"
@@ -2685,6 +2711,24 @@
       "resource_exposure": false
     },
     {
+      "access_level": "List",
+      "action": "rds:DescribeDBEngineVersions",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "rds:DescribeDBEngineVersions",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "rds:DescribeDBInstances",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "rds:DescribeDBInstances",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
       "access_level": "Write",
       "action": "autoscaling:AttachInstances",
       "condition": null,
@@ -3050,6 +3094,55 @@
       "effective_action": "sns:CreateTopic",
       "privesc": false,
       "resource_exposure": true
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:CreateLaunchTemplate",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "ec2:CreateLaunchTemplate",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:DeleteLaunchTemplate",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "ec2:DeleteLaunchTemplate",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:CreateLaunchTemplateVersion",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "ec2:CreateLaunchTemplateVersion",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:DeleteLaunchTemplateVersions",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "ec2:DeleteLaunchTemplateVersions",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:RunInstances",
+      "condition": {
+        "ArnLike": {
+          "ec2:LaunchTemplate": "arn:aws:ec2:*:*:launch-template/*"
+        }
+      },
+      "credentials_exposure": false,
+      "effective_action": "ec2:RunInstances",
+      "privesc": false,
+      "resource_exposure": false
     }
   ],
   "malformed": false,
@@ -3058,6 +3151,6 @@
   "resource_exposure": true,
   "undocumented_actions": false,
   "unknown_actions": [],
-  "updatedate": "2020-12-11T18:21:32+00:00",
-  "version": "v5"
+  "updatedate": "2022-08-23T18:07:08+00:00",
+  "version": "v6"
 }
