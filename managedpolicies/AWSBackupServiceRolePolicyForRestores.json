@@ -7,7 +7,7 @@
     "Permissions management"
   ],
   "arn": "arn:aws:iam::aws:policy/service-role/AWSBackupServiceRolePolicyForRestores",
-  "createdate": "2022-07-19T23:22:51Z",
+  "createdate": "2022-10-12T22:12:43Z",
   "credentials_exposure": false,
   "deprecated": false,
   "document": {
@@ -126,7 +126,8 @@
               "dynamodb.*.amazonaws.com",
               "ec2.*.amazonaws.com",
               "elasticfilesystem.*.amazonaws.com",
-              "rds.*.amazonaws.com"
+              "rds.*.amazonaws.com",
+              "redshift.*.amazonaws.com"
             ]
           }
         },
@@ -186,7 +187,10 @@
           }
         },
         "Effect": "Allow",
-        "Resource": "arn:aws:ec2:*::snapshot/*"
+        "Resource": [
+          "arn:aws:ec2:*::snapshot/*",
+          "arn:aws:ec2:*:*:instance/*"
+        ]
       },
       {
         "Action": [
@@ -309,6 +313,54 @@
         "Effect": "Allow",
         "Resource": "arn:aws:backup-gateway:*:*:hypervisor/*",
         "Sid": "GatewayRestorePermissions"
+      },
+      {
+        "Action": [
+          "cloudformation:CreateChangeSet",
+          "cloudformation:DescribeChangeSet"
+        ],
+        "Effect": "Allow",
+        "Resource": "arn:aws:cloudformation:*:*:stack/*/*"
+      },
+      {
+        "Action": [
+          "redshift:RestoreFromClusterSnapshot",
+          "redshift:RestoreTableFromClusterSnapshot"
+        ],
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:redshift:*:*:snapshot:*/*",
+          "arn:aws:redshift:*:*:cluster:*"
+        ]
+      },
+      {
+        "Action": [
+          "redshift:DescribeClusters"
+        ],
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:redshift:*:*:cluster:*"
+        ]
+      },
+      {
+        "Action": [
+          "redshift:DescribeTableRestoreStatus"
+        ],
+        "Effect": "Allow",
+        "Resource": "*"
+      },
+      {
+        "Action": [
+          "ec2:DescribeAccountAttributes",
+          "ec2:DescribeAddresses",
+          "ec2:DescribeAvailabilityZones",
+          "ec2:DescribeSecurityGroups",
+          "ec2:DescribeSubnets",
+          "ec2:DescribeVpcs",
+          "ec2:DescribeInternetGateways"
+        ],
+        "Effect": "Allow",
+        "Resource": "*"
       }
     ],
     "Version": "2012-10-17"
@@ -656,7 +708,8 @@
             "dynamodb.*.amazonaws.com",
             "ec2.*.amazonaws.com",
             "elasticfilesystem.*.amazonaws.com",
-            "rds.*.amazonaws.com"
+            "rds.*.amazonaws.com",
+            "redshift.*.amazonaws.com"
           ]
         }
       },
@@ -674,7 +727,8 @@
             "dynamodb.*.amazonaws.com",
             "ec2.*.amazonaws.com",
             "elasticfilesystem.*.amazonaws.com",
-            "rds.*.amazonaws.com"
+            "rds.*.amazonaws.com",
+            "redshift.*.amazonaws.com"
           ]
         }
       },
@@ -692,7 +746,8 @@
             "dynamodb.*.amazonaws.com",
             "ec2.*.amazonaws.com",
             "elasticfilesystem.*.amazonaws.com",
-            "rds.*.amazonaws.com"
+            "rds.*.amazonaws.com",
+            "redshift.*.amazonaws.com"
           ]
         }
       },
@@ -710,7 +765,8 @@
             "dynamodb.*.amazonaws.com",
             "ec2.*.amazonaws.com",
             "elasticfilesystem.*.amazonaws.com",
-            "rds.*.amazonaws.com"
+            "rds.*.amazonaws.com",
+            "redshift.*.amazonaws.com"
           ]
         }
       },
@@ -728,7 +784,8 @@
             "dynamodb.*.amazonaws.com",
             "ec2.*.amazonaws.com",
             "elasticfilesystem.*.amazonaws.com",
-            "rds.*.amazonaws.com"
+            "rds.*.amazonaws.com",
+            "redshift.*.amazonaws.com"
           ]
         }
       },
@@ -1007,6 +1064,123 @@
       "effective_action": "backup-gateway:Restore",
       "privesc": false,
       "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "cloudformation:CreateChangeSet",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "cloudformation:CreateChangeSet",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "cloudformation:DescribeChangeSet",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "cloudformation:DescribeChangeSet",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "redshift:RestoreFromClusterSnapshot",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "redshift:RestoreFromClusterSnapshot",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "redshift:RestoreTableFromClusterSnapshot",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "redshift:RestoreTableFromClusterSnapshot",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "redshift:DescribeClusters",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "redshift:DescribeClusters",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "redshift:DescribeTableRestoreStatus",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "redshift:DescribeTableRestoreStatus",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "ec2:DescribeAccountAttributes",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "ec2:DescribeAccountAttributes",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "ec2:DescribeAddresses",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "ec2:DescribeAddresses",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "ec2:DescribeAvailabilityZones",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "ec2:DescribeAvailabilityZones",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "ec2:DescribeSecurityGroups",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "ec2:DescribeSecurityGroups",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "ec2:DescribeSubnets",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "ec2:DescribeSubnets",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "ec2:DescribeVpcs",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "ec2:DescribeVpcs",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "ec2:DescribeInternetGateways",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "ec2:DescribeInternetGateways",
+      "privesc": false,
+      "resource_exposure": false
     }
   ],
   "malformed": false,
@@ -1015,6 +1189,6 @@
   "resource_exposure": true,
   "undocumented_actions": false,
   "unknown_actions": [],
-  "updatedate": "2022-07-19T23:22:51+00:00",
-  "version": "v13"
+  "updatedate": "2022-10-12T22:12:43+00:00",
+  "version": "v14"
 }
