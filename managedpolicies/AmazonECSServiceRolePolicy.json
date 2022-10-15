@@ -7,7 +7,7 @@
     "Permissions management"
   ],
   "arn": "arn:aws:iam::aws:policy/aws-service-role/AmazonECSServiceRolePolicy",
-  "createdate": "2021-01-13T20:04:13Z",
+  "createdate": "2022-10-14T18:10:03Z",
   "credentials_exposure": false,
   "deprecated": false,
   "document": {
@@ -132,6 +132,56 @@
           "arn:aws:ssm:*:*:document/AmazonECS-ExecuteInteractiveCommand"
         ],
         "Sid": "ExecuteCommand"
+      },
+      {
+        "Action": [
+          "servicediscovery:CreateHttpNamespace",
+          "servicediscovery:CreateService"
+        ],
+        "Condition": {
+          "ForAllValues:StringEquals": {
+            "aws:TagKeys": [
+              "AmazonECSManaged"
+            ]
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "CloudMapResourceCreation"
+      },
+      {
+        "Action": [
+          "servicediscovery:TagResource"
+        ],
+        "Condition": {
+          "StringLike": {
+            "aws:RequestTag/AmazonECSManaged": "*"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "CloudMapResourceTagging"
+      },
+      {
+        "Action": [
+          "servicediscovery:DeleteService"
+        ],
+        "Condition": {
+          "Null": {
+            "aws:ResourceTag/AmazonECSManaged": "false"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "CloudMapResourceDeletion"
+      },
+      {
+        "Action": [
+          "servicediscovery:DiscoverInstances"
+        ],
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "CloudMapResourceDiscovery"
       }
     ],
     "Version": "2012-10-17"
@@ -2429,6 +2479,71 @@
       "effective_action": "ssm:StartSession",
       "privesc": false,
       "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "servicediscovery:CreateHttpNamespace",
+      "condition": {
+        "ForAllValues:StringEquals": {
+          "aws:TagKeys": [
+            "AmazonECSManaged"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "effective_action": "servicediscovery:CreateHttpNamespace",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "servicediscovery:CreateService",
+      "condition": {
+        "ForAllValues:StringEquals": {
+          "aws:TagKeys": [
+            "AmazonECSManaged"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "effective_action": "servicediscovery:CreateService",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Tagging",
+      "action": "servicediscovery:TagResource",
+      "condition": {
+        "StringLike": {
+          "aws:RequestTag/AmazonECSManaged": "*"
+        }
+      },
+      "credentials_exposure": false,
+      "effective_action": "servicediscovery:TagResource",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "servicediscovery:DeleteService",
+      "condition": {
+        "Null": {
+          "aws:ResourceTag/AmazonECSManaged": "false"
+        }
+      },
+      "credentials_exposure": false,
+      "effective_action": "servicediscovery:DeleteService",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "servicediscovery:DiscoverInstances",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "servicediscovery:DiscoverInstances",
+      "privesc": false,
+      "resource_exposure": false
     }
   ],
   "malformed": false,
@@ -2437,6 +2552,6 @@
   "resource_exposure": true,
   "undocumented_actions": false,
   "unknown_actions": [],
-  "updatedate": "2021-01-13T20:04:13+00:00",
-  "version": "v8"
+  "updatedate": "2022-10-14T18:10:03+00:00",
+  "version": "v9"
 }
