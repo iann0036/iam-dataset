@@ -16,7 +16,6 @@
     "artifactregistry.npmpackages.list",
     "artifactregistry.packages.get",
     "artifactregistry.packages.list",
-    "artifactregistry.projectsettings.get",
     "artifactregistry.pythonpackages.get",
     "artifactregistry.pythonpackages.list",
     "artifactregistry.repositories.downloadArtifacts",
