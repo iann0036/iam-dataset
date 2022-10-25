@@ -6,7 +6,7 @@
     "Write"
   ],
   "arn": "arn:aws:iam::aws:policy/aws-service-role/AmazonEKSLocalOutpostServiceRolePolicy",
-  "createdate": "2022-08-23T21:53:02Z",
+  "createdate": "2022-10-24T16:24:51Z",
   "credentials_exposure": false,
   "deprecated": false,
   "document": {
@@ -21,7 +21,9 @@
           "ec2:DescribeInstances",
           "ec2:DescribeNetworkInterfaces",
           "ec2:DescribeNetworkInterfaceAttribute",
-          "ec2:DescribeSecurityGroups"
+          "ec2:DescribeSecurityGroups",
+          "ec2:DescribeVpcAttribute",
+          "ec2:DescribePlacementGroups"
         ],
         "Effect": "Allow",
         "Resource": "*"
@@ -106,7 +108,8 @@
           "arn:aws:ec2:*:*:launch-template/*",
           "arn:aws:ec2:*:*:network-interface/*",
           "arn:aws:ec2:*:*:security-group/*",
-          "arn:aws:ec2:*:*:subnet/*"
+          "arn:aws:ec2:*:*:subnet/*",
+          "arn:aws:ec2:*:*:placement-group/*"
         ]
       },
       {
@@ -115,7 +118,8 @@
           "ec2:RevokeSecurityGroupIngress",
           "ec2:DeleteNetworkInterface",
           "ec2:DeleteSecurityGroup",
-          "ec2:TerminateInstances"
+          "ec2:TerminateInstances",
+          "ec2:GetConsoleOutput"
         ],
         "Condition": {
           "StringLike": {
@@ -187,6 +191,13 @@
             "aws:ResourceTag/eks-local:controlplane-name": "*"
           }
         },
+        "Effect": "Allow",
+        "Resource": "arn:aws:secretsmanager:*:*:secret:eks-local.cluster.x-k8s.io/*"
+      },
+      {
+        "Action": [
+          "secretsmanager:DescribeSecret"
+        ],
         "Effect": "Allow",
         "Resource": "arn:aws:secretsmanager:*:*:secret:eks-local.cluster.x-k8s.io/*"
       },
@@ -327,6 +338,24 @@
       "condition": null,
       "credentials_exposure": false,
       "effective_action": "ec2:DescribeSecurityGroups",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "ec2:DescribeVpcAttribute",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "ec2:DescribeVpcAttribute",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "ec2:DescribePlacementGroups",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "ec2:DescribePlacementGroups",
       "privesc": false,
       "resource_exposure": false
     },
@@ -475,6 +504,19 @@
       "resource_exposure": false
     },
     {
+      "access_level": "Read",
+      "action": "ec2:GetConsoleOutput",
+      "condition": {
+        "StringLike": {
+          "aws:ResourceTag/eks-local:controlplane-name": "*"
+        }
+      },
+      "credentials_exposure": false,
+      "effective_action": "ec2:GetConsoleOutput",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
       "access_level": "Tagging",
       "action": "ec2:CreateTags",
       "condition": {
@@ -536,6 +578,15 @@
       },
       "credentials_exposure": false,
       "effective_action": "secretsmanager:DeleteSecret",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "secretsmanager:DescribeSecret",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "secretsmanager:DescribeSecret",
       "privesc": false,
       "resource_exposure": false
     },
@@ -635,6 +686,6 @@
   "resource_exposure": true,
   "undocumented_actions": false,
   "unknown_actions": [],
-  "updatedate": "2022-08-23T21:53:02+00:00",
-  "version": "v1"
+  "updatedate": "2022-10-24T16:24:51+00:00",
+  "version": "v2"
 }
