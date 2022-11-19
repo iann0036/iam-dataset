@@ -321,5 +321,7 @@ module.exports = {
   ConnectCases: require('./connectcases'),
   ResourceExplorer2: require('./resourceexplorer2'),
   Scheduler: require('./scheduler'),
+  ChimeSDKVoice: require('./chimesdkvoice'),
+  IoTRoboRunner: require('./iotroborunner'),
   SsmSap: require('./ssmsap')
 };

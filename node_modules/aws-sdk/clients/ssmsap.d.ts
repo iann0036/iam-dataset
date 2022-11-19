@@ -12,123 +12,123 @@ declare class SsmSap extends Service {
   constructor(options?: SsmSap.Types.ClientConfiguration)
   config: Config & SsmSap.Types.ClientConfiguration;
   /**
-   * 
+   * Removes permissions associated with the target database.
    */
   deleteResourcePermission(params: SsmSap.Types.DeleteResourcePermissionInput, callback?: (err: AWSError, data: SsmSap.Types.DeleteResourcePermissionOutput) => void): Request<SsmSap.Types.DeleteResourcePermissionOutput, AWSError>;
   /**
-   * 
+   * Removes permissions associated with the target database.
    */
   deleteResourcePermission(callback?: (err: AWSError, data: SsmSap.Types.DeleteResourcePermissionOutput) => void): Request<SsmSap.Types.DeleteResourcePermissionOutput, AWSError>;
   /**
-   * 
+   * Deregister an SAP application with AWS Systems Manager for SAP. This action does not aﬀect the existing setup of your SAP workloads on Amazon EC2.
    */
   deregisterApplication(params: SsmSap.Types.DeregisterApplicationInput, callback?: (err: AWSError, data: SsmSap.Types.DeregisterApplicationOutput) => void): Request<SsmSap.Types.DeregisterApplicationOutput, AWSError>;
   /**
-   * 
+   * Deregister an SAP application with AWS Systems Manager for SAP. This action does not aﬀect the existing setup of your SAP workloads on Amazon EC2.
    */
   deregisterApplication(callback?: (err: AWSError, data: SsmSap.Types.DeregisterApplicationOutput) => void): Request<SsmSap.Types.DeregisterApplicationOutput, AWSError>;
   /**
-   * 
+   * Gets an application registered with AWS Systems Manager for SAP. It also returns the components of the application.
    */
   getApplication(params: SsmSap.Types.GetApplicationInput, callback?: (err: AWSError, data: SsmSap.Types.GetApplicationOutput) => void): Request<SsmSap.Types.GetApplicationOutput, AWSError>;
   /**
-   * 
+   * Gets an application registered with AWS Systems Manager for SAP. It also returns the components of the application.
    */
   getApplication(callback?: (err: AWSError, data: SsmSap.Types.GetApplicationOutput) => void): Request<SsmSap.Types.GetApplicationOutput, AWSError>;
   /**
-   * 
+   * Gets the component of an application registered with AWS Systems Manager for SAP.
    */
   getComponent(params: SsmSap.Types.GetComponentInput, callback?: (err: AWSError, data: SsmSap.Types.GetComponentOutput) => void): Request<SsmSap.Types.GetComponentOutput, AWSError>;
   /**
-   * 
+   * Gets the component of an application registered with AWS Systems Manager for SAP.
    */
   getComponent(callback?: (err: AWSError, data: SsmSap.Types.GetComponentOutput) => void): Request<SsmSap.Types.GetComponentOutput, AWSError>;
   /**
-   * 
+   * Gets the SAP HANA database of an application registered with AWS Systems Manager for SAP.
    */
   getDatabase(params: SsmSap.Types.GetDatabaseInput, callback?: (err: AWSError, data: SsmSap.Types.GetDatabaseOutput) => void): Request<SsmSap.Types.GetDatabaseOutput, AWSError>;
   /**
-   * 
+   * Gets the SAP HANA database of an application registered with AWS Systems Manager for SAP.
    */
   getDatabase(callback?: (err: AWSError, data: SsmSap.Types.GetDatabaseOutput) => void): Request<SsmSap.Types.GetDatabaseOutput, AWSError>;
   /**
-   * 
+   * Gets the details of an operation by specifying the operation ID.
    */
   getOperation(params: SsmSap.Types.GetOperationInput, callback?: (err: AWSError, data: SsmSap.Types.GetOperationOutput) => void): Request<SsmSap.Types.GetOperationOutput, AWSError>;
   /**
-   * 
+   * Gets the details of an operation by specifying the operation ID.
    */
   getOperation(callback?: (err: AWSError, data: SsmSap.Types.GetOperationOutput) => void): Request<SsmSap.Types.GetOperationOutput, AWSError>;
   /**
-   * 
+   * Gets permissions associated with the target database.
    */
   getResourcePermission(params: SsmSap.Types.GetResourcePermissionInput, callback?: (err: AWSError, data: SsmSap.Types.GetResourcePermissionOutput) => void): Request<SsmSap.Types.GetResourcePermissionOutput, AWSError>;
   /**
-   * 
+   * Gets permissions associated with the target database.
    */
   getResourcePermission(callback?: (err: AWSError, data: SsmSap.Types.GetResourcePermissionOutput) => void): Request<SsmSap.Types.GetResourcePermissionOutput, AWSError>;
   /**
-   * 
+   * Lists all the applications registered with AWS Systems Manager for SAP.
    */
   listApplications(params: SsmSap.Types.ListApplicationsInput, callback?: (err: AWSError, data: SsmSap.Types.ListApplicationsOutput) => void): Request<SsmSap.Types.ListApplicationsOutput, AWSError>;
   /**
-   * 
+   * Lists all the applications registered with AWS Systems Manager for SAP.
    */
   listApplications(callback?: (err: AWSError, data: SsmSap.Types.ListApplicationsOutput) => void): Request<SsmSap.Types.ListApplicationsOutput, AWSError>;
   /**
-   * 
+   * Lists all the components registered with AWS Systems Manager for SAP.
    */
   listComponents(params: SsmSap.Types.ListComponentsInput, callback?: (err: AWSError, data: SsmSap.Types.ListComponentsOutput) => void): Request<SsmSap.Types.ListComponentsOutput, AWSError>;
   /**
-   * 
+   * Lists all the components registered with AWS Systems Manager for SAP.
    */
   listComponents(callback?: (err: AWSError, data: SsmSap.Types.ListComponentsOutput) => void): Request<SsmSap.Types.ListComponentsOutput, AWSError>;
   /**
-   * 
+   * Lists the SAP HANA databases of an application registered with AWS Systems Manager for SAP.
    */
   listDatabases(params: SsmSap.Types.ListDatabasesInput, callback?: (err: AWSError, data: SsmSap.Types.ListDatabasesOutput) => void): Request<SsmSap.Types.ListDatabasesOutput, AWSError>;
   /**
-   * 
+   * Lists the SAP HANA databases of an application registered with AWS Systems Manager for SAP.
    */
   listDatabases(callback?: (err: AWSError, data: SsmSap.Types.ListDatabasesOutput) => void): Request<SsmSap.Types.ListDatabasesOutput, AWSError>;
   /**
-   * 
+   * Lists all tags on an SAP HANA application and/or database registered with AWS Systems Manager for SAP.
    */
   listTagsForResource(params: SsmSap.Types.ListTagsForResourceRequest, callback?: (err: AWSError, data: SsmSap.Types.ListTagsForResourceResponse) => void): Request<SsmSap.Types.ListTagsForResourceResponse, AWSError>;
   /**
-   * 
+   * Lists all tags on an SAP HANA application and/or database registered with AWS Systems Manager for SAP.
    */
   listTagsForResource(callback?: (err: AWSError, data: SsmSap.Types.ListTagsForResourceResponse) => void): Request<SsmSap.Types.ListTagsForResourceResponse, AWSError>;
   /**
-   * 
+   * Adds permissions to the target database.
    */
   putResourcePermission(params: SsmSap.Types.PutResourcePermissionInput, callback?: (err: AWSError, data: SsmSap.Types.PutResourcePermissionOutput) => void): Request<SsmSap.Types.PutResourcePermissionOutput, AWSError>;
   /**
-   * 
+   * Adds permissions to the target database.
    */
   putResourcePermission(callback?: (err: AWSError, data: SsmSap.Types.PutResourcePermissionOutput) => void): Request<SsmSap.Types.PutResourcePermissionOutput, AWSError>;
   /**
-   * 
+   * Register an SAP application with AWS Systems Manager for SAP. You must meet the following requirements before registering.  The SAP application you want to register with AWS Systems Manager for SAP is running on Amazon EC2. AWS Systems Manager Agent must be setup on an Amazon EC2 instance along with the required IAM permissions. Amazon EC2 instance(s) must have access to the secrets created in AWS Secrets Manager to manage SAP applications and components.
    */
   registerApplication(params: SsmSap.Types.RegisterApplicationInput, callback?: (err: AWSError, data: SsmSap.Types.RegisterApplicationOutput) => void): Request<SsmSap.Types.RegisterApplicationOutput, AWSError>;
   /**
-   * 
+   * Register an SAP application with AWS Systems Manager for SAP. You must meet the following requirements before registering.  The SAP application you want to register with AWS Systems Manager for SAP is running on Amazon EC2. AWS Systems Manager Agent must be setup on an Amazon EC2 instance along with the required IAM permissions. Amazon EC2 instance(s) must have access to the secrets created in AWS Secrets Manager to manage SAP applications and components.
    */
   registerApplication(callback?: (err: AWSError, data: SsmSap.Types.RegisterApplicationOutput) => void): Request<SsmSap.Types.RegisterApplicationOutput, AWSError>;
   /**
-   * 
+   * Creates tag for a resource by specifying the ARN.
    */
   tagResource(params: SsmSap.Types.TagResourceRequest, callback?: (err: AWSError, data: SsmSap.Types.TagResourceResponse) => void): Request<SsmSap.Types.TagResourceResponse, AWSError>;
   /**
-   * 
+   * Creates tag for a resource by specifying the ARN.
    */
   tagResource(callback?: (err: AWSError, data: SsmSap.Types.TagResourceResponse) => void): Request<SsmSap.Types.TagResourceResponse, AWSError>;
   /**
-   * 
+   * Delete the tags for a resource.
    */
   untagResource(params: SsmSap.Types.UntagResourceRequest, callback?: (err: AWSError, data: SsmSap.Types.UntagResourceResponse) => void): Request<SsmSap.Types.UntagResourceResponse, AWSError>;
   /**
-   * 
+   * Delete the tags for a resource.
    */
   untagResource(callback?: (err: AWSError, data: SsmSap.Types.UntagResourceResponse) => void): Request<SsmSap.Types.UntagResourceResponse, AWSError>;
   /**
@@ -721,7 +721,7 @@ declare namespace SsmSap {
      */
     resourceArn: SsmSapArn;
     /**
-     * 
+     * Adds/updates or removes credentials for applications registered with AWS Systems Manager for SAP.
      */
     tagKeys: TagKeyList;
   }
