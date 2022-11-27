@@ -5,7 +5,7 @@
     "Write"
   ],
   "arn": "arn:aws:iam::aws:policy/AWSApplicationMigrationEC2Access",
-  "createdate": "2022-03-02T08:49:20Z",
+  "createdate": "2022-11-27T09:36:21Z",
   "credentials_exposure": false,
   "deprecated": false,
   "document": {
@@ -46,6 +46,40 @@
           "ec2:DeleteLaunchTemplateVersions"
         ],
         "Condition": {
+          "Null": {
+            "aws:ResourceTag/AWSApplicationMigrationServiceManaged": "false"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:ec2:*:*:launch-template/*"
+      },
+      {
+        "Action": [
+          "ec2:CreateLaunchTemplate"
+        ],
+        "Condition": {
+          "ForAnyValue:StringEquals": {
+            "aws:CalledVia": [
+              "mgn.amazonaws.com"
+            ]
+          },
+          "Null": {
+            "aws:RequestTag/AWSApplicationMigrationServiceManaged": "false"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:ec2:*:*:launch-template/*"
+      },
+      {
+        "Action": [
+          "ec2:DeleteLaunchTemplate"
+        ],
+        "Condition": {
+          "ForAnyValue:StringEquals": {
+            "aws:CalledVia": [
+              "mgn.amazonaws.com"
+            ]
+          },
           "Null": {
             "aws:ResourceTag/AWSApplicationMigrationServiceManaged": "false"
           }
@@ -262,7 +296,8 @@
               "CreateSecurityGroup",
               "CreateVolume",
               "CreateSnapshot",
-              "RunInstances"
+              "RunInstances",
+              "CreateLaunchTemplate"
             ]
           }
         },
@@ -271,7 +306,8 @@
           "arn:aws:ec2:*:*:security-group/*",
           "arn:aws:ec2:*:*:volume/*",
           "arn:aws:ec2:*:*:snapshot/*",
-          "arn:aws:ec2:*:*:instance/*"
+          "arn:aws:ec2:*:*:instance/*",
+          "arn:aws:ec2:*:*:launch-template/*"
         ]
       },
       {
@@ -361,6 +397,42 @@
       },
       "credentials_exposure": false,
       "effective_action": "ec2:DeleteLaunchTemplateVersions",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:CreateLaunchTemplate",
+      "condition": {
+        "ForAnyValue:StringEquals": {
+          "aws:CalledVia": [
+            "mgn.amazonaws.com"
+          ]
+        },
+        "Null": {
+          "aws:RequestTag/AWSApplicationMigrationServiceManaged": "false"
+        }
+      },
+      "credentials_exposure": false,
+      "effective_action": "ec2:CreateLaunchTemplate",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:DeleteLaunchTemplate",
+      "condition": {
+        "ForAnyValue:StringEquals": {
+          "aws:CalledVia": [
+            "mgn.amazonaws.com"
+          ]
+        },
+        "Null": {
+          "aws:ResourceTag/AWSApplicationMigrationServiceManaged": "false"
+        }
+      },
+      "credentials_exposure": false,
+      "effective_action": "ec2:DeleteLaunchTemplate",
       "privesc": false,
       "resource_exposure": false
     },
@@ -699,7 +771,8 @@
             "CreateSecurityGroup",
             "CreateVolume",
             "CreateSnapshot",
-            "RunInstances"
+            "RunInstances",
+            "CreateLaunchTemplate"
           ]
         }
       },
@@ -747,6 +820,6 @@
   "resource_exposure": true,
   "undocumented_actions": false,
   "unknown_actions": [],
-  "updatedate": "2022-03-02T08:49:20+00:00",
-  "version": "v2"
+  "updatedate": "2022-11-27T09:36:21+00:00",
+  "version": "v3"
 }
