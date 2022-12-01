@@ -6,13 +6,26 @@
     "Write"
   ],
   "arn": "arn:aws:iam::aws:policy/AmazonDocDBConsoleFullAccess",
-  "createdate": "2021-04-05T22:42:40Z",
+  "createdate": "2022-11-30T15:23:27Z",
   "credentials_exposure": false,
   "deprecated": false,
   "document": {
     "Statement": [
       {
         "Action": [
+          "docdb-elastic:CreateCluster",
+          "docdb-elastic:UpdateCluster",
+          "docdb-elastic:GetCluster",
+          "docdb-elastic:DeleteCluster",
+          "docdb-elastic:ListClusters",
+          "docdb-elastic:CreateClusterSnapshot",
+          "docdb-elastic:GetClusterSnapshot",
+          "docdb-elastic:DeleteClusterSnapshot",
+          "docdb-elastic:ListClusterSnapshots",
+          "docdb-elastic:RestoreClusterFromSnapshot",
+          "docdb-elastic:TagResource",
+          "docdb-elastic:UntagResource",
+          "docdb-elastic:ListTagsForResource",
           "rds:AddRoleToDBCluster",
           "rds:AddSourceIdentifierToSubscription",
           "rds:AddTagsToResource",
@@ -27,6 +40,7 @@
           "rds:CreateDBParameterGroup",
           "rds:CreateDBSubnetGroup",
           "rds:CreateEventSubscription",
+          "rds:CreateGlobalCluster",
           "rds:DeleteDBCluster",
           "rds:DeleteDBClusterParameterGroup",
           "rds:DeleteDBClusterSnapshot",
@@ -34,6 +48,7 @@
           "rds:DeleteDBParameterGroup",
           "rds:DeleteDBSubnetGroup",
           "rds:DeleteEventSubscription",
+          "rds:DeleteGlobalCluster",
           "rds:DescribeAccountAttributes",
           "rds:DescribeCertificates",
           "rds:DescribeDBClusterParameterGroups",
@@ -53,6 +68,7 @@
           "rds:DescribeEventCategories",
           "rds:DescribeEventSubscriptions",
           "rds:DescribeEvents",
+          "rds:DescribeGlobalClusters",
           "rds:DescribeOptionGroups",
           "rds:DescribeOrderableDBInstanceOptions",
           "rds:DescribePendingMaintenanceActions",
@@ -67,8 +83,10 @@
           "rds:ModifyDBParameterGroup",
           "rds:ModifyDBSubnetGroup",
           "rds:ModifyEventSubscription",
+          "rds:ModifyGlobalCluster",
           "rds:PromoteReadReplicaDBCluster",
           "rds:RebootDBInstance",
+          "rds:RemoveFromGlobalCluster",
           "rds:RemoveRoleFromDBCluster",
           "rds:RemoveSourceIdentifierFromSubscription",
           "rds:RemoveTagsFromResource",
@@ -155,6 +173,18 @@
         },
         "Effect": "Allow",
         "Resource": "arn:aws:iam::*:role/aws-service-role/rds.amazonaws.com/AWSServiceRoleForRDS"
+      },
+      {
+        "Action": [
+          "iam:CreateServiceLinkedRole"
+        ],
+        "Condition": {
+          "StringLike": {
+            "iam:AWSServiceName": "docdb-elastic.amazonaws.com"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:iam::*:role/aws-service-role/docdb-elastic.amazonaws.com/AWSServiceRoleForDocDB-Elastic"
       }
     ],
     "Version": "2012-10-17"
@@ -288,6 +318,15 @@
     },
     {
       "access_level": "Write",
+      "action": "rds:CreateGlobalCluster",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "rds:CreateGlobalCluster",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
       "action": "rds:DeleteDBCluster",
       "condition": null,
       "credentials_exposure": false,
@@ -346,6 +385,15 @@
       "condition": null,
       "credentials_exposure": false,
       "effective_action": "rds:DeleteEventSubscription",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "rds:DeleteGlobalCluster",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "rds:DeleteGlobalCluster",
       "privesc": false,
       "resource_exposure": false
     },
@@ -522,6 +570,15 @@
     },
     {
       "access_level": "List",
+      "action": "rds:DescribeGlobalClusters",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "rds:DescribeGlobalClusters",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
       "action": "rds:DescribeOptionGroups",
       "condition": null,
       "credentials_exposure": false,
@@ -648,6 +705,15 @@
     },
     {
       "access_level": "Write",
+      "action": "rds:ModifyGlobalCluster",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "rds:ModifyGlobalCluster",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
       "action": "rds:PromoteReadReplicaDBCluster",
       "condition": null,
       "credentials_exposure": false,
@@ -661,6 +727,15 @@
       "condition": null,
       "credentials_exposure": false,
       "effective_action": "rds:RebootDBInstance",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "rds:RemoveFromGlobalCluster",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "rds:RemoveFromGlobalCluster",
       "privesc": false,
       "resource_exposure": false
     },
@@ -1225,6 +1300,19 @@
       "effective_action": "iam:CreateServiceLinkedRole",
       "privesc": true,
       "resource_exposure": true
+    },
+    {
+      "access_level": "Write",
+      "action": "iam:CreateServiceLinkedRole",
+      "condition": {
+        "StringLike": {
+          "iam:AWSServiceName": "docdb-elastic.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "effective_action": "iam:CreateServiceLinkedRole",
+      "privesc": true,
+      "resource_exposure": true
     }
   ],
   "malformed": false,
@@ -1232,7 +1320,60 @@
   "privesc": true,
   "resource_exposure": true,
   "undocumented_actions": false,
-  "unknown_actions": [],
-  "updatedate": "2021-04-05T22:42:40+00:00",
-  "version": "v3"
+  "unknown_actions": [
+    {
+      "action": "docdb-elastic:CreateCluster",
+      "condition": null
+    },
+    {
+      "action": "docdb-elastic:UpdateCluster",
+      "condition": null
+    },
+    {
+      "action": "docdb-elastic:GetCluster",
+      "condition": null
+    },
+    {
+      "action": "docdb-elastic:DeleteCluster",
+      "condition": null
+    },
+    {
+      "action": "docdb-elastic:ListClusters",
+      "condition": null
+    },
+    {
+      "action": "docdb-elastic:CreateClusterSnapshot",
+      "condition": null
+    },
+    {
+      "action": "docdb-elastic:GetClusterSnapshot",
+      "condition": null
+    },
+    {
+      "action": "docdb-elastic:DeleteClusterSnapshot",
+      "condition": null
+    },
+    {
+      "action": "docdb-elastic:ListClusterSnapshots",
+      "condition": null
+    },
+    {
+      "action": "docdb-elastic:RestoreClusterFromSnapshot",
+      "condition": null
+    },
+    {
+      "action": "docdb-elastic:TagResource",
+      "condition": null
+    },
+    {
+      "action": "docdb-elastic:UntagResource",
+      "condition": null
+    },
+    {
+      "action": "docdb-elastic:ListTagsForResource",
+      "condition": null
+    }
+  ],
+  "updatedate": "2022-11-30T15:23:27+00:00",
+  "version": "v4"
 }
