@@ -7,18 +7,59 @@
     "Permissions management"
   ],
   "arn": "arn:aws:iam::aws:policy/CloudWatchEventsFullAccess",
-  "createdate": "2016-01-14T18:37:08Z",
+  "createdate": "2022-12-01T17:05:05Z",
   "credentials_exposure": false,
   "deprecated": false,
   "document": {
     "Statement": [
       {
         "Action": [
-          "events:*"
+          "events:*",
+          "schemas:*",
+          "scheduler:*",
+          "pipes:*"
         ],
         "Effect": "Allow",
         "Resource": "*",
-        "Sid": "CloudWatchEventsFullAccess"
+        "Sid": "EventBridgeActions"
+      },
+      {
+        "Action": [
+          "iam:CreateServiceLinkedRole"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "iam:AWSServiceName": "apidestinations.events.amazonaws.com"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:iam::*:role/aws-service-role/AmazonEventBridgeApiDestinationsServiceRolePolicy",
+        "Sid": "IAMCreateServiceLinkedRoleForApiDestinations"
+      },
+      {
+        "Action": [
+          "iam:CreateServiceLinkedRole"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "iam:AWSServiceName": "schemas.amazonaws.com"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:iam::*:role/aws-service-role/schemas.amazonaws.com/AWSServiceRoleForSchemas",
+        "Sid": "IAMCreateServiceLinkedRoleForAmazonEventBridgeSchemas"
+      },
+      {
+        "Action": [
+          "secretsmanager:CreateSecret",
+          "secretsmanager:UpdateSecret",
+          "secretsmanager:DeleteSecret",
+          "secretsmanager:GetSecretValue",
+          "secretsmanager:PutSecretValue"
+        ],
+        "Effect": "Allow",
+        "Resource": "arn:aws:secretsmanager:*:*:secret:events!*",
+        "Sid": "SecretsManagerAccessForApiDestinations"
       },
       {
         "Action": [
@@ -27,6 +68,32 @@
         "Effect": "Allow",
         "Resource": "arn:aws:iam::*:role/AWS_Events_Invoke_Targets",
         "Sid": "IAMPassRoleForCloudWatchEvents"
+      },
+      {
+        "Action": [
+          "iam:PassRole"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "iam:PassedToService": "scheduler.amazonaws.com"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:iam::*:role/*",
+        "Sid": "IAMPassRoleAccessForScheduler"
+      },
+      {
+        "Action": [
+          "iam:PassRole"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "iam:PassedToService": "pipes.amazonaws.com"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:iam::*:role/*",
+        "Sid": "IAMPassRoleAccessForPipes"
       }
     ],
     "Version": "2012-10-17"
@@ -547,8 +614,492 @@
     },
     {
       "access_level": "Write",
+      "action": "schemas:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "schemas:CreateDiscoverer",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "schemas:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "schemas:CreateRegistry",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "schemas:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "schemas:CreateSchema",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "schemas:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "schemas:DeleteDiscoverer",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "schemas:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "schemas:DeleteRegistry",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "schemas:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "schemas:DeleteResourcePolicy",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "schemas:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "schemas:DeleteSchema",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "schemas:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "schemas:DeleteSchemaVersion",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "schemas:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "schemas:DescribeCodeBinding",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "schemas:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "schemas:DescribeDiscoverer",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "schemas:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "schemas:DescribeRegistry",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "schemas:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "schemas:DescribeSchema",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "schemas:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "schemas:ExportSchema",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "schemas:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "schemas:GetCodeBindingSource",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "schemas:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "schemas:GetDiscoveredSchema",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "schemas:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "schemas:GetResourcePolicy",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "schemas:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "schemas:ListDiscoverers",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "schemas:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "schemas:ListRegistries",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "schemas:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "schemas:ListSchemaVersions",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "schemas:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "schemas:ListSchemas",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "schemas:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "schemas:ListTagsForResource",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "schemas:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "schemas:PutCodeBinding",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "schemas:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "schemas:PutResourcePolicy",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "schemas:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "schemas:SearchSchemas",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "schemas:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "schemas:StartDiscoverer",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "schemas:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "schemas:StopDiscoverer",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Tagging",
+      "action": "schemas:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "schemas:TagResource",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Tagging",
+      "action": "schemas:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "schemas:UntagResource",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "schemas:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "schemas:UpdateDiscoverer",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "schemas:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "schemas:UpdateRegistry",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "schemas:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "schemas:UpdateSchema",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "scheduler:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "scheduler:CreateSchedule",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "scheduler:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "scheduler:CreateScheduleGroup",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "scheduler:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "scheduler:DeleteSchedule",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "scheduler:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "scheduler:DeleteScheduleGroup",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "scheduler:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "scheduler:GetSchedule",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "scheduler:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "scheduler:GetScheduleGroup",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "scheduler:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "scheduler:ListScheduleGroups",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "scheduler:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "scheduler:ListSchedules",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "scheduler:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "scheduler:ListTagsForResource",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Tagging",
+      "action": "scheduler:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "scheduler:TagResource",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Tagging",
+      "action": "scheduler:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "scheduler:UntagResource",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "scheduler:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "scheduler:UpdateSchedule",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "iam:CreateServiceLinkedRole",
+      "condition": {
+        "StringEquals": {
+          "iam:AWSServiceName": "apidestinations.events.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "effective_action": "iam:CreateServiceLinkedRole",
+      "privesc": true,
+      "resource_exposure": true
+    },
+    {
+      "access_level": "Write",
+      "action": "iam:CreateServiceLinkedRole",
+      "condition": {
+        "StringEquals": {
+          "iam:AWSServiceName": "schemas.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "effective_action": "iam:CreateServiceLinkedRole",
+      "privesc": true,
+      "resource_exposure": true
+    },
+    {
+      "access_level": "Write",
+      "action": "secretsmanager:CreateSecret",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "secretsmanager:CreateSecret",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "secretsmanager:UpdateSecret",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "secretsmanager:UpdateSecret",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "secretsmanager:DeleteSecret",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "secretsmanager:DeleteSecret",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "secretsmanager:GetSecretValue",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "secretsmanager:GetSecretValue",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "secretsmanager:PutSecretValue",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "secretsmanager:PutSecretValue",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
       "action": "iam:PassRole",
       "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "iam:PassRole",
+      "privesc": true,
+      "resource_exposure": true
+    },
+    {
+      "access_level": "Write",
+      "action": "iam:PassRole",
+      "condition": {
+        "StringEquals": {
+          "iam:PassedToService": "scheduler.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "effective_action": "iam:PassRole",
+      "privesc": true,
+      "resource_exposure": true
+    },
+    {
+      "access_level": "Write",
+      "action": "iam:PassRole",
+      "condition": {
+        "StringEquals": {
+          "iam:PassedToService": "pipes.amazonaws.com"
+        }
+      },
       "credentials_exposure": false,
       "effective_action": "iam:PassRole",
       "privesc": true,
@@ -560,7 +1111,12 @@
   "privesc": true,
   "resource_exposure": true,
   "undocumented_actions": false,
-  "unknown_actions": [],
-  "updatedate": "2016-01-14T18:37:08+00:00",
-  "version": "v1"
+  "unknown_actions": [
+    {
+      "action": "pipes:*",
+      "condition": null
+    }
+  ],
+  "updatedate": "2022-12-01T17:05:05+00:00",
+  "version": "v2"
 }
