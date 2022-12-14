@@ -1,10 +1,12 @@
 {
   "access_levels": [
     "List",
+    "Read",
+    "Tagging",
     "Write"
   ],
   "arn": "arn:aws:iam::aws:policy/aws-service-role/AmazonRDSPreviewServiceRolePolicy",
-  "createdate": "2022-06-07T16:55:33Z",
+  "createdate": "2022-12-13T15:53:59Z",
   "credentials_exposure": false,
   "deprecated": false,
   "document": {
@@ -92,6 +94,51 @@
         },
         "Effect": "Allow",
         "Resource": "*"
+      },
+      {
+        "Action": [
+          "secretsmanager:GetRandomPassword"
+        ],
+        "Effect": "Allow",
+        "Resource": "*"
+      },
+      {
+        "Action": [
+          "secretsmanager:DeleteSecret",
+          "secretsmanager:DescribeSecret",
+          "secretsmanager:PutSecretValue",
+          "secretsmanager:RotateSecret",
+          "secretsmanager:UpdateSecret",
+          "secretsmanager:UpdateSecretVersionStage",
+          "secretsmanager:ListSecretVersionIds"
+        ],
+        "Condition": {
+          "StringLike": {
+            "secretsmanager:ResourceTag/aws:secretsmanager:owningService": "rds-preview-us-east-2"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:secretsmanager:*:*:secret:rds-preview-us-east-2!*"
+        ]
+      },
+      {
+        "Action": [
+          "secretsmanager:TagResource"
+        ],
+        "Condition": {
+          "ForAllValues:StringEquals": {
+            "aws:TagKeys": [
+              "aws:rds:primaryDBInstanceArn",
+              "aws:rds:primaryDBClusterArn"
+            ]
+          },
+          "StringLike": {
+            "secretsmanager:ResourceTag/aws:secretsmanager:owningService": "rds-preview-us-east-2"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:secretsmanager:*:*:secret:rds-preview-us-east-2!*"
       }
     ],
     "Version": "2012-10-17"
@@ -411,6 +458,125 @@
       "effective_action": "cloudwatch:PutMetricData",
       "privesc": false,
       "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "secretsmanager:GetRandomPassword",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "secretsmanager:GetRandomPassword",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "secretsmanager:DeleteSecret",
+      "condition": {
+        "StringLike": {
+          "secretsmanager:ResourceTag/aws:secretsmanager:owningService": "rds-preview-us-east-2"
+        }
+      },
+      "credentials_exposure": false,
+      "effective_action": "secretsmanager:DeleteSecret",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "secretsmanager:DescribeSecret",
+      "condition": {
+        "StringLike": {
+          "secretsmanager:ResourceTag/aws:secretsmanager:owningService": "rds-preview-us-east-2"
+        }
+      },
+      "credentials_exposure": false,
+      "effective_action": "secretsmanager:DescribeSecret",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "secretsmanager:PutSecretValue",
+      "condition": {
+        "StringLike": {
+          "secretsmanager:ResourceTag/aws:secretsmanager:owningService": "rds-preview-us-east-2"
+        }
+      },
+      "credentials_exposure": false,
+      "effective_action": "secretsmanager:PutSecretValue",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "secretsmanager:RotateSecret",
+      "condition": {
+        "StringLike": {
+          "secretsmanager:ResourceTag/aws:secretsmanager:owningService": "rds-preview-us-east-2"
+        }
+      },
+      "credentials_exposure": false,
+      "effective_action": "secretsmanager:RotateSecret",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "secretsmanager:UpdateSecret",
+      "condition": {
+        "StringLike": {
+          "secretsmanager:ResourceTag/aws:secretsmanager:owningService": "rds-preview-us-east-2"
+        }
+      },
+      "credentials_exposure": false,
+      "effective_action": "secretsmanager:UpdateSecret",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "secretsmanager:UpdateSecretVersionStage",
+      "condition": {
+        "StringLike": {
+          "secretsmanager:ResourceTag/aws:secretsmanager:owningService": "rds-preview-us-east-2"
+        }
+      },
+      "credentials_exposure": false,
+      "effective_action": "secretsmanager:UpdateSecretVersionStage",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "secretsmanager:ListSecretVersionIds",
+      "condition": {
+        "StringLike": {
+          "secretsmanager:ResourceTag/aws:secretsmanager:owningService": "rds-preview-us-east-2"
+        }
+      },
+      "credentials_exposure": false,
+      "effective_action": "secretsmanager:ListSecretVersionIds",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Tagging",
+      "action": "secretsmanager:TagResource",
+      "condition": {
+        "ForAllValues:StringEquals": {
+          "aws:TagKeys": [
+            "aws:rds:primaryDBInstanceArn",
+            "aws:rds:primaryDBClusterArn"
+          ]
+        },
+        "StringLike": {
+          "secretsmanager:ResourceTag/aws:secretsmanager:owningService": "rds-preview-us-east-2"
+        }
+      },
+      "credentials_exposure": false,
+      "effective_action": "secretsmanager:TagResource",
+      "privesc": false,
+      "resource_exposure": false
     }
   ],
   "malformed": false,
@@ -419,6 +585,6 @@
   "resource_exposure": false,
   "undocumented_actions": false,
   "unknown_actions": [],
-  "updatedate": "2022-06-07T16:55:33+00:00",
-  "version": "v6"
+  "updatedate": "2022-12-13T15:53:59+00:00",
+  "version": "v7"
 }
