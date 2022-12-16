@@ -6,7 +6,7 @@
     "Write"
   ],
   "arn": "arn:aws:iam::aws:policy/aws-service-role/AmazonWorkSpacesWebServiceRolePolicy",
-  "createdate": "2022-10-17T16:43:45Z",
+  "createdate": "2022-12-15T22:46:33Z",
   "credentials_exposure": false,
   "deprecated": false,
   "document": {
@@ -16,9 +16,7 @@
           "ec2:DescribeVpcs",
           "ec2:DescribeSubnets",
           "ec2:DescribeAvailabilityZones",
-          "ec2:CreateNetworkInterface",
           "ec2:DescribeNetworkInterfaces",
-          "ec2:DeleteNetworkInterface",
           "ec2:AssociateAddress",
           "ec2:DisassociateAddress",
           "ec2:DescribeRouteTables",
@@ -27,6 +25,28 @@
         ],
         "Effect": "Allow",
         "Resource": "*"
+      },
+      {
+        "Action": [
+          "ec2:CreateNetworkInterface"
+        ],
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:ec2:*:*:subnet/*",
+          "arn:aws:ec2:*:*:security-group/*"
+        ]
+      },
+      {
+        "Action": [
+          "ec2:CreateNetworkInterface"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:RequestTag/WorkSpacesWebManaged": "true"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:ec2:*:*:network-interface/*"
       },
       {
         "Action": [
@@ -40,6 +60,18 @@
           },
           "StringEquals": {
             "ec2:CreateAction": "CreateNetworkInterface"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:ec2:*:*:network-interface/*"
+      },
+      {
+        "Action": [
+          "ec2:DeleteNetworkInterface"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceTag/WorkSpacesWebManaged": "true"
           }
         },
         "Effect": "Allow",
@@ -101,29 +133,11 @@
       "resource_exposure": false
     },
     {
-      "access_level": "Write",
-      "action": "ec2:CreateNetworkInterface",
-      "condition": null,
-      "credentials_exposure": false,
-      "effective_action": "ec2:CreateNetworkInterface",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
       "access_level": "List",
       "action": "ec2:DescribeNetworkInterfaces",
       "condition": null,
       "credentials_exposure": false,
       "effective_action": "ec2:DescribeNetworkInterfaces",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Write",
-      "action": "ec2:DeleteNetworkInterface",
-      "condition": null,
-      "credentials_exposure": false,
-      "effective_action": "ec2:DeleteNetworkInterface",
       "privesc": false,
       "resource_exposure": false
     },
@@ -173,6 +187,28 @@
       "resource_exposure": false
     },
     {
+      "access_level": "Write",
+      "action": "ec2:CreateNetworkInterface",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "ec2:CreateNetworkInterface",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:CreateNetworkInterface",
+      "condition": {
+        "StringEquals": {
+          "aws:RequestTag/WorkSpacesWebManaged": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "effective_action": "ec2:CreateNetworkInterface",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
       "access_level": "Tagging",
       "action": "ec2:CreateTags",
       "condition": {
@@ -187,6 +223,19 @@
       },
       "credentials_exposure": false,
       "effective_action": "ec2:CreateTags",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:DeleteNetworkInterface",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/WorkSpacesWebManaged": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "effective_action": "ec2:DeleteNetworkInterface",
       "privesc": false,
       "resource_exposure": false
     },
@@ -240,6 +289,6 @@
   "resource_exposure": false,
   "undocumented_actions": false,
   "unknown_actions": [],
-  "updatedate": "2022-10-17T16:43:45+00:00",
-  "version": "v4"
+  "updatedate": "2022-12-15T22:46:33+00:00",
+  "version": "v5"
 }
