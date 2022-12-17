@@ -6,7 +6,7 @@
     "Write"
   ],
   "arn": "arn:aws:iam::aws:policy/AWSRefactoringToolkitFullAccess",
-  "createdate": "2022-10-25T16:41:15Z",
+  "createdate": "2022-12-16T23:26:55Z",
   "credentials_exposure": false,
   "deprecated": false,
   "document": {
@@ -223,15 +223,42 @@
       {
         "Action": [
           "logs:CreateLogGroup",
-          "logs:GetLogEvents"
+          "logs:TagResource"
         ],
+        "Condition": {
+          "ForAllValues:StringEquals": {
+            "aws:TagKeys": [
+              "a2c-generated"
+            ]
+          },
+          "Null": {
+            "aws:RequestTag/a2c-generated": "false"
+          }
+        },
         "Effect": "Allow",
         "Resource": [
           "arn:aws:logs:*:*:log-group:/aws/codebuild/*:*",
           "arn:aws:logs:*:*:log-group:/aws/ecs/containerinsights/*:*",
           "arn:aws:logs:*:*:log-group:/aws/ecs/container-logs/*:*"
         ],
-        "Sid": "CloudwatchAccess"
+        "Sid": "CloudwatchCreateAccess"
+      },
+      {
+        "Action": [
+          "logs:GetLogEvents"
+        ],
+        "Condition": {
+          "Null": {
+            "aws:ResourceTag/a2c-generated": "false"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:logs:*:*:log-group:/aws/codebuild/*:*",
+          "arn:aws:logs:*:*:log-group:/aws/ecs/containerinsights/*:*",
+          "arn:aws:logs:*:*:log-group:/aws/ecs/container-logs/*:*"
+        ],
+        "Sid": "CloudwatchGetAccess"
       },
       {
         "Action": [
@@ -1048,16 +1075,47 @@
     {
       "access_level": "Write",
       "action": "logs:CreateLogGroup",
-      "condition": null,
+      "condition": {
+        "ForAllValues:StringEquals": {
+          "aws:TagKeys": [
+            "a2c-generated"
+          ]
+        },
+        "Null": {
+          "aws:RequestTag/a2c-generated": "false"
+        }
+      },
       "credentials_exposure": false,
       "effective_action": "logs:CreateLogGroup",
       "privesc": false,
       "resource_exposure": false
     },
     {
+      "access_level": "Tagging",
+      "action": "logs:TagResource",
+      "condition": {
+        "ForAllValues:StringEquals": {
+          "aws:TagKeys": [
+            "a2c-generated"
+          ]
+        },
+        "Null": {
+          "aws:RequestTag/a2c-generated": "false"
+        }
+      },
+      "credentials_exposure": false,
+      "effective_action": "logs:TagResource",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
       "access_level": "Read",
       "action": "logs:GetLogEvents",
-      "condition": null,
+      "condition": {
+        "Null": {
+          "aws:ResourceTag/a2c-generated": "false"
+        }
+      },
       "credentials_exposure": false,
       "effective_action": "logs:GetLogEvents",
       "privesc": false,
@@ -1452,6 +1510,6 @@
   "resource_exposure": true,
   "undocumented_actions": false,
   "unknown_actions": [],
-  "updatedate": "2022-10-25T16:41:15+00:00",
-  "version": "v1"
+  "updatedate": "2022-12-16T23:26:55+00:00",
+  "version": "v2"
 }
