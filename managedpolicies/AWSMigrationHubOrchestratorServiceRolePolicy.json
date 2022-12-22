@@ -5,7 +5,7 @@
     "Write"
   ],
   "arn": "arn:aws:iam::aws:policy/aws-service-role/AWSMigrationHubOrchestratorServiceRolePolicy",
-  "createdate": "2022-04-20T02:24:04Z",
+  "createdate": "2022-12-21T18:48:26Z",
   "credentials_exposure": false,
   "deprecated": false,
   "document": {
@@ -92,7 +92,8 @@
           "events:PutTargets",
           "events:DescribeRule",
           "events:DeleteRule",
-          "events:PutRule"
+          "events:PutRule",
+          "events:RemoveTargets"
         ],
         "Effect": "Allow",
         "Resource": "arn:aws:events:*:*:rule/MigrationHubOrchestratorManagedRule*"
@@ -111,6 +112,25 @@
         ],
         "Effect": "Allow",
         "Resource": "*"
+      },
+      {
+        "Action": [
+          "ec2:DescribeImportImageTasks"
+        ],
+        "Effect": "Allow",
+        "Resource": "*"
+      },
+      {
+        "Action": [
+          "s3:ListBucket"
+        ],
+        "Condition": {
+          "StringLike": {
+            "s3:prefix": "migrationhub-orchestrator-vmie-*"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:s3:::*"
       }
     ],
     "Version": "2012-10-17"
@@ -287,6 +307,15 @@
       "resource_exposure": false
     },
     {
+      "access_level": "Write",
+      "action": "events:RemoveTargets",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "events:RemoveTargets",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
       "access_level": "Read",
       "action": "mgn:GetReplicationConfiguration",
       "condition": null,
@@ -366,6 +395,28 @@
       "effective_action": "mgn:ChangeServerLifeCycleState",
       "privesc": false,
       "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "ec2:DescribeImportImageTasks",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "ec2:DescribeImportImageTasks",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "s3:ListBucket",
+      "condition": {
+        "StringLike": {
+          "s3:prefix": "migrationhub-orchestrator-vmie-*"
+        }
+      },
+      "credentials_exposure": false,
+      "effective_action": "s3:ListBucket",
+      "privesc": false,
+      "resource_exposure": false
     }
   ],
   "malformed": false,
@@ -374,6 +425,6 @@
   "resource_exposure": false,
   "undocumented_actions": false,
   "unknown_actions": [],
-  "updatedate": "2022-04-20T02:24:04+00:00",
-  "version": "v1"
+  "updatedate": "2022-12-21T18:48:26+00:00",
+  "version": "v2"
 }
