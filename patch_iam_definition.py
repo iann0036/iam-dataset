@@ -129,6 +129,8 @@ for i in range(len(iam_def)):
         iam_def[i]['service_name'] = 'AWS Backup Storage'
     if iam_def[i]['prefix'] == 'es':
         iam_def[i]['service_name'] = 'Amazon OpenSearch Service'
+    if iam_def[i]['prefix'] == 'cloudformation':
+        iam_def[i]['service_name'] = 'AWS CloudFormation & Cloud Control API'
 
 print("Undocumented method tagging")
 time.sleep(1)
