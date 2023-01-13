@@ -1,0 +1,570 @@
+{
+  "access_levels": [
+    "List",
+    "Read",
+    "Write",
+    "Permissions management"
+  ],
+  "arn": "arn:aws:iam::aws:policy/AWSCleanRoomsFullAccess",
+  "createdate": "2023-01-12T16:10:54Z",
+  "credentials_exposure": false,
+  "deprecated": false,
+  "document": {
+    "Statement": [
+      {
+        "Action": [
+          "cleanrooms:*"
+        ],
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "CleanRoomsAccess"
+      },
+      {
+        "Action": [
+          "iam:PassRole"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "iam:PassedToService": "cleanrooms.amazonaws.com"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:iam::*:role/service-role/*cleanrooms*",
+        "Sid": "PassServiceRole"
+      },
+      {
+        "Action": [
+          "iam:ListRoles"
+        ],
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "ListRolesToPickServiceRole"
+      },
+      {
+        "Action": [
+          "iam:GetRole",
+          "iam:ListRolePolicies",
+          "iam:ListAttachedRolePolicies"
+        ],
+        "Effect": "Allow",
+        "Resource": "arn:aws:iam::*:role/service-role/*cleanrooms*",
+        "Sid": "GetRoleAndListRolePoliciesToInspectServiceRole"
+      },
+      {
+        "Action": [
+          "iam:ListPolicies"
+        ],
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "ListPoliciesToInspectServiceRolePolicy"
+      },
+      {
+        "Action": [
+          "iam:GetPolicy",
+          "iam:GetPolicyVersion"
+        ],
+        "Effect": "Allow",
+        "Resource": "arn:aws:iam::*:policy/*cleanrooms*",
+        "Sid": "GetPolicyToInspectServiceRolePolicy"
+      },
+      {
+        "Action": [
+          "glue:GetDatabase",
+          "glue:GetDatabases",
+          "glue:GetTable",
+          "glue:GetTables",
+          "glue:GetPartition",
+          "glue:GetPartitions",
+          "glue:GetSchema",
+          "glue:GetSchemaVersion",
+          "glue:BatchGetPartition"
+        ],
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "ConsoleDisplayTables"
+      },
+      {
+        "Action": [
+          "s3:ListAllMyBuckets"
+        ],
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "ConsolePickQueryResultsBucketListAll"
+      },
+      {
+        "Action": [
+          "s3:GetBucketLocation",
+          "s3:ListBucketVersions"
+        ],
+        "Effect": "Allow",
+        "Resource": "arn:aws:s3:::cleanrooms-queryresults*",
+        "Sid": "ConsolePickQueryResultsBucket"
+      },
+      {
+        "Action": [
+          "s3:ListBucket",
+          "s3:PutObject"
+        ],
+        "Condition": {
+          "ForAnyValue:StringEquals": {
+            "aws:CalledVia": "cleanrooms.amazonaws.com"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:s3:::cleanrooms-queryresults*",
+        "Sid": "WriteQueryResults"
+      },
+      {
+        "Action": [
+          "s3:GetObject"
+        ],
+        "Effect": "Allow",
+        "Resource": "arn:aws:s3:::cleanrooms-queryresults*",
+        "Sid": "ConsoleDisplayQueryResults"
+      },
+      {
+        "Action": [
+          "logs:CreateLogDelivery",
+          "logs:GetLogDelivery",
+          "logs:UpdateLogDelivery",
+          "logs:DeleteLogDelivery",
+          "logs:ListLogDeliveries"
+        ],
+        "Condition": {
+          "ForAnyValue:StringEquals": {
+            "aws:CalledVia": "cleanrooms.amazonaws.com"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "EstablishLogDeliveries"
+      },
+      {
+        "Action": [
+          "logs:DescribeLogGroups"
+        ],
+        "Condition": {
+          "ForAnyValue:StringEquals": {
+            "aws:CalledVia": "cleanrooms.amazonaws.com"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "SetupLogGroupsDescribe"
+      },
+      {
+        "Action": [
+          "logs:CreateLogGroup"
+        ],
+        "Condition": {
+          "ForAnyValue:StringEquals": {
+            "aws:CalledVia": "cleanrooms.amazonaws.com"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:logs:*:*:log-group:/aws/cleanrooms*",
+        "Sid": "SetupLogGroupsCreate"
+      },
+      {
+        "Action": [
+          "logs:DescribeResourcePolicies",
+          "logs:PutResourcePolicy"
+        ],
+        "Condition": {
+          "ForAnyValue:StringEquals": {
+            "aws:CalledVia": "cleanrooms.amazonaws.com"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "SetupLogGroupsResourcePolicy"
+      },
+      {
+        "Action": [
+          "logs:StartQuery"
+        ],
+        "Effect": "Allow",
+        "Resource": "arn:aws:logs:*:*:log-group:/aws/cleanrooms*",
+        "Sid": "ConsoleLogSummaryQueryLogs"
+      },
+      {
+        "Action": [
+          "logs:GetQueryResults"
+        ],
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "ConsoleLogSummaryObtainLogs"
+      }
+    ],
+    "Version": "2012-10-17"
+  },
+  "effective_actions": [
+    {
+      "access_level": "Write",
+      "action": "iam:PassRole",
+      "condition": {
+        "StringEquals": {
+          "iam:PassedToService": "cleanrooms.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "effective_action": "iam:PassRole",
+      "privesc": true,
+      "resource_exposure": true
+    },
+    {
+      "access_level": "List",
+      "action": "iam:ListRoles",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "iam:ListRoles",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "iam:GetRole",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "iam:GetRole",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "iam:ListRolePolicies",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "iam:ListRolePolicies",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "iam:ListAttachedRolePolicies",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "iam:ListAttachedRolePolicies",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "iam:ListPolicies",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "iam:ListPolicies",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "iam:GetPolicy",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "iam:GetPolicy",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "iam:GetPolicyVersion",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "iam:GetPolicyVersion",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "glue:GetDatabase",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "glue:GetDatabase",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "glue:GetDatabases",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "glue:GetDatabases",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "glue:GetTable",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "glue:GetTable",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "glue:GetTables",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "glue:GetTables",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "glue:GetPartition",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "glue:GetPartition",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "glue:GetPartitions",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "glue:GetPartitions",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "glue:GetSchema",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "glue:GetSchema",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "glue:GetSchemaVersion",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "glue:GetSchemaVersion",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "glue:BatchGetPartition",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "glue:BatchGetPartition",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "s3:ListAllMyBuckets",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "s3:ListAllMyBuckets",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "s3:GetBucketLocation",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "s3:GetBucketLocation",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "s3:ListBucketVersions",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "s3:ListBucketVersions",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "s3:ListBucket",
+      "condition": {
+        "ForAnyValue:StringEquals": {
+          "aws:CalledVia": "cleanrooms.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "effective_action": "s3:ListBucket",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "s3:PutObject",
+      "condition": {
+        "ForAnyValue:StringEquals": {
+          "aws:CalledVia": "cleanrooms.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "effective_action": "s3:PutObject",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "s3:GetObject",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "s3:GetObject",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "logs:CreateLogDelivery",
+      "condition": {
+        "ForAnyValue:StringEquals": {
+          "aws:CalledVia": "cleanrooms.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "effective_action": "logs:CreateLogDelivery",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "logs:GetLogDelivery",
+      "condition": {
+        "ForAnyValue:StringEquals": {
+          "aws:CalledVia": "cleanrooms.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "effective_action": "logs:GetLogDelivery",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "logs:UpdateLogDelivery",
+      "condition": {
+        "ForAnyValue:StringEquals": {
+          "aws:CalledVia": "cleanrooms.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "effective_action": "logs:UpdateLogDelivery",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "logs:DeleteLogDelivery",
+      "condition": {
+        "ForAnyValue:StringEquals": {
+          "aws:CalledVia": "cleanrooms.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "effective_action": "logs:DeleteLogDelivery",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "logs:ListLogDeliveries",
+      "condition": {
+        "ForAnyValue:StringEquals": {
+          "aws:CalledVia": "cleanrooms.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "effective_action": "logs:ListLogDeliveries",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "logs:DescribeLogGroups",
+      "condition": {
+        "ForAnyValue:StringEquals": {
+          "aws:CalledVia": "cleanrooms.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "effective_action": "logs:DescribeLogGroups",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "logs:CreateLogGroup",
+      "condition": {
+        "ForAnyValue:StringEquals": {
+          "aws:CalledVia": "cleanrooms.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "effective_action": "logs:CreateLogGroup",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "logs:DescribeResourcePolicies",
+      "condition": {
+        "ForAnyValue:StringEquals": {
+          "aws:CalledVia": "cleanrooms.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "effective_action": "logs:DescribeResourcePolicies",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Permissions management",
+      "action": "logs:PutResourcePolicy",
+      "condition": {
+        "ForAnyValue:StringEquals": {
+          "aws:CalledVia": "cleanrooms.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "effective_action": "logs:PutResourcePolicy",
+      "privesc": false,
+      "resource_exposure": true
+    },
+    {
+      "access_level": "Read",
+      "action": "logs:StartQuery",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "logs:StartQuery",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "logs:GetQueryResults",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "logs:GetQueryResults",
+      "privesc": false,
+      "resource_exposure": false
+    }
+  ],
+  "malformed": false,
+  "name": "AWSCleanRoomsFullAccess",
+  "privesc": true,
+  "resource_exposure": true,
+  "undocumented_actions": false,
+  "unknown_actions": [
+    {
+      "action": "cleanrooms:*",
+      "condition": null
+    }
+  ],
+  "updatedate": "2023-01-12T16:10:54+00:00",
+  "version": "v1"
+}
