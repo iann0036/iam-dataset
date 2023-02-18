@@ -4,7 +4,7 @@
     "Write"
   ],
   "arn": "arn:aws:iam::aws:policy/AmazonSageMakerPipelinesIntegrations",
-  "createdate": "2022-04-20T18:39:06Z",
+  "createdate": "2023-02-17T21:28:19Z",
   "credentials_exposure": false,
   "deprecated": false,
   "document": {
@@ -43,7 +43,9 @@
         "Condition": {
           "StringEquals": {
             "iam:PassedToService": [
-              "lambda.amazonaws.com"
+              "lambda.amazonaws.com",
+              "elasticmapreduce.amazonaws.com",
+              "ec2.amazonaws.com"
             ]
           }
         },
@@ -58,14 +60,19 @@
         ],
         "Effect": "Allow",
         "Resource": [
-          "arn:aws:events:*:*:rule/SageMakerPipelineExecutionEMRStepStatusUpdateRule"
+          "arn:aws:events:*:*:rule/SageMakerPipelineExecutionEMRStepStatusUpdateRule",
+          "arn:aws:events:*:*:rule/SageMakerPipelineExecutionEMRClusterStatusUpdateRule"
         ]
       },
       {
         "Action": [
           "elasticmapreduce:AddJobFlowSteps",
           "elasticmapreduce:CancelSteps",
-          "elasticmapreduce:DescribeStep"
+          "elasticmapreduce:DescribeStep",
+          "elasticmapreduce:RunJobFlow",
+          "elasticmapreduce:DescribeCluster",
+          "elasticmapreduce:TerminateJobFlows",
+          "elasticmapreduce:ListSteps"
         ],
         "Effect": "Allow",
         "Resource": [
@@ -145,7 +152,9 @@
       "condition": {
         "StringEquals": {
           "iam:PassedToService": [
-            "lambda.amazonaws.com"
+            "lambda.amazonaws.com",
+            "elasticmapreduce.amazonaws.com",
+            "ec2.amazonaws.com"
           ]
         }
       },
@@ -207,6 +216,42 @@
       "effective_action": "elasticmapreduce:DescribeStep",
       "privesc": false,
       "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "elasticmapreduce:RunJobFlow",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "elasticmapreduce:RunJobFlow",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "elasticmapreduce:DescribeCluster",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "elasticmapreduce:DescribeCluster",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "elasticmapreduce:TerminateJobFlows",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "elasticmapreduce:TerminateJobFlows",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "elasticmapreduce:ListSteps",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "elasticmapreduce:ListSteps",
+      "privesc": false,
+      "resource_exposure": false
     }
   ],
   "malformed": false,
@@ -215,6 +260,6 @@
   "resource_exposure": true,
   "undocumented_actions": false,
   "unknown_actions": [],
-  "updatedate": "2022-04-20T18:39:06+00:00",
-  "version": "v2"
+  "updatedate": "2023-02-17T21:28:19+00:00",
+  "version": "v3"
 }
