@@ -4,11 +4,10 @@
     "Read",
     "Tagging",
     "Write",
-    "Permissions management",
-    "Unknown"
+    "Permissions management"
   ],
   "arn": "arn:aws:iam::aws:policy/AmazonLaunchWizard_Fullaccess",
-  "createdate": "2023-01-12T23:55:29Z",
+  "createdate": "2023-02-22T17:25:14Z",
   "credentials_exposure": true,
   "deprecated": false,
   "document": {
@@ -225,6 +224,7 @@
           "autoscaling:DeleteAutoScalingGroup",
           "autoscaling:DeleteLaunchConfiguration",
           "autoscaling:UpdateAutoScalingGroup",
+          "autoscaling:CreateOrUpdateTags",
           "logs:CreateLogStream",
           "logs:DeleteLogGroup",
           "logs:DeleteLogStream",
@@ -605,6 +605,19 @@
         "Effect": "Allow",
         "Resource": "arn:aws:ssm:*:*:document/AWS-ConfigureAWSPackage",
         "Sid": "VisualEditor0"
+      },
+      {
+        "Action": [
+          "elasticfilesystem:UntagResource",
+          "elasticfilesystem:TagResource"
+        ],
+        "Condition": {
+          "ForAnyValue:StringEquals": {
+            "aws:CalledVia": "launchwizard.amazonaws.com"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:elasticfilesystem:*:*:file-system/*"
       },
       {
         "Action": [
@@ -2365,6 +2378,15 @@
       "resource_exposure": false
     },
     {
+      "access_level": "Tagging",
+      "action": "autoscaling:CreateOrUpdateTags",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "autoscaling:CreateOrUpdateTags",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
       "access_level": "Write",
       "action": "logs:CreateLogStream",
       "condition": null,
@@ -2801,7 +2823,7 @@
       "resource_exposure": false
     },
     {
-      "access_level": "Unknown",
+      "access_level": "List",
       "action": "autoscaling:Describe*",
       "condition": null,
       "credentials_exposure": false,
@@ -6594,6 +6616,32 @@
     },
     {
       "access_level": "Tagging",
+      "action": "elasticfilesystem:UntagResource",
+      "condition": {
+        "ForAnyValue:StringEquals": {
+          "aws:CalledVia": "launchwizard.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "effective_action": "elasticfilesystem:UntagResource",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Tagging",
+      "action": "elasticfilesystem:TagResource",
+      "condition": {
+        "ForAnyValue:StringEquals": {
+          "aws:CalledVia": "launchwizard.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "effective_action": "elasticfilesystem:TagResource",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Tagging",
       "action": "logs:TagResource",
       "condition": {
         "ForAnyValue:StringEquals": {
@@ -6623,8 +6671,8 @@
   "name": "AmazonLaunchWizard_Fullaccess",
   "privesc": true,
   "resource_exposure": true,
-  "undocumented_actions": true,
+  "undocumented_actions": false,
   "unknown_actions": [],
-  "updatedate": "2023-01-12T23:55:29+00:00",
-  "version": "v14"
+  "updatedate": "2023-02-22T17:25:14+00:00",
+  "version": "v15"
 }
