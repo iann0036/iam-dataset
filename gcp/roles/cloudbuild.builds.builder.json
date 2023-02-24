@@ -19,6 +19,7 @@
     "artifactregistry.projectsettings.get",
     "artifactregistry.pythonpackages.get",
     "artifactregistry.pythonpackages.list",
+    "artifactregistry.repositories.createOnPush",
     "artifactregistry.repositories.downloadArtifacts",
     "artifactregistry.repositories.get",
     "artifactregistry.repositories.list",
