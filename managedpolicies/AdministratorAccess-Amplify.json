@@ -7,7 +7,7 @@
     "Permissions management"
   ],
   "arn": "arn:aws:iam::aws:policy/AdministratorAccess-Amplify",
-  "createdate": "2022-08-30T23:24:53Z",
+  "createdate": "2023-02-24T20:14:32Z",
   "credentials_exposure": true,
   "deprecated": false,
   "document": {
@@ -25,6 +25,7 @@
           "cloudformation:ExecuteChangeSet",
           "cloudformation:GetTemplate",
           "cloudformation:UpdateStack",
+          "cloudformation:ListStacks",
           "cloudformation:ListStackResources",
           "cloudformation:DeleteStackSet",
           "cloudformation:DescribeStackSet",
@@ -47,6 +48,7 @@
           "iam:DeleteRolePolicy",
           "iam:DetachRolePolicy",
           "iam:PutRolePolicy",
+          "iam:UntagRole",
           "iam:UpdateRole",
           "iam:GetRole",
           "iam:GetPolicy",
@@ -84,6 +86,7 @@
           "appsync:ListResolversByFunction",
           "appsync:ListTypes",
           "appsync:StartSchemaCreation",
+          "appsync:UntagResource",
           "appsync:UpdateApiKey",
           "appsync:UpdateDataSource",
           "appsync:UpdateFunction",
@@ -156,6 +159,7 @@
           "dynamodb:PutItem",
           "dynamodb:TagResource",
           "dynamodb:ListTagsOfResource",
+          "dynamodb:UntagResource",
           "dynamodb:UpdateContinuousBackups",
           "dynamodb:UpdateItem",
           "dynamodb:UpdateTable",
@@ -198,7 +202,9 @@
           "es:CreateElasticsearchDomain",
           "es:DeleteElasticsearchDomain",
           "es:DescribeElasticsearchDomain",
-          "s3:PutEncryptionConfiguration"
+          "es:UpdateElasticsearchDomainConfig",
+          "s3:PutEncryptionConfiguration",
+          "s3:PutBucketPublicAccessBlock"
         ],
         "Condition": {
           "ForAnyValue:StringEquals": {
@@ -281,6 +287,7 @@
           "iam:DeleteRole",
           "iam:DetachRolePolicy",
           "cloudformation:ListStacks",
+          "cloudformation:DescribeStacks",
           "sns:CreateSMSSandboxPhoneNumber",
           "sns:GetSMSSandboxAccountStatus",
           "sns:VerifySMSSandboxPhoneNumber",
@@ -295,7 +302,10 @@
           "lex:GetBuiltinIntents",
           "lex:GetBuiltinSlotTypes",
           "cloudformation:GetTemplateSummary",
-          "codecommit:GitPull"
+          "codecommit:GitPull",
+          "cloudfront:GetCloudFrontOriginAccessIdentity",
+          "cloudfront:GetCloudFrontOriginAccessIdentityConfig",
+          "polly:DescribeVoices"
         ],
         "Effect": "Allow",
         "Resource": "*",
@@ -547,6 +557,15 @@
     },
     {
       "access_level": "List",
+      "action": "cloudformation:ListStacks",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "cloudformation:ListStacks",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
       "action": "cloudformation:ListStackResources",
       "condition": null,
       "credentials_exposure": false,
@@ -715,6 +734,21 @@
       "effective_action": "iam:PutRolePolicy",
       "privesc": true,
       "resource_exposure": true
+    },
+    {
+      "access_level": "Tagging",
+      "action": "iam:UntagRole",
+      "condition": {
+        "ForAnyValue:StringEquals": {
+          "aws:CalledVia": [
+            "cloudformation.amazonaws.com"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "effective_action": "iam:UntagRole",
+      "privesc": false,
+      "resource_exposure": false
     },
     {
       "access_level": "Write",
@@ -1268,6 +1302,21 @@
       },
       "credentials_exposure": false,
       "effective_action": "appsync:StartSchemaCreation",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Tagging",
+      "action": "appsync:UntagResource",
+      "condition": {
+        "ForAnyValue:StringEquals": {
+          "aws:CalledVia": [
+            "cloudformation.amazonaws.com"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "effective_action": "appsync:UntagResource",
       "privesc": false,
       "resource_exposure": false
     },
@@ -2352,6 +2401,21 @@
       "resource_exposure": false
     },
     {
+      "access_level": "Tagging",
+      "action": "dynamodb:UntagResource",
+      "condition": {
+        "ForAnyValue:StringEquals": {
+          "aws:CalledVia": [
+            "cloudformation.amazonaws.com"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "effective_action": "dynamodb:UntagResource",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
       "access_level": "Write",
       "action": "dynamodb:UpdateContinuousBackups",
       "condition": {
@@ -2983,6 +3047,21 @@
     },
     {
       "access_level": "Write",
+      "action": "es:UpdateElasticsearchDomainConfig",
+      "condition": {
+        "ForAnyValue:StringEquals": {
+          "aws:CalledVia": [
+            "cloudformation.amazonaws.com"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "effective_action": "es:UpdateElasticsearchDomainConfig",
+      "privesc": false,
+      "resource_exposure": true
+    },
+    {
+      "access_level": "Write",
       "action": "s3:PutEncryptionConfiguration",
       "condition": {
         "ForAnyValue:StringEquals": {
@@ -2995,6 +3074,21 @@
       "effective_action": "s3:PutEncryptionConfiguration",
       "privesc": false,
       "resource_exposure": false
+    },
+    {
+      "access_level": "Permissions management",
+      "action": "s3:PutBucketPublicAccessBlock",
+      "condition": {
+        "ForAnyValue:StringEquals": {
+          "aws:CalledVia": [
+            "cloudformation.amazonaws.com"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "effective_action": "s3:PutBucketPublicAccessBlock",
+      "privesc": false,
+      "resource_exposure": true
     },
     {
       "access_level": "Read",
@@ -5481,6 +5575,15 @@
       "resource_exposure": false
     },
     {
+      "access_level": "List",
+      "action": "cloudformation:DescribeStacks",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "cloudformation:DescribeStacks",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
       "access_level": "Write",
       "action": "sns:CreateSMSSandboxPhoneNumber",
       "condition": null,
@@ -5612,6 +5715,33 @@
       "condition": null,
       "credentials_exposure": false,
       "effective_action": "codecommit:GitPull",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "cloudfront:GetCloudFrontOriginAccessIdentity",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "cloudfront:GetCloudFrontOriginAccessIdentity",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "cloudfront:GetCloudFrontOriginAccessIdentityConfig",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "cloudfront:GetCloudFrontOriginAccessIdentityConfig",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "polly:DescribeVoices",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "polly:DescribeVoices",
       "privesc": false,
       "resource_exposure": false
     },
@@ -6918,6 +7048,6 @@
   "resource_exposure": true,
   "undocumented_actions": false,
   "unknown_actions": [],
-  "updatedate": "2022-08-30T23:24:53+00:00",
-  "version": "v9"
+  "updatedate": "2023-02-24T20:14:32+00:00",
+  "version": "v10"
 }
