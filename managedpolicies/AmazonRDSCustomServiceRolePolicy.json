@@ -6,7 +6,7 @@
     "Write"
   ],
   "arn": "arn:aws:iam::aws:policy/aws-service-role/AmazonRDSCustomServiceRolePolicy",
-  "createdate": "2023-02-21T23:14:53Z",
+  "createdate": "2023-03-08T23:32:54Z",
   "credentials_exposure": false,
   "deprecated": false,
   "document": {
@@ -249,6 +249,7 @@
               "CreateKeyPair",
               "RunInstances",
               "CreateVolume",
+              "CreateSnapshot",
               "CreateSnapshots",
               "CopySnapshot",
               "AllocateAddress"
@@ -337,6 +338,7 @@
       {
         "Action": [
           "ec2:CopySnapshot",
+          "ec2:CreateSnapshot",
           "ec2:CreateSnapshots"
         ],
         "Condition": {
@@ -371,6 +373,23 @@
           "arn:aws:ec2:*:*:volume/*"
         ],
         "Sid": "eccSnapshot3"
+      },
+      {
+        "Action": [
+          "ec2:CreateSnapshot"
+        ],
+        "Condition": {
+          "StringLike": {
+            "aws:ResourceTag/AWSRDSCustom": [
+              "custom-sqlserver"
+            ]
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:ec2:*:*:volume/*"
+        ],
+        "Sid": "eccSnapshot4"
       },
       {
         "Action": [
@@ -596,6 +615,41 @@
         "Effect": "Allow",
         "Resource": "arn:aws:secretsmanager:*:*:secret:do-not-delete-rds-custom-*",
         "Sid": "secretmanager2"
+      },
+      {
+        "Action": [
+          "sqs:CreateQueue",
+          "sqs:TagQueue"
+        ],
+        "Condition": {
+          "StringLike": {
+            "aws:RequestTag/AWSRDSCustom": [
+              "custom-sqlserver"
+            ]
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:sqs:*:*:do-not-delete-rds-custom-*",
+        "Sid": "sqs1"
+      },
+      {
+        "Action": [
+          "sqs:GetQueueAttributes",
+          "sqs:SendMessage",
+          "sqs:ReceiveMessage",
+          "sqs:DeleteMessage",
+          "sqs:DeleteQueue"
+        ],
+        "Condition": {
+          "StringLike": {
+            "aws:ResourceTag/AWSRDSCustom": [
+              "custom-sqlserver"
+            ]
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:sqs:*:*:do-not-delete-rds-custom-*",
+        "Sid": "sqs2"
       },
       {
         "Action": [
@@ -1135,6 +1189,7 @@
             "CreateKeyPair",
             "RunInstances",
             "CreateVolume",
+            "CreateSnapshot",
             "CreateSnapshots",
             "CopySnapshot",
             "AllocateAddress"
@@ -1301,6 +1356,23 @@
     },
     {
       "access_level": "Write",
+      "action": "ec2:CreateSnapshot",
+      "condition": {
+        "StringLike": {
+          "aws:RequestTag/AWSRDSCustom": [
+            "custom-oracle",
+            "custom-sqlserver",
+            "custom-oracle-rac"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "effective_action": "ec2:CreateSnapshot",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
       "action": "ec2:CreateSnapshots",
       "condition": {
         "StringLike": {
@@ -1330,6 +1402,21 @@
       },
       "credentials_exposure": false,
       "effective_action": "ec2:CreateSnapshots",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:CreateSnapshot",
+      "condition": {
+        "StringLike": {
+          "aws:ResourceTag/AWSRDSCustom": [
+            "custom-sqlserver"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "effective_action": "ec2:CreateSnapshot",
       "privesc": false,
       "resource_exposure": false
     },
@@ -1858,6 +1945,111 @@
       "resource_exposure": false
     },
     {
+      "access_level": "Write",
+      "action": "sqs:CreateQueue",
+      "condition": {
+        "StringLike": {
+          "aws:RequestTag/AWSRDSCustom": [
+            "custom-sqlserver"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "effective_action": "sqs:CreateQueue",
+      "privesc": false,
+      "resource_exposure": true
+    },
+    {
+      "access_level": "Tagging",
+      "action": "sqs:TagQueue",
+      "condition": {
+        "StringLike": {
+          "aws:RequestTag/AWSRDSCustom": [
+            "custom-sqlserver"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "effective_action": "sqs:TagQueue",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "sqs:GetQueueAttributes",
+      "condition": {
+        "StringLike": {
+          "aws:ResourceTag/AWSRDSCustom": [
+            "custom-sqlserver"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "effective_action": "sqs:GetQueueAttributes",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "sqs:SendMessage",
+      "condition": {
+        "StringLike": {
+          "aws:ResourceTag/AWSRDSCustom": [
+            "custom-sqlserver"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "effective_action": "sqs:SendMessage",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "sqs:ReceiveMessage",
+      "condition": {
+        "StringLike": {
+          "aws:ResourceTag/AWSRDSCustom": [
+            "custom-sqlserver"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "effective_action": "sqs:ReceiveMessage",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "sqs:DeleteMessage",
+      "condition": {
+        "StringLike": {
+          "aws:ResourceTag/AWSRDSCustom": [
+            "custom-sqlserver"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "effective_action": "sqs:DeleteMessage",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "sqs:DeleteQueue",
+      "condition": {
+        "StringLike": {
+          "aws:ResourceTag/AWSRDSCustom": [
+            "custom-sqlserver"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "effective_action": "sqs:DeleteQueue",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
       "access_level": "Read",
       "action": "servicequotas:GetServiceQuota",
       "condition": null,
@@ -1873,6 +2065,6 @@
   "resource_exposure": true,
   "undocumented_actions": false,
   "unknown_actions": [],
-  "updatedate": "2023-02-21T23:14:53+00:00",
-  "version": "v3"
+  "updatedate": "2023-03-08T23:32:54+00:00",
+  "version": "v4"
 }
