@@ -7,7 +7,7 @@
     "Permissions management"
   ],
   "arn": "arn:aws:iam::aws:policy/aws-service-role/AWSServiceRoleForImageBuilder",
-  "createdate": "2022-06-16T00:09:27Z",
+  "createdate": "2023-03-13T20:33:11Z",
   "credentials_exposure": true,
   "deprecated": false,
   "document": {
@@ -373,6 +373,63 @@
         "Resource": [
           "arn:aws:ec2:*::image/*",
           "arn:aws:ec2:*:*:launch-template/*"
+        ]
+      },
+      {
+        "Action": [
+          "inspector2:ListCoverage",
+          "inspector2:ListFindings"
+        ],
+        "Effect": "Allow",
+        "Resource": "*"
+      },
+      {
+        "Action": [
+          "ecr:CreateRepository"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:RequestTag/CreatedBy": "EC2 Image Builder"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "*"
+      },
+      {
+        "Action": [
+          "ecr:TagResource"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:RequestTag/CreatedBy": "EC2 Image Builder"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:ecr:*:*:repository/image-builder-*"
+      },
+      {
+        "Action": [
+          "ecr:BatchDeleteImage"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "ecr:ResourceTag/CreatedBy": "EC2 Image Builder"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:ecr:*:*:repository/image-builder-*"
+      },
+      {
+        "Action": [
+          "events:DeleteRule",
+          "events:DescribeRule",
+          "events:PutRule",
+          "events:PutTargets",
+          "events:RemoveTargets"
+        ],
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:events:*:*:rule/ImageBuilder-*"
         ]
       }
     ],
@@ -1089,6 +1146,108 @@
       "effective_action": "ec2:EnableFastLaunch",
       "privesc": false,
       "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "inspector2:ListCoverage",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "inspector2:ListCoverage",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "inspector2:ListFindings",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "inspector2:ListFindings",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ecr:CreateRepository",
+      "condition": {
+        "StringEquals": {
+          "aws:RequestTag/CreatedBy": "EC2 Image Builder"
+        }
+      },
+      "credentials_exposure": false,
+      "effective_action": "ecr:CreateRepository",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Tagging",
+      "action": "ecr:TagResource",
+      "condition": {
+        "StringEquals": {
+          "aws:RequestTag/CreatedBy": "EC2 Image Builder"
+        }
+      },
+      "credentials_exposure": false,
+      "effective_action": "ecr:TagResource",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ecr:BatchDeleteImage",
+      "condition": {
+        "StringEquals": {
+          "ecr:ResourceTag/CreatedBy": "EC2 Image Builder"
+        }
+      },
+      "credentials_exposure": false,
+      "effective_action": "ecr:BatchDeleteImage",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "events:DeleteRule",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "events:DeleteRule",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "events:DescribeRule",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "events:DescribeRule",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "events:PutRule",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "events:PutRule",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "events:PutTargets",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "events:PutTargets",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "events:RemoveTargets",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "events:RemoveTargets",
+      "privesc": false,
+      "resource_exposure": false
     }
   ],
   "malformed": false,
@@ -1097,6 +1256,6 @@
   "resource_exposure": true,
   "undocumented_actions": false,
   "unknown_actions": [],
-  "updatedate": "2022-06-16T00:09:27+00:00",
-  "version": "v17"
+  "updatedate": "2023-03-13T20:33:11+00:00",
+  "version": "v18"
 }
