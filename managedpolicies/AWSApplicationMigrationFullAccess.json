@@ -6,7 +6,7 @@
     "Write"
   ],
   "arn": "arn:aws:iam::aws:policy/AWSApplicationMigrationFullAccess",
-  "createdate": "2022-08-11T16:08:08Z",
+  "createdate": "2023-03-20T10:43:04Z",
   "credentials_exposure": false,
   "deprecated": false,
   "document": {
@@ -105,22 +105,6 @@
         "Condition": {
           "Bool": {
             "aws:ViaAWSService": "true"
-          }
-        },
-        "Effect": "Allow",
-        "Resource": [
-          "arn:aws:ssm:*:*:document/AWSDisasterRecovery-InstallDRAgentOnInstance",
-          "arn:aws:ssm:*:*:document/AWSMigration-ConvertCentOsToRockyLinuxDistribution",
-          "arn:aws:ssm:*:*:document/AWSMigration-ReplaceSuseSubscriptionWithAwsSubscription"
-        ]
-      },
-      {
-        "Action": [
-          "ssm:SendCommand"
-        ],
-        "Condition": {
-          "Bool": {
-            "aws:ViaAWSService": "true"
           },
           "Null": {
             "aws:ResourceTag/AWSApplicationMigrationServiceManaged": "false"
@@ -153,7 +137,8 @@
       },
       {
         "Action": [
-          "ssm:DescribeDocument"
+          "ssm:DescribeDocument",
+          "ssm:SendCommand"
         ],
         "Condition": {
           "Bool": {
@@ -163,8 +148,7 @@
         "Effect": "Allow",
         "Resource": [
           "arn:aws:ssm:*:*:document/AWSDisasterRecovery-InstallDRAgentOnInstance",
-          "arn:aws:ssm:*:*:document/AWSMigration-ConvertCentOsToRockyLinuxDistribution",
-          "arn:aws:ssm:*:*:document/AWSMigration-ReplaceSuseSubscriptionWithAwsSubscription"
+          "arn:aws:ssm:*:*:document/AWSMigration-*"
         ]
       },
       {
@@ -196,6 +180,47 @@
         ],
         "Effect": "Allow",
         "Resource": "*"
+      },
+      {
+        "Action": [
+          "ssm:GetAutomationExecution"
+        ],
+        "Effect": "Allow",
+        "Resource": "arn:aws:ssm:*:*:automation-execution/*"
+      },
+      {
+        "Action": [
+          "ssm:GetDocument"
+        ],
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:ssm:*:*:document/AWSDisasterRecovery-InstallDRAgentOnInstance",
+          "arn:aws:ssm:*:*:document/AWSMigration-*"
+        ]
+      },
+      {
+        "Action": [
+          "ssm:GetParameters"
+        ],
+        "Condition": {
+          "ForAnyValue:StringEquals": {
+            "aws:CalledVia": "ssm.amazonaws.com"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:ssm:*:*:parameter/ManagedByAWSApplicationMigrationService-*"
+      },
+      {
+        "Action": [
+          "ssm:StartAutomationExecution"
+        ],
+        "Condition": {
+          "ForAnyValue:StringEquals": {
+            "aws:CalledVia": "mgn.amazonaws.com"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:ssm:*:*:automation-definition/AWSMigration-*:$DEFAULT"
       }
     ],
     "Version": "2012-10-17"
@@ -1258,19 +1283,6 @@
       "condition": {
         "Bool": {
           "aws:ViaAWSService": "true"
-        }
-      },
-      "credentials_exposure": false,
-      "effective_action": "ssm:SendCommand",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Write",
-      "action": "ssm:SendCommand",
-      "condition": {
-        "Bool": {
-          "aws:ViaAWSService": "true"
         },
         "Null": {
           "aws:ResourceTag/AWSApplicationMigrationServiceManaged": "false"
@@ -1331,6 +1343,19 @@
     },
     {
       "access_level": "Write",
+      "action": "ssm:SendCommand",
+      "condition": {
+        "Bool": {
+          "aws:ViaAWSService": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "effective_action": "ssm:SendCommand",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
       "action": "drs:DisconnectSourceServer",
       "condition": {
         "Bool": {
@@ -1371,6 +1396,50 @@
       "effective_action": "servicequotas:GetServiceQuota",
       "privesc": false,
       "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "ssm:GetAutomationExecution",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "ssm:GetAutomationExecution",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "ssm:GetDocument",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "ssm:GetDocument",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "ssm:GetParameters",
+      "condition": {
+        "ForAnyValue:StringEquals": {
+          "aws:CalledVia": "ssm.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "effective_action": "ssm:GetParameters",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ssm:StartAutomationExecution",
+      "condition": {
+        "ForAnyValue:StringEquals": {
+          "aws:CalledVia": "mgn.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "effective_action": "ssm:StartAutomationExecution",
+      "privesc": false,
+      "resource_exposure": false
     }
   ],
   "malformed": false,
@@ -1379,6 +1448,6 @@
   "resource_exposure": true,
   "undocumented_actions": false,
   "unknown_actions": [],
-  "updatedate": "2022-08-11T16:08:08+00:00",
-  "version": "v5"
+  "updatedate": "2023-03-20T10:43:04+00:00",
+  "version": "v6"
 }
