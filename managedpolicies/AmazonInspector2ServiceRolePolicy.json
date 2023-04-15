@@ -5,7 +5,7 @@
     "Write"
   ],
   "arn": "arn:aws:iam::aws:policy/aws-service-role/AmazonInspector2ServiceRolePolicy",
-  "createdate": "2023-02-24T17:57:17Z",
+  "createdate": "2023-04-14T14:12:30Z",
   "credentials_exposure": true,
   "deprecated": false,
   "document": {
@@ -185,6 +185,23 @@
           "*"
         ],
         "Sid": "CodeGuruCodeVulnerabilityScanning"
+      },
+      {
+        "Action": [
+          "ssm:PutParameter",
+          "ssm:GetParameters",
+          "ssm:DeleteParameter"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:*:ssm:*:*:parameter/inspector-aws/service/inspector-linux-application-paths"
+        ],
+        "Sid": "Ec2DeepInspection"
       }
     ],
     "Version": "2012-10-17"
@@ -1110,6 +1127,45 @@
       "effective_action": "lambda:ListVersionsByFunction",
       "privesc": false,
       "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ssm:PutParameter",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "effective_action": "ssm:PutParameter",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "ssm:GetParameters",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "effective_action": "ssm:GetParameters",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ssm:DeleteParameter",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "effective_action": "ssm:DeleteParameter",
+      "privesc": false,
+      "resource_exposure": false
     }
   ],
   "malformed": false,
@@ -1118,6 +1174,6 @@
   "resource_exposure": false,
   "undocumented_actions": false,
   "unknown_actions": [],
-  "updatedate": "2023-02-24T17:57:17+00:00",
-  "version": "v7"
+  "updatedate": "2023-04-14T14:12:30+00:00",
+  "version": "v8"
 }
