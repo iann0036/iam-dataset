@@ -6,7 +6,7 @@
     "Write"
   ],
   "arn": "arn:aws:iam::aws:policy/AWSElasticDisasterRecoveryConsoleFullAccess",
-  "createdate": "2022-05-29T08:40:00Z",
+  "createdate": "2023-04-19T09:52:11Z",
   "credentials_exposure": false,
   "deprecated": false,
   "document": {
@@ -43,7 +43,10 @@
           "ec2:DescribeSubnets",
           "ec2:DescribeVolumes",
           "ec2:GetEbsEncryptionByDefault",
-          "ec2:GetEbsDefaultKmsKeyId"
+          "ec2:GetEbsDefaultKmsKeyId",
+          "ec2:DescribeKeyPairs",
+          "ec2:DescribeCapacityReservations",
+          "ec2:DescribeHosts"
         ],
         "Effect": "Allow",
         "Resource": "*"
@@ -111,11 +114,25 @@
         "Action": [
           "ec2:CreateLaunchTemplateVersion",
           "ec2:ModifyLaunchTemplate",
-          "ec2:DeleteLaunchTemplateVersions"
+          "ec2:DeleteLaunchTemplateVersions",
+          "ec2:CreateTags",
+          "ec2:DeleteTags"
         ],
         "Condition": {
           "Null": {
             "aws:ResourceTag/AWSElasticDisasterRecoveryManaged": "false"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:ec2:*:*:launch-template/*"
+      },
+      {
+        "Action": [
+          "ec2:CreateLaunchTemplate"
+        ],
+        "Condition": {
+          "Null": {
+            "aws:RequestTag/AWSElasticDisasterRecoveryManaged": "false"
           }
         },
         "Effect": "Allow",
@@ -341,6 +358,20 @@
           "arn:aws:ec2:*:*:snapshot/*",
           "arn:aws:ec2:*:*:instance/*"
         ]
+      },
+      {
+        "Action": [
+          "ec2:CreateTags"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "ec2:CreateAction": [
+              "CreateLaunchTemplate"
+            ]
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:ec2:*:*:launch-template/*"
       }
     ],
     "Version": "2012-10-17"
@@ -1220,6 +1251,33 @@
       "resource_exposure": false
     },
     {
+      "access_level": "List",
+      "action": "ec2:DescribeKeyPairs",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "ec2:DescribeKeyPairs",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "ec2:DescribeCapacityReservations",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "ec2:DescribeCapacityReservations",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "ec2:DescribeHosts",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "ec2:DescribeHosts",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
       "access_level": "Read",
       "action": "license-manager:ListLicenseConfigurations",
       "condition": null,
@@ -1329,6 +1387,45 @@
       },
       "credentials_exposure": false,
       "effective_action": "ec2:DeleteLaunchTemplateVersions",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Tagging",
+      "action": "ec2:CreateTags",
+      "condition": {
+        "Null": {
+          "aws:ResourceTag/AWSElasticDisasterRecoveryManaged": "false"
+        }
+      },
+      "credentials_exposure": false,
+      "effective_action": "ec2:CreateTags",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Tagging",
+      "action": "ec2:DeleteTags",
+      "condition": {
+        "Null": {
+          "aws:ResourceTag/AWSElasticDisasterRecoveryManaged": "false"
+        }
+      },
+      "credentials_exposure": false,
+      "effective_action": "ec2:DeleteTags",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:CreateLaunchTemplate",
+      "condition": {
+        "Null": {
+          "aws:RequestTag/AWSElasticDisasterRecoveryManaged": "false"
+        }
+      },
+      "credentials_exposure": false,
+      "effective_action": "ec2:CreateLaunchTemplate",
       "privesc": false,
       "resource_exposure": false
     },
@@ -1675,6 +1772,21 @@
       "effective_action": "ec2:CreateTags",
       "privesc": false,
       "resource_exposure": false
+    },
+    {
+      "access_level": "Tagging",
+      "action": "ec2:CreateTags",
+      "condition": {
+        "StringEquals": {
+          "ec2:CreateAction": [
+            "CreateLaunchTemplate"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "effective_action": "ec2:CreateTags",
+      "privesc": false,
+      "resource_exposure": false
     }
   ],
   "malformed": false,
@@ -1683,6 +1795,6 @@
   "resource_exposure": true,
   "undocumented_actions": false,
   "unknown_actions": [],
-  "updatedate": "2022-05-29T08:40:00+00:00",
-  "version": "v2"
+  "updatedate": "2023-04-19T09:52:11+00:00",
+  "version": "v3"
 }
