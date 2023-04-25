@@ -7,7 +7,7 @@
     "Permissions management"
   ],
   "arn": "arn:aws:iam::aws:policy/service-role/AWSBackupServiceRolePolicyForRestores",
-  "createdate": "2023-03-28T23:32:58Z",
+  "createdate": "2023-04-24T21:24:51Z",
   "credentials_exposure": false,
   "deprecated": false,
   "document": {
@@ -58,7 +58,8 @@
         "Action": [
           "storagegateway:DeleteVolume",
           "storagegateway:DescribeCachediSCSIVolumes",
-          "storagegateway:DescribeStorediSCSIVolumes"
+          "storagegateway:DescribeStorediSCSIVolumes",
+          "storagegateway:AddTagsToResource"
         ],
         "Effect": "Allow",
         "Resource": "arn:aws:storagegateway:*:*:gateway/*/volume/*"
@@ -100,7 +101,8 @@
           "elasticfilesystem:Restore",
           "elasticfilesystem:CreateFilesystem",
           "elasticfilesystem:DescribeFilesystems",
-          "elasticfilesystem:DeleteFilesystem"
+          "elasticfilesystem:DeleteFilesystem",
+          "elasticfilesystem:TagResource"
         ],
         "Effect": "Allow",
         "Resource": "arn:aws:elasticfilesystem:*:*:file-system/*"
@@ -209,6 +211,24 @@
       },
       {
         "Action": [
+          "ec2:CreateTags"
+        ],
+        "Condition": {
+          "ForAnyValue:StringLike": {
+            "ec2:CreateAction": [
+              "RunInstances",
+              "CreateVolume"
+            ]
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:ec2:*:*:instance/*",
+          "arn:aws:ec2:*:*:volume/*"
+        ]
+      },
+      {
+        "Action": [
           "fsx:CreateFileSystemFromBackup"
         ],
         "Effect": "Allow",
@@ -271,12 +291,14 @@
       },
       {
         "Action": [
-          "fsx:CreateVolumeFromBackup"
+          "fsx:CreateVolumeFromBackup",
+          "fsx:TagResource"
         ],
         "Effect": "Allow",
         "Resource": [
           "arn:aws:fsx:*:*:storage-virtual-machine/*",
-          "arn:aws:fsx:*:*:backup/*"
+          "arn:aws:fsx:*:*:backup/*",
+          "arn:aws:fsx:*:*:volume/*"
         ]
       },
       {
@@ -318,10 +340,11 @@
       {
         "Action": [
           "cloudformation:CreateChangeSet",
-          "cloudformation:DescribeChangeSet"
+          "cloudformation:DescribeChangeSet",
+          "cloudformation:TagResource"
         ],
         "Effect": "Allow",
-        "Resource": "arn:aws:cloudformation:*:*:stack/*/*"
+        "Resource": "arn:aws:cloudformation:*:*:*/*/*"
       },
       {
         "Action": [
@@ -375,7 +398,6 @@
         ],
         "Effect": "Allow",
         "Resource": [
-          "arn:aws:timestream:*:*:database/*/table/*",
           "arn:aws:timestream:*:*:database/*"
         ]
       },
@@ -555,6 +577,15 @@
       "resource_exposure": false
     },
     {
+      "access_level": "Tagging",
+      "action": "storagegateway:AddTagsToResource",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "storagegateway:AddTagsToResource",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
       "access_level": "Read",
       "action": "storagegateway:DescribeGatewayInformation",
       "condition": null,
@@ -713,6 +744,15 @@
       "condition": null,
       "credentials_exposure": false,
       "effective_action": "elasticfilesystem:DeleteFileSystem",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Tagging",
+      "action": "elasticfilesystem:TagResource",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "elasticfilesystem:TagResource",
       "privesc": false,
       "resource_exposure": false
     },
@@ -948,6 +988,22 @@
       "resource_exposure": false
     },
     {
+      "access_level": "Tagging",
+      "action": "ec2:CreateTags",
+      "condition": {
+        "ForAnyValue:StringLike": {
+          "ec2:CreateAction": [
+            "RunInstances",
+            "CreateVolume"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "effective_action": "ec2:CreateTags",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
       "access_level": "Write",
       "action": "fsx:CreateFileSystemFromBackup",
       "condition": null,
@@ -1058,6 +1114,15 @@
       "resource_exposure": false
     },
     {
+      "access_level": "Tagging",
+      "action": "fsx:TagResource",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "fsx:TagResource",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
       "access_level": "Write",
       "action": "fsx:DeleteVolume",
       "condition": {
@@ -1125,6 +1190,15 @@
       "condition": null,
       "credentials_exposure": false,
       "effective_action": "cloudformation:DescribeChangeSet",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Tagging",
+      "action": "cloudformation:TagResource",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "cloudformation:TagResource",
       "privesc": false,
       "resource_exposure": false
     },
@@ -1306,6 +1380,6 @@
   "resource_exposure": true,
   "undocumented_actions": false,
   "unknown_actions": [],
-  "updatedate": "2023-03-28T23:32:58+00:00",
-  "version": "v16"
+  "updatedate": "2023-04-24T21:24:51+00:00",
+  "version": "v17"
 }
