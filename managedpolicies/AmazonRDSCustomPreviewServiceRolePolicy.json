@@ -6,7 +6,7 @@
     "Write"
   ],
   "arn": "arn:aws:iam::aws:policy/aws-service-role/AmazonRDSCustomPreviewServiceRolePolicy",
-  "createdate": "2023-02-14T23:58:11Z",
+  "createdate": "2023-04-26T02:01:02Z",
   "credentials_exposure": false,
   "deprecated": false,
   "document": {
@@ -106,6 +106,21 @@
           "*"
         ],
         "Sid": "ecc1scoping2"
+      },
+      {
+        "Action": [
+          "ec2:AssignPrivateIpAddresses"
+        ],
+        "Condition": {
+          "StringLike": {
+            "aws:ResourceTag/AWSRDSCustom": [
+              "custom-oracle-rac"
+            ]
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:ec2:*:*:network-interface/*",
+        "Sid": "ecc1scoping3"
       },
       {
         "Action": [
@@ -217,6 +232,47 @@
       },
       {
         "Action": [
+          "ec2:CreateNetworkInterface"
+        ],
+        "Condition": {
+          "StringLike": {
+            "aws:RequestTag/AWSRDSCustom": [
+              "custom-oracle-rac"
+            ]
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:ec2:*:*:network-interface/*",
+        "Sid": "eccNetworkInterface1"
+      },
+      {
+        "Action": [
+          "ec2:CreateNetworkInterface"
+        ],
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:ec2:*:*:subnet/*",
+          "arn:aws:ec2:*:*:security-group/*"
+        ],
+        "Sid": "eccNetworkInterface2"
+      },
+      {
+        "Action": [
+          "ec2:DeleteNetworkInterface"
+        ],
+        "Condition": {
+          "StringLike": {
+            "aws:ResourceTag/AWSRDSCustom": [
+              "custom-oracle-rac"
+            ]
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:ec2:*:*:network-interface/*",
+        "Sid": "eccNetworkInterface3"
+      },
+      {
+        "Action": [
           "ec2:CreateTags"
         ],
         "Condition": {
@@ -248,6 +304,7 @@
             "ec2:CreateAction": [
               "CreateKeyPair",
               "RunInstances",
+              "CreateNetworkInterface",
               "CreateVolume",
               "CreateSnapshots",
               "CopySnapshot",
@@ -1014,6 +1071,21 @@
     },
     {
       "access_level": "Write",
+      "action": "ec2:AssignPrivateIpAddresses",
+      "condition": {
+        "StringLike": {
+          "aws:ResourceTag/AWSRDSCustom": [
+            "custom-oracle-rac"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "effective_action": "ec2:AssignPrivateIpAddresses",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
       "action": "ec2:RunInstances",
       "condition": {
         "StringLike": {
@@ -1105,6 +1177,45 @@
       "resource_exposure": false
     },
     {
+      "access_level": "Write",
+      "action": "ec2:CreateNetworkInterface",
+      "condition": {
+        "StringLike": {
+          "aws:RequestTag/AWSRDSCustom": [
+            "custom-oracle-rac"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "effective_action": "ec2:CreateNetworkInterface",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:CreateNetworkInterface",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "ec2:CreateNetworkInterface",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:DeleteNetworkInterface",
+      "condition": {
+        "StringLike": {
+          "aws:ResourceTag/AWSRDSCustom": [
+            "custom-oracle-rac"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "effective_action": "ec2:DeleteNetworkInterface",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
       "access_level": "Tagging",
       "action": "ec2:CreateTags",
       "condition": {
@@ -1134,6 +1245,7 @@
           "ec2:CreateAction": [
             "CreateKeyPair",
             "RunInstances",
+            "CreateNetworkInterface",
             "CreateVolume",
             "CreateSnapshots",
             "CopySnapshot",
@@ -1873,6 +1985,6 @@
   "resource_exposure": true,
   "undocumented_actions": false,
   "unknown_actions": [],
-  "updatedate": "2023-02-14T23:58:11+00:00",
-  "version": "v3"
+  "updatedate": "2023-04-26T02:01:02+00:00",
+  "version": "v4"
 }
