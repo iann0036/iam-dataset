@@ -6,7 +6,7 @@
     "Permissions management"
   ],
   "arn": "arn:aws:iam::aws:policy/aws-service-role/KafkaServiceRolePolicy",
-  "createdate": "2020-08-26T20:40:53Z",
+  "createdate": "2023-04-28T00:39:35Z",
   "credentials_exposure": false,
   "deprecated": false,
   "document": {
@@ -19,11 +19,35 @@
           "ec2:AttachNetworkInterface",
           "ec2:DeleteNetworkInterface",
           "ec2:DetachNetworkInterface",
+          "ec2:DescribeVpcEndpoints",
           "acm-pca:GetCertificateAuthorityCertificate",
           "secretsmanager:ListSecrets"
         ],
         "Effect": "Allow",
         "Resource": "*"
+      },
+      {
+        "Action": [
+          "ec2:ModifyVpcEndpoint"
+        ],
+        "Effect": "Allow",
+        "Resource": "arn:*:ec2:*:*:subnet/*"
+      },
+      {
+        "Action": [
+          "ec2:DeleteVpcEndpoints",
+          "ec2:ModifyVpcEndpoint"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "ec2:ResourceTag/AWSMSKManaged": "true"
+          },
+          "StringLike": {
+            "ec2:ResourceTag/ClusterArn": "*"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:*:ec2:*:*:vpc-endpoint/*"
       },
       {
         "Action": [
@@ -99,6 +123,15 @@
       "resource_exposure": false
     },
     {
+      "access_level": "List",
+      "action": "ec2:DescribeVpcEndpoints",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "ec2:DescribeVpcEndpoints",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
       "access_level": "Read",
       "action": "acm-pca:GetCertificateAuthorityCertificate",
       "condition": null,
@@ -113,6 +146,47 @@
       "condition": null,
       "credentials_exposure": false,
       "effective_action": "secretsmanager:ListSecrets",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:ModifyVpcEndpoint",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "ec2:ModifyVpcEndpoint",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:DeleteVpcEndpoints",
+      "condition": {
+        "StringEquals": {
+          "ec2:ResourceTag/AWSMSKManaged": "true"
+        },
+        "StringLike": {
+          "ec2:ResourceTag/ClusterArn": "*"
+        }
+      },
+      "credentials_exposure": false,
+      "effective_action": "ec2:DeleteVpcEndpoints",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:ModifyVpcEndpoint",
+      "condition": {
+        "StringEquals": {
+          "ec2:ResourceTag/AWSMSKManaged": "true"
+        },
+        "StringLike": {
+          "ec2:ResourceTag/ClusterArn": "*"
+        }
+      },
+      "credentials_exposure": false,
+      "effective_action": "ec2:ModifyVpcEndpoint",
       "privesc": false,
       "resource_exposure": false
     },
@@ -175,6 +249,6 @@
   "resource_exposure": true,
   "undocumented_actions": false,
   "unknown_actions": [],
-  "updatedate": "2020-08-26T20:40:53+00:00",
-  "version": "v3"
+  "updatedate": "2023-04-28T00:39:35+00:00",
+  "version": "v4"
 }
