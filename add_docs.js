@@ -15,7 +15,7 @@ async function x() {
         var version = sdkmetadataservice['versions'][sdkmetadataservice['versions'].length - 1];
 
         try {
-            REPLACESHORTNAME = {
+            var REPLACESHORTNAME = {
                 'acmpca': 'acm-pca',
                 'applicationautoscaling': 'application-autoscaling',
                 'applicationinsights': 'application-insights',
@@ -46,7 +46,6 @@ async function x() {
                 'elbv2': 'elasticloadbalancingv2',
                 'emr': 'elasticmapreduce',
                 'emrcontainers': 'emr-containers',
-                'finspacedata': 'finspace-data',
                 'forecastqueryservice': 'forecastquery',
                 'forecastservice': 'forecast',
                 'iot1clickdevicesservice': 'iot1click-devices',
@@ -87,8 +86,6 @@ async function x() {
                 'servicequotas': 'service-quotas',
                 'ses': 'email',
                 'simpledb': 'sdb',
-                'ssmcontacts': 'ssm-contacts',
-                'ssmincidents': 'ssm-incidents',
                 'ssoadmin': 'sso-admin',
                 'ssooidc': 'sso-oidc',
                 'stepfunctions': 'states',
@@ -96,6 +93,9 @@ async function x() {
                 'timestreamwrite': 'timestream-write',
                 'transcribeservice': 'transcribe',
                 'wafregional': 'waf-regional',
+                'finspacedata': 'finspace-data',
+                'ssmcontacts': 'ssm-contacts',
+                'ssmincidents': 'ssm-incidents',
                 'route53recoverycluster': 'route53-recovery-cluster',
                 'route53recoverycontrolconfig': 'route53-recovery-control-config',
                 'route53recoveryreadiness': 'route53-recovery-readiness',
@@ -106,7 +106,26 @@ async function x() {
                 'chimesdkmeetings': 'chime-sdk-meetings',
                 'migrationhubrefactorspaces': 'migration-hub-refactor-spaces',
                 'backupgateway': 'backup-gateway',
-                'workspacesweb': 'workspaces-web'
+                'workspacesweb': 'workspaces-web',
+                'emrserverless': 'emr-serverless',
+                'chimesdkmediapipelines': 'chime-sdk-media-pipelines',
+                'licensemanagerusersubscriptions': 'license-manager-user-subscriptions',
+                'redshiftserverless': 'redshift-serverless',
+                'pinpointsmsvoicev2': 'pinpoint-sms-voice-v2',
+                'suportapp': 'support-app',
+                'resourceexplorer2': 'resource-explorer-2',
+                'chimesdkvoice': 'chime-sdk-voice',
+                'iotroborunner': 'iot-roborunner',
+                'ssmsap': 'ssm-sap',
+                'arczonalshift': 'arc-zonal-shift',
+                'docdbelastic': 'docdb-elastic',
+                'sagemakergeospatial': 'sagemaker-geospatial',
+                'kinesisvideowebrtcstorage': 'kinesis-video-webrtc-storage',
+                'licensemanagerlinuxsubscriptions': 'license-manager-linux-subscriptions',
+                'kendraranking': 'kendra-ranking',
+                'cloudtraildata': 'cloudtrail-data',
+                'ivsrealtime': 'ivs-realtime',
+                'vpclattice': 'vpc-lattice'
             };
             var sdkshortname = shortname;
             if (REPLACESHORTNAME[shortname]) {
