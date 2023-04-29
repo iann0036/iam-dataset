@@ -5,7 +5,7 @@
     "Write"
   ],
   "arn": "arn:aws:iam::aws:policy/aws-service-role/AmazonInspector2ServiceRolePolicy",
-  "createdate": "2023-04-14T14:12:30Z",
+  "createdate": "2023-04-28T18:13:17Z",
   "credentials_exposure": true,
   "deprecated": false,
   "document": {
@@ -202,6 +202,37 @@
           "arn:*:ssm:*:*:parameter/inspector-aws/service/inspector-linux-application-paths"
         ],
         "Sid": "Ec2DeepInspection"
+      },
+      {
+        "Action": [
+          "cloudtrail:CreateServiceLinkedChannel",
+          "cloudtrail:DeleteServiceLinkedChannel"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:*:cloudtrail:*:*:channel/aws-service-channel/inspector2/*"
+        ],
+        "Sid": "AllowManagementOfServiceLinkedChannel"
+      },
+      {
+        "Action": [
+          "cloudtrail:ListServiceLinkedChannels"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "*"
+        ],
+        "Sid": "AllowListServiceLinkedChannels"
       }
     ],
     "Version": "2012-10-17"
@@ -1166,6 +1197,45 @@
       "effective_action": "ssm:DeleteParameter",
       "privesc": false,
       "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "cloudtrail:CreateServiceLinkedChannel",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "effective_action": "cloudtrail:CreateServiceLinkedChannel",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "cloudtrail:DeleteServiceLinkedChannel",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "effective_action": "cloudtrail:DeleteServiceLinkedChannel",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "cloudtrail:ListServiceLinkedChannels",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "effective_action": "cloudtrail:ListServiceLinkedChannels",
+      "privesc": false,
+      "resource_exposure": false
     }
   ],
   "malformed": false,
@@ -1174,6 +1244,6 @@
   "resource_exposure": false,
   "undocumented_actions": false,
   "unknown_actions": [],
-  "updatedate": "2023-04-14T14:12:30+00:00",
-  "version": "v8"
+  "updatedate": "2023-04-28T18:13:17+00:00",
+  "version": "v9"
 }
