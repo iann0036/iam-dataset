@@ -29,18 +29,3 @@ Mapping tool hosted version: [https://iann0036.github.io/iam-dataset/index.html#
 `%%iftruthy%${PropertyName}%ValueIfTrue%ValueIfFalse%%` - Truthy test
 
 `%%regex%${PropertyName}%/(.+)/g%%` - Returns first capture group of Regex
-
-## Notes
-
-Template checking notes: check for `/{` or `""` or `\`` or `" ` or `"%m` or `"%$` or `}%"` or `}[]` mistakes after full mapping.
-
-```
-cp js/iam_definition.json iam_definition.json.old
-python3 ~/parliament/utils/update_iam_data.py > js/iam_definition.json 
-rm -rf docs
-python3 compare_iam_defs.py iam_definition.json.old js/iam_definition.json > changes.txt
-cd js
-npm update aws-sdk
-cd ..
-
-```
