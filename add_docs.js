@@ -112,7 +112,7 @@ async function x() {
                 'licensemanagerusersubscriptions': 'license-manager-user-subscriptions',
                 'redshiftserverless': 'redshift-serverless',
                 'pinpointsmsvoicev2': 'pinpoint-sms-voice-v2',
-                'suportapp': 'support-app',
+                'supportapp': 'support-app',
                 'resourceexplorer2': 'resource-explorer-2',
                 'chimesdkvoice': 'chime-sdk-voice',
                 'iotroborunner': 'iot-roborunner',
@@ -125,7 +125,8 @@ async function x() {
                 'kendraranking': 'kendra-ranking',
                 'cloudtraildata': 'cloudtrail-data',
                 'ivsrealtime': 'ivs-realtime',
-                'vpclattice': 'vpc-lattice'
+                'vpclattice': 'vpc-lattice',
+                'sagemakermetrics': 'sagemaker-metrics'
             };
             var sdkshortname = shortname;
             if (REPLACESHORTNAME[shortname]) {
