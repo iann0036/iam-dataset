@@ -8,7 +8,7 @@
     "Unknown"
   ],
   "arn": "arn:aws:iam::aws:policy/service-role/AWSElasticBeanstalkService",
-  "createdate": "2019-06-14T23:18:46Z",
+  "createdate": "2023-05-10T19:29:34Z",
   "credentials_exposure": false,
   "deprecated": false,
   "document": {
@@ -36,6 +36,22 @@
       },
       {
         "Action": [
+          "ecs:TagResource"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "ecs:CreateAction": [
+              "CreateCluster",
+              "RegisterTaskDefinition"
+            ]
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "AllowECSTagResource"
+      },
+      {
+        "Action": [
           "s3:*"
         ],
         "Effect": "Allow",
@@ -60,9 +76,25 @@
       },
       {
         "Action": [
+          "elasticloadbalancing:AddTags"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "elasticloadbalancing:CreateAction": [
+              "CreateLoadBalancer"
+            ]
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "AllowELBAddTags"
+      },
+      {
+        "Action": [
           "autoscaling:AttachInstances",
           "autoscaling:CreateAutoScalingGroup",
           "autoscaling:CreateLaunchConfiguration",
+          "autoscaling:CreateOrUpdateTags",
           "autoscaling:DeleteLaunchConfiguration",
           "autoscaling:DeleteAutoScalingGroup",
           "autoscaling:DeleteScheduledAction",
@@ -863,6 +895,22 @@
       "condition": null,
       "credentials_exposure": false,
       "effective_action": "logs:DeleteLogGroup",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Tagging",
+      "action": "ecs:TagResource",
+      "condition": {
+        "StringEquals": {
+          "ecs:CreateAction": [
+            "CreateCluster",
+            "RegisterTaskDefinition"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "effective_action": "ecs:TagResource",
       "privesc": false,
       "resource_exposure": false
     },
@@ -2059,6 +2107,21 @@
       "resource_exposure": false
     },
     {
+      "access_level": "Tagging",
+      "action": "elasticloadbalancing:AddTags",
+      "condition": {
+        "StringEquals": {
+          "elasticloadbalancing:CreateAction": [
+            "CreateLoadBalancer"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "effective_action": "elasticloadbalancing:AddTags",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
       "access_level": "Write",
       "action": "autoscaling:AttachInstances",
       "condition": null,
@@ -2082,6 +2145,15 @@
       "condition": null,
       "credentials_exposure": false,
       "effective_action": "autoscaling:CreateLaunchConfiguration",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Tagging",
+      "action": "autoscaling:CreateOrUpdateTags",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "autoscaling:CreateOrUpdateTags",
       "privesc": false,
       "resource_exposure": false
     },
@@ -3343,6 +3415,6 @@
   "resource_exposure": true,
   "undocumented_actions": true,
   "unknown_actions": [],
-  "updatedate": "2019-06-14T23:18:46+00:00",
-  "version": "v16"
+  "updatedate": "2023-05-10T19:29:34+00:00",
+  "version": "v17"
 }
