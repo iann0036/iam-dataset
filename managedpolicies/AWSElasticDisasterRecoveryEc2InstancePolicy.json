@@ -5,8 +5,8 @@
     "Write"
   ],
   "arn": "arn:aws:iam::aws:policy/service-role/AWSElasticDisasterRecoveryEc2InstancePolicy",
-  "createdate": "2022-05-26T12:30:18Z",
-  "credentials_exposure": false,
+  "createdate": "2023-05-14T07:27:48Z",
+  "credentials_exposure": true,
   "deprecated": false,
   "document": {
     "Statement": [
@@ -46,6 +46,24 @@
         ],
         "Effect": "Allow",
         "Resource": "arn:aws:drs:*:*:source-server/*"
+      },
+      {
+        "Action": [
+          "sts:AssumeRole",
+          "sts:TagSession"
+        ],
+        "Condition": {
+          "ForAnyValue:StringEquals": {
+            "sts:TransitiveTagKeys": "SourceInstanceARN"
+          },
+          "StringLike": {
+            "aws:RequestTag/SourceInstanceARN": "${ec2:SourceInstanceARN}"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:iam::*:role/service-role/DRSCrossAccountAgentAuthorizedRole_*"
+        ]
       }
     ],
     "Version": "2012-10-17"
@@ -180,6 +198,38 @@
       "effective_action": "drs:GetAgentReplicationInfoForDrs",
       "privesc": false,
       "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "sts:AssumeRole",
+      "condition": {
+        "ForAnyValue:StringEquals": {
+          "sts:TransitiveTagKeys": "SourceInstanceARN"
+        },
+        "StringLike": {
+          "aws:RequestTag/SourceInstanceARN": "${ec2:SourceInstanceARN}"
+        }
+      },
+      "credentials_exposure": true,
+      "effective_action": "sts:AssumeRole",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Tagging",
+      "action": "sts:TagSession",
+      "condition": {
+        "ForAnyValue:StringEquals": {
+          "sts:TransitiveTagKeys": "SourceInstanceARN"
+        },
+        "StringLike": {
+          "aws:RequestTag/SourceInstanceARN": "${ec2:SourceInstanceARN}"
+        }
+      },
+      "credentials_exposure": false,
+      "effective_action": "sts:TagSession",
+      "privesc": false,
+      "resource_exposure": false
     }
   ],
   "malformed": false,
@@ -188,6 +238,6 @@
   "resource_exposure": false,
   "undocumented_actions": false,
   "unknown_actions": [],
-  "updatedate": "2022-05-26T12:30:18+00:00",
-  "version": "v1"
+  "updatedate": "2023-05-14T07:27:48+00:00",
+  "version": "v2"
 }
