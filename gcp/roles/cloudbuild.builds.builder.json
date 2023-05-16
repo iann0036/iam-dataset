@@ -46,6 +46,7 @@
     "containeranalysis.occurrences.update",
     "logging.logEntries.create",
     "logging.logEntries.list",
+    "logging.privateLogEntries.list",
     "logging.views.access",
     "pubsub.topics.create",
     "pubsub.topics.publish",
