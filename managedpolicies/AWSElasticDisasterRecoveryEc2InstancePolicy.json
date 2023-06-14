@@ -5,7 +5,7 @@
     "Write"
   ],
   "arn": "arn:aws:iam::aws:policy/service-role/AWSElasticDisasterRecoveryEc2InstancePolicy",
-  "createdate": "2023-05-14T07:27:48Z",
+  "createdate": "2023-06-13T16:30:14Z",
   "credentials_exposure": true,
   "deprecated": false,
   "document": {
@@ -14,7 +14,8 @@
         "Action": [
           "drs:GetAgentInstallationAssetsForDrs",
           "drs:SendClientLogsForDrs",
-          "drs:CreateSourceServerForDrs"
+          "drs:CreateSourceServerForDrs",
+          "drs:CreateSourceNetwork"
         ],
         "Effect": "Allow",
         "Resource": "*"
@@ -30,6 +31,18 @@
         },
         "Effect": "Allow",
         "Resource": "arn:aws:drs:*:*:source-server/*"
+      },
+      {
+        "Action": [
+          "drs:TagResource"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "drs:CreateAction": "CreateSourceNetwork"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:drs:*:*:source-network/*"
       },
       {
         "Action": [
@@ -102,6 +115,19 @@
       "condition": {
         "StringEquals": {
           "drs:CreateAction": "CreateSourceServerForDrs"
+        }
+      },
+      "credentials_exposure": false,
+      "effective_action": "drs:TagResource",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Tagging",
+      "action": "drs:TagResource",
+      "condition": {
+        "StringEquals": {
+          "drs:CreateAction": "CreateSourceNetwork"
         }
       },
       "credentials_exposure": false,
@@ -237,7 +263,12 @@
   "privesc": false,
   "resource_exposure": false,
   "undocumented_actions": false,
-  "unknown_actions": [],
-  "updatedate": "2023-05-14T07:27:48+00:00",
-  "version": "v2"
+  "unknown_actions": [
+    {
+      "action": "drs:CreateSourceNetwork",
+      "condition": null
+    }
+  ],
+  "updatedate": "2023-06-13T16:30:14+00:00",
+  "version": "v3"
 }
