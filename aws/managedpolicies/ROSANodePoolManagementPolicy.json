@@ -1,0 +1,544 @@
+{
+  "access_levels": [
+    "List",
+    "Read",
+    "Tagging",
+    "Write",
+    "Permissions management"
+  ],
+  "arn": "arn:aws:iam::aws:policy/service-role/ROSANodePoolManagementPolicy",
+  "createdate": "2023-06-08T20:48:08Z",
+  "credentials_exposure": false,
+  "deprecated": false,
+  "document": {
+    "Statement": [
+      {
+        "Action": [
+          "ec2:DescribeImages",
+          "ec2:DescribeInstances",
+          "ec2:DescribeInternetGateways",
+          "ec2:DescribeNetworkInterfaces",
+          "ec2:DescribeNetworkInterfaceAttribute",
+          "ec2:DescribeRouteTables",
+          "ec2:DescribeSecurityGroups",
+          "ec2:DescribeSubnets",
+          "ec2:DescribeVpcs"
+        ],
+        "Effect": "Allow",
+        "Resource": [
+          "*"
+        ],
+        "Sid": "ReadPermissions"
+      },
+      {
+        "Action": [
+          "iam:CreateServiceLinkedRole"
+        ],
+        "Condition": {
+          "StringLike": {
+            "iam:AWSServiceName": "elasticloadbalancing.amazonaws.com"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:*:iam::*:role/aws-service-role/elasticloadbalancing.amazonaws.com/AWSServiceRoleForElasticLoadBalancing"
+        ],
+        "Sid": "CreateServiceLinkedRole"
+      },
+      {
+        "Action": [
+          "iam:PassRole"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "iam:PassedToService": [
+              "ec2.amazonaws.com"
+            ]
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:*:iam::*:role/*-ROSA-Worker-Role"
+        ],
+        "Sid": "PassWorkerRole"
+      },
+      {
+        "Action": [
+          "ec2:AuthorizeSecurityGroupIngress"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceTag/red-hat-managed": "true"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:ec2:*:*:security-group/*",
+          "arn:aws:ec2:*:*:security-group-rule/*"
+        ],
+        "Sid": "AuthorizeSecurityGroupIngressRestrictedResourceTag"
+      },
+      {
+        "Action": [
+          "ec2:ModifyNetworkInterfaceAttribute"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceTag/red-hat-managed": "true"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:ec2:*:*:instance/*"
+        ],
+        "Sid": "NetworkInterfaces"
+      },
+      {
+        "Action": [
+          "ec2:ModifyNetworkInterfaceAttribute"
+        ],
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:ec2:*:*:network-interface/*",
+          "arn:aws:ec2:*:*:security-group/*",
+          "arn:aws:ec2:*:*:vpc/*"
+        ],
+        "Sid": "NetworkInterfacesNoCondition"
+      },
+      {
+        "Action": [
+          "ec2:TerminateInstances"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceTag/red-hat-managed": "true"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:ec2:*:*:instance/*"
+        ],
+        "Sid": "TerminateInstances"
+      },
+      {
+        "Action": [
+          "ec2:CreateTags"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "ec2:CreateAction": [
+              "RunInstances"
+            ]
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:ec2:*:*:instance/*",
+          "arn:aws:ec2:*:*:volume/*"
+        ],
+        "Sid": "CreateTags"
+      },
+      {
+        "Action": [
+          "ec2:CreateTags"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceTag/red-hat-managed": "true"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:ec2:*:*:instance/*"
+        ],
+        "Sid": "CreateTagsCAPAControllerReconcileInstance"
+      },
+      {
+        "Action": [
+          "ec2:CreateTags"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:RequestTag/red-hat-managed": "true"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:ec2:*:*:volume/*"
+        ],
+        "Sid": "CreateTagsCAPAControllerReconcileVolume"
+      },
+      {
+        "Action": [
+          "ec2:RunInstances"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:RequestTag/red-hat-managed": "true"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:ec2:*:*:instance/*"
+        ],
+        "Sid": "RunInstancesRequest"
+      },
+      {
+        "Action": [
+          "ec2:RunInstances"
+        ],
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:ec2:*:*:network-interface/*",
+          "arn:aws:ec2:*:*:subnet/*",
+          "arn:aws:ec2:*:*:security-group/*",
+          "arn:aws:ec2:*:*:volume/*"
+        ],
+        "Sid": "RunInstancesNoCondition"
+      },
+      {
+        "Action": [
+          "ec2:RunInstances"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "ec2:Owner": [
+              "531415883065",
+              "251351625822"
+            ]
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:ec2:*:*:image/*"
+        ],
+        "Sid": "RunInstancesRedHatAMI"
+      },
+      {
+        "Action": [
+          "kms:DescribeKey",
+          "kms:GenerateDataKeyWithoutPlaintext"
+        ],
+        "Condition": {
+          "StringLike": {
+            "aws:ResourceTag/red-hat": "true"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "ManagedKMSRestrictedResourceTag"
+      },
+      {
+        "Action": [
+          "kms:CreateGrant"
+        ],
+        "Condition": {
+          "Bool": {
+            "kms:GrantIsForAWSResource": true
+          },
+          "StringEquals": {
+            "aws:ResourceTag/red-hat": "true"
+          },
+          "StringLike": {
+            "kms:ViaService": "ec2.*.amazonaws.com"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "CreateGrantRestricted"
+      }
+    ],
+    "Version": "2012-10-17"
+  },
+  "effective_actions": [
+    {
+      "access_level": "List",
+      "action": "ec2:DescribeImages",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "ec2:DescribeImages",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "ec2:DescribeInstances",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "ec2:DescribeInstances",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "ec2:DescribeInternetGateways",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "ec2:DescribeInternetGateways",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "ec2:DescribeNetworkInterfaces",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "ec2:DescribeNetworkInterfaces",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "ec2:DescribeNetworkInterfaceAttribute",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "ec2:DescribeNetworkInterfaceAttribute",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "ec2:DescribeRouteTables",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "ec2:DescribeRouteTables",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "ec2:DescribeSecurityGroups",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "ec2:DescribeSecurityGroups",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "ec2:DescribeSubnets",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "ec2:DescribeSubnets",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "ec2:DescribeVpcs",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "ec2:DescribeVpcs",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "iam:CreateServiceLinkedRole",
+      "condition": {
+        "StringLike": {
+          "iam:AWSServiceName": "elasticloadbalancing.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "effective_action": "iam:CreateServiceLinkedRole",
+      "privesc": true,
+      "resource_exposure": true
+    },
+    {
+      "access_level": "Write",
+      "action": "iam:PassRole",
+      "condition": {
+        "StringEquals": {
+          "iam:PassedToService": [
+            "ec2.amazonaws.com"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "effective_action": "iam:PassRole",
+      "privesc": true,
+      "resource_exposure": true
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:AuthorizeSecurityGroupIngress",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/red-hat-managed": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "effective_action": "ec2:AuthorizeSecurityGroupIngress",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:ModifyNetworkInterfaceAttribute",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/red-hat-managed": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "effective_action": "ec2:ModifyNetworkInterfaceAttribute",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:ModifyNetworkInterfaceAttribute",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "ec2:ModifyNetworkInterfaceAttribute",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:TerminateInstances",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/red-hat-managed": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "effective_action": "ec2:TerminateInstances",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Tagging",
+      "action": "ec2:CreateTags",
+      "condition": {
+        "StringEquals": {
+          "ec2:CreateAction": [
+            "RunInstances"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "effective_action": "ec2:CreateTags",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Tagging",
+      "action": "ec2:CreateTags",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/red-hat-managed": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "effective_action": "ec2:CreateTags",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Tagging",
+      "action": "ec2:CreateTags",
+      "condition": {
+        "StringEquals": {
+          "aws:RequestTag/red-hat-managed": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "effective_action": "ec2:CreateTags",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:RunInstances",
+      "condition": {
+        "StringEquals": {
+          "aws:RequestTag/red-hat-managed": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "effective_action": "ec2:RunInstances",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:RunInstances",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "ec2:RunInstances",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:RunInstances",
+      "condition": {
+        "StringEquals": {
+          "ec2:Owner": [
+            "531415883065",
+            "251351625822"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "effective_action": "ec2:RunInstances",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "kms:DescribeKey",
+      "condition": {
+        "StringLike": {
+          "aws:ResourceTag/red-hat": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "effective_action": "kms:DescribeKey",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "kms:GenerateDataKeyWithoutPlaintext",
+      "condition": {
+        "StringLike": {
+          "aws:ResourceTag/red-hat": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "effective_action": "kms:GenerateDataKeyWithoutPlaintext",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Permissions management",
+      "action": "kms:CreateGrant",
+      "condition": {
+        "Bool": {
+          "kms:GrantIsForAWSResource": true
+        },
+        "StringEquals": {
+          "aws:ResourceTag/red-hat": "true"
+        },
+        "StringLike": {
+          "kms:ViaService": "ec2.*.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "effective_action": "kms:CreateGrant",
+      "privesc": false,
+      "resource_exposure": true
+    }
+  ],
+  "malformed": false,
+  "name": "ROSANodePoolManagementPolicy",
+  "privesc": true,
+  "resource_exposure": true,
+  "undocumented_actions": false,
+  "unknown_actions": [],
+  "updatedate": "2023-06-08T20:48:08+00:00",
+  "version": "v1"
+}
