@@ -3,7 +3,7 @@
 > **Note**
 > This repository is currently undergoing a directory restructure. If you previously relied on `.json` files in the root of this repository, these should now be accessed from within the `aws/` directory if hotlinking or consumed with CI/CD.
 
-A consolidated series of structured data for cloud identity and access management systems, including datasets of AWS, Azure, and Google Cloud.
+A consolidated series of structured data for cloud identity and access management systems, including datasets for AWS, Azure, and Google Cloud.
 
 It is currently being used to support:
 
@@ -23,7 +23,7 @@ In order to assist with the creation of the map.json file, a custom mapping tool
 
 ### map.json
 
-A comprehensive mapping from SDK calls to IAM actions. It is manually created by @iann0036, typically with the assistance of the mapping tool.
+A comprehensive mapping from SDK calls to IAM actions, typically created with the assistance of the mapping tool.
 
 #### map.json Template Syntax
 
@@ -49,7 +49,7 @@ A scraping of the [AWS Service Authorization Reference](https://docs.aws.amazon.
 
 The file does have some post-crawl patching actions.
 
-### managedpolicies/<name>.json
+### managedpolicies/_name_.json
 
 The details of all AWS Managed Policies, including flags for whether the managed policy contains high sensitivity actions.
 
@@ -89,6 +89,6 @@ IAM Permissions as defined by the online [IAM permissions reference](https://clo
 
 A mapping of each permission and the roles which the permission has, including whether the containment is undocumented per the IAM permission reference.
 
-### roles/<name>.json
+### roles/_name_.json
 
 The result of the command `gcloud iam roles describe "$name"` for all built-in roles.
