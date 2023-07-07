@@ -19,7 +19,7 @@ Tooling which assists in the generation of some datasources is located in the `u
 
 For Amazon Web Services IAM, the primary datasources are map.json and iam_definition.json.
 
-In order to assist with the creation of the map.json file, a custom mapping tool may be used to accelerate the process. The mapping tool is currently hosted at: [https://iann0036.github.io/iam-dataset/index.html#](https://iann0036.github.io/iam-dataset/index.html#)
+In order to assist with the creation of the map.json file, a custom mapping tool may be used to accelerate the process. The mapping tool is currently hosted at: [https://iann0036.github.io/iam-dataset/util/index.html#](https://iann0036.github.io/iam-dataset/util/index.html#)
 
 ### map.json
 
