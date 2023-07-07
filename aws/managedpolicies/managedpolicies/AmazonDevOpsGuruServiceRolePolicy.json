@@ -1,0 +1,967 @@
+{
+  "access_levels": [
+    "List",
+    "Read",
+    "Tagging",
+    "Write"
+  ],
+  "arn": "arn:aws:iam::aws:policy/aws-service-role/AmazonDevOpsGuruServiceRolePolicy",
+  "createdate": "2023-01-10T14:36:48Z",
+  "credentials_exposure": false,
+  "deprecated": false,
+  "document": {
+    "Statement": [
+      {
+        "Action": [
+          "autoscaling:DescribeAutoScalingGroups",
+          "cloudtrail:LookupEvents",
+          "cloudwatch:GetMetricData",
+          "cloudwatch:ListMetrics",
+          "cloudwatch:DescribeAnomalyDetectors",
+          "cloudwatch:DescribeAlarms",
+          "cloudwatch:ListDashboards",
+          "cloudwatch:GetDashboard",
+          "cloudformation:GetTemplate",
+          "cloudformation:ListStacks",
+          "cloudformation:ListStackResources",
+          "cloudformation:DescribeStacks",
+          "cloudformation:ListImports",
+          "codedeploy:BatchGetDeployments",
+          "codedeploy:GetDeploymentGroup",
+          "codedeploy:ListDeployments",
+          "config:DescribeConfigurationRecorderStatus",
+          "config:GetResourceConfigHistory",
+          "events:ListRuleNamesByTarget",
+          "xray:GetServiceGraph",
+          "organizations:ListRoots",
+          "organizations:ListChildren",
+          "organizations:ListDelegatedAdministrators",
+          "pi:GetResourceMetrics",
+          "tag:GetResources",
+          "lambda:GetFunction",
+          "lambda:GetFunctionConcurrency",
+          "lambda:GetAccountSettings",
+          "lambda:ListProvisionedConcurrencyConfigs",
+          "lambda:ListAliases",
+          "lambda:ListEventSourceMappings",
+          "lambda:GetPolicy",
+          "ec2:DescribeSubnets",
+          "application-autoscaling:DescribeScalableTargets",
+          "application-autoscaling:DescribeScalingPolicies",
+          "sqs:GetQueueAttributes",
+          "kinesis:DescribeStream",
+          "kinesis:DescribeLimits",
+          "dynamodb:DescribeTable",
+          "dynamodb:DescribeLimits",
+          "dynamodb:DescribeContinuousBackups",
+          "dynamodb:DescribeStream",
+          "dynamodb:ListStreams",
+          "elasticloadbalancing:DescribeLoadBalancers",
+          "elasticloadbalancing:DescribeLoadBalancerAttributes",
+          "rds:DescribeDBInstances",
+          "rds:DescribeDBClusters",
+          "rds:DescribeOptionGroups",
+          "rds:DescribeDBClusterParameters",
+          "rds:DescribeDBInstanceAutomatedBackups",
+          "rds:DescribeAccountAttributes",
+          "logs:DescribeLogGroups",
+          "logs:DescribeLogStreams",
+          "s3:GetBucketNotification",
+          "s3:GetBucketPolicy",
+          "s3:GetBucketPublicAccessBlock",
+          "s3:GetBucketTagging",
+          "s3:GetBucketWebsite",
+          "s3:GetIntelligentTieringConfiguration",
+          "s3:GetLifecycleConfiguration",
+          "s3:GetReplicationConfiguration",
+          "s3:ListAllMyBuckets",
+          "s3:ListStorageLensConfigurations",
+          "servicequotas:GetServiceQuota",
+          "servicequotas:ListRequestedServiceQuotaChangeHistory",
+          "servicequotas:ListServiceQuotas"
+        ],
+        "Effect": "Allow",
+        "Resource": "*"
+      },
+      {
+        "Action": [
+          "events:PutTargets",
+          "events:PutRule"
+        ],
+        "Effect": "Allow",
+        "Resource": "arn:aws:events:*:*:rule/DevOps-Guru-managed-*",
+        "Sid": "AllowPutTargetsOnASpecificRule"
+      },
+      {
+        "Action": [
+          "ssm:CreateOpsItem"
+        ],
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "AllowCreateOpsItem"
+      },
+      {
+        "Action": [
+          "ssm:AddTagsToResource"
+        ],
+        "Effect": "Allow",
+        "Resource": "arn:aws:ssm:*:*:opsitem/*",
+        "Sid": "AllowAddTagsToOpsItem"
+      },
+      {
+        "Action": [
+          "ssm:GetOpsItem",
+          "ssm:UpdateOpsItem"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceTag/DevOps-GuruInsightSsmOpsItemRelated": "true"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "AllowAccessOpsItem"
+      },
+      {
+        "Action": [
+          "events:PutRule"
+        ],
+        "Effect": "Allow",
+        "Resource": "arn:aws:events:*:*:rule/DevOpsGuruManagedRule*",
+        "Sid": "AllowCreateManagedRule"
+      },
+      {
+        "Action": [
+          "events:DescribeRule",
+          "events:ListTargetsByRule"
+        ],
+        "Effect": "Allow",
+        "Resource": "arn:aws:events:*:*:rule/DevOpsGuruManagedRule*",
+        "Sid": "AllowAccessManagedRule"
+      },
+      {
+        "Action": [
+          "events:DeleteRule",
+          "events:EnableRule",
+          "events:DisableRule",
+          "events:PutTargets",
+          "events:RemoveTargets"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "events:ManagedBy": "devops-guru.amazonaws.com"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:events:*:*:rule/DevOpsGuruManagedRule*",
+        "Sid": "AllowOtherOperationsOnManagedRule"
+      },
+      {
+        "Action": [
+          "logs:FilterLogEvents"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceTag/DevOps-Guru-Analysis": "true"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:logs:*:*:log-group:*",
+        "Sid": "AllowTagBasedFilterLogEvents"
+      },
+      {
+        "Action": [
+          "apigateway:GET"
+        ],
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:apigateway:*::/restapis/??????????",
+          "arn:aws:apigateway:*::/restapis/*/resources",
+          "arn:aws:apigateway:*::/restapis/*/resources/*/methods/*/integration"
+        ],
+        "Sid": "AllowAPIGatewayGetIntegrations"
+      }
+    ],
+    "Version": "2012-10-17"
+  },
+  "effective_actions": [
+    {
+      "access_level": "List",
+      "action": "autoscaling:DescribeAutoScalingGroups",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "autoscaling:DescribeAutoScalingGroups",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "cloudtrail:LookupEvents",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "cloudtrail:LookupEvents",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "cloudwatch:GetMetricData",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "cloudwatch:GetMetricData",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "cloudwatch:ListMetrics",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "cloudwatch:ListMetrics",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "cloudwatch:DescribeAnomalyDetectors",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "cloudwatch:DescribeAnomalyDetectors",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "cloudwatch:DescribeAlarms",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "cloudwatch:DescribeAlarms",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "cloudwatch:ListDashboards",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "cloudwatch:ListDashboards",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "cloudwatch:GetDashboard",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "cloudwatch:GetDashboard",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "cloudformation:GetTemplate",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "cloudformation:GetTemplate",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "cloudformation:ListStacks",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "cloudformation:ListStacks",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "cloudformation:ListStackResources",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "cloudformation:ListStackResources",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "cloudformation:DescribeStacks",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "cloudformation:DescribeStacks",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "cloudformation:ListImports",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "cloudformation:ListImports",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "codedeploy:BatchGetDeployments",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "codedeploy:BatchGetDeployments",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "codedeploy:GetDeploymentGroup",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "codedeploy:GetDeploymentGroup",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "codedeploy:ListDeployments",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "codedeploy:ListDeployments",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "config:DescribeConfigurationRecorderStatus",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "config:DescribeConfigurationRecorderStatus",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "config:GetResourceConfigHistory",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "config:GetResourceConfigHistory",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "events:ListRuleNamesByTarget",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "events:ListRuleNamesByTarget",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "xray:GetServiceGraph",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "xray:GetServiceGraph",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "organizations:ListRoots",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "organizations:ListRoots",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "organizations:ListChildren",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "organizations:ListChildren",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "organizations:ListDelegatedAdministrators",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "organizations:ListDelegatedAdministrators",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "pi:GetResourceMetrics",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "pi:GetResourceMetrics",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "tag:GetResources",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "tag:GetResources",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "lambda:GetFunction",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "lambda:GetFunction",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "lambda:GetFunctionConcurrency",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "lambda:GetFunctionConcurrency",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "lambda:GetAccountSettings",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "lambda:GetAccountSettings",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "lambda:ListProvisionedConcurrencyConfigs",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "lambda:ListProvisionedConcurrencyConfigs",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "lambda:ListAliases",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "lambda:ListAliases",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "lambda:ListEventSourceMappings",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "lambda:ListEventSourceMappings",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "lambda:GetPolicy",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "lambda:GetPolicy",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "ec2:DescribeSubnets",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "ec2:DescribeSubnets",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "application-autoscaling:DescribeScalableTargets",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "application-autoscaling:DescribeScalableTargets",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "application-autoscaling:DescribeScalingPolicies",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "application-autoscaling:DescribeScalingPolicies",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "sqs:GetQueueAttributes",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "sqs:GetQueueAttributes",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "kinesis:DescribeStream",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "kinesis:DescribeStream",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "kinesis:DescribeLimits",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "kinesis:DescribeLimits",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "dynamodb:DescribeTable",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "dynamodb:DescribeTable",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "dynamodb:DescribeLimits",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "dynamodb:DescribeLimits",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "dynamodb:DescribeContinuousBackups",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "dynamodb:DescribeContinuousBackups",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "dynamodb:DescribeStream",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "dynamodb:DescribeStream",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "dynamodb:ListStreams",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "dynamodb:ListStreams",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "elasticloadbalancing:DescribeLoadBalancers",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "elasticloadbalancing:DescribeLoadBalancers",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "elasticloadbalancing:DescribeLoadBalancerAttributes",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "elasticloadbalancing:DescribeLoadBalancerAttributes",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "rds:DescribeDBInstances",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "rds:DescribeDBInstances",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "rds:DescribeDBClusters",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "rds:DescribeDBClusters",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "rds:DescribeOptionGroups",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "rds:DescribeOptionGroups",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "rds:DescribeDBClusterParameters",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "rds:DescribeDBClusterParameters",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "rds:DescribeDBInstanceAutomatedBackups",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "rds:DescribeDBInstanceAutomatedBackups",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "rds:DescribeAccountAttributes",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "rds:DescribeAccountAttributes",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "logs:DescribeLogGroups",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "logs:DescribeLogGroups",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "logs:DescribeLogStreams",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "logs:DescribeLogStreams",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "s3:GetBucketNotification",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "s3:GetBucketNotification",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "s3:GetBucketPolicy",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "s3:GetBucketPolicy",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "s3:GetBucketPublicAccessBlock",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "s3:GetBucketPublicAccessBlock",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "s3:GetBucketTagging",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "s3:GetBucketTagging",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "s3:GetBucketWebsite",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "s3:GetBucketWebsite",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "s3:GetIntelligentTieringConfiguration",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "s3:GetIntelligentTieringConfiguration",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "s3:GetLifecycleConfiguration",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "s3:GetLifecycleConfiguration",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "s3:GetReplicationConfiguration",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "s3:GetReplicationConfiguration",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "s3:ListAllMyBuckets",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "s3:ListAllMyBuckets",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "s3:ListStorageLensConfigurations",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "s3:ListStorageLensConfigurations",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "servicequotas:GetServiceQuota",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "servicequotas:GetServiceQuota",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "servicequotas:ListRequestedServiceQuotaChangeHistory",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "servicequotas:ListRequestedServiceQuotaChangeHistory",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "servicequotas:ListServiceQuotas",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "servicequotas:ListServiceQuotas",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "events:PutTargets",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "events:PutTargets",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "events:PutRule",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "events:PutRule",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ssm:CreateOpsItem",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "ssm:CreateOpsItem",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Tagging",
+      "action": "ssm:AddTagsToResource",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "ssm:AddTagsToResource",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "ssm:GetOpsItem",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/DevOps-GuruInsightSsmOpsItemRelated": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "effective_action": "ssm:GetOpsItem",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ssm:UpdateOpsItem",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/DevOps-GuruInsightSsmOpsItemRelated": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "effective_action": "ssm:UpdateOpsItem",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "events:PutRule",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "events:PutRule",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "events:DescribeRule",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "events:DescribeRule",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "events:ListTargetsByRule",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "events:ListTargetsByRule",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "events:DeleteRule",
+      "condition": {
+        "StringEquals": {
+          "events:ManagedBy": "devops-guru.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "effective_action": "events:DeleteRule",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "events:EnableRule",
+      "condition": {
+        "StringEquals": {
+          "events:ManagedBy": "devops-guru.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "effective_action": "events:EnableRule",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "events:DisableRule",
+      "condition": {
+        "StringEquals": {
+          "events:ManagedBy": "devops-guru.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "effective_action": "events:DisableRule",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "events:PutTargets",
+      "condition": {
+        "StringEquals": {
+          "events:ManagedBy": "devops-guru.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "effective_action": "events:PutTargets",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "events:RemoveTargets",
+      "condition": {
+        "StringEquals": {
+          "events:ManagedBy": "devops-guru.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "effective_action": "events:RemoveTargets",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "logs:FilterLogEvents",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/DevOps-Guru-Analysis": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "effective_action": "logs:FilterLogEvents",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "apigateway:GET",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "apigateway:GET",
+      "privesc": false,
+      "resource_exposure": false
+    }
+  ],
+  "malformed": false,
+  "name": "AmazonDevOpsGuruServiceRolePolicy",
+  "privesc": false,
+  "resource_exposure": false,
+  "undocumented_actions": false,
+  "unknown_actions": [],
+  "updatedate": "2023-01-10T14:36:48+00:00",
+  "version": "v9"
+}
