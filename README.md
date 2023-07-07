@@ -1,6 +1,7 @@
 # IAM Dataset
 
-> (currently a bit of a mess)
+> **Note**
+> This repository is currently undergoing a directory restructure. If you previously relied on `.json` files in the root of this repository, these should now be accessed from within the `aws/` directory if hotlinking or consumed with CI/CD.
 
 A series of tools to develop a comprehensive map (`map.json`) from SDK calls to IAM actions, and evaluation of managed policies.
 
