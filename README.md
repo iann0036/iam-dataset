@@ -1,7 +1,7 @@
 # IAM Dataset
 
 > **Note**
-> This repository is currently undergoing a directory restructure. If you previously relied on `.json` files in the root of this repository, these should now be accessed from within the `aws/` directory if hotlinking or consumed with CI/CD.
+> This repository is currently undergoing a directory restructure. If you previously relied on `.json` files or `managedpolicies/` in the root of this repository, these should now be accessed from within the `aws/` directory if hotlinking or consumed with CI/CD.
 
 A consolidated series of structured data for cloud identity and access management systems, including datasets for AWS, Azure, and Google Cloud.
 

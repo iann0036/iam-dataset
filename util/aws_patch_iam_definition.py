@@ -6,7 +6,7 @@ print("Loading IAM data")
 time.sleep(1)
 
 iam_def = []
-with open("js/iam_definition.json", "r") as f:
+with open("util/aws_js/iam_definition.json", "r") as f:
     iam_def = json.loads(f.read())
 
 print("Loading map data")

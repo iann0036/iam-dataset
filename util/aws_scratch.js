@@ -3,7 +3,7 @@
 var mapdata = await fetch('https://raw.githubusercontent.com/iann0036/iam-dataset/main/map.json');
 map = await mapdata.json();
 
-var iamdefdata = await fetch('https://raw.githubusercontent.com/iann0036/iam-dataset/main/js/iam_definition.json');
+var iamdefdata = await fetch('https://raw.githubusercontent.com/iann0036/iam-dataset/main/util/aws_js/iam_definition.json');
 iamdef = await iamdefdata.json();
 
 for (var iamdefitem of iamdef) {
@@ -33,7 +33,7 @@ for (var iamdefitem of iamdef) {
 var mapdata = await fetch('https://raw.githubusercontent.com/iann0036/iam-dataset/main/map.json');
 map = await mapdata.json();
 
-var iamdefdata = await fetch('https://raw.githubusercontent.com/iann0036/iam-dataset/main/js/iam_definition.json');
+var iamdefdata = await fetch('https://raw.githubusercontent.com/iann0036/iam-dataset/main/util/aws_js/iam_definition.json');
 iamdef = await iamdefdata.json();
 
 var chains = [];
