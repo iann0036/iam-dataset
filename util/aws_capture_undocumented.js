@@ -189,7 +189,7 @@ function transformArn(arn) {
 async function go() {
     try {
         var known_permissions = {};
-        var iamdefdata = await fetch('https://raw.githubusercontent.com/iann0036/iam-dataset/main/iam_definition.json');
+        var iamdefdata = await fetch('https://raw.githubusercontent.com/iann0036/iam-dataset/main/aws/iam_definition.json');
         iamdef = await iamdefdata.json();
 
         for (var iamdefitem of iamdef) {
@@ -299,7 +299,7 @@ async function go() {
             }
         }
 
-        var mapdata = await fetch('https://raw.githubusercontent.com/iann0036/iam-dataset/main/map.json');
+        var mapdata = await fetch('https://raw.githubusercontent.com/iann0036/iam-dataset/main/aws/map.json');
         var map = await mapdata.json();
 
         for (let reskey of Object.keys(res)) {

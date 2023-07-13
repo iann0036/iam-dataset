@@ -358,7 +358,7 @@ CREDEXPOSURE_ACTIONS = [ # https://cloudsplaining.readthedocs.io/en/latest/gloss
 ]
 
 iam_def = []
-with open("iam_definition.json", "r") as f:
+with open("aws/iam_definition.json", "r") as f:
     iam_def = json.loads(f.read())
 
 allactions = {}
@@ -546,10 +546,10 @@ for policyname in os.listdir("MAMIP/policies/"):
         'effective_actions': effective_actions
     }
 
-    with open("managedpolicies/{}.json".format(policyname), "w") as f:
+    with open("aws/managedpolicies/{}.json".format(policyname), "w") as f:
         f.write(json.dumps(detailed_policy, indent=2, sort_keys=True))
 
-with open("managed_policies.json", "w") as f:
+with open("aws/managed_policies.json", "w") as f:
     f.write(json.dumps({
         "policies": policies
     }, indent=2, sort_keys=True))

@@ -1,8 +1,8 @@
 const AWS = require('aws-sdk');
 const fs = require('fs'); 
 
-const iam_def = JSON.parse(fs.readFileSync('./iam_definition.json', {encoding:'utf8', flag:'r'}));
-const map = JSON.parse(fs.readFileSync('../map.json', {encoding:'utf8', flag:'r'}));
+const iam_def = JSON.parse(fs.readFileSync('./aws/iam_definition.json', {encoding:'utf8', flag:'r'}));
+const map = JSON.parse(fs.readFileSync('./aws/map.json', {encoding:'utf8', flag:'r'}));
 
 let sdk_services = []
 

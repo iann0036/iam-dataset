@@ -7,11 +7,11 @@ import datetime
 now = datetime.datetime.utcnow().replace(microsecond=0).isoformat()
 
 historic_counts = {}
-with open("historic-counts.json", "r") as f:
+with open("aws/historic-counts.json", "r") as f:
     historic_counts = json.loads(f.read())
 
 iam_def = []
-with open("iam_definition.json", "r") as f:
+with open("aws/iam_definition.json", "r") as f:
     iam_def = json.loads(f.read())
 
 iam_count = 0
@@ -36,5 +36,5 @@ historic_counts['api'].append({
     'date': now
 })
 
-with open("historic-counts.json", "w") as f:
+with open("aws/historic-counts.json", "w") as f:
     f.write(json.dumps(historic_counts, skipkeys=False, indent=2))

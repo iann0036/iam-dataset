@@ -13,7 +13,7 @@ print("Loading map data")
 time.sleep(1)
 
 mapdata = {}
-with open("map.json", "r") as f:
+with open("aws/map.json", "r") as f:
     mapdata = json.loads(f.read())
 
 # Undocumented roots
@@ -175,5 +175,5 @@ for i in range(len(iam_def)):
 print("Outputting")
 time.sleep(1)
 
-with open("iam_definition.json", "w") as f:
+with open("aws/iam_definition.json", "w") as f:
     f.write(json.dumps(iam_def, indent=2, sort_keys=True))
