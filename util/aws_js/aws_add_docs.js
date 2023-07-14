@@ -126,7 +126,10 @@ async function x() {
                 'cloudtraildata': 'cloudtrail-data',
                 'ivsrealtime': 'ivs-realtime',
                 'vpclattice': 'vpc-lattice',
-                'sagemakermetrics': 'sagemaker-metrics'
+                'sagemakermetrics': 'sagemaker-metrics',
+                'paymentcryptography': 'payment-cryptography',
+                'paymentcryptographydata': 'payment-cryptography-data',
+                'codegurusecurity': 'codeguru-security'
             };
             var sdkshortname = shortname;
             if (REPLACESHORTNAME[shortname]) {
