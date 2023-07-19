@@ -6,7 +6,7 @@
     "Write"
   ],
   "arn": "arn:aws:iam::aws:policy/service-role/ROSAKubeControllerPolicy",
-  "createdate": "2023-04-27T20:09:29Z",
+  "createdate": "2023-07-18T21:45:19Z",
   "credentials_exposure": false,
   "deprecated": false,
   "document": {
@@ -19,7 +19,11 @@
           "ec2:DescribeSubnets",
           "ec2:DescribeVpcs",
           "elasticloadbalancing:DescribeLoadBalancers",
-          "elasticloadbalancing:DescribeLoadBalancerAttributes"
+          "elasticloadbalancing:DescribeLoadBalancerAttributes",
+          "elasticloadbalancing:DescribeListeners",
+          "elasticloadbalancing:DescribeTargetGroups",
+          "elasticloadbalancing:DescribeTargetHealth",
+          "elasticloadbalancing:DescribeLoadBalancerPolicies"
         ],
         "Effect": "Allow",
         "Resource": [
@@ -58,6 +62,62 @@
           "*"
         ],
         "Sid": "LoadBalanacerManagement"
+      },
+      {
+        "Action": [
+          "elasticloadbalancing:CreateTargetGroup"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:RequestTag/red-hat-managed": "true"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "*"
+        ],
+        "Sid": "CreateTargetGroup"
+      },
+      {
+        "Action": [
+          "elasticloadbalancing:DeleteListener",
+          "elasticloadbalancing:RegisterTargets",
+          "elasticloadbalancing:ModifyTargetGroup",
+          "elasticloadbalancing:DeleteTargetGroup",
+          "elasticloadbalancing:ApplySecurityGroupsToLoadBalancer",
+          "elasticloadbalancing:CreateLoadBalancerListeners",
+          "elasticloadbalancing:DeleteLoadBalancerListeners",
+          "elasticloadbalancing:AttachLoadBalancerToSubnets",
+          "elasticloadbalancing:DetachLoadBalancerFromSubnets",
+          "elasticloadbalancing:ModifyListener",
+          "elasticloadbalancing:SetLoadBalancerPoliciesOfListener"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceTag/red-hat-managed": "true"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "*"
+        ],
+        "Sid": "LoadBalanacerManagementResourceTag"
+      },
+      {
+        "Action": [
+          "elasticloadbalancing:CreateListener"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:RequestTag/red-hat-managed": "true",
+            "aws:ResourceTag/red-hat-managed": "true"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "*"
+        ],
+        "Sid": "CreateListeners"
       },
       {
         "Action": [
@@ -102,6 +162,7 @@
       {
         "Action": [
           "ec2:AuthorizeSecurityGroupIngress",
+          "ec2:RevokeSecurityGroupIngress",
           "ec2:DeleteSecurityGroup"
         ],
         "Condition": {
@@ -199,6 +260,42 @@
     },
     {
       "access_level": "Read",
+      "action": "elasticloadbalancing:DescribeListeners",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "elasticloadbalancing:DescribeListeners",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "elasticloadbalancing:DescribeTargetGroups",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "elasticloadbalancing:DescribeTargetGroups",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "elasticloadbalancing:DescribeTargetHealth",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "elasticloadbalancing:DescribeTargetHealth",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "elasticloadbalancing:DescribeLoadBalancerPolicies",
+      "condition": null,
+      "credentials_exposure": false,
+      "effective_action": "elasticloadbalancing:DescribeLoadBalancerPolicies",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
       "action": "kms:DescribeKey",
       "condition": {
         "StringEquals": {
@@ -284,6 +381,176 @@
     },
     {
       "access_level": "Write",
+      "action": "elasticloadbalancing:CreateTargetGroup",
+      "condition": {
+        "StringEquals": {
+          "aws:RequestTag/red-hat-managed": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "effective_action": "elasticloadbalancing:CreateTargetGroup",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "elasticloadbalancing:DeleteListener",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/red-hat-managed": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "effective_action": "elasticloadbalancing:DeleteListener",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "elasticloadbalancing:RegisterTargets",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/red-hat-managed": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "effective_action": "elasticloadbalancing:RegisterTargets",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "elasticloadbalancing:ModifyTargetGroup",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/red-hat-managed": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "effective_action": "elasticloadbalancing:ModifyTargetGroup",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "elasticloadbalancing:DeleteTargetGroup",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/red-hat-managed": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "effective_action": "elasticloadbalancing:DeleteTargetGroup",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "elasticloadbalancing:ApplySecurityGroupsToLoadBalancer",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/red-hat-managed": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "effective_action": "elasticloadbalancing:ApplySecurityGroupsToLoadBalancer",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "elasticloadbalancing:CreateLoadBalancerListeners",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/red-hat-managed": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "effective_action": "elasticloadbalancing:CreateLoadBalancerListeners",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "elasticloadbalancing:DeleteLoadBalancerListeners",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/red-hat-managed": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "effective_action": "elasticloadbalancing:DeleteLoadBalancerListeners",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "elasticloadbalancing:AttachLoadBalancerToSubnets",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/red-hat-managed": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "effective_action": "elasticloadbalancing:AttachLoadBalancerToSubnets",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "elasticloadbalancing:DetachLoadBalancerFromSubnets",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/red-hat-managed": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "effective_action": "elasticloadbalancing:DetachLoadBalancerFromSubnets",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "elasticloadbalancing:ModifyListener",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/red-hat-managed": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "effective_action": "elasticloadbalancing:ModifyListener",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "elasticloadbalancing:SetLoadBalancerPoliciesOfListener",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/red-hat-managed": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "effective_action": "elasticloadbalancing:SetLoadBalancerPoliciesOfListener",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "elasticloadbalancing:CreateListener",
+      "condition": {
+        "StringEquals": {
+          "aws:RequestTag/red-hat-managed": "true",
+          "aws:ResourceTag/red-hat-managed": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "effective_action": "elasticloadbalancing:CreateListener",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
       "action": "ec2:CreateSecurityGroup",
       "condition": {
         "StringEquals": {
@@ -332,6 +599,19 @@
     },
     {
       "access_level": "Write",
+      "action": "ec2:RevokeSecurityGroupIngress",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/red-hat-managed": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "effective_action": "ec2:RevokeSecurityGroupIngress",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
       "action": "ec2:DeleteSecurityGroup",
       "condition": {
         "StringEquals": {
@@ -363,6 +643,6 @@
   "resource_exposure": false,
   "undocumented_actions": false,
   "unknown_actions": [],
-  "updatedate": "2023-04-27T20:09:29+00:00",
-  "version": "v1"
+  "updatedate": "2023-07-18T21:45:19+00:00",
+  "version": "v2"
 }
