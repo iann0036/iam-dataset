@@ -39,6 +39,8 @@
     "cloudbuild.builds.get",
     "cloudbuild.builds.list",
     "cloudbuild.builds.update",
+    "cloudbuild.operations.get",
+    "cloudbuild.operations.list",
     "cloudbuild.workerpools.use",
     "containeranalysis.occurrences.create",
     "containeranalysis.occurrences.delete",
