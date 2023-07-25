@@ -7,7 +7,7 @@
     "Permissions management"
   ],
   "arn": "arn:aws:iam::aws:policy/AmazonSageMakerCanvasFullAccess",
-  "createdate": "2023-05-04T17:03:12Z",
+  "createdate": "2023-07-24T23:16:37Z",
   "credentials_exposure": true,
   "deprecated": false,
   "document": {
@@ -241,6 +241,20 @@
         },
         "Effect": "Allow",
         "Resource": "arn:aws:iam::*:role/*"
+      },
+      {
+        "Action": [
+          "application-autoscaling:PutScalingPolicy",
+          "application-autoscaling:RegisterScalableTarget"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "application-autoscaling:scalable-dimension": "sagemaker:variant:DesiredInstanceCount",
+            "application-autoscaling:service-namespace": "sagemaker"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:application-autoscaling:*:*:scalable-target/*"
       }
     ],
     "Version": "2012-10-17"
@@ -1080,6 +1094,34 @@
       "effective_action": "iam:PassRole",
       "privesc": true,
       "resource_exposure": true
+    },
+    {
+      "access_level": "Write",
+      "action": "application-autoscaling:PutScalingPolicy",
+      "condition": {
+        "StringEquals": {
+          "application-autoscaling:scalable-dimension": "sagemaker:variant:DesiredInstanceCount",
+          "application-autoscaling:service-namespace": "sagemaker"
+        }
+      },
+      "credentials_exposure": false,
+      "effective_action": "application-autoscaling:PutScalingPolicy",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "application-autoscaling:RegisterScalableTarget",
+      "condition": {
+        "StringEquals": {
+          "application-autoscaling:scalable-dimension": "sagemaker:variant:DesiredInstanceCount",
+          "application-autoscaling:service-namespace": "sagemaker"
+        }
+      },
+      "credentials_exposure": false,
+      "effective_action": "application-autoscaling:RegisterScalableTarget",
+      "privesc": false,
+      "resource_exposure": false
     }
   ],
   "malformed": false,
@@ -1088,6 +1130,6 @@
   "resource_exposure": true,
   "undocumented_actions": false,
   "unknown_actions": [],
-  "updatedate": "2023-05-04T17:03:12+00:00",
-  "version": "v4"
+  "updatedate": "2023-07-24T23:16:37+00:00",
+  "version": "v5"
 }
