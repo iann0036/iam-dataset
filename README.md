@@ -71,7 +71,7 @@ The aggregation of thr built-in roles and provider operations permitted by those
 
 ## Google Cloud
 
-For Azure, the primary datasources are methods.json, permissions.json and role_permissions.json.
+For Google Cloud, the primary datasources are methods.json, permissions.json and role_permissions.json.
 
 ### predefined_roles.json
 
