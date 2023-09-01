@@ -11,6 +11,9 @@ with open("gcp/permissions.json", "r") as f:
 with open("gcp/predefined_roles.json", "r") as f:
     predefined_roles_json = json.loads(f.read())
 
+with open("gcp/tags.json", "r") as f:
+    tags_json = json.loads(f.read())
+
 for filename in os.listdir("gcp/roles/"):
     try:
         with open("gcp/roles/" + filename) as f:
@@ -44,6 +47,21 @@ for filename in os.listdir("gcp/roles/"):
                     for i in range(len(predefined_roles_json)):
                         if predefined_roles_json[i]['name'] == role_json['name']:
                             predefined_roles_json[i]['has_undocumented'] = True
+
+                if includedPermission in tags_json['iam']['CredentialExposure']:
+                    for i in range(len(predefined_roles_json)):
+                        if predefined_roles_json[i]['name'] == role_json['name']:
+                            predefined_roles_json[i]['has_credentialexposure'] = True
+
+                if includedPermission in tags_json['iam']['DataAccess']:
+                    for i in range(len(predefined_roles_json)):
+                        if predefined_roles_json[i]['name'] == role_json['name']:
+                            predefined_roles_json[i]['has_dataaccess'] = True
+
+                if includedPermission in tags_json['iam']['PrivEsc']:
+                    for i in range(len(predefined_roles_json)):
+                        if predefined_roles_json[i]['name'] == role_json['name']:
+                            predefined_roles_json[i]['has_privesc'] = True
 
                 roles_json[includedPermission].append({
                     'id': role_json['name'],
