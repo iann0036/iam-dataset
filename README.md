@@ -77,9 +77,17 @@ For Google Cloud, the primary datasources are methods.json, permissions.json and
 
 The result of the command `gcloud iam roles list`, including deleted roles, showing all predefined roles.
 
+### map.json
+
+A map of IAM permissions required for each method. **[WORK IN PROGRESS]**
+
 ### methods.json
 
 The combination of the methods extracted from the Google Cloud Go SDK.
+
+### methods_ext.json
+
+Same as methods.json, but with parameter information.
 
 ### permissions.json
 
