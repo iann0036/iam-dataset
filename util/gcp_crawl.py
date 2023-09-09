@@ -31,6 +31,8 @@ for root_service in methods.keys():
 
         method_without_service = method.removeprefix(root_service + ".")
         url = "https://cloud.google.com/{}/docs/reference/rest/{}/{}".format(root_service, version, "/".join(method_without_service.rsplit(".", 1)))
+        if 'restUrl' in map['api'][root_service]:
+            url = "{}/{}/{}".format(map['api'][root_service]['restUrl'], version, "/".join(method_without_service.rsplit(".", 1)))
         print("crawling " + url)
         request = requests.get(url)
         if request.status_code == 404:

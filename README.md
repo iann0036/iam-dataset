@@ -1,17 +1,14 @@
 # IAM Dataset
 
-> **Note**
-> This repository has recently undergone a directory restructure. If you previously relied on `.json` files or `managedpolicies/` in the root of this repository, these should now be accessed from within the `aws/` directory if hotlinking or consumed with CI/CD.
-
 A consolidated series of structured data for cloud identity and access management systems, including datasets for AWS, Azure, and Google Cloud.
 
 It is currently being used to support:
 
-* [https://github.com/iann0036/iamlive](https://github.com/iann0036/iamlive)
-* [https://github.com/iann0036/iamfast](https://github.com/iann0036/iamfast)
-* [https://github.com/iann0036/aws.permissions.cloud](https://github.com/iann0036/aws.permissions.cloud)
-* [https://github.com/iann0036/azure.permissions.cloud](https://github.com/iann0036/azure.permissions.cloud)
-* [https://github.com/iann0036/gcp.permissions.cloud](https://github.com/iann0036/gcp.permissions.cloud)
+* [iamlive](https://github.com/iann0036/iamlive)
+* [iamfast](https://github.com/iann0036/iamfast)
+* [aws.permissions.cloud](https://aws.permissions.cloud)
+* [azure.permissions.cloud](https://azure.permissions.cloud)
+* [gcp.permissions.cloud](https://gcp.permissions.cloud)
 
 Tooling which assists in the generation of some datasources is located in the `util/` directory.
 
