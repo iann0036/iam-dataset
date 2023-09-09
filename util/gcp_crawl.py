@@ -12,6 +12,13 @@ map = {}
 with open("gcp/map.json", "r") as f:
     map = json.loads(f.read())
 
+source_permissions = {}
+with open("gcp/permissions.json", "r") as f:
+    source_permissions = json.loads(f.read())
+
+def is_known_permission(name):
+    return name in source_permissions.keys()
+
 for root_service in methods.keys():
     if root_service not in map['api'].keys():
         map['api'][root_service] = {}
@@ -45,12 +52,15 @@ for root_service in methods.keys():
                     continue
                 if 'permissions' not in map['api'][root_service]['methods'][method]:
                     map['api'][root_service]['methods'][method]['permissions'] = []
-                map['api'][root_service]['methods'][method]['permissions'].append({
+                obj = {
                     'name': code.text,
                     'discoveryMethodologies': [
                         "restcrawliamblockv1"
                     ]
-                })
+                }
+                if not is_known_permission(code.text):
+                    obj['undocumented'] = True
+                map['api'][root_service]['methods'][method]['permissions'].append(obj)
 
         # Path
         table = soup.find("table", {"id": "body.PATH_PARAMETERS-table"})
@@ -66,7 +76,7 @@ for root_service in methods.keys():
                     elif 'parameterType' not in perm and code.has_attr("class") and " ".join(code.get('class')) == "apitype":
                         perm['parameterType'] = code.text
                     elif 'parameterType' in perm and 'parameterFormat' not in perm and "following IAM permission" not in code.parent.text and code.parent.name != "li":
-                        perm['parameterFormat'] = code.text
+                        perm['parameterFormat'] = code.text.replace("\n", " ").replace("  ", " ")
                     elif "IAM permission" in code.parent.text and 'resourceIndicator' not in perm:
                         perm['resourceIndicator'] = code.text
                     elif code.parent.name == "li" and "following IAM permission" in code.parent.parent.find_previous('p').text:
@@ -96,6 +106,8 @@ for root_service in methods.keys():
                             addedperm['parameterFormat'] = perm['parameterFormat']
                         if 'lowConfidence' in perm:
                             addedperm['lowConfidence'] = perm['lowConfidence']
+                        if not is_known_permission(permission_instance):
+                            addedperm['undocumented'] = True
                         map['api'][root_service]['methods'][method]['permissions'].append(addedperm)
 
                 print(perm)
@@ -114,7 +126,7 @@ for root_service in methods.keys():
                     elif 'parameterType' not in perm and code.has_attr("class") and " ".join(code.get('class')) == "apitype":
                         perm['parameterType'] = code.text
                     elif 'parameterType' in perm and 'parameterFormat' not in perm and "following IAM permission" not in code.parent.text and code.parent.name != "li":
-                        perm['parameterFormat'] = code.text
+                        perm['parameterFormat'] = code.text.replace("\n", " ").replace("  ", " ")
                     elif "IAM permission" in code.parent.text and 'resourceIndicator' not in perm:
                         perm['resourceIndicator'] = code.text
                     elif code.parent.name == "li" and "following IAM permission" in code.parent.parent.find_previous('p').text:
@@ -144,27 +156,29 @@ for root_service in methods.keys():
                         #    addedperm['parameterFormat'] = perm['parameterFormat']
                         if 'lowConfidence' in perm:
                             addedperm['lowConfidence'] = perm['lowConfidence']
+                        if not is_known_permission(permission_instance):
+                            addedperm['undocumented'] = True
                         map['api'][root_service]['methods'][method]['permissions'].append(addedperm)
 
                 print(perm)
 
         # Dedup
-        permdict = {}
-        for perminst in map['api'][root_service]['methods'][method]['permissions']:
-            if not perminst['name'] in permdict.keys():
-                permdict[perminst['name']] = perminst
-            else:
-                permdict[perminst['name']]['discoveryMethodologies'] = list(set(perminst['discoveryMethodologies']) | set(permdict[perminst['name']]['discoveryMethodologies']))
-                if 'parameterType' in perminst.keys():
-                    permdict[perminst['name']]['parameterType'] = perminst['parameterType']
-                if 'resourceIndicator' in perminst.keys():
-                    permdict[perminst['name']]['resourceIndicator'] = perminst['resourceIndicator']
-                if 'parameterName' in perminst.keys():
-                    permdict[perminst['name']]['parameterName'] = perminst['parameterName']
-                if 'lowConfidence' in perminst.keys():
-                    permdict[perminst['name']]['lowConfidence'] = perminst['lowConfidence']
-        map['api'][root_service]['methods'][method]['permissions'] = permdict.values()
-
+        if 'permissions' in map['api'][root_service]['methods'][method].keys():
+            permdict = {}
+            for perminst in map['api'][root_service]['methods'][method]['permissions']:
+                if not perminst['name'] in permdict.keys():
+                    permdict[perminst['name']] = perminst
+                else:
+                    permdict[perminst['name']]['discoveryMethodologies'] = list(set(perminst['discoveryMethodologies']) | set(permdict[perminst['name']]['discoveryMethodologies']))
+                    if 'parameterType' in perminst.keys():
+                        permdict[perminst['name']]['parameterType'] = perminst['parameterType']
+                    if 'resourceIndicator' in perminst.keys():
+                        permdict[perminst['name']]['resourceIndicator'] = perminst['resourceIndicator']
+                    if 'parameterName' in perminst.keys():
+                        permdict[perminst['name']]['parameterName'] = perminst['parameterName']
+                    if 'lowConfidence' in perminst.keys():
+                        permdict[perminst['name']]['lowConfidence'] = perminst['lowConfidence']
+            map['api'][root_service]['methods'][method]['permissions'] = list(permdict.values())
 
 
 with open("gcp/map.json", "w") as f:
