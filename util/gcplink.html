@@ -1,0 +1,190 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>IAM Mapping Tool</title>
+    <style>
+        .column {
+            float: left;
+            width: 50%;
+        }
+
+        .row:after {
+            content: "";
+            display: table;
+            clear: both;
+        }
+    </style>
+  </head>
+  <body>
+    <div class="row">
+        <div class="column">
+            <div id="loadjsonarea">
+                <i>Loading JSON...</i>
+                <br />
+            </div>
+        
+            <div id="methodmappingarea"></div>
+
+            <br /><br /><button id="submitbutton" onclick="submitMapping()">Submit Mapping [`]</button>&nbsp;&nbsp;<button id="skipbutton" onclick="nextService()">Next Service [\]</button>
+        
+            <br /><br /><br /><h4>Output</h4>
+            <textarea id="output" cols="80" rows="20"></textarea>
+        </div>
+        <div class="column">
+            <div id="permissionmappingarea"></div>
+        </div>
+    </div>
+
+
+
+    <script>
+        var map = {};
+        var methods = {};
+        var permissions = {};
+        var services = [];
+        var current_service = null;
+
+        var selected_method = null;
+        var selected_permissions = [];
+
+        async function loadJson() {
+            var mapdata = await fetch('https://raw.githubusercontent.com/iann0036/iam-dataset/main/gcp/map.json');
+            map = await mapdata.json();
+            
+            var methodsdata = await fetch('https://raw.githubusercontent.com/iann0036/iam-dataset/main/gcp/methods.json');
+            methods = await methodsdata.json();
+
+            services = Object.keys(methods);
+
+            var permissionsdata = await fetch('https://raw.githubusercontent.com/iann0036/iam-dataset/main/gcp/permissions_sorted.json');
+            permissions = await permissionsdata.json();
+
+            await nextService();
+
+            document.getElementById('loadjsonarea').setAttribute('style', 'display: none;');
+        }
+
+        async function nextService() {
+            document.getElementById('output').value = JSON.stringify(map, null, 2);
+
+            if (services.length < 1) {
+                alert("Done");
+                return;
+            }
+
+            current_service = services.pop();
+
+            refresh();
+        }
+
+        async function submitMapping() {
+            if (!selected_method) {
+                alert("No method selected");
+
+                selected_method = null;
+                selected_permissions = [];
+                refresh();
+                return;
+            }
+            if (selected_permissions.length == 0) {
+                alert("No permissions selected");
+
+                selected_method = null;
+                selected_permissions = [];
+                refresh();
+                return;
+            }
+
+            if (!map['api'][current_service]) {
+                map['api'][current_service] = {};
+            }
+            if (!map['api'][current_service]['methods']) {
+                map['api'][current_service]['methods'] = {};
+            }
+            if (!map['api'][current_service]['methods'][selected_method]) {
+                map['api'][current_service]['methods'][selected_method] = {};
+            }
+            if (!map['api'][current_service]['methods'][selected_method]['permissions']) {
+                map['api'][current_service]['methods'][selected_method]['permissions'] = [];
+            }
+
+            for (var selected_permission of selected_permissions) {
+                map['api'][current_service]['methods'][selected_method]['permissions'].push({
+                    "discoveryMethodologies": [
+                        "manual"
+                    ],
+                    "name": selected_permission
+                });
+            }
+
+            selected_method = null;
+            selected_permissions = [];
+
+            refresh();
+        }
+
+        async function refresh() {
+            document.getElementById('output').value = JSON.stringify(map, null, 2);
+
+            document.getElementById('methodmappingarea').innerHTML = "";
+            document.getElementById('permissionmappingarea').innerHTML = "";
+
+            var seen_iam_perms = [];
+
+            for (var method of Object.keys(methods[current_service]['methods'])) {
+                var apimappings = "";
+                if (map['api'][current_service] && map['api'][current_service]['methods'] && map['api'][current_service]['methods'][method] && map['api'][current_service]['methods'][method]['permissions']) {
+                    apimappings = "<br /><i><b>[";
+                    for (var perm of map['api'][current_service]['methods'][method]['permissions']) {
+                        apimappings += " " + perm['name'];
+                        seen_iam_perms.push(perm['name']);
+                    }
+                    apimappings += " ]</b></i>";
+                }
+
+                document.getElementById('methodmappingarea').innerHTML += `
+                    ${method} <button id="api-${method.replaceAll(".","--")}" data-api="${method}">Select</button>${apimappings}<hr />
+                `;
+            }
+            for (var method of Object.keys(methods[current_service]['methods'])) {
+                document.getElementById("api-" + method.replaceAll(".","--")).addEventListener("click", (e) => {
+                    selected_method = e.target.dataset.api;
+                    e.target.innerHTML = "SELECTED";
+                }, false);
+            }
+
+            iam_prefix = current_service; // TODO: mappings
+
+            for (var perm of Object.keys(permissions)) {
+                if (perm.startsWith(iam_prefix + ".")) {
+                    document.getElementById('permissionmappingarea').innerHTML += `
+                        ${perm}${(seen_iam_perms.includes(perm) ? " *" : "")} <button id="iam-${perm.replaceAll(".","--")}" data-iam="${perm}">Select</button><hr />
+                    `;
+                }
+            }
+            for (var perm of Object.keys(permissions)) {
+                if (perm.startsWith(iam_prefix + ".")) {
+                    document.getElementById("iam-" + perm.replaceAll(".","--")).addEventListener("click", (e) => {
+                        selected_permissions.push(e.target.dataset.iam);
+                        e.target.innerHTML = "SELECTED";
+                    }, false);
+                }
+            }
+        }
+
+        window.onload = async () => {
+            await loadJson();
+        }
+
+        document.addEventListener("keypress", (e) => {
+            if (e.key == '`') {
+                document.getElementById('submitbutton').click();
+            } else if (e.key == '\\') {
+                document.getElementById('skipbutton').click();
+            }
+        }, false);
+    </script>
+  </body>
+</html>
