@@ -43,6 +43,7 @@
         var map = {};
         var methods = {};
         var permissions = {};
+        var servicemapping = {};
         var services = [];
         var current_service = null;
 
@@ -60,6 +61,9 @@
 
             var permissionsdata = await fetch('https://raw.githubusercontent.com/iann0036/iam-dataset/main/gcp/permissions_sorted.json');
             permissions = await permissionsdata.json();
+
+            var servicemappingdata = await fetch('https://raw.githubusercontent.com/iann0036/iam-dataset/main/gcp/service_mapping.json');
+            servicemapping = await servicemappingdata.json();
 
             await nextService();
 
@@ -153,6 +157,10 @@
             }
 
             iam_prefix = current_service; // TODO: mappings
+            if (servicemapping['api'][current_service]) {
+                iam_prefix = servicemapping['api'][current_service];
+            }
+
 
             for (var perm of Object.keys(permissions)) {
                 if (perm.startsWith(iam_prefix + ".")) {
