@@ -4,9 +4,9 @@
     "Read"
   ],
   "arn": "arn:aws:iam::aws:policy/AWSElasticDisasterRecoveryReadOnlyAccess",
-  "createdate": "2022-05-29T08:27:37Z",
+  "createdate": "2023-09-13T07:42:45Z",
   "credentials_exposure": false,
-  "data_access": false,
+  "data_access": true,
   "deprecated": false,
   "document": {
     "Statement": [
@@ -23,7 +23,8 @@
           "drs:GetReplicationConfiguration",
           "drs:ListExtensibleSourceServers",
           "drs:ListStagingAccounts",
-          "drs:ListTagsForResource"
+          "drs:ListTagsForResource",
+          "drs:ListLaunchActions"
         ],
         "Effect": "Allow",
         "Resource": "*"
@@ -44,6 +45,44 @@
         ],
         "Effect": "Allow",
         "Resource": "*"
+      },
+      {
+        "Action": [
+          "ssm:ListCommandInvocations"
+        ],
+        "Effect": "Allow",
+        "Resource": "*"
+      },
+      {
+        "Action": [
+          "ssm:GetParameter"
+        ],
+        "Effect": "Allow",
+        "Resource": "arn:aws:ssm:*:*:parameter/ManagedByAWSElasticDisasterRecovery-*"
+      },
+      {
+        "Action": [
+          "ssm:DescribeDocument",
+          "ssm:GetDocument"
+        ],
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:ssm:*:*:document/AWS-CreateImage",
+          "arn:aws:ssm:*:*:document/AWSMigration-LinuxTimeSyncSetting",
+          "arn:aws:ssm:*:*:document/AWSEC2-ApplicationInsightsCloudwatchAgentInstallAndConfigure"
+        ]
+      },
+      {
+        "Action": [
+          "ssm:GetAutomationExecution"
+        ],
+        "Condition": {
+          "Null": {
+            "aws:ResourceTag/AWSElasticDisasterRecoveryManaged": "false"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:ssm:*:*:automation-execution/*"
       }
     ],
     "Version": "2012-10-17"
@@ -218,6 +257,60 @@
       "effective_action": "iam:ListRoles",
       "privesc": false,
       "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "ssm:ListCommandInvocations",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ssm:ListCommandInvocations",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "ssm:GetParameter",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": true,
+      "effective_action": "ssm:GetParameter",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "ssm:DescribeDocument",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ssm:DescribeDocument",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "ssm:GetDocument",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": true,
+      "effective_action": "ssm:GetDocument",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "ssm:GetAutomationExecution",
+      "condition": {
+        "Null": {
+          "aws:ResourceTag/AWSElasticDisasterRecoveryManaged": "false"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ssm:GetAutomationExecution",
+      "privesc": false,
+      "resource_exposure": false
     }
   ],
   "malformed": false,
@@ -225,7 +318,12 @@
   "privesc": false,
   "resource_exposure": false,
   "undocumented_actions": false,
-  "unknown_actions": [],
-  "updatedate": "2022-05-29T08:27:37+00:00",
-  "version": "v2"
+  "unknown_actions": [
+    {
+      "action": "drs:ListLaunchActions",
+      "condition": null
+    }
+  ],
+  "updatedate": "2023-09-13T07:42:45+00:00",
+  "version": "v3"
 }
