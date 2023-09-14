@@ -8,8 +8,6 @@ for rootitem in os.listdir('azure-rest-api-specs/specification/'):
         if os.path.isdir('azure-rest-api-specs/specification/' + rootitem + '/resource-manager/'):
             for servicename in os.listdir('azure-rest-api-specs/specification/' + rootitem + '/resource-manager/'):
                 if os.path.isdir('azure-rest-api-specs/specification/' + rootitem + '/resource-manager/' + servicename + '/'):
-                    result[servicename] = {}
-
                     subresourcesmap = {}
 
                     for item in os.listdir('azure-rest-api-specs/specification/' + rootitem + '/resource-manager/' + servicename + '/'):
@@ -32,21 +30,34 @@ for rootitem in os.listdir('azure-rest-api-specs/specification/'):
                                                     for httpmethodname, httpmethoddetail in pathdetail.items():            
                                                         if httpmethodname == "parameters":
                                                             continue
-                                                        if httpmethodname not in result[servicename]:
-                                                            result[servicename][httpmethodname] = {}
-                                                        if pathname not in result[servicename][httpmethodname]:
-                                                            result[servicename][httpmethodname][pathname] = {}
-                                                        if 'versions' not in result[servicename][httpmethodname][pathname]:
-                                                            result[servicename][httpmethodname][pathname]['versions'] = []
-                                                        result[servicename][httpmethodname][pathname]['versions'].append(apiversion)
-                                                        result[servicename][httpmethodname][pathname]['versions'].sort()
-                                                        result[servicename][httpmethodname][pathname]['operationId'] = httpmethoddetail['operationId']
+                                                        mappedservicename = servicename
+                                                        if "." not in mappedservicename:
+                                                            if subresourcedetail['subresource'] is not None:
+                                                                mappedservicename = subresourcedetail['subresource']
+                                                            if rootitem == "marketplacecatalog":
+                                                                mappedservicename = "Microsoft.Marketplace"
+                                                        if "." not in mappedservicename:
+                                                            print(servicename)
+                                                            print(rootitem)
+                                                            print("---")
+                                                            raise "Unmapped service"
+                                                        if mappedservicename not in result:
+                                                            result[mappedservicename] = {}
+                                                        if httpmethodname not in result[mappedservicename]:
+                                                            result[mappedservicename][httpmethodname] = {}
+                                                        if pathname not in result[mappedservicename][httpmethodname]:
+                                                            result[mappedservicename][httpmethodname][pathname] = {}
+                                                        if 'versions' not in result[mappedservicename][httpmethodname][pathname]:
+                                                            result[mappedservicename][httpmethodname][pathname]['versions'] = []
+                                                        result[mappedservicename][httpmethodname][pathname]['versions'].append(apiversion)
+                                                        result[mappedservicename][httpmethodname][pathname]['versions'].sort()
+                                                        result[mappedservicename][httpmethodname][pathname]['operationId'] = httpmethoddetail['operationId']
                                                         if 'description' in httpmethoddetail:
-                                                            result[servicename][httpmethodname][pathname]['description'] = httpmethoddetail['description']
+                                                            result[mappedservicename][httpmethodname][pathname]['description'] = httpmethoddetail['description']
                                                         elif 'summary' in httpmethoddetail:
-                                                            result[servicename][httpmethodname][pathname]['description'] = httpmethoddetail['summary']
+                                                            result[mappedservicename][httpmethodname][pathname]['description'] = httpmethoddetail['summary']
                                                         else:
-                                                            result[servicename][httpmethodname][pathname]['description'] = ""
+                                                            result[mappedservicename][httpmethodname][pathname]['description'] = ""
 
 
 with open("azure/api.json", "w") as f:
