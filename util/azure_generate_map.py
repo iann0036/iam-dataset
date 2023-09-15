@@ -117,9 +117,10 @@ for opservice in ops:
                             if m:
                                 path_entities.append(m.group(1).lower())
                                 trimmed_pathname = ""
-                                is_action = True
-                                if httpmethodname.lower() != "post":
-                                    continue # not an action
+                                if httpmethodname.lower() == "post":
+                                    is_action = True
+                                elif httpmethodname.lower() != "get":
+                                    continue
                         
                         path_entities_join = "/".join(path_entities)
                         path_entities_join_noslashes = "".join(path_entities)
