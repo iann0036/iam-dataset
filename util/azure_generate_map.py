@@ -90,6 +90,10 @@ for opservice in ops:
                     # Entity array matching
                     if len(candidates) == 0:
                         trimmed_pathname = pathname
+                        scope_managementgroup = False
+                        if trimmed_pathname.startswith("/providers/Microsoft.Management/managementGroups/{managementGroupName}"):
+                            scope_managementgroup = True
+                            trimmed_pathname = trimmed_pathname[len("/providers/Microsoft.Management/managementGroups/{managementGroupName}"):]
                         scope_subscription = False
                         if trimmed_pathname.startswith("/subscriptions/{subscriptionId}"):
                             scope_subscription = True
@@ -99,7 +103,7 @@ for opservice in ops:
                             scope_resourcegroup = True
                             trimmed_pathname = trimmed_pathname[len("/resourceGroups/{resourceGroupName}"):]
                         scope_provider = False
-                        if trimmed_pathname.startswith("/providers/" + apibasename):
+                        if trimmed_pathname.lower().startswith("/providers/" + apibasename.lower()):
                             scope_provider = True
                             trimmed_pathname = trimmed_pathname[len("/providers/" + apibasename):]
 
