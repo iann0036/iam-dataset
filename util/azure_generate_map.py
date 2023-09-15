@@ -48,6 +48,16 @@ for opservice in ops:
                                 result["POST"]["/providers/Microsoft.Management/managementGroups/{groupId}/providers/{resourceProviderNamespace}/register"][op['name']] = {}
                             result["POST"]["/subscriptions/{subscriptionId}/providers/{resourceProviderNamespace}/register"][op['name']]['automated'] = True
                             result["POST"]["/providers/Microsoft.Management/managementGroups/{groupId}/providers/{resourceProviderNamespace}/register"][op['name']]['automated'] = True
+                            result["POST"]["/subscriptions/{subscriptionId}/providers/{resourceProviderNamespace}/register"][op['name']]['condition'] = {
+                                "pathEquals": {
+                                    "resourceProviderNamespace": op['name'].split("/")[0]
+                                }
+                            }
+                            result["POST"]["/providers/Microsoft.Management/managementGroups/{groupId}/providers/{resourceProviderNamespace}/register"][op['name']]['condition'] = {
+                                "pathEquals": {
+                                    "resourceProviderNamespace": op['name'].split("/")[0]
+                                }
+                            }
                             continue
                         if op['name'].lower().endswith("/unregister/action"):
                             if "POST" not in result:
@@ -57,6 +67,11 @@ for opservice in ops:
                             if op['name'] not in result["POST"]["/subscriptions/{subscriptionId}/providers/{resourceProviderNamespace}/unregister"]:
                                 result["POST"]["/subscriptions/{subscriptionId}/providers/{resourceProviderNamespace}/unregister"][op['name']] = {}
                             result["POST"]["/subscriptions/{subscriptionId}/providers/{resourceProviderNamespace}/unregister"][op['name']]['automated'] = True
+                            result["POST"]["/subscriptions/{subscriptionId}/providers/{resourceProviderNamespace}/unregister"][op['name']]['condition'] = {
+                                "pathEquals": {
+                                    "resourceProviderNamespace": op['name'].split("/")[0]
+                                }
+                            }
                             continue
 
                         opname = op['name'].removeprefix(opservice['name'] + "/")
