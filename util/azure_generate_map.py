@@ -24,7 +24,6 @@ for opservice in ops:
     combined_ops = opservice['operations']
     for restype in opservice['resourceTypes']:
         combined_ops += restype['operations']
-    
     for apibasename, apidetail in apis.items():
         if apibasename.lower() == opservice['name'].lower():
             for httpmethodname, httpmethoddetail in apidetail.items():
@@ -35,6 +34,31 @@ for opservice in ops:
 
                     # Basic matching
                     for op in combined_ops:
+                        # special case - service registration
+                        if op['name'].lower().endswith("/register/action"):
+                            if "POST" not in result:
+                                result["POST"] = {}
+                            if "/subscriptions/{subscriptionId}/providers/{resourceProviderNamespace}/register" not in result["POST"]:
+                                result["POST"]["/subscriptions/{subscriptionId}/providers/{resourceProviderNamespace}/register"] = {}
+                            if op['name'] not in result["POST"]["/subscriptions/{subscriptionId}/providers/{resourceProviderNamespace}/register"]:
+                                result["POST"]["/subscriptions/{subscriptionId}/providers/{resourceProviderNamespace}/register"][op['name']] = {}
+                            if "/providers/Microsoft.Management/managementGroups/{groupId}/providers/{resourceProviderNamespace}/register" not in result["POST"]:
+                                result["POST"]["/providers/Microsoft.Management/managementGroups/{groupId}/providers/{resourceProviderNamespace}/register"] = {}
+                            if op['name'] not in result["POST"]["/providers/Microsoft.Management/managementGroups/{groupId}/providers/{resourceProviderNamespace}/register"]:
+                                result["POST"]["/providers/Microsoft.Management/managementGroups/{groupId}/providers/{resourceProviderNamespace}/register"][op['name']] = {}
+                            result["POST"]["/subscriptions/{subscriptionId}/providers/{resourceProviderNamespace}/register"][op['name']]['automated'] = True
+                            result["POST"]["/providers/Microsoft.Management/managementGroups/{groupId}/providers/{resourceProviderNamespace}/register"][op['name']]['automated'] = True
+                            continue
+                        if op['name'].lower().endswith("/unregister/action"):
+                            if "POST" not in result:
+                                result["POST"] = {}
+                            if "/subscriptions/{subscriptionId}/providers/{resourceProviderNamespace}/unregister" not in result["POST"]:
+                                result["POST"]["/subscriptions/{subscriptionId}/providers/{resourceProviderNamespace}/unregister"] = {}
+                            if op['name'] not in result["POST"]["/subscriptions/{subscriptionId}/providers/{resourceProviderNamespace}/unregister"]:
+                                result["POST"]["/subscriptions/{subscriptionId}/providers/{resourceProviderNamespace}/unregister"][op['name']] = {}
+                            result["POST"]["/subscriptions/{subscriptionId}/providers/{resourceProviderNamespace}/unregister"][op['name']]['automated'] = True
+                            continue
+
                         opname = op['name'].removeprefix(opservice['name'] + "/")
                         opname_parts = opname.split("/")
 
@@ -94,6 +118,9 @@ for opservice in ops:
                         if trimmed_pathname.startswith("/providers/Microsoft.Management/managementGroups/{managementGroupName}"):
                             scope_managementgroup = True
                             trimmed_pathname = trimmed_pathname[len("/providers/Microsoft.Management/managementGroups/{managementGroupName}"):]
+                        if trimmed_pathname.startswith("/providers/Microsoft.Management/managementGroups/{groupId}"):
+                            scope_managementgroup = True
+                            trimmed_pathname = trimmed_pathname[len("/providers/Microsoft.Management/managementGroups/{groupId}"):]
                         scope_subscription = False
                         if trimmed_pathname.startswith("/subscriptions/{subscriptionId}"):
                             scope_subscription = True
@@ -137,7 +164,7 @@ for opservice in ops:
                         if is_action:
                             path_entities_join += "/action"
                             path_entities_join_noslashes += "/action"
-                        elif httpmethodname.lower() in ["get"]:
+                        elif httpmethodname.lower() in ["get", "head"]:
                             path_entities_join += "/read"
                             path_entities_join_noslashes += "/read"
                         elif httpmethodname.lower() in ["delete"]:
@@ -162,7 +189,7 @@ for opservice in ops:
                         if is_action:
                             path_entries_singular_join += "action"
                             path_entries_singular_join_noslashes += "/action"
-                        elif httpmethodname.lower() in ["get"]:
+                        elif httpmethodname.lower() in ["get", "head"]:
                             path_entries_singular_join += "read"
                             path_entries_singular_join_noslashes += "/read"
                         elif httpmethodname.lower() in ["delete"]:
