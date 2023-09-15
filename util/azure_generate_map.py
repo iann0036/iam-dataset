@@ -103,6 +103,9 @@ for opservice in ops:
                             scope_provider = True
                             trimmed_pathname = trimmed_pathname[len("/providers/" + apibasename):]
 
+                        if trimmed_pathname.endswith("/default"):
+                            trimmed_pathname = trimmed_pathname[:-len("/default")]
+
                         path_entities = []
                         m = path_entities_pattern.match(trimmed_pathname)
                         while m:
