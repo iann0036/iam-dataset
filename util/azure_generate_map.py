@@ -5,7 +5,7 @@ import inflect
 
 p = inflect.engine()
 
-path_entities_pattern = re.compile("^/([a-zA-Z]{3})[a-zA-Z0-9._-]+/{(\\1[a-zA-Z0-9._-]+)(?:Name|Id)}($|.+)")
+path_entities_pattern = re.compile("^/([a-zA-Z0-9._-]+)/{[a-zA-Z0-9._-]+}($|/.+)")
 
 result = {}
 
@@ -101,12 +101,13 @@ for opservice in ops:
                         path_entities = []
                         m = path_entities_pattern.match(trimmed_pathname)
                         while m:
-                            path_entities.append(m.group(2))
-                            trimmed_pathname = m.group(3)
-                            m = path_entities_pattern.match(trimmed_pathname)
+                            path_entities.append(m.group(1))
+                            trimmed_pathname = m.group(2)
+                            if trimmed_pathname is not None:
+                                m = path_entities_pattern.match(trimmed_pathname)
                         path_entities_join = "".join(path_entities).lower()
 
-                        if trimmed_pathname == "":
+                        if trimmed_pathname == "" and path_entities_join != "":
                             for op in combined_ops:
                                 opname = op['name'].removeprefix(opservice['name'] + "/")
                                 opname_parts = opname.split("/")
