@@ -102,6 +102,9 @@ for opservice in ops:
                         if trimmed_pathname.startswith("/resourceGroups/{resourceGroupName}"):
                             scope_resourcegroup = True
                             trimmed_pathname = trimmed_pathname[len("/resourceGroups/{resourceGroupName}"):]
+                        if trimmed_pathname.startswith("/resourceGroups/{resourceGroup}"):
+                            scope_resourcegroup = True
+                            trimmed_pathname = trimmed_pathname[len("/resourceGroups/{resourceGroup}"):]
                         scope_provider = False
                         if trimmed_pathname.lower().startswith("/providers/" + apibasename.lower()):
                             scope_provider = True
