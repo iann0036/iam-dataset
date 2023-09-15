@@ -1,8 +1,11 @@
 import os
+import re
 import json
 import inflect
 
 p = inflect.engine()
+
+path_entities_pattern = re.compile("^/([a-zA-Z]{3})[a-zA-Z0-9._-]+/{(\\1[a-zA-Z0-9._-]+)(?:Name|Id)}($|.+)")
 
 result = {}
 
@@ -27,6 +30,7 @@ for opservice in ops:
 
                     candidates = []
 
+                    # Basic matching
                     for op in combined_ops:
                         opname = op['name'].removeprefix(opservice['name'] + "/")
                         opname_parts = opname.split("/")
@@ -79,7 +83,45 @@ for opservice in ops:
                         elif len(method_parts) == 2 and len(opname_parts) == 3 and method_parts0plural == opname_parts[0].lower() and opname_parts[2].lower() == "write" and method_parts[1].lower() in ["create"+opname_parts[1].lower(), "update"+opname_parts[1].lower(), "createorupdate"+opname_parts[1].lower()]:
                             candidates.append(op['name'])
                             continue
+
+                    # Entity array matching
+                    if len(candidates) == 0:
+                        trimmed_pathname = pathname
+                        scope_subscription = False
+                        if trimmed_pathname.startswith("/subscriptions/{subscriptionId}"):
+                            scope_subscription = True
+                            trimmed_pathname = trimmed_pathname[len("/subscriptions/{subscriptionId}"):]
+                        scope_resourcegroup = False
+                        if trimmed_pathname.startswith("/resourceGroups/{resourceGroupName}"):
+                            scope_resourcegroup = True
+                            trimmed_pathname = trimmed_pathname[len("/resourceGroups/{resourceGroupName}"):]
+                        if trimmed_pathname.startswith("/providers/" + apibasename):
+                            trimmed_pathname = trimmed_pathname[len("/providers/" + apibasename):]
+
+                        path_entities = []
+                        m = path_entities_pattern.match(trimmed_pathname)
+                        while m:
+                            path_entities.append(m.group(2))
+                            trimmed_pathname = m.group(3)
+                            m = path_entities_pattern.match(trimmed_pathname)
+                        path_entities_join = "".join(path_entities).lower()
+
+                        if trimmed_pathname == "":
+                            for op in combined_ops:
+                                opname = op['name'].removeprefix(opservice['name'] + "/")
+                                opname_parts = opname.split("/")
+
+                                if len(opname_parts) == 2 and path_entities_join == opname_parts[0].lower() and opname_parts[1].lower() == "read" and httpmethodname.lower() in ["get"]:
+                                    candidates.append(op['name'])
+                                    continue
+                                elif len(opname_parts) == 2 and path_entities_join == opname_parts[0].lower() and opname_parts[1].lower() == "delete" and httpmethodname.lower() in ["delete"]:
+                                    candidates.append(op['name'])
+                                    continue
+                                elif len(opname_parts) == 2 and path_entities_join == opname_parts[0].lower() and opname_parts[1].lower() == "write" and httpmethodname.lower() in ["post", "put", "patch"]:
+                                    candidates.append(op['name'])
+                                    continue
                     
+                    ## End
                     if len(candidates) == 1:
                         if httpmethodname.upper() not in result:
                             result[httpmethodname.upper()] = {}
