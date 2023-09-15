@@ -6,6 +6,7 @@ import inflect
 p = inflect.engine()
 
 path_entities_pattern = re.compile("^/([a-zA-Z0-9._-]+)/{[a-zA-Z0-9._-]+}($|/.+)")
+path_entities_action_pattern = re.compile("^/([a-zA-Z0-9._-]+)$")
 
 result = {}
 with open("azure/map.json", "r") as f:
@@ -109,9 +110,23 @@ for opservice in ops:
                             trimmed_pathname = m.group(2)
                             if trimmed_pathname is not None:
                                 m = path_entities_pattern.match(trimmed_pathname)
+
+                        is_action = False
+                        if trimmed_pathname != "":
+                            m = path_entities_action_pattern.match(trimmed_pathname)
+                            if m:
+                                path_entities.append(m.group(1).lower())
+                                trimmed_pathname = ""
+                                is_action = True
+                                if httpmethodname.lower() != "post":
+                                    continue # not an action
+                        
                         path_entities_join = "/".join(path_entities)
                         path_entities_join_noslashes = "".join(path_entities)
-                        if httpmethodname.lower() in ["get"]:
+                        if is_action:
+                            path_entities_join += "/action"
+                            path_entities_join_noslashes += "/action"
+                        elif httpmethodname.lower() in ["get"]:
                             path_entities_join += "/read"
                             path_entities_join_noslashes += "/read"
                         elif httpmethodname.lower() in ["delete"]:
@@ -133,7 +148,10 @@ for opservice in ops:
                                 path_entries_singular_join += path_entity + "/"
                                 path_entries_singular_join_noslashes += path_entity
                             exceptfirst = False
-                        if httpmethodname.lower() in ["get"]:
+                        if is_action:
+                            path_entries_singular_join += "action"
+                            path_entries_singular_join_noslashes += "/action"
+                        elif httpmethodname.lower() in ["get"]:
                             path_entries_singular_join += "read"
                             path_entries_singular_join_noslashes += "/read"
                         elif httpmethodname.lower() in ["delete"]:
