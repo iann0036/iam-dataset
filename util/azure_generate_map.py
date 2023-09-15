@@ -8,6 +8,8 @@ p = inflect.engine()
 path_entities_pattern = re.compile("^/([a-zA-Z0-9._-]+)/{[a-zA-Z0-9._-]+}($|/.+)")
 
 result = {}
+with open("azure/map.json", "r") as f:
+    result = json.loads(f.read())
 
 apis = {}
 with open("azure/api.json", "r") as f:
@@ -95,30 +97,63 @@ for opservice in ops:
                         if trimmed_pathname.startswith("/resourceGroups/{resourceGroupName}"):
                             scope_resourcegroup = True
                             trimmed_pathname = trimmed_pathname[len("/resourceGroups/{resourceGroupName}"):]
+                        scope_provider = False
                         if trimmed_pathname.startswith("/providers/" + apibasename):
+                            scope_provider = True
                             trimmed_pathname = trimmed_pathname[len("/providers/" + apibasename):]
 
                         path_entities = []
                         m = path_entities_pattern.match(trimmed_pathname)
                         while m:
-                            path_entities.append(m.group(1))
+                            path_entities.append(m.group(1).lower())
                             trimmed_pathname = m.group(2)
                             if trimmed_pathname is not None:
                                 m = path_entities_pattern.match(trimmed_pathname)
-                        path_entities_join = "".join(path_entities).lower()
+                        path_entities_join = "/".join(path_entities)
+                        path_entities_join_noslashes = "".join(path_entities)
+                        if httpmethodname.lower() in ["get"]:
+                            path_entities_join += "/read"
+                            path_entities_join_noslashes += "/read"
+                        elif httpmethodname.lower() in ["delete"]:
+                            path_entities_join += "/delete"
+                            path_entities_join_noslashes += "/delete"
+                        elif httpmethodname.lower() in ["post", "put", "patch"]:
+                            path_entities_join += "/write"
+                            path_entities_join_noslashes += "/write"
 
-                        if trimmed_pathname == "" and path_entities_join != "":
+                        path_entries_singular_join = ""
+                        exceptfirst = True
+                        path_entries_singular_join_noslashes = ""
+                        for path_entity in path_entities:
+                            singular = p.singular_noun(path_entity)
+                            if singular:
+                                path_entries_singular_join += singular + "/"
+                                path_entries_singular_join_noslashes += singular
+                            else:
+                                path_entries_singular_join += path_entity + "/"
+                                path_entries_singular_join_noslashes += path_entity
+                            exceptfirst = False
+                        if httpmethodname.lower() in ["get"]:
+                            path_entries_singular_join += "read"
+                            path_entries_singular_join_noslashes += "/read"
+                        elif httpmethodname.lower() in ["delete"]:
+                            path_entries_singular_join += "delete"
+                            path_entries_singular_join_noslashes += "/delete"
+                        elif httpmethodname.lower() in ["post", "put", "patch"]:
+                            path_entries_singular_join += "write"
+                            path_entries_singular_join_noslashes += "/write"
+
+                        if trimmed_pathname == "":
                             for op in combined_ops:
                                 opname = op['name'].removeprefix(opservice['name'] + "/")
                                 opname_parts = opname.split("/")
 
-                                if len(opname_parts) == 2 and path_entities_join == opname_parts[0].lower() and opname_parts[1].lower() == "read" and httpmethodname.lower() in ["get"]:
-                                    candidates.append(op['name'])
-                                    continue
-                                elif len(opname_parts) == 2 and path_entities_join == opname_parts[0].lower() and opname_parts[1].lower() == "delete" and httpmethodname.lower() in ["delete"]:
-                                    candidates.append(op['name'])
-                                    continue
-                                elif len(opname_parts) == 2 and path_entities_join == opname_parts[0].lower() and opname_parts[1].lower() == "write" and httpmethodname.lower() in ["post", "put", "patch"]:
+                                if opname.lower() in [
+                                    path_entities_join.lower(),
+                                    path_entities_join_noslashes.lower(),
+                                    path_entries_singular_join.lower(),
+                                    path_entries_singular_join_noslashes.lower()
+                                ]:
                                     candidates.append(op['name'])
                                     continue
                     
