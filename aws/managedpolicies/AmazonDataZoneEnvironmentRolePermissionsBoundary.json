@@ -7,7 +7,7 @@
     "Permissions management"
   ],
   "arn": "arn:aws:iam::aws:policy/AmazonDataZoneEnvironmentRolePermissionsBoundary",
-  "createdate": "2023-09-11T23:38:22Z",
+  "createdate": "2023-09-14T19:33:50Z",
   "credentials_exposure": true,
   "data_access": true,
   "deprecated": false,
@@ -279,7 +279,8 @@
           "redshift-serverless:GetNamespace",
           "redshift-serverless:GetWorkgroup",
           "redshift-serverless:GetCredentials",
-          "secretsmanager:ListSecrets"
+          "secretsmanager:ListSecrets",
+          "tag:GetResources"
         ],
         "Effect": "Allow",
         "Resource": "*"
@@ -330,8 +331,11 @@
           "s3:ListBucket"
         ],
         "Condition": {
-          "StringEquals": {
-            "s3:prefix": "datazone/"
+          "StringLike": {
+            "s3:prefix": [
+              "*/datazone/*",
+              "datazone/*"
+            ]
           }
         },
         "Effect": "Allow",
@@ -499,7 +503,8 @@
           "s3:ListBucket",
           "secretsmanager:CreateSecret",
           "secretsmanager:ListSecrets",
-          "secretsmanager:TagResource"
+          "secretsmanager:TagResource",
+          "tag:GetResources"
         ],
         "Resource": [
           "*"
@@ -5186,6 +5191,16 @@
       "resource_exposure": false
     },
     {
+      "access_level": "Read",
+      "action": "tag:GetResources",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "tag:GetResources",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
       "access_level": "Write",
       "action": "secretsmanager:CreateSecret",
       "condition": {
@@ -5277,8 +5292,11 @@
       "access_level": "List",
       "action": "s3:ListBucket",
       "condition": {
-        "StringEquals": {
-          "s3:prefix": "datazone/"
+        "StringLike": {
+          "s3:prefix": [
+            "*/datazone/*",
+            "datazone/*"
+          ]
         }
       },
       "credentials_exposure": false,
@@ -5294,6 +5312,6 @@
   "resource_exposure": true,
   "undocumented_actions": false,
   "unknown_actions": [],
-  "updatedate": "2023-09-11T23:38:22+00:00",
-  "version": "v1"
+  "updatedate": "2023-09-14T19:33:50+00:00",
+  "version": "v2"
 }
