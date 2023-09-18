@@ -1,7 +1,4 @@
-import os
 import json
-import time
-import requests
 import re
 
 result = {
@@ -16,6 +13,14 @@ provider_ops = []
 with open("azure/provider-operations.json", "r") as f:
     provider_ops = json.loads(f.read())
 
+action_pattern_cache = {}
+def get_action_pattern(action):
+    action_lower = action.lower()
+    if action_lower not in action_pattern_cache:
+        match_expression = "^" + action.replace("*", ".*").replace("?", ".{{1}}") + "$"
+        action_pattern_cache[action_lower] = re.compile(match_expression.lower())
+    return action_pattern_cache[action_lower]
+
 for raw_role in raw_roles:
     if raw_role['roleType'] != "BuiltInRole":
         continue
@@ -28,10 +33,10 @@ for raw_role in raw_roles:
     for permission in raw_role['permissions']:
         for action in permission['actions']:
             matched = False
-            matchexpression = "^" + action.replace(".", "\\.").replace("*", ".*").replace("?", ".{{1}}") + "$"
+            action_pattern = get_action_pattern(action)
             for provider in provider_ops:
                 for operation in provider['operations']:
-                    if not operation['isDataAction'] and re.search(matchexpression.lower(), operation['name'].lower()):
+                    if not operation['isDataAction'] and action_pattern.search(operation['name'].lower()):
                         permitted_actions.append({
                             'name': operation['name'],
                             'description': operation['description'],
@@ -42,7 +47,7 @@ for raw_role in raw_roles:
                         matched = True
                 for resource_type in provider['resourceTypes']:
                     for operation in resource_type['operations']:
-                        if not operation['isDataAction'] and re.search(matchexpression.lower(), operation['name'].lower()):
+                        if not operation['isDataAction'] and action_pattern.search(operation['name'].lower()):
                             permitted_actions.append({
                                 'name': operation['name'],
                                 'description': operation['description'],
@@ -59,10 +64,10 @@ for raw_role in raw_roles:
     for permission in raw_role['permissions']:
         for action in permission['dataActions']:
             matched = False
-            matchexpression = "^" + action.replace(".", "\\.").replace("*", ".*").replace("?", ".{{1}}") + "$"
+            action_pattern = get_action_pattern(action)
             for provider in provider_ops:
                 for operation in provider['operations']:
-                    if operation['isDataAction'] and re.search(matchexpression.lower(), operation['name'].lower()):
+                    if operation['isDataAction'] and action_pattern.search(operation['name'].lower()):
                         permitted_data_actions.append({
                             'name': operation['name'],
                             'description': operation['description'],
@@ -73,7 +78,7 @@ for raw_role in raw_roles:
                         matched = True
                 for resource_type in provider['resourceTypes']:
                     for operation in resource_type['operations']:
-                        if operation['isDataAction'] and re.search(matchexpression.lower(), operation['name'].lower()):
+                        if operation['isDataAction'] and action_pattern.search(operation['name'].lower()):
                             permitted_data_actions.append({
                                 'name': operation['name'],
                                 'description': operation['description'],
@@ -90,15 +95,15 @@ for raw_role in raw_roles:
     for permission in raw_role['permissions']:
         for action in permission['notActions']:
             matched = False
-            matchexpression = "^" + action.replace(".", "\\.").replace("*", ".*").replace("?", ".{{1}}") + "$"
+            action_pattern = get_action_pattern(action)
             for provider in provider_ops:
                 for operation in provider['operations']:
-                    if not operation['isDataAction'] and re.search(matchexpression.lower(), operation['name'].lower()):
+                    if not operation['isDataAction'] and action_pattern.search(operation['name'].lower()):
                         permitted_actions = list(filter(lambda x: x['name'].lower() != operation['name'].lower(), permitted_actions))
                         matched = True
                 for resource_type in provider['resourceTypes']:
                     for operation in resource_type['operations']:
-                        if not operation['isDataAction'] and re.search(matchexpression.lower(), operation['name'].lower()):
+                        if not operation['isDataAction'] and action_pattern.search(operation['name'].lower()):
                             permitted_actions = list(filter(lambda x: x['name'].lower() != operation['name'].lower(), permitted_actions))
                             matched = True
             if not action.lower().startswith("microsoft."):
@@ -109,15 +114,15 @@ for raw_role in raw_roles:
     for permission in raw_role['permissions']:
         for action in permission['notDataActions']:
             matched = False
-            matchexpression = "^" + action.replace(".", "\\.").replace("*", ".*").replace("?", ".{{1}}") + "$"
+            action_pattern = get_action_pattern(action)
             for provider in provider_ops:
                 for operation in provider['operations']:
-                    if operation['isDataAction'] and re.search(matchexpression.lower(), operation['name'].lower()):
+                    if operation['isDataAction'] and action_pattern.search(operation['name'].lower()):
                         permitted_data_actions = list(filter(lambda x: x['name'].lower() != operation['name'].lower(), permitted_data_actions))
                         matched = True
                 for resource_type in provider['resourceTypes']:
                     for operation in resource_type['operations']:
-                        if operation['isDataAction'] and re.search(matchexpression.lower(), operation['name'].lower()):
+                        if operation['isDataAction'] and action_pattern.search(operation['name'].lower()):
                             permitted_data_actions = list(filter(lambda x: x['name'].lower() != operation['name'].lower(), permitted_data_actions))
                             matched = True
             if not action.lower().startswith("microsoft."):

@@ -37,6 +37,14 @@ with open("MAMIP/DEPRECATED.json", "r") as f:
 
 policies = []
 
+action_pattern_cache = {}
+def get_action_pattern(action):
+    action_lower = action.lower()
+    if action_lower not in action_pattern_cache:
+        match_expression = "^" + action.replace("*", ".*").replace("?", ".{{1}}") + "$"
+        action_pattern_cache[action_lower] = re.compile(match_expression.lower())
+    return action_pattern_cache[action_lower]
+
 for policyname in os.listdir("MAMIP/policies/"):
     policy = {}
     detailed_policy = {}
@@ -82,9 +90,9 @@ for policyname in os.listdir("MAMIP/policies/"):
 
             for action in statement['Action']:
                 foundmatch = False
-                matchexpression = "^" + action.replace("*", ".*").replace("?", ".{{1}}") + "$"
+                action_pattern = get_action_pattern(action)
                 for potentialaction in allactions.keys():
-                    if re.search(matchexpression.lower(), potentialaction.lower()):
+                    if action_pattern.search(potentialaction.lower()):
                         access_levels.append(allactions[potentialaction])
                         foundmatch = True
 
@@ -122,7 +130,7 @@ for policyname in os.listdir("MAMIP/policies/"):
                     condition = None
                     if 'Condition' in statement:
                         condition = statement['Condition']
-                        
+
                     unknown_actions.append({
                         'action': action,
                         'condition': condition
@@ -136,14 +144,14 @@ for policyname in os.listdir("MAMIP/policies/"):
             for potentialaction in allactions.keys():
                 matched = False
                 for action in statement['NotAction']:
-                    matchexpression = "^" + action.replace("*", ".*").replace("?", ".{{1}}") + "$"
-                    if re.search(matchexpression.lower(), potentialaction.lower()):
+                    action_pattern = get_action_pattern(action)
+                    if action_pattern.search(potentialaction.lower()):
                         matched = True
                         break
 
                 if matched:
                     continue
-                
+
                 access_levels.append(allactions[potentialaction])
 
                 condition = None
