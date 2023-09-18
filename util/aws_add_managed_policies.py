@@ -36,6 +36,7 @@ with open("MAMIP/DEPRECATED.json", "r") as f:
     deprecated_policies = json.loads(f.read())
 
 policies = []
+actions = {}
 
 for policyname in os.listdir("MAMIP/policies/"):
     policy = {}
@@ -186,6 +187,9 @@ for policyname in os.listdir("MAMIP/policies/"):
     access_levels = list(set(access_levels))
     access_levels.sort(key=lambda x: access_level_order[x])
 
+    for e in effective_actions:
+        actions.setdefault( e['effective_action'], {}).setdefault('managed_policies', []).append(policyname)
+
     policies.append({
         'name': policyname,
         'arn': arn,
@@ -228,4 +232,9 @@ for policyname in os.listdir("MAMIP/policies/"):
 with open("aws/managed_policies.json", "w") as f:
     f.write(json.dumps({
         "policies": policies
+    }, indent=2, sort_keys=True))
+
+with open("aws/actions.json", "w") as f:
+    f.write(json.dumps({
+        "actions": actions,
     }, indent=2, sort_keys=True))
