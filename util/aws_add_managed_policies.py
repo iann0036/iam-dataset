@@ -194,6 +194,8 @@ for policyname in os.listdir("MAMIP/policies/"):
     access_levels = list(set(access_levels))
     access_levels.sort(key=lambda x: access_level_order[x])
 
+    effective_action_names = [a['effective_action'] for a in effective_actions]
+
     policies.append({
         'name': policyname,
         'arn': arn,
@@ -202,6 +204,7 @@ for policyname in os.listdir("MAMIP/policies/"):
         'updatedate': updatedate,
         'version': policy['PolicyVersion']['VersionId'],
         'malformed': malformed,
+        'effective_action_names': effective_action_names,
         'unknown_actions': (len(unknown_actions) > 0),
         'access_levels': access_levels,
         'privesc': privesc,
