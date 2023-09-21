@@ -7,9 +7,9 @@
     "Permissions management"
   ],
   "arn": "arn:aws:iam::aws:policy/service-role/AWSSupplyChainFederationAdminAccess",
-  "createdate": "2023-03-01T18:54:25Z",
+  "createdate": "2023-09-20T20:11:53Z",
   "credentials_exposure": false,
-  "data_access": false,
+  "data_access": true,
   "deprecated": false,
   "document": {
     "Statement": [
@@ -125,6 +125,21 @@
           "s3:GetBucketPolicy",
           "s3:ListBucket"
         ],
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:s3:::aws-supply-chain-data-*"
+        ]
+      },
+      {
+        "Action": [
+          "s3:GetObject",
+          "s3:PutObject"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          }
+        },
         "Effect": "Allow",
         "Resource": [
           "arn:aws:s3:::aws-supply-chain-data-*"
@@ -867,6 +882,34 @@
       "resource_exposure": false
     },
     {
+      "access_level": "Read",
+      "action": "s3:GetObject",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": true,
+      "effective_action": "s3:GetObject",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "s3:PutObject",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3:PutObject",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
       "access_level": "Write",
       "action": "secretsmanager:CreateSecret",
       "condition": {
@@ -985,6 +1028,6 @@
   "resource_exposure": true,
   "undocumented_actions": false,
   "unknown_actions": [],
-  "updatedate": "2023-03-01T18:54:25+00:00",
-  "version": "v1"
+  "updatedate": "2023-09-20T20:11:53+00:00",
+  "version": "v2"
 }
