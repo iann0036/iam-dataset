@@ -1,0 +1,1057 @@
+{
+  "access_levels": [
+    "List",
+    "Read",
+    "Tagging",
+    "Write",
+    "Permissions management"
+  ],
+  "arn": "arn:aws:iam::aws:policy/AmazonDataZoneRedshiftGlueProvisioningPolicy",
+  "createdate": "2023-09-23T00:50:47Z",
+  "credentials_exposure": false,
+  "data_access": true,
+  "deprecated": false,
+  "document": {
+    "Statement": [
+      {
+        "Action": [
+          "iam:CreateRole",
+          "iam:DetachRolePolicy",
+          "iam:DeleteRolePolicy",
+          "iam:AttachRolePolicy",
+          "iam:PutRolePolicy"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:CalledViaFirst": [
+              "cloudformation.amazonaws.com"
+            ],
+            "iam:PermissionsBoundary": "arn:aws:iam::aws:policy/AmazonDataZoneEnvironmentRolePermissionsBoundary"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:iam::*:role/datazone*",
+        "Sid": "AmazonDataZonePermissionsToCreateEnvironmentRole"
+      },
+      {
+        "Action": [
+          "iam:PassRole"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:CalledViaFirst": [
+              "cloudformation.amazonaws.com"
+            ],
+            "iam:PassedToService": [
+              "glue.amazonaws.com",
+              "lakeformation.amazonaws.com"
+            ]
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:iam::*:role/datazone*"
+        ]
+      },
+      {
+        "Action": [
+          "iam:DeleteRole",
+          "iam:GetRole"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:CalledViaFirst": [
+              "cloudformation.amazonaws.com"
+            ]
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:iam::*:role/datazone*",
+        "Sid": "AmazonDataZonePermissionsToManageCreatedEnvironmentRole"
+      },
+      {
+        "Action": [
+          "cloudformation:CreateStack",
+          "cloudformation:TagResource"
+        ],
+        "Condition": {
+          "ForAnyValue:StringLike": {
+            "aws:TagKeys": "AmazonDataZoneEnvironment"
+          },
+          "Null": {
+            "aws:ResourceTag/AmazonDataZoneEnvironment": "false"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:cloudformation:*:*:stack/DataZone*"
+        ],
+        "Sid": "AmazonDataZoneCFStackCreationForEnvironments"
+      },
+      {
+        "Action": [
+          "cloudformation:DeleteStack",
+          "cloudformation:DescribeStacks",
+          "cloudformation:DescribeStackEvents"
+        ],
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:cloudformation:*:*:stack/DataZone*"
+        ],
+        "Sid": "AmazonDataZoneCFStackManagementForEnvironments"
+      },
+      {
+        "Action": [
+          "lakeformation:GetDataLakeSettings",
+          "lakeformation:PutDataLakeSettings",
+          "lakeformation:RevokePermissions",
+          "lakeformation:ListPermissions",
+          "glue:CreateDatabase",
+          "glue:GetDatabase",
+          "athena:GetWorkGroup",
+          "logs:DescribeLogGroups",
+          "redshift-serverless:GetNamespace",
+          "redshift-serverless:GetWorkgroup",
+          "redshift:DescribeClusters",
+          "secretsmanager:ListSecrets"
+        ],
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "AmazonDataZoneEnvironmentParameterValidation"
+      },
+      {
+        "Action": [
+          "lakeformation:RegisterResource",
+          "lakeformation:DeregisterResource",
+          "lakeformation:GrantPermissions",
+          "lakeformation:ListResources"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:CalledViaFirst": [
+              "cloudformation.amazonaws.com"
+            ]
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "AmazonDataZoneEnvironmentLakeFormationPermissions"
+      },
+      {
+        "Action": [
+          "glue:DeleteDatabase"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:CalledViaFirst": [
+              "cloudformation.amazonaws.com"
+            ]
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "AmazonDataZoneEnvironmentGlueDeletePermissions"
+      },
+      {
+        "Action": [
+          "athena:DeleteWorkGroup"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:CalledViaFirst": [
+              "cloudformation.amazonaws.com"
+            ]
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "AmazonDataZoneEnvironmentAthenaDeletePermissions"
+      },
+      {
+        "Action": [
+          "athena:CreateWorkGroup",
+          "athena:TagResource",
+          "iam:TagRole",
+          "iam:TagPolicy",
+          "logs:TagLogGroup"
+        ],
+        "Condition": {
+          "ForAnyValue:StringLike": {
+            "aws:TagKeys": "AmazonDataZoneEnvironment"
+          },
+          "Null": {
+            "aws:ResourceTag/AmazonDataZoneEnvironment": "false"
+          },
+          "StringEquals": {
+            "aws:CalledViaFirst": [
+              "cloudformation.amazonaws.com"
+            ]
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "AmazonDataZoneEnvironmentAthenaResourceCreation"
+      },
+      {
+        "Action": [
+          "logs:CreateLogGroup",
+          "logs:DeleteLogGroup"
+        ],
+        "Condition": {
+          "ForAnyValue:StringLike": {
+            "aws:TagKeys": "AmazonDataZoneEnvironment"
+          },
+          "Null": {
+            "aws:ResourceTag/AmazonDataZoneEnvironment": "false"
+          },
+          "StringEquals": {
+            "aws:CalledViaFirst": [
+              "cloudformation.amazonaws.com"
+            ]
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:logs:*:*:log-group:datazone-*",
+        "Sid": "AmazonDataZoneEnvironmentLogGroupCreation"
+      },
+      {
+        "Action": [
+          "logs:PutRetentionPolicy"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:CalledViaFirst": [
+              "cloudformation.amazonaws.com"
+            ]
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:logs:*:*:log-group:datazone-*",
+        "Sid": "AmazonDataZoneEnvironmentLogGroupManagement"
+      },
+      {
+        "Action": [
+          "iam:DeletePolicy",
+          "iam:CreatePolicy",
+          "iam:GetPolicy",
+          "iam:ListPolicyVersions"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:CalledViaFirst": [
+              "cloudformation.amazonaws.com"
+            ]
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:iam::*:policy/datazone*"
+        ],
+        "Sid": "AmazonDataZoneEnvironmentIAMPolicyManagement"
+      },
+      {
+        "Action": [
+          "s3:ListAllMyBuckets",
+          "s3:ListBucket"
+        ],
+        "Effect": "Allow",
+        "Resource": "arn:aws:s3:::*",
+        "Sid": "AmazonDataZoneEnvironmentS3ValidationPermissions"
+      },
+      {
+        "Action": [
+          "kms:GenerateDataKey",
+          "kms:Decrypt"
+        ],
+        "Condition": {
+          "Null": {
+            "aws:ResourceTag/AmazonDataZoneEnvironment": "false"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "AmazonDataZoneEnvironmentKMSDecryptPermissions"
+      },
+      {
+        "Action": [
+          "glue:TagResource"
+        ],
+        "Condition": {
+          "ForAnyValue:StringLike": {
+            "aws:TagKeys": "AmazonDataZoneEnvironment"
+          },
+          "Null": {
+            "aws:RequestTag/AmazonDataZoneEnvironment": "false"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "PermissionsToTagAmazonDataZoneEnvironmentGlueResources"
+      },
+      {
+        "Action": [
+          "s3:GetObject"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:CalledViaFirst": [
+              "cloudformation.amazonaws.com"
+            ]
+          },
+          "StringNotEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "PermissionsToGetAmazonDataZoneEnvironmentBlueprintTemplates"
+      }
+    ],
+    "Version": "2012-10-17"
+  },
+  "effective_actions": [
+    {
+      "access_level": "Write",
+      "action": "iam:CreateRole",
+      "condition": {
+        "StringEquals": {
+          "aws:CalledViaFirst": [
+            "cloudformation.amazonaws.com"
+          ],
+          "iam:PermissionsBoundary": "arn:aws:iam::aws:policy/AmazonDataZoneEnvironmentRolePermissionsBoundary"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "iam:CreateRole",
+      "privesc": false,
+      "resource_exposure": true
+    },
+    {
+      "access_level": "Permissions management",
+      "action": "iam:DetachRolePolicy",
+      "condition": {
+        "StringEquals": {
+          "aws:CalledViaFirst": [
+            "cloudformation.amazonaws.com"
+          ],
+          "iam:PermissionsBoundary": "arn:aws:iam::aws:policy/AmazonDataZoneEnvironmentRolePermissionsBoundary"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "iam:DetachRolePolicy",
+      "privesc": false,
+      "resource_exposure": true
+    },
+    {
+      "access_level": "Permissions management",
+      "action": "iam:DeleteRolePolicy",
+      "condition": {
+        "StringEquals": {
+          "aws:CalledViaFirst": [
+            "cloudformation.amazonaws.com"
+          ],
+          "iam:PermissionsBoundary": "arn:aws:iam::aws:policy/AmazonDataZoneEnvironmentRolePermissionsBoundary"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "iam:DeleteRolePolicy",
+      "privesc": false,
+      "resource_exposure": true
+    },
+    {
+      "access_level": "Permissions management",
+      "action": "iam:AttachRolePolicy",
+      "condition": {
+        "StringEquals": {
+          "aws:CalledViaFirst": [
+            "cloudformation.amazonaws.com"
+          ],
+          "iam:PermissionsBoundary": "arn:aws:iam::aws:policy/AmazonDataZoneEnvironmentRolePermissionsBoundary"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "iam:AttachRolePolicy",
+      "privesc": true,
+      "resource_exposure": true
+    },
+    {
+      "access_level": "Permissions management",
+      "action": "iam:PutRolePolicy",
+      "condition": {
+        "StringEquals": {
+          "aws:CalledViaFirst": [
+            "cloudformation.amazonaws.com"
+          ],
+          "iam:PermissionsBoundary": "arn:aws:iam::aws:policy/AmazonDataZoneEnvironmentRolePermissionsBoundary"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "iam:PutRolePolicy",
+      "privesc": true,
+      "resource_exposure": true
+    },
+    {
+      "access_level": "Write",
+      "action": "iam:PassRole",
+      "condition": {
+        "StringEquals": {
+          "aws:CalledViaFirst": [
+            "cloudformation.amazonaws.com"
+          ],
+          "iam:PassedToService": [
+            "glue.amazonaws.com",
+            "lakeformation.amazonaws.com"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "iam:PassRole",
+      "privesc": true,
+      "resource_exposure": true
+    },
+    {
+      "access_level": "Write",
+      "action": "iam:DeleteRole",
+      "condition": {
+        "StringEquals": {
+          "aws:CalledViaFirst": [
+            "cloudformation.amazonaws.com"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "iam:DeleteRole",
+      "privesc": false,
+      "resource_exposure": true
+    },
+    {
+      "access_level": "Read",
+      "action": "iam:GetRole",
+      "condition": {
+        "StringEquals": {
+          "aws:CalledViaFirst": [
+            "cloudformation.amazonaws.com"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "iam:GetRole",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "cloudformation:CreateStack",
+      "condition": {
+        "ForAnyValue:StringLike": {
+          "aws:TagKeys": "AmazonDataZoneEnvironment"
+        },
+        "Null": {
+          "aws:ResourceTag/AmazonDataZoneEnvironment": "false"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudformation:CreateStack",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Tagging",
+      "action": "cloudformation:TagResource",
+      "condition": {
+        "ForAnyValue:StringLike": {
+          "aws:TagKeys": "AmazonDataZoneEnvironment"
+        },
+        "Null": {
+          "aws:ResourceTag/AmazonDataZoneEnvironment": "false"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudformation:TagResource",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "cloudformation:DeleteStack",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudformation:DeleteStack",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "cloudformation:DescribeStacks",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudformation:DescribeStacks",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "cloudformation:DescribeStackEvents",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudformation:DescribeStackEvents",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "lakeformation:GetDataLakeSettings",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "lakeformation:GetDataLakeSettings",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Permissions management",
+      "action": "lakeformation:PutDataLakeSettings",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "lakeformation:PutDataLakeSettings",
+      "privesc": false,
+      "resource_exposure": true
+    },
+    {
+      "access_level": "Permissions management",
+      "action": "lakeformation:RevokePermissions",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "lakeformation:RevokePermissions",
+      "privesc": false,
+      "resource_exposure": true
+    },
+    {
+      "access_level": "List",
+      "action": "lakeformation:ListPermissions",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "lakeformation:ListPermissions",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "glue:CreateDatabase",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "glue:CreateDatabase",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "glue:GetDatabase",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "glue:GetDatabase",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "athena:GetWorkGroup",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "athena:GetWorkGroup",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "logs:DescribeLogGroups",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "logs:DescribeLogGroups",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "redshift-serverless:GetNamespace",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "redshift-serverless:GetNamespace",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "redshift-serverless:GetWorkgroup",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "redshift-serverless:GetWorkgroup",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "redshift:DescribeClusters",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "redshift:DescribeClusters",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "secretsmanager:ListSecrets",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "secretsmanager:ListSecrets",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "lakeformation:RegisterResource",
+      "condition": {
+        "StringEquals": {
+          "aws:CalledViaFirst": [
+            "cloudformation.amazonaws.com"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "lakeformation:RegisterResource",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "lakeformation:DeregisterResource",
+      "condition": {
+        "StringEquals": {
+          "aws:CalledViaFirst": [
+            "cloudformation.amazonaws.com"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "lakeformation:DeregisterResource",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Permissions management",
+      "action": "lakeformation:GrantPermissions",
+      "condition": {
+        "StringEquals": {
+          "aws:CalledViaFirst": [
+            "cloudformation.amazonaws.com"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "lakeformation:GrantPermissions",
+      "privesc": false,
+      "resource_exposure": true
+    },
+    {
+      "access_level": "List",
+      "action": "lakeformation:ListResources",
+      "condition": {
+        "StringEquals": {
+          "aws:CalledViaFirst": [
+            "cloudformation.amazonaws.com"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "lakeformation:ListResources",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "glue:DeleteDatabase",
+      "condition": {
+        "StringEquals": {
+          "aws:CalledViaFirst": [
+            "cloudformation.amazonaws.com"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "glue:DeleteDatabase",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "athena:DeleteWorkGroup",
+      "condition": {
+        "StringEquals": {
+          "aws:CalledViaFirst": [
+            "cloudformation.amazonaws.com"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "athena:DeleteWorkGroup",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "athena:CreateWorkGroup",
+      "condition": {
+        "ForAnyValue:StringLike": {
+          "aws:TagKeys": "AmazonDataZoneEnvironment"
+        },
+        "Null": {
+          "aws:ResourceTag/AmazonDataZoneEnvironment": "false"
+        },
+        "StringEquals": {
+          "aws:CalledViaFirst": [
+            "cloudformation.amazonaws.com"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "athena:CreateWorkGroup",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Tagging",
+      "action": "athena:TagResource",
+      "condition": {
+        "ForAnyValue:StringLike": {
+          "aws:TagKeys": "AmazonDataZoneEnvironment"
+        },
+        "Null": {
+          "aws:ResourceTag/AmazonDataZoneEnvironment": "false"
+        },
+        "StringEquals": {
+          "aws:CalledViaFirst": [
+            "cloudformation.amazonaws.com"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "athena:TagResource",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Tagging",
+      "action": "iam:TagRole",
+      "condition": {
+        "ForAnyValue:StringLike": {
+          "aws:TagKeys": "AmazonDataZoneEnvironment"
+        },
+        "Null": {
+          "aws:ResourceTag/AmazonDataZoneEnvironment": "false"
+        },
+        "StringEquals": {
+          "aws:CalledViaFirst": [
+            "cloudformation.amazonaws.com"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "iam:TagRole",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Tagging",
+      "action": "iam:TagPolicy",
+      "condition": {
+        "ForAnyValue:StringLike": {
+          "aws:TagKeys": "AmazonDataZoneEnvironment"
+        },
+        "Null": {
+          "aws:ResourceTag/AmazonDataZoneEnvironment": "false"
+        },
+        "StringEquals": {
+          "aws:CalledViaFirst": [
+            "cloudformation.amazonaws.com"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "iam:TagPolicy",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Tagging",
+      "action": "logs:TagLogGroup",
+      "condition": {
+        "ForAnyValue:StringLike": {
+          "aws:TagKeys": "AmazonDataZoneEnvironment"
+        },
+        "Null": {
+          "aws:ResourceTag/AmazonDataZoneEnvironment": "false"
+        },
+        "StringEquals": {
+          "aws:CalledViaFirst": [
+            "cloudformation.amazonaws.com"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "logs:TagLogGroup",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "logs:CreateLogGroup",
+      "condition": {
+        "ForAnyValue:StringLike": {
+          "aws:TagKeys": "AmazonDataZoneEnvironment"
+        },
+        "Null": {
+          "aws:ResourceTag/AmazonDataZoneEnvironment": "false"
+        },
+        "StringEquals": {
+          "aws:CalledViaFirst": [
+            "cloudformation.amazonaws.com"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "logs:CreateLogGroup",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "logs:DeleteLogGroup",
+      "condition": {
+        "ForAnyValue:StringLike": {
+          "aws:TagKeys": "AmazonDataZoneEnvironment"
+        },
+        "Null": {
+          "aws:ResourceTag/AmazonDataZoneEnvironment": "false"
+        },
+        "StringEquals": {
+          "aws:CalledViaFirst": [
+            "cloudformation.amazonaws.com"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "logs:DeleteLogGroup",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "logs:PutRetentionPolicy",
+      "condition": {
+        "StringEquals": {
+          "aws:CalledViaFirst": [
+            "cloudformation.amazonaws.com"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "logs:PutRetentionPolicy",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Permissions management",
+      "action": "iam:DeletePolicy",
+      "condition": {
+        "StringEquals": {
+          "aws:CalledViaFirst": [
+            "cloudformation.amazonaws.com"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "iam:DeletePolicy",
+      "privesc": false,
+      "resource_exposure": true
+    },
+    {
+      "access_level": "Permissions management",
+      "action": "iam:CreatePolicy",
+      "condition": {
+        "StringEquals": {
+          "aws:CalledViaFirst": [
+            "cloudformation.amazonaws.com"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "iam:CreatePolicy",
+      "privesc": false,
+      "resource_exposure": true
+    },
+    {
+      "access_level": "Read",
+      "action": "iam:GetPolicy",
+      "condition": {
+        "StringEquals": {
+          "aws:CalledViaFirst": [
+            "cloudformation.amazonaws.com"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "iam:GetPolicy",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "iam:ListPolicyVersions",
+      "condition": {
+        "StringEquals": {
+          "aws:CalledViaFirst": [
+            "cloudformation.amazonaws.com"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "iam:ListPolicyVersions",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "s3:ListAllMyBuckets",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3:ListAllMyBuckets",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "s3:ListBucket",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3:ListBucket",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "kms:GenerateDataKey",
+      "condition": {
+        "Null": {
+          "aws:ResourceTag/AmazonDataZoneEnvironment": "false"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "kms:GenerateDataKey",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "kms:Decrypt",
+      "condition": {
+        "Null": {
+          "aws:ResourceTag/AmazonDataZoneEnvironment": "false"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "kms:Decrypt",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Tagging",
+      "action": "glue:TagResource",
+      "condition": {
+        "ForAnyValue:StringLike": {
+          "aws:TagKeys": "AmazonDataZoneEnvironment"
+        },
+        "Null": {
+          "aws:RequestTag/AmazonDataZoneEnvironment": "false"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "glue:TagResource",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "s3:GetObject",
+      "condition": {
+        "StringEquals": {
+          "aws:CalledViaFirst": [
+            "cloudformation.amazonaws.com"
+          ]
+        },
+        "StringNotEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": true,
+      "effective_action": "s3:GetObject",
+      "privesc": false,
+      "resource_exposure": false
+    }
+  ],
+  "malformed": false,
+  "name": "AmazonDataZoneRedshiftGlueProvisioningPolicy",
+  "privesc": true,
+  "resource_exposure": true,
+  "undocumented_actions": false,
+  "unknown_actions": [],
+  "updatedate": "2023-09-23T00:50:47+00:00",
+  "version": "v2"
+}
