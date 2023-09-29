@@ -6,7 +6,7 @@
     "Permissions management"
   ],
   "arn": "arn:aws:iam::aws:policy/service-role/AmazonDataZoneGlueManageAccessRolePolicy",
-  "createdate": "2023-09-22T20:21:53Z",
+  "createdate": "2023-09-29T01:53:41Z",
   "credentials_exposure": false,
   "data_access": false,
   "deprecated": false,
@@ -29,7 +29,8 @@
           "arn:aws:glue:*:*:catalog",
           "arn:aws:glue:*:*:database/*",
           "arn:aws:glue:*:*:table/*"
-        ]
+        ],
+        "Sid": "GlueTableDatabasePermissions"
       },
       {
         "Action": [
@@ -46,7 +47,8 @@
           "ram:ListResources"
         ],
         "Effect": "Allow",
-        "Resource": "*"
+        "Resource": "*",
+        "Sid": "LakeformationResourceSharingPermissions"
       },
       {
         "Action": [
@@ -56,12 +58,17 @@
         "Condition": {
           "ForAnyValue:StringEquals": {
             "aws:CalledVia": [
-              "lakeformation.amazonaws.com"
+              "ram.amazonaws.com"
             ]
           }
         },
         "Effect": "Allow",
-        "Resource": "arn:aws:glue:*:*:catalog"
+        "Resource": [
+          "arn:aws:glue:*:*:catalog",
+          "arn:aws:glue:*:*:database/*",
+          "arn:aws:glue:*:*:table/*"
+        ],
+        "Sid": "CrossAccountRAMResourceSharingPermissions"
       },
       {
         "Action": [
@@ -82,14 +89,16 @@
           }
         },
         "Effect": "Allow",
-        "Resource": "*"
+        "Resource": "*",
+        "Sid": "CrossAccountLakeFormationResourceSharingPermissions"
       },
       {
         "Action": [
           "ram:AcceptResourceShareInvitation"
         ],
         "Effect": "Allow",
-        "Resource": "arn:aws:ram:*:*:resource-share-invitation/*"
+        "Resource": "arn:aws:ram:*:*:resource-share-invitation/*",
+        "Sid": "CrossAccountRAMResourceShareInvitationPermission"
       },
       {
         "Action": [
@@ -112,7 +121,8 @@
           }
         },
         "Effect": "Allow",
-        "Resource": "*"
+        "Resource": "*",
+        "Sid": "CrossAccountRAMResourceSharingViaLakeFormationPermissions"
       },
       {
         "Action": [
@@ -124,7 +134,8 @@
           }
         },
         "Effect": "Allow",
-        "Resource": "*"
+        "Resource": "*",
+        "Sid": "KMSDecryptPermission"
       }
     ],
     "Version": "2012-10-17"
@@ -302,7 +313,7 @@
       "condition": {
         "ForAnyValue:StringEquals": {
           "aws:CalledVia": [
-            "lakeformation.amazonaws.com"
+            "ram.amazonaws.com"
           ]
         }
       },
@@ -318,7 +329,7 @@
       "condition": {
         "ForAnyValue:StringEquals": {
           "aws:CalledVia": [
-            "lakeformation.amazonaws.com"
+            "ram.amazonaws.com"
           ]
         }
       },
@@ -487,6 +498,6 @@
   "resource_exposure": true,
   "undocumented_actions": false,
   "unknown_actions": [],
-  "updatedate": "2023-09-22T20:21:53+00:00",
-  "version": "v1"
+  "updatedate": "2023-09-29T01:53:41+00:00",
+  "version": "v2"
 }
