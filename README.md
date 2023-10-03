@@ -9,6 +9,8 @@ It is currently being used to support:
 * [aws.permissions.cloud](https://aws.permissions.cloud)
 * [azure.permissions.cloud](https://azure.permissions.cloud)
 * [gcp.permissions.cloud](https://gcp.permissions.cloud)
+* [claws](https://clawsapp.com)
+* [LocalStack](https://discuss.localstack.cloud/t/localstack-release-v2-2-0/424#live-policy-streams-9)
 
 Tooling which assists in the generation of some datasources is located in the `util/` directory.
 
