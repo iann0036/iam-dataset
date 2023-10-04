@@ -6,7 +6,7 @@
     "Write"
   ],
   "arn": "arn:aws:iam::aws:policy/AmazonKeyspacesFullAccess",
-  "createdate": "2023-06-05T15:21:18Z",
+  "createdate": "2023-10-03T19:12:30Z",
   "credentials_exposure": false,
   "data_access": true,
   "deprecated": false,
@@ -17,7 +17,8 @@
           "cassandra:*"
         ],
         "Effect": "Allow",
-        "Resource": "*"
+        "Resource": "*",
+        "Sid": "CassandraFullAccess"
       },
       {
         "Action": [
@@ -35,7 +36,8 @@
           "kms:ListAliases"
         ],
         "Effect": "Allow",
-        "Resource": "*"
+        "Resource": "*",
+        "Sid": "ApplicationAutoscalingFullAccess"
       },
       {
         "Action": [
@@ -45,7 +47,8 @@
           "cloudwatch:PutMetricAlarm"
         ],
         "Effect": "Allow",
-        "Resource": "*"
+        "Resource": "*",
+        "Sid": "CloudwatchAlarmsFullAccess"
       },
       {
         "Action": [
@@ -57,7 +60,8 @@
           }
         },
         "Effect": "Allow",
-        "Resource": "arn:aws:iam::*:role/aws-service-role/cassandra.application-autoscaling.amazonaws.com/AWSServiceRoleForApplicationAutoScaling_CassandraTable"
+        "Resource": "arn:aws:iam::*:role/aws-service-role/cassandra.application-autoscaling.amazonaws.com/AWSServiceRoleForApplicationAutoScaling_CassandraTable",
+        "Sid": "ApplicationAutoscalingServiceLinkedRole"
       },
       {
         "Action": [
@@ -69,7 +73,17 @@
           }
         },
         "Effect": "Allow",
-        "Resource": "arn:aws:iam::*:role/aws-service-role/replication.cassandra.amazonaws.com/AWSServiceRoleForKeyspacesReplication"
+        "Resource": "arn:aws:iam::*:role/aws-service-role/replication.cassandra.amazonaws.com/AWSServiceRoleForKeyspacesReplication",
+        "Sid": "KeyspacesReplicationServiceLinkedRole"
+      },
+      {
+        "Action": [
+          "ec2:DescribeNetworkInterfaces",
+          "ec2:DescribeVpcEndpoints"
+        ],
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "Ec2VpcReadAccess"
       }
     ],
     "Version": "2012-10-17"
@@ -432,6 +446,26 @@
       "effective_action": "iam:CreateServiceLinkedRole",
       "privesc": true,
       "resource_exposure": true
+    },
+    {
+      "access_level": "List",
+      "action": "ec2:DescribeNetworkInterfaces",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:DescribeNetworkInterfaces",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "ec2:DescribeVpcEndpoints",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:DescribeVpcEndpoints",
+      "privesc": false,
+      "resource_exposure": false
     }
   ],
   "malformed": false,
@@ -440,6 +474,6 @@
   "resource_exposure": true,
   "undocumented_actions": false,
   "unknown_actions": [],
-  "updatedate": "2023-06-05T15:21:18+00:00",
-  "version": "v4"
+  "updatedate": "2023-10-03T19:12:30+00:00",
+  "version": "v5"
 }
