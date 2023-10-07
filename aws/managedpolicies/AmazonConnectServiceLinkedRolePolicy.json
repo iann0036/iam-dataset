@@ -7,7 +7,7 @@
     "Permissions management"
   ],
   "arn": "arn:aws:iam::aws:policy/aws-service-role/AmazonConnectServiceLinkedRolePolicy",
-  "createdate": "2023-09-27T21:05:04Z",
+  "createdate": "2023-10-06T17:23:46Z",
   "credentials_exposure": true,
   "data_access": true,
   "deprecated": false,
@@ -20,14 +20,16 @@
         "Effect": "Allow",
         "Resource": [
           "*"
-        ]
+        ],
+        "Sid": "AllowConnectActions"
       },
       {
         "Action": [
           "iam:DeleteRole"
         ],
         "Effect": "Allow",
-        "Resource": "arn:aws:iam::*:role/aws-service-role/connect.amazonaws.com/AWSServiceRoleForAmazonConnect_*"
+        "Resource": "arn:aws:iam::*:role/aws-service-role/connect.amazonaws.com/AWSServiceRoleForAmazonConnect_*",
+        "Sid": "AllowDeleteSLR"
       },
       {
         "Action": [
@@ -40,7 +42,8 @@
         "Effect": "Allow",
         "Resource": [
           "arn:aws:s3:::amazon-connect-*/*"
-        ]
+        ],
+        "Sid": "AllowS3ObjectForConnectBucket"
       },
       {
         "Action": [
@@ -50,7 +53,8 @@
         "Effect": "Allow",
         "Resource": [
           "arn:aws:s3:::amazon-connect-*"
-        ]
+        ],
+        "Sid": "AllowGetBucketMetadataForConnectBucket"
       },
       {
         "Action": [
@@ -61,7 +65,8 @@
         "Effect": "Allow",
         "Resource": [
           "arn:aws:logs:*:*:log-group:/aws/connect/*:*"
-        ]
+        ],
+        "Sid": "AllowConnectLogGroupAccess"
       },
       {
         "Action": [
@@ -69,7 +74,8 @@
           "lex:ListBotAliases"
         ],
         "Effect": "Allow",
-        "Resource": "*"
+        "Resource": "*",
+        "Sid": "AllowListLexBotAccess"
       },
       {
         "Action": [
@@ -77,10 +83,12 @@
           "profile:CreateProfile",
           "profile:UpdateProfile",
           "profile:AddProfileKey",
-          "profile:ListProfileObjectTypes"
+          "profile:ListProfileObjectTypes",
+          "profile:ListCalculatedAttributeDefinitions"
         ],
         "Effect": "Allow",
-        "Resource": "arn:aws:profile:*:*:domains/amazon-connect-*"
+        "Resource": "arn:aws:profile:*:*:domains/amazon-connect-*",
+        "Sid": "AllowCustomerProfilesForConnectDomain"
       },
       {
         "Action": [
@@ -90,14 +98,16 @@
         "Effect": "Allow",
         "Resource": [
           "arn:aws:profile:*:*:domains/amazon-connect-*/object-types/*"
-        ]
+        ],
+        "Sid": "AllowReadPermissionForCustomerProfileObjects"
       },
       {
         "Action": [
           "profile:ListAccountIntegrations"
         ],
         "Effect": "Allow",
-        "Resource": "*"
+        "Resource": "*",
+        "Sid": "AllowListIntegrationForCustomerProfile"
       },
       {
         "Action": [
@@ -105,7 +115,8 @@
           "profile:GetProfileObjectTypeTemplate"
         ],
         "Effect": "Allow",
-        "Resource": "arn:aws:profile:*:*:/templates*"
+        "Resource": "arn:aws:profile:*:*:/templates*",
+        "Sid": "AllowReadForCustomerProfileObjectTemplates"
       },
       {
         "Action": [
@@ -131,7 +142,8 @@
           }
         },
         "Effect": "Allow",
-        "Resource": "*"
+        "Resource": "*",
+        "Sid": "AllowWisdomForConnectEnabledTaggedResources"
       },
       {
         "Action": [
@@ -139,7 +151,18 @@
           "wisdom:ListKnowledgeBases"
         ],
         "Effect": "Allow",
-        "Resource": "*"
+        "Resource": "*",
+        "Sid": "AllowListOperationForWisdom"
+      },
+      {
+        "Action": [
+          "profile:GetCalculatedAttributeForProfile"
+        ],
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:profile:*:*:domains/amazon-connect-*/calculated-attributes/*"
+        ],
+        "Sid": "AllowReadCalculatedAttributesForProfile"
       },
       {
         "Action": [
@@ -151,7 +174,8 @@
           }
         },
         "Effect": "Allow",
-        "Resource": "*"
+        "Resource": "*",
+        "Sid": "AllowPutMetricsForConnectNamespace"
       }
     ],
     "Version": "2012-10-17"
@@ -2519,6 +2543,16 @@
     },
     {
       "access_level": "List",
+      "action": "profile:ListCalculatedAttributeDefinitions",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "profile:ListCalculatedAttributeDefinitions",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
       "action": "profile:ListProfileObjects",
       "condition": null,
       "credentials_exposure": false,
@@ -2798,6 +2832,16 @@
       "resource_exposure": false
     },
     {
+      "access_level": "Read",
+      "action": "profile:GetCalculatedAttributeForProfile",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "profile:GetCalculatedAttributeForProfile",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
       "access_level": "Write",
       "action": "cloudwatch:PutMetricData",
       "condition": {
@@ -2818,6 +2862,6 @@
   "resource_exposure": true,
   "undocumented_actions": false,
   "unknown_actions": [],
-  "updatedate": "2023-09-27T21:05:04+00:00",
-  "version": "v9"
+  "updatedate": "2023-10-06T17:23:46+00:00",
+  "version": "v10"
 }
