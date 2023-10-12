@@ -5,7 +5,7 @@
     "Write"
   ],
   "arn": "arn:aws:iam::aws:policy/AWSCloud9User",
-  "createdate": "2023-08-02T08:53:58Z",
+  "createdate": "2023-10-11T13:24:10Z",
   "credentials_exposure": true,
   "data_access": false,
   "deprecated": false,
@@ -13,7 +13,6 @@
     "Statement": [
       {
         "Action": [
-          "cloud9:ValidateEnvironmentName",
           "cloud9:UpdateUserSettings",
           "cloud9:GetUserSettings",
           "iam:GetUser",
@@ -80,7 +79,8 @@
       },
       {
         "Action": [
-          "ssm:StartSession"
+          "ssm:StartSession",
+          "ssm:GetConnectionStatus"
         ],
         "Condition": {
           "StringEquals": {
@@ -106,16 +106,6 @@
     "Version": "2012-10-17"
   },
   "effective_actions": [
-    {
-      "access_level": "Read",
-      "action": "cloud9:ValidateEnvironmentName",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "cloud9:ValidateEnvironmentName",
-      "privesc": false,
-      "resource_exposure": false
-    },
     {
       "access_level": "Write",
       "action": "cloud9:UpdateUserSettings",
@@ -285,6 +275,23 @@
       "resource_exposure": false
     },
     {
+      "access_level": "Read",
+      "action": "ssm:GetConnectionStatus",
+      "condition": {
+        "StringEquals": {
+          "aws:CalledViaFirst": "cloud9.amazonaws.com"
+        },
+        "StringLike": {
+          "ssm:resourceTag/aws:cloud9:environment": "*"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ssm:GetConnectionStatus",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
       "access_level": "Write",
       "action": "ssm:StartSession",
       "condition": null,
@@ -301,6 +308,6 @@
   "resource_exposure": true,
   "undocumented_actions": false,
   "unknown_actions": [],
-  "updatedate": "2023-08-02T08:53:58+00:00",
-  "version": "v5"
+  "updatedate": "2023-10-11T13:24:10+00:00",
+  "version": "v6"
 }
