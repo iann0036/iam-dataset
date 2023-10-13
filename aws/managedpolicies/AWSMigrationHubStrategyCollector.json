@@ -2,10 +2,11 @@
   "access_levels": [
     "List",
     "Read",
-    "Write"
+    "Write",
+    "Permissions management"
   ],
   "arn": "arn:aws:iam::aws:policy/AWSMigrationHubStrategyCollector",
-  "createdate": "2023-03-02T22:08:23Z",
+  "createdate": "2023-10-12T16:44:29Z",
   "credentials_exposure": false,
   "data_access": true,
   "deprecated": false,
@@ -15,17 +16,24 @@
         "Action": [
           "s3:GetObject",
           "s3:PutObject",
-          "s3:GetBucketAcl"
+          "s3:GetBucketAcl",
+          "s3:CreateBucket",
+          "s3:PutEncryptionConfiguration",
+          "s3:PutBucketPublicAccessBlock",
+          "s3:PutBucketVersioning",
+          "s3:PutLifecycleConfiguration"
         ],
         "Effect": "Allow",
-        "Resource": "arn:aws:s3:::migrationhub-strategy-*"
+        "Resource": "arn:aws:s3:::migrationhub-strategy-*",
+        "Sid": "MHSRAllowS3Resources"
       },
       {
         "Action": [
           "s3:ListAllMyBuckets"
         ],
         "Effect": "Allow",
-        "Resource": "arn:aws:s3:::*"
+        "Resource": "arn:aws:s3:::*",
+        "Sid": "MHSRAllowS3ListBucket"
       },
       {
         "Action": [
@@ -36,7 +44,8 @@
         "Resource": [
           "arn:aws:execute-api:*:*:*/prod/*/put-log-data",
           "arn:aws:execute-api:*:*:*/prod/*/put-metric-data"
-        ]
+        ],
+        "Sid": "MHSRAllowExecuteAPI"
       },
       {
         "Action": [
@@ -49,14 +58,16 @@
           "migrationhub-strategy:UpdateCollectorConfiguration"
         ],
         "Effect": "Allow",
-        "Resource": "arn:aws:migrationhub-strategy:*:*:*"
+        "Resource": "arn:aws:migrationhub-strategy:*:*:*",
+        "Sid": "MHSRAllowCollectorAPI"
       },
       {
         "Action": [
           "secretsmanager:GetSecretValue"
         ],
         "Effect": "Allow",
-        "Resource": "arn:aws:secretsmanager:*:*:secret:migrationhub-strategy-*"
+        "Resource": "arn:aws:secretsmanager:*:*:secret:migrationhub-strategy-*",
+        "Sid": "MHSRAllowSecretsManager"
       }
     ],
     "Version": "2012-10-17"
@@ -89,6 +100,56 @@
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "s3:GetBucketAcl",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "s3:CreateBucket",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3:CreateBucket",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "s3:PutEncryptionConfiguration",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3:PutEncryptionConfiguration",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Permissions management",
+      "action": "s3:PutBucketPublicAccessBlock",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3:PutBucketPublicAccessBlock",
+      "privesc": false,
+      "resource_exposure": true
+    },
+    {
+      "access_level": "Write",
+      "action": "s3:PutBucketVersioning",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3:PutBucketVersioning",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "s3:PutLifecycleConfiguration",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3:PutLifecycleConfiguration",
       "privesc": false,
       "resource_exposure": false
     },
@@ -206,9 +267,9 @@
   "malformed": false,
   "name": "AWSMigrationHubStrategyCollector",
   "privesc": false,
-  "resource_exposure": false,
+  "resource_exposure": true,
   "undocumented_actions": false,
   "unknown_actions": [],
-  "updatedate": "2023-03-02T22:08:23+00:00",
-  "version": "v3"
+  "updatedate": "2023-10-12T16:44:29+00:00",
+  "version": "v4"
 }
