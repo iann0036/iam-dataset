@@ -5,7 +5,7 @@
     "Write"
   ],
   "arn": "arn:aws:iam::aws:policy/AWSElasticDisasterRecoveryLaunchActionsPolicy",
-  "createdate": "2023-09-13T07:38:26Z",
+  "createdate": "2023-10-16T12:28:44Z",
   "credentials_exposure": false,
   "data_access": true,
   "deprecated": false,
@@ -25,7 +25,8 @@
         "Effect": "Allow",
         "Resource": [
           "*"
-        ]
+        ],
+        "Sid": "LaunchActionsPolicy1"
       },
       {
         "Action": [
@@ -46,7 +47,8 @@
         "Resource": [
           "arn:aws:ssm:*:*:document/*",
           "arn:aws:ssm:*:*:automation-definition/*:*"
-        ]
+        ],
+        "Sid": "LaunchActionsPolicy2"
       },
       {
         "Action": [
@@ -138,7 +140,8 @@
           "arn:aws:ssm:*::automation-definition/AmazonInternal-*:*",
           "arn:aws:ssm:*::automation-definition/AwsEnaNetworkDriver-*:*",
           "arn:aws:ssm:*::automation-definition/AwsVssComponents-*:*"
-        ]
+        ],
+        "Sid": "LaunchActionsPolicy3"
       },
       {
         "Action": [
@@ -157,7 +160,28 @@
         "Effect": "Allow",
         "Resource": [
           "arn:aws:ec2:*:*:instance/*"
-        ]
+        ],
+        "Sid": "LaunchActionsPolicy4"
+      },
+      {
+        "Action": [
+          "ssm:SendCommand"
+        ],
+        "Condition": {
+          "ForAnyValue:StringEquals": {
+            "aws:CalledVia": [
+              "drs.amazonaws.com"
+            ]
+          },
+          "StringEquals": {
+            "aws:ResourceTag/AWSDRS": "AllowLaunchingIntoThisInstance"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:ec2:*:*:instance/*"
+        ],
+        "Sid": "LaunchActionsPolicy5"
       },
       {
         "Action": [
@@ -165,7 +189,8 @@
           "ssm:ListCommandInvocations"
         ],
         "Effect": "Allow",
-        "Resource": "*"
+        "Resource": "*",
+        "Sid": "LaunchActionsPolicy6"
       },
       {
         "Action": [
@@ -174,7 +199,8 @@
           "ssm:DescribeDocument"
         ],
         "Effect": "Allow",
-        "Resource": "arn:aws:ssm:*:*:document/*"
+        "Resource": "arn:aws:ssm:*:*:document/*",
+        "Sid": "LaunchActionsPolicy7"
       },
       {
         "Action": [
@@ -186,7 +212,8 @@
           }
         },
         "Effect": "Allow",
-        "Resource": "arn:aws:ssm:*:*:automation-execution/*"
+        "Resource": "arn:aws:ssm:*:*:automation-execution/*",
+        "Sid": "LaunchActionsPolicy8"
       },
       {
         "Action": [
@@ -198,7 +225,8 @@
           }
         },
         "Effect": "Allow",
-        "Resource": "arn:aws:ssm:*:*:parameter/ManagedByAWSElasticDisasterRecoveryService-*"
+        "Resource": "arn:aws:ssm:*:*:parameter/ManagedByAWSElasticDisasterRecoveryService-*",
+        "Sid": "LaunchActionsPolicy9"
       },
       {
         "Action": [
@@ -211,7 +239,8 @@
           }
         },
         "Effect": "Allow",
-        "Resource": "arn:aws:ssm:*:*:parameter/ManagedByAWSElasticDisasterRecoveryService-*"
+        "Resource": "arn:aws:ssm:*:*:parameter/ManagedByAWSElasticDisasterRecoveryService-*",
+        "Sid": "LaunchActionsPolicy10"
       },
       {
         "Action": [
@@ -228,7 +257,8 @@
         "Effect": "Allow",
         "Resource": [
           "arn:aws:iam::*:role/service-role/AWSElasticDisasterRecoveryRecoveryInstanceWithLaunchActionsRole"
-        ]
+        ],
+        "Sid": "LaunchActionsPolicy11"
       }
     ],
     "Version": "2012-10-17"
@@ -331,6 +361,25 @@
         },
         "Null": {
           "aws:ResourceTag/AWSElasticDisasterRecoveryManaged": "false"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ssm:SendCommand",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ssm:SendCommand",
+      "condition": {
+        "ForAnyValue:StringEquals": {
+          "aws:CalledVia": [
+            "drs.amazonaws.com"
+          ]
+        },
+        "StringEquals": {
+          "aws:ResourceTag/AWSDRS": "AllowLaunchingIntoThisInstance"
         }
       },
       "credentials_exposure": false,
@@ -469,6 +518,6 @@
   "resource_exposure": true,
   "undocumented_actions": false,
   "unknown_actions": [],
-  "updatedate": "2023-09-13T07:38:26+00:00",
-  "version": "v1"
+  "updatedate": "2023-10-16T12:28:44+00:00",
+  "version": "v2"
 }
