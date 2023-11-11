@@ -6,7 +6,7 @@
     "Write"
   ],
   "arn": "arn:aws:iam::aws:policy/AWSServiceCatalogAppRegistryFullAccess",
-  "createdate": "2022-11-17T18:13:10Z",
+  "createdate": "2023-11-10T17:06:21Z",
   "credentials_exposure": false,
   "data_access": false,
   "deprecated": false,
@@ -22,7 +22,8 @@
           }
         },
         "Effect": "Allow",
-        "Resource": "*"
+        "Resource": "*",
+        "Sid": "AppRegistryUpdateStack"
       },
       {
         "Action": [
@@ -32,7 +33,9 @@
           "resource-groups:GetTags",
           "resource-groups:Tag",
           "resource-groups:Untag",
-          "resource-groups:GetGroupConfiguration"
+          "resource-groups:GetGroupConfiguration",
+          "resource-groups:AssociateResource",
+          "resource-groups:DisassociateResource"
         ],
         "Condition": {
           "ForAnyValue:StringEquals": {
@@ -40,7 +43,8 @@
           }
         },
         "Effect": "Allow",
-        "Resource": "arn:aws:resource-groups:*:*:group/AWS_*"
+        "Resource": "arn:aws:resource-groups:*:*:group/AWS_*",
+        "Sid": "AppRegistryResourceGroupsIntegration"
       },
       {
         "Action": [
@@ -52,7 +56,8 @@
           }
         },
         "Effect": "Allow",
-        "Resource": "arn:aws:iam::*:role/aws-service-role/servicecatalog-appregistry.amazonaws.com/AWSServiceRoleForAWSServiceCatalogAppRegistry*"
+        "Resource": "arn:aws:iam::*:role/aws-service-role/servicecatalog-appregistry.amazonaws.com/AWSServiceRoleForAWSServiceCatalogAppRegistry*",
+        "Sid": "AppRegistryServiceLinkedRole"
       },
       {
         "Action": [
@@ -80,7 +85,8 @@
           "servicecatalog:PutConfiguration"
         ],
         "Effect": "Allow",
-        "Resource": "*"
+        "Resource": "*",
+        "Sid": "AppRegistryOperations"
       },
       {
         "Action": [
@@ -89,7 +95,8 @@
           "servicecatalog:TagResource"
         ],
         "Effect": "Allow",
-        "Resource": "arn:aws:servicecatalog:*:*:*"
+        "Resource": "arn:aws:servicecatalog:*:*:*",
+        "Sid": "AppRegistryResourceTagging"
       }
     ],
     "Version": "2012-10-17"
@@ -477,7 +484,24 @@
   "privesc": true,
   "resource_exposure": true,
   "undocumented_actions": false,
-  "unknown_actions": [],
-  "updatedate": "2022-11-17T18:13:10+00:00",
-  "version": "v4"
+  "unknown_actions": [
+    {
+      "action": "resource-groups:AssociateResource",
+      "condition": {
+        "ForAnyValue:StringEquals": {
+          "aws:CalledVia": "servicecatalog-appregistry.amazonaws.com"
+        }
+      }
+    },
+    {
+      "action": "resource-groups:DisassociateResource",
+      "condition": {
+        "ForAnyValue:StringEquals": {
+          "aws:CalledVia": "servicecatalog-appregistry.amazonaws.com"
+        }
+      }
+    }
+  ],
+  "updatedate": "2023-11-10T17:06:21+00:00",
+  "version": "v5"
 }
