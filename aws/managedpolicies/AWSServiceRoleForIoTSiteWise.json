@@ -5,7 +5,7 @@
     "Write"
   ],
   "arn": "arn:aws:iam::aws:policy/aws-service-role/AWSServiceRoleForIoTSiteWise",
-  "createdate": "2020-04-25T02:15:01Z",
+  "createdate": "2023-11-13T18:27:50Z",
   "credentials_exposure": false,
   "data_access": false,
   "deprecated": false,
@@ -20,7 +20,8 @@
           "greengrass:GetGroupVersion"
         ],
         "Effect": "Allow",
-        "Resource": "*"
+        "Resource": "*",
+        "Sid": "AllowSiteWiseReadGreenGrass"
       },
       {
         "Action": [
@@ -28,7 +29,8 @@
           "logs:DescribeLogGroups"
         ],
         "Effect": "Allow",
-        "Resource": "arn:aws:logs:*:*:log-group:/aws/iotsitewise*"
+        "Resource": "arn:aws:logs:*:*:log-group:/aws/iotsitewise*",
+        "Sid": "AllowSiteWiseAccessLogGroup"
       },
       {
         "Action": [
@@ -37,7 +39,24 @@
           "logs:PutLogEvents"
         ],
         "Effect": "Allow",
-        "Resource": "arn:aws:logs:*:*:log-group:/aws/iotsitewise*:log-stream:*"
+        "Resource": "arn:aws:logs:*:*:log-group:/aws/iotsitewise*:log-stream:*",
+        "Sid": "AllowSiteWiseAccessLog"
+      },
+      {
+        "Action": [
+          "iottwinmaker:GetWorkspace",
+          "iottwinmaker:ExecuteQuery"
+        ],
+        "Condition": {
+          "ForAnyValue:StringEquals": {
+            "iottwinmaker:linkedServices": [
+              "IOTSITEWISE"
+            ]
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:iottwinmaker:*:*:workspace/*",
+        "Sid": "AllowSiteWiseAccessSiteWiseManagedWorkspaceInTwinMaker"
       }
     ],
     "Version": "2012-10-17"
@@ -142,6 +161,38 @@
       "effective_action": "logs:PutLogEvents",
       "privesc": false,
       "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "iottwinmaker:GetWorkspace",
+      "condition": {
+        "ForAnyValue:StringEquals": {
+          "iottwinmaker:linkedServices": [
+            "IOTSITEWISE"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "iottwinmaker:GetWorkspace",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "iottwinmaker:ExecuteQuery",
+      "condition": {
+        "ForAnyValue:StringEquals": {
+          "iottwinmaker:linkedServices": [
+            "IOTSITEWISE"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "iottwinmaker:ExecuteQuery",
+      "privesc": false,
+      "resource_exposure": false
     }
   ],
   "malformed": false,
@@ -150,6 +201,6 @@
   "resource_exposure": false,
   "undocumented_actions": false,
   "unknown_actions": [],
-  "updatedate": "2020-04-25T02:15:01+00:00",
-  "version": "v7"
+  "updatedate": "2023-11-13T18:27:50+00:00",
+  "version": "v8"
 }
