@@ -6,7 +6,7 @@
     "Permissions management"
   ],
   "arn": "arn:aws:iam::aws:policy/service-role/AmazonDataZoneRedshiftManageAccessRolePolicy",
-  "createdate": "2023-09-22T20:15:14Z",
+  "createdate": "2023-11-16T22:04:02Z",
   "credentials_exposure": false,
   "data_access": false,
   "deprecated": false,
@@ -30,14 +30,16 @@
         "Resource": [
           "arn:aws:redshift-serverless:*:*:workgroup/*",
           "arn:aws:redshift:*:*:cluster:*"
-        ]
+        ],
+        "Sid": "redshiftDataScopeDownPermissions"
       },
       {
         "Action": [
           "secretsmanager:ListSecrets"
         ],
         "Effect": "Allow",
-        "Resource": "*"
+        "Resource": "*",
+        "Sid": "listSecretsPermission"
       },
       {
         "Action": [
@@ -51,7 +53,8 @@
         "Effect": "Allow",
         "Resource": [
           "arn:aws:redshift-serverless:*:*:workgroup/*"
-        ]
+        ],
+        "Sid": "getWorkgroupPermission"
       },
       {
         "Action": [
@@ -65,7 +68,8 @@
         "Effect": "Allow",
         "Resource": [
           "arn:aws:redshift-serverless:*:*:namespace/*"
-        ]
+        ],
+        "Sid": "getNamespacePermission"
       },
       {
         "Action": [
@@ -74,7 +78,8 @@
           "redshift:DescribeClusters"
         ],
         "Effect": "Allow",
-        "Resource": "*"
+        "Resource": "*",
+        "Sid": "redshiftDataPermissions"
       },
       {
         "Action": [
@@ -89,19 +94,16 @@
         "Effect": "Allow",
         "Resource": [
           "arn:aws:redshift:*:*:datashare:*/datazone*"
-        ]
+        ],
+        "Sid": "dataSharesPermissions"
       },
       {
         "Action": [
           "redshift:AssociateDataShareConsumer"
         ],
-        "Condition": {
-          "StringEquals": {
-            "aws:ResourceOrgID": "${aws:PrincipalOrgID}"
-          }
-        },
         "Effect": "Allow",
-        "Resource": "arn:aws:redshift:*:*:datashare:*/datazone*"
+        "Resource": "arn:aws:redshift:*:*:datashare:*/datazone*",
+        "Sid": "associateDataShareConsumerPermission"
       }
     ],
     "Version": "2012-10-17"
@@ -290,11 +292,7 @@
     {
       "access_level": "Write",
       "action": "redshift:AssociateDataShareConsumer",
-      "condition": {
-        "StringEquals": {
-          "aws:ResourceOrgID": "${aws:PrincipalOrgID}"
-        }
-      },
+      "condition": null,
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "redshift:AssociateDataShareConsumer",
@@ -308,6 +306,6 @@
   "resource_exposure": false,
   "undocumented_actions": false,
   "unknown_actions": [],
-  "updatedate": "2023-09-22T20:15:14+00:00",
-  "version": "v1"
+  "updatedate": "2023-11-16T22:04:02+00:00",
+  "version": "v2"
 }
