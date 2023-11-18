@@ -3,11 +3,12 @@
     "List",
     "Read",
     "Tagging",
-    "Write"
+    "Write",
+    "Permissions management"
   ],
   "arn": "arn:aws:iam::aws:policy/AWSRefactoringToolkitFullAccess",
-  "createdate": "2023-03-23T23:14:02Z",
-  "credentials_exposure": false,
+  "createdate": "2023-11-18T00:37:27Z",
+  "credentials_exposure": true,
   "data_access": true,
   "deprecated": false,
   "document": {
@@ -35,7 +36,8 @@
         "Effect": "Allow",
         "Resource": [
           "arn:*:cloudformation:*:*:stack/a2c-app-*",
-          "arn:*:cloudformation:*:*:stack/a2c-build-*"
+          "arn:*:cloudformation:*:*:stack/a2c-build-*",
+          "arn:*:cloudformation:*:*:stack/application-transformation-app-*"
         ],
         "Sid": "CloudformationExecutionAccess"
       },
@@ -71,9 +73,6 @@
       },
       {
         "Action": [
-          "ec2:AssociateRouteTable",
-          "ec2:AttachInternetGateway",
-          "ec2:AuthorizeSecurityGroupIngress",
           "ec2:CreateInternetGateway",
           "ec2:CreateKeyPair",
           "ec2:CreateRoute",
@@ -81,8 +80,7 @@
           "ec2:CreateSubnet",
           "ec2:CreateTags",
           "ec2:CreateVpc",
-          "ec2:ModifySubnetAttribute",
-          "ec2:ModifyVpcAttribute"
+          "ec2:AuthorizeSecurityGroupIngress"
         ],
         "Condition": {
           "Null": {
@@ -95,9 +93,6 @@
       },
       {
         "Action": [
-          "ec2:AssociateRouteTable",
-          "ec2:AttachInternetGateway",
-          "ec2:AuthorizeSecurityGroupIngress",
           "ec2:CreateInternetGateway",
           "ec2:CreateKeyPair",
           "ec2:CreateRoute",
@@ -105,10 +100,29 @@
           "ec2:CreateSubnet",
           "ec2:CreateTags",
           "ec2:CreateVpc",
+          "ec2:AuthorizeSecurityGroupIngress"
+        ],
+        "Condition": {
+          "Null": {
+            "aws:RequestTag/application-transformation": "false"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "Ec2CreateAccessATS"
+      },
+      {
+        "Action": [
+          "ec2:AssociateRouteTable",
+          "ec2:AttachInternetGateway",
+          "ec2:AuthorizeSecurityGroupIngress",
           "ec2:DeleteTags",
           "ec2:ModifySubnetAttribute",
           "ec2:ModifyVpcAttribute",
-          "ec2:RevokeSecurityGroupIngress"
+          "ec2:RevokeSecurityGroupIngress",
+          "ec2:CreateSubnet",
+          "ec2:CreateRoute",
+          "ec2:CreateRouteTable"
         ],
         "Condition": {
           "Null": {
@@ -118,6 +132,28 @@
         "Effect": "Allow",
         "Resource": "*",
         "Sid": "Ec2ModifyAccess"
+      },
+      {
+        "Action": [
+          "ec2:AssociateRouteTable",
+          "ec2:AttachInternetGateway",
+          "ec2:AuthorizeSecurityGroupIngress",
+          "ec2:DeleteTags",
+          "ec2:ModifySubnetAttribute",
+          "ec2:ModifyVpcAttribute",
+          "ec2:RevokeSecurityGroupIngress",
+          "ec2:CreateSubnet",
+          "ec2:CreateRoute",
+          "ec2:CreateRouteTable"
+        ],
+        "Condition": {
+          "Null": {
+            "aws:ResourceTag/application-transformation": "false"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "Ec2ModifyAccessATS"
       },
       {
         "Action": [
@@ -132,6 +168,20 @@
         "Effect": "Allow",
         "Resource": "arn:*:ecr:*:*:repository/*",
         "Sid": "EcrCreateAccess"
+      },
+      {
+        "Action": [
+          "ecr:CreateRepository",
+          "ecr:TagResource"
+        ],
+        "Condition": {
+          "Null": {
+            "aws:RequestTag/application-transformation": "false"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:*:ecr:*:*:repository/*",
+        "Sid": "EcrCreateAccessATS"
       },
       {
         "Action": [
@@ -153,6 +203,24 @@
       },
       {
         "Action": [
+          "ecr:GetLifecyclePolicy",
+          "ecr:GetRepositoryPolicy",
+          "ecr:ListImages",
+          "ecr:ListTagsForResource",
+          "ecr:TagResource",
+          "ecr:UntagResource"
+        ],
+        "Condition": {
+          "Null": {
+            "aws:ResourceTag/application-transformation": "false"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:*:ecr:*:*:repository/*",
+        "Sid": "EcrModifyAccessATS"
+      },
+      {
+        "Action": [
           "ecs:CreateCluster",
           "ecs:CreateService",
           "ecs:RegisterTaskDefinition",
@@ -169,9 +237,25 @@
       },
       {
         "Action": [
+          "ecs:CreateCluster",
+          "ecs:CreateService",
+          "ecs:RegisterTaskDefinition",
+          "ecs:TagResource"
+        ],
+        "Condition": {
+          "Null": {
+            "aws:RequestTag/application-transformation": "false"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "EcsCreateAccessATS"
+      },
+      {
+        "Action": [
+          "ecs:UpdateService",
           "ecs:TagResource",
-          "ecs:UntagResource",
-          "ecs:UpdateService"
+          "ecs:UntagResource"
         ],
         "Condition": {
           "Null": {
@@ -181,6 +265,21 @@
         "Effect": "Allow",
         "Resource": "*",
         "Sid": "EcsModifyAccess"
+      },
+      {
+        "Action": [
+          "ecs:UpdateService",
+          "ecs:TagResource",
+          "ecs:UntagResource"
+        ],
+        "Condition": {
+          "Null": {
+            "aws:ResourceTag/application-transformation": "false"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "EcsModifyAccessATS"
       },
       {
         "Action": [
@@ -207,6 +306,19 @@
         "Effect": "Allow",
         "Resource": "*",
         "Sid": "EcsExecuteCommandInSidecar"
+      },
+      {
+        "Action": [
+          "ecs:ExecuteCommand"
+        ],
+        "Condition": {
+          "StringLike": {
+            "ecs:container-name": "application-transformation-sidecar"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "EcsExecuteCommandInSidecarATS"
       },
       {
         "Action": [
@@ -246,6 +358,28 @@
       },
       {
         "Action": [
+          "logs:CreateLogGroup",
+          "logs:TagResource"
+        ],
+        "Condition": {
+          "ForAllValues:StringEquals": {
+            "aws:TagKeys": [
+              "application-transformation"
+            ]
+          },
+          "Null": {
+            "aws:RequestTag/application-transformation": "false"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:logs:*:*:log-group:/aws/ecs/containerinsights/*:*",
+          "arn:aws:logs:*:*:log-group:/aws/ecs/container-logs/*:*"
+        ],
+        "Sid": "CloudwatchCreateAccessATS"
+      },
+      {
+        "Action": [
           "logs:GetLogEvents"
         ],
         "Condition": {
@@ -260,6 +394,22 @@
           "arn:aws:logs:*:*:log-group:/aws/ecs/container-logs/*:*"
         ],
         "Sid": "CloudwatchGetAccess"
+      },
+      {
+        "Action": [
+          "logs:GetLogEvents"
+        ],
+        "Condition": {
+          "Null": {
+            "aws:ResourceTag/application-transformation": "false"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:logs:*:*:log-group:/aws/ecs/containerinsights/*:*",
+          "arn:aws:logs:*:*:log-group:/aws/ecs/container-logs/*:*"
+        ],
+        "Sid": "CloudwatchGetAccessATS"
       },
       {
         "Action": [
@@ -293,7 +443,8 @@
         "Effect": "Allow",
         "Resource": [
           "arn:aws:s3:::*/refactoringtoolkit*",
-          "arn:aws:s3:::*/a2c-generated*"
+          "arn:aws:s3:::*/a2c-generated*",
+          "arn:aws:s3:::*/application-transformation*"
         ],
         "Sid": "S3ObjectAccess"
       },
@@ -303,7 +454,10 @@
         ],
         "Condition": {
           "StringLike": {
-            "s3:prefix": "refactoringtoolkit*"
+            "s3:prefix": [
+              "application-transformation",
+              "refactoringtoolkit"
+            ]
           }
         },
         "Effect": "Allow",
@@ -328,6 +482,7 @@
           "ec2:DescribeSecurityGroups",
           "ec2:DescribeSubnets",
           "ec2:DescribeVpcs",
+          "ec2:DescribeRegions",
           "ecr:DescribeImages",
           "ecr:DescribeRepositories",
           "ecs:DescribeClusters",
@@ -363,6 +518,81 @@
           "arn:aws:s3:::aws.portingassistant.dotnet.datastore/*"
         ],
         "Sid": "PortingAssistantFullAccess"
+      },
+      {
+        "Action": [
+          "application-transformation:StartPortingCompatibilityAssessment",
+          "application-transformation:GetPortingCompatibilityAssessment",
+          "application-transformation:StartPortingRecommendationAssessment",
+          "application-transformation:GetPortingRecommendationAssessment",
+          "application-transformation:PutLogData",
+          "application-transformation:PutMetricData",
+          "application-transformation:StartContainerization",
+          "application-transformation:GetContainerization",
+          "application-transformation:StartDeployment",
+          "application-transformation:GetDeployment"
+        ],
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "ApplicationTransformationAccess"
+      },
+      {
+        "Action": [
+          "kms:Decrypt",
+          "kms:Encrypt",
+          "kms:DescribeKey",
+          "kms:GenerateDataKey"
+        ],
+        "Condition": {
+          "ForAnyValue:StringLike": {
+            "kms:ResourceAliases": "alias/application-transformation*"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:kms:*::*",
+        "Sid": "KmsAccess"
+      },
+      {
+        "Action": [
+          "ecr:InitiateLayerUpload",
+          "ecr:PutImage",
+          "ecr:UploadLayerPart",
+          "ecr:CompleteLayerUpload",
+          "ecr:BatchCheckLayerAvailability",
+          "ecr:GetDownloadUrlForLayer"
+        ],
+        "Condition": {
+          "Null": {
+            "ecr:ResourceTag/application-transformation": "false"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:*:ecr:*:*:repository/*",
+        "Sid": "EcrPushAccess"
+      },
+      {
+        "Action": [
+          "ecr:GetAuthorizationToken"
+        ],
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "EcrAuthAccess"
+      },
+      {
+        "Action": [
+          "kms:CreateGrant"
+        ],
+        "Condition": {
+          "Bool": {
+            "kms:GrantIsForAWSResource": true
+          },
+          "ForAnyValue:StringLike": {
+            "kms:ResourceAliases": "alias/application-transformation*"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:kms:*::*",
+        "Sid": "KmsCreateGrantAccess"
       }
     ],
     "Version": "2012-10-17"
@@ -518,48 +748,6 @@
     },
     {
       "access_level": "Write",
-      "action": "ec2:AssociateRouteTable",
-      "condition": {
-        "Null": {
-          "aws:RequestTag/a2c-generated": "false"
-        }
-      },
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:AssociateRouteTable",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Write",
-      "action": "ec2:AttachInternetGateway",
-      "condition": {
-        "Null": {
-          "aws:RequestTag/a2c-generated": "false"
-        }
-      },
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:AttachInternetGateway",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Write",
-      "action": "ec2:AuthorizeSecurityGroupIngress",
-      "condition": {
-        "Null": {
-          "aws:RequestTag/a2c-generated": "false"
-        }
-      },
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:AuthorizeSecurityGroupIngress",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Write",
       "action": "ec2:CreateInternetGateway",
       "condition": {
         "Null": {
@@ -658,7 +846,7 @@
     },
     {
       "access_level": "Write",
-      "action": "ec2:ModifySubnetAttribute",
+      "action": "ec2:AuthorizeSecurityGroupIngress",
       "condition": {
         "Null": {
           "aws:RequestTag/a2c-generated": "false"
@@ -666,21 +854,119 @@
       },
       "credentials_exposure": false,
       "data_access": false,
-      "effective_action": "ec2:ModifySubnetAttribute",
+      "effective_action": "ec2:AuthorizeSecurityGroupIngress",
       "privesc": false,
       "resource_exposure": false
     },
     {
       "access_level": "Write",
-      "action": "ec2:ModifyVpcAttribute",
+      "action": "ec2:CreateInternetGateway",
       "condition": {
         "Null": {
-          "aws:RequestTag/a2c-generated": "false"
+          "aws:RequestTag/application-transformation": "false"
         }
       },
       "credentials_exposure": false,
       "data_access": false,
-      "effective_action": "ec2:ModifyVpcAttribute",
+      "effective_action": "ec2:CreateInternetGateway",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:CreateKeyPair",
+      "condition": {
+        "Null": {
+          "aws:RequestTag/application-transformation": "false"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:CreateKeyPair",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:CreateRoute",
+      "condition": {
+        "Null": {
+          "aws:RequestTag/application-transformation": "false"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:CreateRoute",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:CreateRouteTable",
+      "condition": {
+        "Null": {
+          "aws:RequestTag/application-transformation": "false"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:CreateRouteTable",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:CreateSubnet",
+      "condition": {
+        "Null": {
+          "aws:RequestTag/application-transformation": "false"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:CreateSubnet",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Tagging",
+      "action": "ec2:CreateTags",
+      "condition": {
+        "Null": {
+          "aws:RequestTag/application-transformation": "false"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:CreateTags",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:CreateVpc",
+      "condition": {
+        "Null": {
+          "aws:RequestTag/application-transformation": "false"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:CreateVpc",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:AuthorizeSecurityGroupIngress",
+      "condition": {
+        "Null": {
+          "aws:RequestTag/application-transformation": "false"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:AuthorizeSecurityGroupIngress",
       "privesc": false,
       "resource_exposure": false
     },
@@ -723,104 +1009,6 @@
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "ec2:AuthorizeSecurityGroupIngress",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Write",
-      "action": "ec2:CreateInternetGateway",
-      "condition": {
-        "Null": {
-          "aws:ResourceTag/a2c-generated": "false"
-        }
-      },
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:CreateInternetGateway",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Write",
-      "action": "ec2:CreateKeyPair",
-      "condition": {
-        "Null": {
-          "aws:ResourceTag/a2c-generated": "false"
-        }
-      },
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:CreateKeyPair",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Write",
-      "action": "ec2:CreateRoute",
-      "condition": {
-        "Null": {
-          "aws:ResourceTag/a2c-generated": "false"
-        }
-      },
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:CreateRoute",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Write",
-      "action": "ec2:CreateRouteTable",
-      "condition": {
-        "Null": {
-          "aws:ResourceTag/a2c-generated": "false"
-        }
-      },
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:CreateRouteTable",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Write",
-      "action": "ec2:CreateSubnet",
-      "condition": {
-        "Null": {
-          "aws:ResourceTag/a2c-generated": "false"
-        }
-      },
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:CreateSubnet",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Tagging",
-      "action": "ec2:CreateTags",
-      "condition": {
-        "Null": {
-          "aws:ResourceTag/a2c-generated": "false"
-        }
-      },
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:CreateTags",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Write",
-      "action": "ec2:CreateVpc",
-      "condition": {
-        "Null": {
-          "aws:ResourceTag/a2c-generated": "false"
-        }
-      },
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:CreateVpc",
       "privesc": false,
       "resource_exposure": false
     },
@@ -882,6 +1070,188 @@
     },
     {
       "access_level": "Write",
+      "action": "ec2:CreateSubnet",
+      "condition": {
+        "Null": {
+          "aws:ResourceTag/a2c-generated": "false"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:CreateSubnet",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:CreateRoute",
+      "condition": {
+        "Null": {
+          "aws:ResourceTag/a2c-generated": "false"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:CreateRoute",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:CreateRouteTable",
+      "condition": {
+        "Null": {
+          "aws:ResourceTag/a2c-generated": "false"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:CreateRouteTable",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:AssociateRouteTable",
+      "condition": {
+        "Null": {
+          "aws:ResourceTag/application-transformation": "false"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:AssociateRouteTable",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:AttachInternetGateway",
+      "condition": {
+        "Null": {
+          "aws:ResourceTag/application-transformation": "false"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:AttachInternetGateway",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:AuthorizeSecurityGroupIngress",
+      "condition": {
+        "Null": {
+          "aws:ResourceTag/application-transformation": "false"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:AuthorizeSecurityGroupIngress",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Tagging",
+      "action": "ec2:DeleteTags",
+      "condition": {
+        "Null": {
+          "aws:ResourceTag/application-transformation": "false"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:DeleteTags",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:ModifySubnetAttribute",
+      "condition": {
+        "Null": {
+          "aws:ResourceTag/application-transformation": "false"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:ModifySubnetAttribute",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:ModifyVpcAttribute",
+      "condition": {
+        "Null": {
+          "aws:ResourceTag/application-transformation": "false"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:ModifyVpcAttribute",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:RevokeSecurityGroupIngress",
+      "condition": {
+        "Null": {
+          "aws:ResourceTag/application-transformation": "false"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:RevokeSecurityGroupIngress",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:CreateSubnet",
+      "condition": {
+        "Null": {
+          "aws:ResourceTag/application-transformation": "false"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:CreateSubnet",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:CreateRoute",
+      "condition": {
+        "Null": {
+          "aws:ResourceTag/application-transformation": "false"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:CreateRoute",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:CreateRouteTable",
+      "condition": {
+        "Null": {
+          "aws:ResourceTag/application-transformation": "false"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:CreateRouteTable",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
       "action": "ecr:CreateRepository",
       "condition": {
         "Null": {
@@ -900,6 +1270,34 @@
       "condition": {
         "Null": {
           "aws:RequestTag/a2c-generated": "false"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ecr:TagResource",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ecr:CreateRepository",
+      "condition": {
+        "Null": {
+          "aws:RequestTag/application-transformation": "false"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ecr:CreateRepository",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Tagging",
+      "action": "ecr:TagResource",
+      "condition": {
+        "Null": {
+          "aws:RequestTag/application-transformation": "false"
         }
       },
       "credentials_exposure": false,
@@ -993,6 +1391,90 @@
       "resource_exposure": false
     },
     {
+      "access_level": "Read",
+      "action": "ecr:GetLifecyclePolicy",
+      "condition": {
+        "Null": {
+          "aws:ResourceTag/application-transformation": "false"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ecr:GetLifecyclePolicy",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "ecr:GetRepositoryPolicy",
+      "condition": {
+        "Null": {
+          "aws:ResourceTag/application-transformation": "false"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ecr:GetRepositoryPolicy",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "ecr:ListImages",
+      "condition": {
+        "Null": {
+          "aws:ResourceTag/application-transformation": "false"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ecr:ListImages",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "ecr:ListTagsForResource",
+      "condition": {
+        "Null": {
+          "aws:ResourceTag/application-transformation": "false"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ecr:ListTagsForResource",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Tagging",
+      "action": "ecr:TagResource",
+      "condition": {
+        "Null": {
+          "aws:ResourceTag/application-transformation": "false"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ecr:TagResource",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Tagging",
+      "action": "ecr:UntagResource",
+      "condition": {
+        "Null": {
+          "aws:ResourceTag/application-transformation": "false"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ecr:UntagResource",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
       "access_level": "Write",
       "action": "ecs:CreateCluster",
       "condition": {
@@ -1049,6 +1531,76 @@
       "resource_exposure": false
     },
     {
+      "access_level": "Write",
+      "action": "ecs:CreateCluster",
+      "condition": {
+        "Null": {
+          "aws:RequestTag/application-transformation": "false"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ecs:CreateCluster",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ecs:CreateService",
+      "condition": {
+        "Null": {
+          "aws:RequestTag/application-transformation": "false"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ecs:CreateService",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ecs:RegisterTaskDefinition",
+      "condition": {
+        "Null": {
+          "aws:RequestTag/application-transformation": "false"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ecs:RegisterTaskDefinition",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Tagging",
+      "action": "ecs:TagResource",
+      "condition": {
+        "Null": {
+          "aws:RequestTag/application-transformation": "false"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ecs:TagResource",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ecs:UpdateService",
+      "condition": {
+        "Null": {
+          "aws:ResourceTag/a2c-generated": "false"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ecs:UpdateService",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
       "access_level": "Tagging",
       "action": "ecs:TagResource",
       "condition": {
@@ -1081,12 +1633,40 @@
       "action": "ecs:UpdateService",
       "condition": {
         "Null": {
-          "aws:ResourceTag/a2c-generated": "false"
+          "aws:ResourceTag/application-transformation": "false"
         }
       },
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "ecs:UpdateService",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Tagging",
+      "action": "ecs:TagResource",
+      "condition": {
+        "Null": {
+          "aws:ResourceTag/application-transformation": "false"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ecs:TagResource",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Tagging",
+      "action": "ecs:UntagResource",
+      "condition": {
+        "Null": {
+          "aws:ResourceTag/application-transformation": "false"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ecs:UntagResource",
       "privesc": false,
       "resource_exposure": false
     },
@@ -1110,6 +1690,20 @@
       "condition": {
         "StringLike": {
           "ecs:container-name": "a2c-sidecar"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ecs:ExecuteCommand",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ecs:ExecuteCommand",
+      "condition": {
+        "StringLike": {
+          "ecs:container-name": "application-transformation-sidecar"
         }
       },
       "credentials_exposure": false,
@@ -1171,11 +1765,63 @@
       "resource_exposure": false
     },
     {
+      "access_level": "Write",
+      "action": "logs:CreateLogGroup",
+      "condition": {
+        "ForAllValues:StringEquals": {
+          "aws:TagKeys": [
+            "application-transformation"
+          ]
+        },
+        "Null": {
+          "aws:RequestTag/application-transformation": "false"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "logs:CreateLogGroup",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Tagging",
+      "action": "logs:TagResource",
+      "condition": {
+        "ForAllValues:StringEquals": {
+          "aws:TagKeys": [
+            "application-transformation"
+          ]
+        },
+        "Null": {
+          "aws:RequestTag/application-transformation": "false"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "logs:TagResource",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
       "access_level": "Read",
       "action": "logs:GetLogEvents",
       "condition": {
         "Null": {
           "aws:ResourceTag/a2c-generated": "false"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": true,
+      "effective_action": "logs:GetLogEvents",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "logs:GetLogEvents",
+      "condition": {
+        "Null": {
+          "aws:ResourceTag/application-transformation": "false"
         }
       },
       "credentials_exposure": false,
@@ -1309,7 +1955,10 @@
       "action": "s3:ListBucket",
       "condition": {
         "StringLike": {
-          "s3:prefix": "refactoringtoolkit*"
+          "s3:prefix": [
+            "application-transformation",
+            "refactoringtoolkit"
+          ]
         }
       },
       "credentials_exposure": false,
@@ -1480,6 +2129,16 @@
     },
     {
       "access_level": "List",
+      "action": "ec2:DescribeRegions",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:DescribeRegions",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
       "action": "ecr:DescribeImages",
       "condition": null,
       "credentials_exposure": false,
@@ -1617,6 +2276,233 @@
       "effective_action": "s3:GetObject",
       "privesc": false,
       "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "application-transformation:StartPortingCompatibilityAssessment",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "application-transformation:StartPortingCompatibilityAssessment",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "application-transformation:GetPortingCompatibilityAssessment",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "application-transformation:GetPortingCompatibilityAssessment",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "application-transformation:StartPortingRecommendationAssessment",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "application-transformation:StartPortingRecommendationAssessment",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "application-transformation:GetPortingRecommendationAssessment",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "application-transformation:GetPortingRecommendationAssessment",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "application-transformation:PutLogData",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "application-transformation:PutLogData",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "application-transformation:PutMetricData",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "application-transformation:PutMetricData",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "kms:Decrypt",
+      "condition": {
+        "ForAnyValue:StringLike": {
+          "kms:ResourceAliases": "alias/application-transformation*"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "kms:Decrypt",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "kms:Encrypt",
+      "condition": {
+        "ForAnyValue:StringLike": {
+          "kms:ResourceAliases": "alias/application-transformation*"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "kms:Encrypt",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "kms:DescribeKey",
+      "condition": {
+        "ForAnyValue:StringLike": {
+          "kms:ResourceAliases": "alias/application-transformation*"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "kms:DescribeKey",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "kms:GenerateDataKey",
+      "condition": {
+        "ForAnyValue:StringLike": {
+          "kms:ResourceAliases": "alias/application-transformation*"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "kms:GenerateDataKey",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ecr:InitiateLayerUpload",
+      "condition": {
+        "Null": {
+          "ecr:ResourceTag/application-transformation": "false"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ecr:InitiateLayerUpload",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ecr:PutImage",
+      "condition": {
+        "Null": {
+          "ecr:ResourceTag/application-transformation": "false"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ecr:PutImage",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ecr:UploadLayerPart",
+      "condition": {
+        "Null": {
+          "ecr:ResourceTag/application-transformation": "false"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ecr:UploadLayerPart",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ecr:CompleteLayerUpload",
+      "condition": {
+        "Null": {
+          "ecr:ResourceTag/application-transformation": "false"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ecr:CompleteLayerUpload",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "ecr:BatchCheckLayerAvailability",
+      "condition": {
+        "Null": {
+          "ecr:ResourceTag/application-transformation": "false"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ecr:BatchCheckLayerAvailability",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "ecr:GetDownloadUrlForLayer",
+      "condition": {
+        "Null": {
+          "ecr:ResourceTag/application-transformation": "false"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": true,
+      "effective_action": "ecr:GetDownloadUrlForLayer",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "ecr:GetAuthorizationToken",
+      "condition": null,
+      "credentials_exposure": true,
+      "data_access": false,
+      "effective_action": "ecr:GetAuthorizationToken",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Permissions management",
+      "action": "kms:CreateGrant",
+      "condition": {
+        "Bool": {
+          "kms:GrantIsForAWSResource": true
+        },
+        "ForAnyValue:StringLike": {
+          "kms:ResourceAliases": "alias/application-transformation*"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "kms:CreateGrant",
+      "privesc": false,
+      "resource_exposure": true
     }
   ],
   "malformed": false,
@@ -1624,7 +2510,24 @@
   "privesc": true,
   "resource_exposure": true,
   "undocumented_actions": false,
-  "unknown_actions": [],
-  "updatedate": "2023-03-23T23:14:02+00:00",
-  "version": "v3"
+  "unknown_actions": [
+    {
+      "action": "application-transformation:StartContainerization",
+      "condition": null
+    },
+    {
+      "action": "application-transformation:GetContainerization",
+      "condition": null
+    },
+    {
+      "action": "application-transformation:StartDeployment",
+      "condition": null
+    },
+    {
+      "action": "application-transformation:GetDeployment",
+      "condition": null
+    }
+  ],
+  "updatedate": "2023-11-18T00:37:27+00:00",
+  "version": "v4"
 }
