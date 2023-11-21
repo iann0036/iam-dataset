@@ -1,0 +1,373 @@
+{
+  "access_levels": [
+    "List",
+    "Read",
+    "Tagging",
+    "Write"
+  ],
+  "arn": "arn:aws:iam::aws:policy/aws-service-role/AmazonInspector2AgentlessServiceRolePolicy",
+  "createdate": "2023-11-20T15:18:32Z",
+  "credentials_exposure": false,
+  "data_access": false,
+  "deprecated": false,
+  "document": {
+    "Statement": [
+      {
+        "Action": [
+          "ec2:DescribeInstances",
+          "ec2:DescribeVolumes",
+          "ec2:DescribeSnapshots"
+        ],
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "InstanceIdentification"
+      },
+      {
+        "Action": [
+          "ebs:ListSnapshotBlocks",
+          "ebs:GetSnapshotBlock"
+        ],
+        "Condition": {
+          "StringLike": {
+            "aws:ResourceTag/InspectorScan": "*"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:ec2:*:*:snapshot/*",
+        "Sid": "GetSnapshotData"
+      },
+      {
+        "Action": [
+          "ec2:CreateSnapshots"
+        ],
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:ec2:*:*:instance/*",
+          "arn:aws:ec2:*:*:volume/*"
+        ],
+        "Sid": "CreateSnapshotsAnyInstanceOrVolume"
+      },
+      {
+        "Action": "ec2:CreateSnapshots",
+        "Condition": {
+          "StringEquals": {
+            "ec2:ResourceTag/InspectorEc2Exclusion": "true"
+          }
+        },
+        "Effect": "Deny",
+        "Resource": "arn:aws:ec2:*:*:instance/*",
+        "Sid": "DenyCreateSnapshotsOnExcludedInstances"
+      },
+      {
+        "Action": [
+          "ec2:CreateSnapshots"
+        ],
+        "Condition": {
+          "ForAllValues:StringEquals": {
+            "aws:TagKeys": "InspectorScan"
+          },
+          "Null": {
+            "aws:TagKeys": "false"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:ec2:*:*:snapshot/*",
+        "Sid": "CreateSnapshotsOnAnySnapshotOnlyWithTag"
+      },
+      {
+        "Action": [
+          "ec2:CreateTags"
+        ],
+        "Condition": {
+          "ForAllValues:StringEquals": {
+            "aws:TagKeys": "InspectorScan"
+          },
+          "Null": {
+            "aws:TagKeys": "false"
+          },
+          "StringLike": {
+            "ec2:CreateAction": "CreateSnapshots"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:ec2:*:*:snapshot/*",
+        "Sid": "CreateOnlyInspectorScanTagOnlyUsingCreateSnapshots"
+      },
+      {
+        "Action": [
+          "ec2:DeleteSnapshot"
+        ],
+        "Condition": {
+          "StringLike": {
+            "ec2:ResourceTag/InspectorScan": "*"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:ec2:*:*:snapshot/*",
+        "Sid": "DeleteOnlySnapshotsTaggedForScanning"
+      },
+      {
+        "Action": "kms:Decrypt",
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceTag/InspectorEc2Exclusion": "true"
+          }
+        },
+        "Effect": "Deny",
+        "Resource": "arn:aws:kms:*:*:key/*",
+        "Sid": "DenyKmsDecryptForExcludedKeys"
+      },
+      {
+        "Action": [
+          "kms:Decrypt"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          },
+          "StringLike": {
+            "kms:EncryptionContext:aws:ebs:id": "vol-*",
+            "kms:ViaService": "ec2.*.amazonaws.com"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:kms:*:*:key/*",
+        "Sid": "DecryptSnapshotBlocksVolContext"
+      },
+      {
+        "Action": [
+          "kms:Decrypt"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          },
+          "StringLike": {
+            "kms:EncryptionContext:aws:ebs:id": "snap-*",
+            "kms:ViaService": "ec2.*.amazonaws.com"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:kms:*:*:key/*",
+        "Sid": "DecryptSnapshotBlocksSnapContext"
+      },
+      {
+        "Action": [
+          "kms:DescribeKey"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          },
+          "StringLike": {
+            "kms:ViaService": "ec2.*.amazonaws.com"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:kms:*:*:key/*",
+        "Sid": "DescribeKeysForEbsOperations"
+      },
+      {
+        "Action": [
+          "kms:ListResourceTags"
+        ],
+        "Effect": "Allow",
+        "Resource": "arn:aws:kms:*:*:key/*",
+        "Sid": "ListKeyResourceTags"
+      }
+    ],
+    "Version": "2012-10-17"
+  },
+  "effective_actions": [
+    {
+      "access_level": "List",
+      "action": "ec2:DescribeInstances",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:DescribeInstances",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "ec2:DescribeVolumes",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:DescribeVolumes",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "ec2:DescribeSnapshots",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:DescribeSnapshots",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "ebs:ListSnapshotBlocks",
+      "condition": {
+        "StringLike": {
+          "aws:ResourceTag/InspectorScan": "*"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ebs:ListSnapshotBlocks",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "ebs:GetSnapshotBlock",
+      "condition": {
+        "StringLike": {
+          "aws:ResourceTag/InspectorScan": "*"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ebs:GetSnapshotBlock",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:CreateSnapshots",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:CreateSnapshots",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:CreateSnapshots",
+      "condition": {
+        "ForAllValues:StringEquals": {
+          "aws:TagKeys": "InspectorScan"
+        },
+        "Null": {
+          "aws:TagKeys": "false"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:CreateSnapshots",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Tagging",
+      "action": "ec2:CreateTags",
+      "condition": {
+        "ForAllValues:StringEquals": {
+          "aws:TagKeys": "InspectorScan"
+        },
+        "Null": {
+          "aws:TagKeys": "false"
+        },
+        "StringLike": {
+          "ec2:CreateAction": "CreateSnapshots"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:CreateTags",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:DeleteSnapshot",
+      "condition": {
+        "StringLike": {
+          "ec2:ResourceTag/InspectorScan": "*"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:DeleteSnapshot",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "kms:Decrypt",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        },
+        "StringLike": {
+          "kms:EncryptionContext:aws:ebs:id": "vol-*",
+          "kms:ViaService": "ec2.*.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "kms:Decrypt",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "kms:Decrypt",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        },
+        "StringLike": {
+          "kms:EncryptionContext:aws:ebs:id": "snap-*",
+          "kms:ViaService": "ec2.*.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "kms:Decrypt",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "kms:DescribeKey",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        },
+        "StringLike": {
+          "kms:ViaService": "ec2.*.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "kms:DescribeKey",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "kms:ListResourceTags",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "kms:ListResourceTags",
+      "privesc": false,
+      "resource_exposure": false
+    }
+  ],
+  "malformed": false,
+  "name": "AmazonInspector2AgentlessServiceRolePolicy",
+  "privesc": false,
+  "resource_exposure": false,
+  "undocumented_actions": false,
+  "unknown_actions": [],
+  "updatedate": "2023-11-20T15:18:32+00:00",
+  "version": "v1"
+}

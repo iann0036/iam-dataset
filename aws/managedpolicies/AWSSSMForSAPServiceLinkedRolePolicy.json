@@ -6,7 +6,7 @@
     "Write"
   ],
   "arn": "arn:aws:iam::aws:policy/aws-service-role/AWSSSMForSAPServiceLinkedRolePolicy",
-  "createdate": "2023-11-17T21:22:26Z",
+  "createdate": "2023-11-21T03:35:14Z",
   "credentials_exposure": false,
   "data_access": false,
   "deprecated": false,
@@ -256,6 +256,42 @@
         "Effect": "Allow",
         "Resource": "arn:*:resource-groups:*:*:group/SystemsManagerForSAP-*",
         "Sid": "DeleteGroup"
+      },
+      {
+        "Action": [
+          "resource-groups:CreateGroup"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:RequestTag/EnableAWSServiceCatalogAppRegistry": "true"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:*:resource-groups:*:*:group/AWS_AppRegistry_AppTag_*",
+        "Sid": "CreateAppTagResourceGroup"
+      },
+      {
+        "Action": [
+          "resource-groups:Tag"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceTag/EnableAWSServiceCatalogAppRegistry": "true"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:*:resource-groups:*:*:group/AWS_AppRegistry_AppTag_*",
+        "Sid": "TagAppTagResourceGroup"
+      },
+      {
+        "Action": [
+          "resource-groups:GetGroupConfiguration"
+        ],
+        "Effect": "Allow",
+        "Resource": [
+          "arn:*:resource-groups:*:*:group/AWS_AppRegistry_AppTag_*"
+        ],
+        "Sid": "GetAppTagResourceGroupConfig"
       }
     ],
     "Version": "2012-10-17"
@@ -663,6 +699,44 @@
       "effective_action": "resource-groups:DeleteGroup",
       "privesc": false,
       "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "resource-groups:CreateGroup",
+      "condition": {
+        "StringEquals": {
+          "aws:RequestTag/EnableAWSServiceCatalogAppRegistry": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "resource-groups:CreateGroup",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Tagging",
+      "action": "resource-groups:Tag",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/EnableAWSServiceCatalogAppRegistry": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "resource-groups:Tag",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "resource-groups:GetGroupConfiguration",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "resource-groups:GetGroupConfiguration",
+      "privesc": false,
+      "resource_exposure": false
     }
   ],
   "malformed": false,
@@ -671,6 +745,6 @@
   "resource_exposure": true,
   "undocumented_actions": false,
   "unknown_actions": [],
-  "updatedate": "2023-11-17T21:22:26+00:00",
-  "version": "v5"
+  "updatedate": "2023-11-21T03:35:14+00:00",
+  "version": "v6"
 }
