@@ -6,7 +6,7 @@
     "Write"
   ],
   "arn": "arn:aws:iam::aws:policy/aws-service-role/CloudTrailServiceRolePolicy",
-  "createdate": "2022-11-03T20:35:01Z",
+  "createdate": "2023-11-27T01:18:10Z",
   "credentials_exposure": false,
   "data_access": true,
   "deprecated": false,
@@ -47,6 +47,36 @@
         "Effect": "Allow",
         "Resource": "*",
         "Sid": "AwsOrgsDelegatedAdminAccess"
+      },
+      {
+        "Action": [
+          "glue:DeleteTable"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:*:glue:*:*:catalog",
+          "arn:*:glue:*:*:database/aws:cloudtrail",
+          "arn:*:glue:*:*:table/aws:cloudtrail/*"
+        ],
+        "Sid": "DeleteTableAccess"
+      },
+      {
+        "Action": [
+          "lakeformation:DeregisterResource"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "DeregisterResourceAccess"
       }
     ],
     "Version": "2012-10-17"
@@ -617,6 +647,34 @@
       "effective_action": "organizations:ListDelegatedAdministrators",
       "privesc": false,
       "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "glue:DeleteTable",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "glue:DeleteTable",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "lakeformation:DeregisterResource",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "lakeformation:DeregisterResource",
+      "privesc": false,
+      "resource_exposure": false
     }
   ],
   "malformed": false,
@@ -625,6 +683,6 @@
   "resource_exposure": false,
   "undocumented_actions": false,
   "unknown_actions": [],
-  "updatedate": "2022-11-03T20:35:01+00:00",
-  "version": "v2"
+  "updatedate": "2023-11-27T01:18:10+00:00",
+  "version": "v3"
 }

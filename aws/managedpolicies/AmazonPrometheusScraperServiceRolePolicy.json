@@ -1,0 +1,237 @@
+{
+  "access_levels": [
+    "List",
+    "Read",
+    "Tagging",
+    "Write"
+  ],
+  "arn": "arn:aws:iam::aws:policy/aws-service-role/AmazonPrometheusScraperServiceRolePolicy",
+  "createdate": "2023-11-26T14:19:52Z",
+  "credentials_exposure": false,
+  "data_access": false,
+  "deprecated": false,
+  "document": {
+    "Statement": [
+      {
+        "Action": [
+          "iam:DeleteRole"
+        ],
+        "Effect": "Allow",
+        "Resource": "arn:aws:iam::*:role/aws-service-role/scraper.aps.amazonaws.com/AWSServiceRoleForAmazonPrometheusScraper*",
+        "Sid": "DeleteSLR"
+      },
+      {
+        "Action": [
+          "ec2:DescribeNetworkInterfaces",
+          "ec2:DescribeSubnets",
+          "ec2:DescribeSecurityGroups"
+        ],
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "NetworkDiscovery"
+      },
+      {
+        "Action": [
+          "ec2:CreateNetworkInterface"
+        ],
+        "Condition": {
+          "ForAllValues:StringEquals": {
+            "aws:TagKeys": [
+              "AMPAgentlessScraper"
+            ]
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "ENIManagement"
+      },
+      {
+        "Action": [
+          "ec2:CreateTags"
+        ],
+        "Condition": {
+          "Null": {
+            "aws:RequestTag/AMPAgentlessScraper": "false"
+          },
+          "StringEquals": {
+            "ec2:CreateAction": "CreateNetworkInterface"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:*:ec2:*:*:network-interface/*",
+        "Sid": "TagManagement"
+      },
+      {
+        "Action": [
+          "ec2:DeleteNetworkInterface",
+          "ec2:ModifyNetworkInterfaceAttribute"
+        ],
+        "Condition": {
+          "Null": {
+            "ec2:ResourceTag/AMPAgentlessScraper": "false"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "ENIUpdating"
+      },
+      {
+        "Action": [
+          "eks:DescribeCluster"
+        ],
+        "Effect": "Allow",
+        "Resource": "arn:*:eks:*:*:cluster/*",
+        "Sid": "EKSAccess"
+      },
+      {
+        "Action": [
+          "aps:RemoteWrite"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:PrincipalAccount": "${aws:ResourceAccount}"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:*:aps:*:*:workspace/*",
+        "Sid": "APSWriting"
+      }
+    ],
+    "Version": "2012-10-17"
+  },
+  "effective_actions": [
+    {
+      "access_level": "Write",
+      "action": "iam:DeleteRole",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "iam:DeleteRole",
+      "privesc": false,
+      "resource_exposure": true
+    },
+    {
+      "access_level": "List",
+      "action": "ec2:DescribeNetworkInterfaces",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:DescribeNetworkInterfaces",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "ec2:DescribeSubnets",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:DescribeSubnets",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "ec2:DescribeSecurityGroups",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:DescribeSecurityGroups",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:CreateNetworkInterface",
+      "condition": {
+        "ForAllValues:StringEquals": {
+          "aws:TagKeys": [
+            "AMPAgentlessScraper"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:CreateNetworkInterface",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Tagging",
+      "action": "ec2:CreateTags",
+      "condition": {
+        "Null": {
+          "aws:RequestTag/AMPAgentlessScraper": "false"
+        },
+        "StringEquals": {
+          "ec2:CreateAction": "CreateNetworkInterface"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:CreateTags",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:DeleteNetworkInterface",
+      "condition": {
+        "Null": {
+          "ec2:ResourceTag/AMPAgentlessScraper": "false"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:DeleteNetworkInterface",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:ModifyNetworkInterfaceAttribute",
+      "condition": {
+        "Null": {
+          "ec2:ResourceTag/AMPAgentlessScraper": "false"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:ModifyNetworkInterfaceAttribute",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "eks:DescribeCluster",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "eks:DescribeCluster",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "aps:RemoteWrite",
+      "condition": {
+        "StringEquals": {
+          "aws:PrincipalAccount": "${aws:ResourceAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "aps:RemoteWrite",
+      "privesc": false,
+      "resource_exposure": false
+    }
+  ],
+  "malformed": false,
+  "name": "AmazonPrometheusScraperServiceRolePolicy",
+  "privesc": false,
+  "resource_exposure": true,
+  "undocumented_actions": false,
+  "unknown_actions": [],
+  "updatedate": "2023-11-26T14:19:52+00:00",
+  "version": "v1"
+}

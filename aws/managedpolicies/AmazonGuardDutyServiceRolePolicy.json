@@ -6,7 +6,7 @@
     "Write"
   ],
   "arn": "arn:aws:iam::aws:policy/aws-service-role/AmazonGuardDutyServiceRolePolicy",
-  "createdate": "2023-03-08T19:59:16Z",
+  "createdate": "2023-11-26T22:03:45Z",
   "credentials_exposure": false,
   "data_access": false,
   "deprecated": false,
@@ -35,10 +35,13 @@
           "eks:ListClusters",
           "eks:DescribeCluster",
           "ec2:DescribeVpcEndpointServices",
-          "ec2:DescribeSecurityGroups"
+          "ec2:DescribeSecurityGroups",
+          "ecs:ListClusters",
+          "ecs:DescribeClusters"
         ],
         "Effect": "Allow",
-        "Resource": "*"
+        "Resource": "*",
+        "Sid": "GuardDutyGetDescribeListPolicy"
       },
       {
         "Action": [
@@ -50,7 +53,8 @@
           }
         },
         "Effect": "Allow",
-        "Resource": "*"
+        "Resource": "*",
+        "Sid": "GuardDutyCreateSLRPolicy"
       },
       {
         "Action": [
@@ -68,7 +72,8 @@
           }
         },
         "Effect": "Allow",
-        "Resource": "arn:aws:ec2:*:*:vpc-endpoint/*"
+        "Resource": "arn:aws:ec2:*:*:vpc-endpoint/*",
+        "Sid": "GuardDutyCreateVpcEndpointPolicy"
       },
       {
         "Action": [
@@ -81,7 +86,8 @@
           }
         },
         "Effect": "Allow",
-        "Resource": "arn:aws:ec2:*:*:vpc-endpoint/*"
+        "Resource": "arn:aws:ec2:*:*:vpc-endpoint/*",
+        "Sid": "GuardDutyModifyDeleteVpcEndpointPolicy"
       },
       {
         "Action": [
@@ -93,7 +99,8 @@
           "arn:aws:ec2:*:*:vpc/*",
           "arn:aws:ec2:*:*:security-group/*",
           "arn:aws:ec2:*:*:subnet/*"
-        ]
+        ],
+        "Sid": "GuardDutyCreateModifyVpcEndpointNetworkPolicy"
       },
       {
         "Action": [
@@ -108,7 +115,8 @@
           }
         },
         "Effect": "Allow",
-        "Resource": "arn:aws:ec2:*:*:vpc-endpoint/*"
+        "Resource": "arn:aws:ec2:*:*:vpc-endpoint/*",
+        "Sid": "GuardDutyCreateTagsDuringVpcEndpointCreationPolicy"
       },
       {
         "Action": [
@@ -124,7 +132,8 @@
           }
         },
         "Effect": "Allow",
-        "Resource": "arn:aws:ec2:*:*:security-group/*"
+        "Resource": "arn:aws:ec2:*:*:security-group/*",
+        "Sid": "GuardDutySecurityGroupManagementPolicy"
       },
       {
         "Action": [
@@ -136,14 +145,16 @@
           }
         },
         "Effect": "Allow",
-        "Resource": "arn:aws:ec2:*:*:security-group/*"
+        "Resource": "arn:aws:ec2:*:*:security-group/*",
+        "Sid": "GuardDutyCreateSecurityGroupPolicy"
       },
       {
         "Action": [
           "ec2:CreateSecurityGroup"
         ],
         "Effect": "Allow",
-        "Resource": "arn:aws:ec2:*:*:vpc/*"
+        "Resource": "arn:aws:ec2:*:*:vpc/*",
+        "Sid": "GuardDutyCreateSecurityGroupForVpcPolicy"
       },
       {
         "Action": [
@@ -158,7 +169,8 @@
           }
         },
         "Effect": "Allow",
-        "Resource": "arn:aws:ec2:*:*:security-group/*"
+        "Resource": "arn:aws:ec2:*:*:security-group/*",
+        "Sid": "GuardDutyCreateTagsDuringSecurityGroupCreationPolicy"
       },
       {
         "Action": [
@@ -170,7 +182,8 @@
           }
         },
         "Effect": "Allow",
-        "Resource": "arn:aws:eks:*:*:cluster/*"
+        "Resource": "arn:aws:eks:*:*:cluster/*",
+        "Sid": "GuardDutyCreateEksAddonPolicy"
       },
       {
         "Action": [
@@ -179,7 +192,8 @@
           "eks:DescribeAddon"
         ],
         "Effect": "Allow",
-        "Resource": "arn:aws:eks:*:*:addon/*/aws-guardduty-agent/*"
+        "Resource": "arn:aws:eks:*:*:addon/*/aws-guardduty-agent/*",
+        "Sid": "GuardDutyEksAddonManagementPolicy"
       },
       {
         "Action": [
@@ -191,7 +205,23 @@
           }
         },
         "Effect": "Allow",
-        "Resource": "arn:aws:eks:*:*:cluster/*"
+        "Resource": "arn:aws:eks:*:*:cluster/*",
+        "Sid": "GuardDutyEksClusterTagResourcePolicy"
+      },
+      {
+        "Action": [
+          "ecs:PutAccountSettingDefault"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "ecs:account-setting": [
+              "guardDutyActivate"
+            ]
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "GuardDutyEcsPutAccountSettingsDefaultPolicy"
       }
     ],
     "Version": "2012-10-17"
@@ -414,6 +444,26 @@
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "ec2:DescribeSecurityGroups",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "ecs:ListClusters",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ecs:ListClusters",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "ecs:DescribeClusters",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ecs:DescribeClusters",
       "privesc": false,
       "resource_exposure": false
     },
@@ -684,6 +734,22 @@
       "effective_action": "eks:TagResource",
       "privesc": false,
       "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ecs:PutAccountSettingDefault",
+      "condition": {
+        "StringEquals": {
+          "ecs:account-setting": [
+            "guardDutyActivate"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ecs:PutAccountSettingDefault",
+      "privesc": false,
+      "resource_exposure": false
     }
   ],
   "malformed": false,
@@ -692,6 +758,6 @@
   "resource_exposure": true,
   "undocumented_actions": false,
   "unknown_actions": [],
-  "updatedate": "2023-03-08T19:59:16+00:00",
-  "version": "v6"
+  "updatedate": "2023-11-26T22:03:45+00:00",
+  "version": "v7"
 }
