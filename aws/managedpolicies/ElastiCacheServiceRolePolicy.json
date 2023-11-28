@@ -2,10 +2,11 @@
   "access_levels": [
     "List",
     "Read",
+    "Tagging",
     "Write"
   ],
   "arn": "arn:aws:iam::aws:policy/aws-service-role/ElastiCacheServiceRolePolicy",
-  "createdate": "2020-02-06T21:27:13Z",
+  "createdate": "2023-11-28T03:05:37Z",
   "credentials_exposure": false,
   "data_access": false,
   "deprecated": false,
@@ -23,6 +24,7 @@
           "ec2:DescribeSecurityGroups",
           "ec2:DescribeSubnets",
           "ec2:DescribeVpcs",
+          "ec2:DescribeVpcEndpoints",
           "ec2:ModifyNetworkInterfaceAttribute",
           "ec2:RevokeSecurityGroupIngress",
           "cloudwatch:PutMetricData",
@@ -32,7 +34,58 @@
           "outposts:ListSites"
         ],
         "Effect": "Allow",
-        "Resource": "*"
+        "Resource": "*",
+        "Sid": "ElastiCacheManagementActions"
+      },
+      {
+        "Action": [
+          "ec2:CreateVpcEndpoint",
+          "ec2:DeleteVpcEndpoints"
+        ],
+        "Condition": {
+          "StringLike": {
+            "ec2:VpceServiceName": "com.amazonaws.elasticache.serverless.*"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:ec2:*:*:vpc-endpoint/*",
+        "Sid": "CreateDeleteVPCEndpoints"
+      },
+      {
+        "Action": [
+          "ec2:CreateTags"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:RequestTag/AmazonElastiCacheManaged": "true",
+            "ec2:CreateAction": "CreateVpcEndpoint"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:ec2:*:*:vpc-endpoint/*",
+        "Sid": "TagVPCEndpointsOnCreation"
+      },
+      {
+        "Action": [
+          "ec2:ModifyVpcEndpoint"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "ec2:ResourceTag/AmazonElastiCacheManaged": "true"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:ec2:*:*:vpc-endpoint/*",
+        "Sid": "ModifyVpcEndpoints"
+      },
+      {
+        "Action": [
+          "ec2:CreateVpcEndpoint",
+          "ec2:ModifyVpcEndpoint"
+        ],
+        "Effect": "Allow",
+        "NotResource": "arn:aws:ec2:*:*:vpc-endpoint/*",
+        "Sid": "AllowAccessToElastiCacheTaggedVpcEndpoints"
       }
     ],
     "Version": "2012-10-17"
@@ -139,6 +192,16 @@
       "resource_exposure": false
     },
     {
+      "access_level": "List",
+      "action": "ec2:DescribeVpcEndpoints",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:DescribeVpcEndpoints",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
       "access_level": "Write",
       "action": "ec2:ModifyNetworkInterfaceAttribute",
       "condition": null,
@@ -207,6 +270,83 @@
       "effective_action": "outposts:ListSites",
       "privesc": false,
       "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:CreateVpcEndpoint",
+      "condition": {
+        "StringLike": {
+          "ec2:VpceServiceName": "com.amazonaws.elasticache.serverless.*"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:CreateVpcEndpoint",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:DeleteVpcEndpoints",
+      "condition": {
+        "StringLike": {
+          "ec2:VpceServiceName": "com.amazonaws.elasticache.serverless.*"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:DeleteVpcEndpoints",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Tagging",
+      "action": "ec2:CreateTags",
+      "condition": {
+        "StringEquals": {
+          "aws:RequestTag/AmazonElastiCacheManaged": "true",
+          "ec2:CreateAction": "CreateVpcEndpoint"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:CreateTags",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:ModifyVpcEndpoint",
+      "condition": {
+        "StringEquals": {
+          "ec2:ResourceTag/AmazonElastiCacheManaged": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:ModifyVpcEndpoint",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:CreateVpcEndpoint",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:CreateVpcEndpoint",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:ModifyVpcEndpoint",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:ModifyVpcEndpoint",
+      "privesc": false,
+      "resource_exposure": false
     }
   ],
   "malformed": false,
@@ -215,6 +355,6 @@
   "resource_exposure": false,
   "undocumented_actions": false,
   "unknown_actions": [],
-  "updatedate": "2020-02-06T21:27:13+00:00",
-  "version": "v3"
+  "updatedate": "2023-11-28T03:05:37+00:00",
+  "version": "v4"
 }

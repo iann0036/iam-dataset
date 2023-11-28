@@ -7,7 +7,7 @@
     "Permissions management"
   ],
   "arn": "arn:aws:iam::aws:policy/service-role/AWSBackupServiceRolePolicyForRestores",
-  "createdate": "2023-09-06T20:41:44Z",
+  "createdate": "2023-11-27T19:38:10Z",
   "credentials_exposure": false,
   "data_access": true,
   "deprecated": false,
@@ -25,14 +25,16 @@
           "dynamodb:DescribeTable"
         ],
         "Effect": "Allow",
-        "Resource": "arn:aws:dynamodb:*:*:table/*"
+        "Resource": "arn:aws:dynamodb:*:*:table/*",
+        "Sid": "DynamoDBPermissions"
       },
       {
         "Action": [
           "dynamodb:RestoreTableFromBackup"
         ],
         "Effect": "Allow",
-        "Resource": "arn:aws:dynamodb:*:*:table/*/backup/*"
+        "Resource": "arn:aws:dynamodb:*:*:table/*/backup/*",
+        "Sid": "DynamoDBBackupResourcePermissions"
       },
       {
         "Action": [
@@ -43,17 +45,26 @@
         "Resource": [
           "arn:aws:ec2:*::snapshot/*",
           "arn:aws:ec2:*:*:volume/*"
-        ]
+        ],
+        "Sid": "EBSPermissions"
       },
       {
         "Action": [
           "ec2:DescribeImages",
           "ec2:DescribeInstances",
           "ec2:DescribeSnapshots",
-          "ec2:DescribeVolumes"
+          "ec2:DescribeVolumes",
+          "ec2:DescribeAccountAttributes",
+          "ec2:DescribeAddresses",
+          "ec2:DescribeAvailabilityZones",
+          "ec2:DescribeSecurityGroups",
+          "ec2:DescribeSubnets",
+          "ec2:DescribeVpcs",
+          "ec2:DescribeInternetGateways"
         ],
         "Effect": "Allow",
-        "Resource": "*"
+        "Resource": "*",
+        "Sid": "EC2DescribePermissions"
       },
       {
         "Action": [
@@ -63,7 +74,8 @@
           "storagegateway:AddTagsToResource"
         ],
         "Effect": "Allow",
-        "Resource": "arn:aws:storagegateway:*:*:gateway/*/volume/*"
+        "Resource": "arn:aws:storagegateway:*:*:gateway/*/volume/*",
+        "Sid": "StorageGatewayVolumePermissions"
       },
       {
         "Action": [
@@ -72,14 +84,16 @@
           "storagegateway:CreateCachediSCSIVolume"
         ],
         "Effect": "Allow",
-        "Resource": "arn:aws:storagegateway:*:*:gateway/*"
+        "Resource": "arn:aws:storagegateway:*:*:gateway/*",
+        "Sid": "StorageGatewayGatewayPermissions"
       },
       {
         "Action": [
           "storagegateway:ListVolumes"
         ],
         "Effect": "Allow",
-        "Resource": "arn:aws:storagegateway:*:*:*"
+        "Resource": "arn:aws:storagegateway:*:*:*",
+        "Sid": "StorageGatewayListPermissions"
       },
       {
         "Action": [
@@ -97,7 +111,8 @@
           "rds:RestoreDBClusterToPointInTime"
         ],
         "Effect": "Allow",
-        "Resource": "*"
+        "Resource": "*",
+        "Sid": "RDSPermissions"
       },
       {
         "Action": [
@@ -108,14 +123,16 @@
           "elasticfilesystem:TagResource"
         ],
         "Effect": "Allow",
-        "Resource": "arn:aws:elasticfilesystem:*:*:file-system/*"
+        "Resource": "arn:aws:elasticfilesystem:*:*:file-system/*",
+        "Sid": "EFSPermissions"
       },
       {
         "Action": [
           "kms:DescribeKey"
         ],
         "Effect": "Allow",
-        "Resource": "*"
+        "Resource": "*",
+        "Sid": "KMSDescribePermissions"
       },
       {
         "Action": [
@@ -138,7 +155,8 @@
           }
         },
         "Effect": "Allow",
-        "Resource": "*"
+        "Resource": "*",
+        "Sid": "KMSPermissions"
       },
       {
         "Action": [
@@ -150,7 +168,8 @@
           }
         },
         "Effect": "Allow",
-        "Resource": "*"
+        "Resource": "*",
+        "Sid": "KMSCreateGrantPermissions"
       },
       {
         "Action": [
@@ -159,19 +178,23 @@
           "ebs:PutSnapshotBlock"
         ],
         "Effect": "Allow",
-        "Resource": "arn:aws:ec2:*::snapshot/*"
+        "Resource": "arn:aws:ec2:*::snapshot/*",
+        "Sid": "EBSSnapshotBlockPermissions"
       },
       {
         "Action": [
           "rds:CreateDBInstance"
         ],
         "Effect": "Allow",
-        "Resource": "arn:aws:rds:*:*:db:*"
+        "Resource": "arn:aws:rds:*:*:db:*",
+        "Sid": "RDSResourcePermissions"
       },
       {
         "Action": [
           "ec2:DeleteSnapshot",
-          "ec2:DeleteTags"
+          "ec2:DeleteTags",
+          "ec2:RestoreSnapshotTier",
+          "ec2:DescribeSnapshotTierStatus"
         ],
         "Condition": {
           "Null": {
@@ -179,7 +202,8 @@
           }
         },
         "Effect": "Allow",
-        "Resource": "arn:aws:ec2:*::snapshot/*"
+        "Resource": "arn:aws:ec2:*::snapshot/*",
+        "Sid": "EC2DeleteAndRestorePermissions"
       },
       {
         "Action": [
@@ -196,21 +220,24 @@
         "Resource": [
           "arn:aws:ec2:*::snapshot/*",
           "arn:aws:ec2:*:*:instance/*"
-        ]
+        ],
+        "Sid": "EC2CreateTagsScopedPermissions"
       },
       {
         "Action": [
           "ec2:RunInstances"
         ],
         "Effect": "Allow",
-        "Resource": "*"
+        "Resource": "*",
+        "Sid": "EC2RunInstancesPermissions"
       },
       {
         "Action": [
           "ec2:TerminateInstances"
         ],
         "Effect": "Allow",
-        "Resource": "arn:aws:ec2:*:*:instance/*"
+        "Resource": "arn:aws:ec2:*:*:instance/*",
+        "Sid": "EC2TerminateInstancesPermissions"
       },
       {
         "Action": [
@@ -228,7 +255,8 @@
         "Resource": [
           "arn:aws:ec2:*:*:instance/*",
           "arn:aws:ec2:*:*:volume/*"
-        ]
+        ],
+        "Sid": "EC2CreateTagsPermissions"
       },
       {
         "Action": [
@@ -238,7 +266,8 @@
         "Resource": [
           "arn:aws:fsx:*:*:file-system/*",
           "arn:aws:fsx:*:*:backup/*"
-        ]
+        ],
+        "Sid": "FsxPermissions"
       },
       {
         "Action": [
@@ -246,14 +275,16 @@
           "fsx:TagResource"
         ],
         "Effect": "Allow",
-        "Resource": "arn:aws:fsx:*:*:file-system/*"
+        "Resource": "arn:aws:fsx:*:*:file-system/*",
+        "Sid": "FsxTagPermissions"
       },
       {
         "Action": [
           "fsx:DescribeBackups"
         ],
         "Effect": "Allow",
-        "Resource": "arn:aws:fsx:*:*:backup/*"
+        "Resource": "arn:aws:fsx:*:*:backup/*",
+        "Sid": "FsxBackupPermissions"
       },
       {
         "Action": [
@@ -266,14 +297,16 @@
           }
         },
         "Effect": "Allow",
-        "Resource": "arn:aws:fsx:*:*:file-system/*"
+        "Resource": "arn:aws:fsx:*:*:file-system/*",
+        "Sid": "FsxDeletePermissions"
       },
       {
         "Action": [
           "fsx:DescribeVolumes"
         ],
         "Effect": "Allow",
-        "Resource": "arn:aws:fsx:*:*:volume/*"
+        "Resource": "arn:aws:fsx:*:*:volume/*",
+        "Sid": "FsxDescribePermissions"
       },
       {
         "Action": [
@@ -290,7 +323,8 @@
         "Effect": "Allow",
         "Resource": [
           "arn:aws:fsx:*:*:volume/*"
-        ]
+        ],
+        "Sid": "FsxVolumeTagPermissions"
       },
       {
         "Action": [
@@ -302,7 +336,8 @@
           "arn:aws:fsx:*:*:storage-virtual-machine/*",
           "arn:aws:fsx:*:*:backup/*",
           "arn:aws:fsx:*:*:volume/*"
-        ]
+        ],
+        "Sid": "FsxBackupTagPermissions"
       },
       {
         "Action": [
@@ -315,14 +350,16 @@
           }
         },
         "Effect": "Allow",
-        "Resource": "arn:aws:fsx:*:*:volume/*"
+        "Resource": "arn:aws:fsx:*:*:volume/*",
+        "Sid": "FsxVolumePermissions"
       },
       {
         "Action": [
           "ds:DescribeDirectories"
         ],
         "Effect": "Allow",
-        "Resource": "*"
+        "Resource": "*",
+        "Sid": "DSPermissions"
       },
       {
         "Action": [
@@ -347,7 +384,8 @@
           "cloudformation:TagResource"
         ],
         "Effect": "Allow",
-        "Resource": "arn:aws:cloudformation:*:*:*/*/*"
+        "Resource": "arn:aws:cloudformation:*:*:*/*/*",
+        "Sid": "CloudformationChangeSetPermissions"
       },
       {
         "Action": [
@@ -358,7 +396,8 @@
         "Resource": [
           "arn:aws:redshift:*:*:snapshot:*/*",
           "arn:aws:redshift:*:*:cluster:*"
-        ]
+        ],
+        "Sid": "RedshiftClusterSnapshotPermissions"
       },
       {
         "Action": [
@@ -367,27 +406,16 @@
         "Effect": "Allow",
         "Resource": [
           "arn:aws:redshift:*:*:cluster:*"
-        ]
+        ],
+        "Sid": "RedshiftClusterPermissions"
       },
       {
         "Action": [
           "redshift:DescribeTableRestoreStatus"
         ],
         "Effect": "Allow",
-        "Resource": "*"
-      },
-      {
-        "Action": [
-          "ec2:DescribeAccountAttributes",
-          "ec2:DescribeAddresses",
-          "ec2:DescribeAvailabilityZones",
-          "ec2:DescribeSecurityGroups",
-          "ec2:DescribeSubnets",
-          "ec2:DescribeVpcs",
-          "ec2:DescribeInternetGateways"
-        ],
-        "Effect": "Allow",
-        "Resource": "*"
+        "Resource": "*",
+        "Sid": "RedshiftTablePermissions"
       },
       {
         "Action": [
@@ -402,7 +430,8 @@
         "Effect": "Allow",
         "Resource": [
           "arn:aws:timestream:*:*:database/*"
-        ]
+        ],
+        "Sid": "TimestreamResourcePermissions"
       },
       {
         "Action": [
@@ -411,7 +440,8 @@
         "Effect": "Allow",
         "Resource": [
           "*"
-        ]
+        ],
+        "Sid": "TimestreamEndpointPermissions"
       }
     ],
     "Version": "2012-10-17"
@@ -564,6 +594,76 @@
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "ec2:DescribeVolumes",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "ec2:DescribeAccountAttributes",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:DescribeAccountAttributes",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "ec2:DescribeAddresses",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:DescribeAddresses",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "ec2:DescribeAvailabilityZones",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:DescribeAvailabilityZones",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "ec2:DescribeSecurityGroups",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:DescribeSecurityGroups",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "ec2:DescribeSubnets",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:DescribeSubnets",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "ec2:DescribeVpcs",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:DescribeVpcs",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "ec2:DescribeInternetGateways",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:DescribeInternetGateways",
       "privesc": false,
       "resource_exposure": false
     },
@@ -1030,6 +1130,34 @@
       "resource_exposure": false
     },
     {
+      "access_level": "Write",
+      "action": "ec2:RestoreSnapshotTier",
+      "condition": {
+        "Null": {
+          "aws:ResourceTag/aws:backup:source-resource": "false"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:RestoreSnapshotTier",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "ec2:DescribeSnapshotTierStatus",
+      "condition": {
+        "Null": {
+          "aws:ResourceTag/aws:backup:source-resource": "false"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:DescribeSnapshotTierStatus",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
       "access_level": "Tagging",
       "action": "ec2:CreateTags",
       "condition": {
@@ -1341,76 +1469,6 @@
       "resource_exposure": false
     },
     {
-      "access_level": "List",
-      "action": "ec2:DescribeAccountAttributes",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:DescribeAccountAttributes",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "ec2:DescribeAddresses",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:DescribeAddresses",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "ec2:DescribeAvailabilityZones",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:DescribeAvailabilityZones",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "ec2:DescribeSecurityGroups",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:DescribeSecurityGroups",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "ec2:DescribeSubnets",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:DescribeSubnets",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "ec2:DescribeVpcs",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:DescribeVpcs",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "ec2:DescribeInternetGateways",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:DescribeInternetGateways",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
       "access_level": "Write",
       "action": "timestream:StartAwsRestoreJob",
       "condition": null,
@@ -1497,6 +1555,6 @@
   "resource_exposure": true,
   "undocumented_actions": false,
   "unknown_actions": [],
-  "updatedate": "2023-09-06T20:41:44+00:00",
-  "version": "v18"
+  "updatedate": "2023-11-27T19:38:10+00:00",
+  "version": "v19"
 }

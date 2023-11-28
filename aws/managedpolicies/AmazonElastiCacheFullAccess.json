@@ -6,7 +6,7 @@
     "Write"
   ],
   "arn": "arn:aws:iam::aws:policy/AmazonElastiCacheFullAccess",
-  "createdate": "2017-12-07T17:48:26Z",
+  "createdate": "2023-11-28T03:49:56Z",
   "credentials_exposure": false,
   "data_access": false,
   "deprecated": false,
@@ -17,7 +17,8 @@
           "elasticache:*"
         ],
         "Effect": "Allow",
-        "Resource": "*"
+        "Resource": "*",
+        "Sid": "ElastiCacheManagementActions"
       },
       {
         "Action": [
@@ -29,7 +30,123 @@
           }
         },
         "Effect": "Allow",
-        "Resource": "arn:aws:iam::*:role/aws-service-role/elasticache.amazonaws.com/AWSServiceRoleForElastiCache"
+        "Resource": "arn:aws:iam::*:role/aws-service-role/elasticache.amazonaws.com/AWSServiceRoleForElastiCache",
+        "Sid": "CreateServiceLinkedRole"
+      },
+      {
+        "Action": [
+          "ec2:CreateVpcEndpoint"
+        ],
+        "Condition": {
+          "StringLike": {
+            "ec2:VpceServiceName": "com.amazonaws.elasticache.serverless.*"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:ec2:*:*:vpc-endpoint/*",
+        "Sid": "CreateVPCEndpoints"
+      },
+      {
+        "Action": [
+          "ec2:CreateVpcEndpoint"
+        ],
+        "Effect": "Allow",
+        "NotResource": "arn:aws:ec2:*:*:vpc-endpoint/*",
+        "Sid": "AllowAccessToElastiCacheTaggedVpcEndpoints"
+      },
+      {
+        "Action": [
+          "ec2:CreateTags"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:RequestTag/AmazonElastiCacheManaged": "true",
+            "ec2:CreateAction": "CreateVpcEndpoint"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:ec2:*:*:vpc-endpoint/*",
+        "Sid": "TagVPCEndpointsOnCreation"
+      },
+      {
+        "Action": [
+          "ec2:DescribeVpcs",
+          "ec2:DescribeSubnets",
+          "ec2:DescribeSecurityGroups"
+        ],
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "AllowAccessToEc2"
+      },
+      {
+        "Action": [
+          "kms:DescribeKey",
+          "kms:ListAliases",
+          "kms:ListKeys"
+        ],
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "AllowAccessToKMS"
+      },
+      {
+        "Action": [
+          "cloudwatch:GetMetricStatistics",
+          "cloudwatch:GetMetricData"
+        ],
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "AllowAccessToCloudWatch"
+      },
+      {
+        "Action": [
+          "application-autoscaling:DescribeScalableTargets",
+          "application-autoscaling:DescribeScheduledActions",
+          "application-autoscaling:DescribeScalingPolicies",
+          "application-autoscaling:DescribeScalingActivities"
+        ],
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "AllowAccessToAutoScaling"
+      },
+      {
+        "Action": [
+          "logs:DescribeLogGroups"
+        ],
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "DescribeLogGroups"
+      },
+      {
+        "Action": [
+          "firehose:ListDeliveryStreams"
+        ],
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "ListLogDeliveryStreams"
+      },
+      {
+        "Action": [
+          "s3:ListAllMyBuckets"
+        ],
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "DescribeS3Buckets"
+      },
+      {
+        "Action": [
+          "outposts:ListOutposts"
+        ],
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "AllowAccessToOutposts"
+      },
+      {
+        "Action": [
+          "sns:ListTopics"
+        ],
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "AllowAccessToSNS"
       }
     ],
     "Version": "2012-10-17"
@@ -718,6 +835,215 @@
       "effective_action": "iam:CreateServiceLinkedRole",
       "privesc": true,
       "resource_exposure": true
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:CreateVpcEndpoint",
+      "condition": {
+        "StringLike": {
+          "ec2:VpceServiceName": "com.amazonaws.elasticache.serverless.*"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:CreateVpcEndpoint",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:CreateVpcEndpoint",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:CreateVpcEndpoint",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Tagging",
+      "action": "ec2:CreateTags",
+      "condition": {
+        "StringEquals": {
+          "aws:RequestTag/AmazonElastiCacheManaged": "true",
+          "ec2:CreateAction": "CreateVpcEndpoint"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:CreateTags",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "ec2:DescribeVpcs",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:DescribeVpcs",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "ec2:DescribeSubnets",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:DescribeSubnets",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "ec2:DescribeSecurityGroups",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:DescribeSecurityGroups",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "kms:DescribeKey",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "kms:DescribeKey",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "kms:ListAliases",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "kms:ListAliases",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "kms:ListKeys",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "kms:ListKeys",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "cloudwatch:GetMetricStatistics",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudwatch:GetMetricStatistics",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "cloudwatch:GetMetricData",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudwatch:GetMetricData",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "application-autoscaling:DescribeScalableTargets",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "application-autoscaling:DescribeScalableTargets",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "application-autoscaling:DescribeScheduledActions",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "application-autoscaling:DescribeScheduledActions",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "application-autoscaling:DescribeScalingPolicies",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "application-autoscaling:DescribeScalingPolicies",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "application-autoscaling:DescribeScalingActivities",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "application-autoscaling:DescribeScalingActivities",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "logs:DescribeLogGroups",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "logs:DescribeLogGroups",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "firehose:ListDeliveryStreams",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "firehose:ListDeliveryStreams",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "s3:ListAllMyBuckets",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3:ListAllMyBuckets",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "outposts:ListOutposts",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "outposts:ListOutposts",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "sns:ListTopics",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sns:ListTopics",
+      "privesc": false,
+      "resource_exposure": false
     }
   ],
   "malformed": false,
@@ -726,6 +1052,6 @@
   "resource_exposure": true,
   "undocumented_actions": false,
   "unknown_actions": [],
-  "updatedate": "2017-12-07T17:48:26+00:00",
-  "version": "v2"
+  "updatedate": "2023-11-28T03:49:56+00:00",
+  "version": "v3"
 }

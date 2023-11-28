@@ -7,7 +7,7 @@
     "Permissions management"
   ],
   "arn": "arn:aws:iam::aws:policy/AWSBackupFullAccess",
-  "createdate": "2023-09-06T20:47:03Z",
+  "createdate": "2023-11-27T17:33:10Z",
   "credentials_exposure": false,
   "data_access": false,
   "deprecated": false,
@@ -18,14 +18,16 @@
           "backup:*"
         ],
         "Effect": "Allow",
-        "Resource": "*"
+        "Resource": "*",
+        "Sid": "AwsBackupAllAccessPermissions"
       },
       {
         "Action": [
           "backup-storage:*"
         ],
         "Effect": "Allow",
-        "Resource": "*"
+        "Resource": "*",
+        "Sid": "AwsBackupStorageAllAccessPermissions"
       },
       {
         "Action": [
@@ -44,7 +46,8 @@
           "rds:DescribeDBClusterAutomatedBackups"
         ],
         "Effect": "Allow",
-        "Resource": "*"
+        "Resource": "*",
+        "Sid": "RdsPermissions"
       },
       {
         "Action": [
@@ -59,7 +62,8 @@
           }
         },
         "Effect": "Allow",
-        "Resource": "*"
+        "Resource": "*",
+        "Sid": "RdsDeletePermissions"
       },
       {
         "Action": [
@@ -67,7 +71,8 @@
           "dynamodb:ListTables"
         ],
         "Effect": "Allow",
-        "Resource": "*"
+        "Resource": "*",
+        "Sid": "DynamoDbPermissions"
       },
       {
         "Action": [
@@ -81,14 +86,16 @@
           }
         },
         "Effect": "Allow",
-        "Resource": "*"
+        "Resource": "*",
+        "Sid": "DynamoDbDeleteBackupPermissions"
       },
       {
         "Action": [
           "elasticfilesystem:DescribeFilesystems"
         ],
         "Effect": "Allow",
-        "Resource": "arn:aws:elasticfilesystem:*:*:file-system/*"
+        "Resource": "arn:aws:elasticfilesystem:*:*:file-system/*",
+        "Sid": "EfsFileSystemPermissions"
       },
       {
         "Action": [
@@ -103,10 +110,12 @@
           "ec2:DescribePlacementGroups",
           "ec2:DescribeInstances",
           "ec2:DescribeInstanceTypes",
-          "ec2:DescribeVpcEndpoints"
+          "ec2:DescribeVpcEndpoints",
+          "ec2:DescribeAddresses"
         ],
         "Effect": "Allow",
-        "Resource": "*"
+        "Resource": "*",
+        "Sid": "Ec2Permissions"
       },
       {
         "Action": [
@@ -121,7 +130,8 @@
           }
         },
         "Effect": "Allow",
-        "Resource": "*"
+        "Resource": "*",
+        "Sid": "Ec2DeletePermissions"
       },
       {
         "Action": [
@@ -130,7 +140,8 @@
           "tag:GetResources"
         ],
         "Effect": "Allow",
-        "Resource": "*"
+        "Resource": "*",
+        "Sid": "ResourceGroupTaggingPermissions"
       },
       {
         "Action": [
@@ -138,14 +149,16 @@
           "storagegateway:DescribeStorediSCSIVolumes"
         ],
         "Effect": "Allow",
-        "Resource": "arn:aws:storagegateway:*:*:gateway/*/volume/*"
+        "Resource": "arn:aws:storagegateway:*:*:gateway/*/volume/*",
+        "Sid": "StorageGatewayVolumePermissions"
       },
       {
         "Action": [
           "storagegateway:ListGateways"
         ],
         "Effect": "Allow",
-        "Resource": "arn:aws:storagegateway:*:*:*"
+        "Resource": "arn:aws:storagegateway:*:*:*",
+        "Sid": "StorageGatewayPermissions"
       },
       {
         "Action": [
@@ -154,7 +167,8 @@
           "storagegateway:ListLocalDisks"
         ],
         "Effect": "Allow",
-        "Resource": "arn:aws:storagegateway:*:*:gateway/*"
+        "Resource": "arn:aws:storagegateway:*:*:gateway/*",
+        "Sid": "StorageGatewayGatewayPermissions"
       },
       {
         "Action": [
@@ -162,29 +176,35 @@
           "iam:GetRole"
         ],
         "Effect": "Allow",
-        "Resource": "*"
+        "Resource": "*",
+        "Sid": "IamRolePermissions"
       },
       {
         "Action": [
           "iam:PassRole"
         ],
         "Condition": {
-          "StringLike": {
-            "iam:PassedToService": "backup.amazonaws.com"
+          "StringEquals": {
+            "iam:PassedToService": [
+              "backup.amazonaws.com",
+              "restore-testing.backup.amazonaws.com"
+            ]
           }
         },
         "Effect": "Allow",
         "Resource": [
           "arn:aws:iam::*:role/*AwsBackup*",
           "arn:aws:iam::*:role/*AWSBackup*"
-        ]
+        ],
+        "Sid": "IamPassRolePermissions"
       },
       {
         "Action": [
           "organizations:DescribeOrganization"
         ],
         "Effect": "Allow",
-        "Resource": "*"
+        "Resource": "*",
+        "Sid": "AwsOrganizationsPermissions"
       },
       {
         "Action": [
@@ -194,7 +214,8 @@
           "kms:ListAliases"
         ],
         "Effect": "Allow",
-        "Resource": "*"
+        "Resource": "*",
+        "Sid": "KmsPermissions"
       },
       {
         "Action": [
@@ -212,7 +233,8 @@
           }
         },
         "Effect": "Allow",
-        "Resource": "*"
+        "Resource": "*",
+        "Sid": "KmsCreateGrantPermissions"
       },
       {
         "Action": [
@@ -220,7 +242,8 @@
           "ssm:GetCommandInvocation"
         ],
         "Effect": "Allow",
-        "Resource": "*"
+        "Resource": "*",
+        "Sid": "SystemManagerCommandPermissions"
       },
       {
         "Action": [
@@ -230,35 +253,19 @@
         "Resource": [
           "arn:aws:ssm:*:*:document/AWSEC2-CreateVssSnapshot",
           "arn:aws:ec2:*:*:instance/*"
-        ]
-      },
-      {
-        "Action": [
-          "fsx:DescribeFileSystems"
         ],
-        "Effect": "Allow",
-        "Resource": "*"
+        "Sid": "SystemManagerSendCommandPermissions"
       },
       {
         "Action": [
-          "fsx:DescribeBackups"
-        ],
-        "Effect": "Allow",
-        "Resource": "*"
-      },
-      {
-        "Action": [
-          "fsx:DescribeVolumes"
-        ],
-        "Effect": "Allow",
-        "Resource": "arn:aws:fsx:*:*:volume/*/*"
-      },
-      {
-        "Action": [
+          "fsx:DescribeFileSystems",
+          "fsx:DescribeBackups",
+          "fsx:DescribeVolumes",
           "fsx:DescribeStorageVirtualMachines"
         ],
         "Effect": "Allow",
-        "Resource": "arn:aws:fsx:*:*:storage-virtual-machine/*/*"
+        "Resource": "*",
+        "Sid": "FsxPermissions"
       },
       {
         "Action": [
@@ -272,14 +279,16 @@
           }
         },
         "Effect": "Allow",
-        "Resource": "arn:aws:fsx:*:*:backup/*"
+        "Resource": "arn:aws:fsx:*:*:backup/*",
+        "Sid": "FsxDeletePermissions"
       },
       {
         "Action": [
           "ds:DescribeDirectories"
         ],
         "Effect": "Allow",
-        "Resource": "*"
+        "Resource": "*",
+        "Sid": "DirectoryServicePermissions"
       },
       {
         "Action": [
@@ -287,11 +296,15 @@
         ],
         "Condition": {
           "StringEquals": {
-            "iam:AWSServiceName": "backup.amazonaws.com"
+            "iam:AWSServiceName": [
+              "backup.amazonaws.com",
+              "restore-testing.backup.amazonaws.com"
+            ]
           }
         },
         "Effect": "Allow",
-        "Resource": "*"
+        "Resource": "*",
+        "Sid": "IamCreateServiceLinkedRolePermissions"
       },
       {
         "Action": [
@@ -313,7 +326,8 @@
           "backup-gateway:UpdateHypervisor"
         ],
         "Effect": "Allow",
-        "Resource": "*"
+        "Resource": "*",
+        "Sid": "BackupGatewayPermissions"
       },
       {
         "Action": [
@@ -323,14 +337,16 @@
           "backup-gateway:StartVirtualMachinesMetadataSync"
         ],
         "Effect": "Allow",
-        "Resource": "arn:aws:backup-gateway:*:*:hypervisor/*"
+        "Resource": "arn:aws:backup-gateway:*:*:hypervisor/*",
+        "Sid": "BackupGatewayHypervisorPermissions"
       },
       {
         "Action": [
           "backup-gateway:GetVirtualMachine"
         ],
         "Effect": "Allow",
-        "Resource": "arn:aws:backup-gateway:*:*:vm/*"
+        "Resource": "arn:aws:backup-gateway:*:*:vm/*",
+        "Sid": "BackupGatewayVirtualMachinePermissions"
       },
       {
         "Action": [
@@ -339,14 +355,16 @@
           "backup-gateway:PutBandwidthRateLimitSchedule"
         ],
         "Effect": "Allow",
-        "Resource": "arn:aws:backup-gateway:*:*:gateway/*"
+        "Resource": "arn:aws:backup-gateway:*:*:gateway/*",
+        "Sid": "BackupGatewayGatewayPermissions"
       },
       {
         "Action": [
           "cloudwatch:GetMetricData"
         ],
         "Effect": "Allow",
-        "Resource": "*"
+        "Resource": "*",
+        "Sid": "CloudWatchPermissions"
       },
       {
         "Action": [
@@ -356,21 +374,24 @@
         "Effect": "Allow",
         "Resource": [
           "arn:aws:timestream:*:*:database/*"
-        ]
+        ],
+        "Sid": "TimestreamDatabasePermissions"
       },
       {
         "Action": [
           "timestream:DescribeEndpoints"
         ],
         "Effect": "Allow",
-        "Resource": "*"
+        "Resource": "*",
+        "Sid": "TimestreamPermissions"
       },
       {
         "Action": [
           "s3:ListAllMyBuckets"
         ],
         "Effect": "Allow",
-        "Resource": "arn:aws:s3:::*"
+        "Resource": "arn:aws:s3:::*",
+        "Sid": "S3BucketPermissions"
       },
       {
         "Action": [
@@ -385,7 +406,8 @@
           "arn:aws:redshift:*:*:subnetgroup:*",
           "arn:aws:redshift:*:*:snapshot:*/*",
           "arn:aws:redshift:*:*:snapshotschedule:*"
-        ]
+        ],
+        "Sid": "RedshiftResourcesPermissions"
       },
       {
         "Action": [
@@ -395,14 +417,8 @@
           "redshift:DescribeClusterTracks"
         ],
         "Effect": "Allow",
-        "Resource": "*"
-      },
-      {
-        "Action": [
-          "ec2:DescribeAddresses"
-        ],
-        "Effect": "Allow",
-        "Resource": "*"
+        "Resource": "*",
+        "Sid": "RedshiftPermissions"
       },
       {
         "Action": [
@@ -411,30 +427,27 @@
         "Effect": "Allow",
         "Resource": [
           "arn:aws:cloudformation:*:*:stack/*"
-        ]
+        ],
+        "Sid": "CloudFormationStackPermissions"
       },
       {
         "Action": [
           "ssm-sap:GetOperation",
-          "ssm-sap:ListDatabases"
-        ],
-        "Effect": "Allow",
-        "Resource": "*"
-      },
-      {
-        "Action": [
+          "ssm-sap:ListDatabases",
           "ssm-sap:GetDatabase",
           "ssm-sap:ListTagsForResource"
         ],
         "Effect": "Allow",
-        "Resource": "arn:aws:ssm-sap:*:*:*"
+        "Resource": "*",
+        "Sid": "SystemsManagerForSapPermissions"
       },
       {
         "Action": [
           "ram:GetResourceShareAssociations"
         ],
         "Effect": "Allow",
-        "Resource": "*"
+        "Resource": "*",
+        "Sid": "ResourceAccessManagerPermissions"
       }
     ],
     "Version": "2012-10-17"
@@ -1739,6 +1752,16 @@
       "resource_exposure": false
     },
     {
+      "access_level": "List",
+      "action": "ec2:DescribeAddresses",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:DescribeAddresses",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
       "access_level": "Write",
       "action": "ec2:DeleteSnapshot",
       "condition": {
@@ -1884,8 +1907,11 @@
       "access_level": "Write",
       "action": "iam:PassRole",
       "condition": {
-        "StringLike": {
-          "iam:PassedToService": "backup.amazonaws.com"
+        "StringEquals": {
+          "iam:PassedToService": [
+            "backup.amazonaws.com",
+            "restore-testing.backup.amazonaws.com"
+          ]
         }
       },
       "credentials_exposure": false,
@@ -2065,7 +2091,10 @@
       "action": "iam:CreateServiceLinkedRole",
       "condition": {
         "StringEquals": {
-          "iam:AWSServiceName": "backup.amazonaws.com"
+          "iam:AWSServiceName": [
+            "backup.amazonaws.com",
+            "restore-testing.backup.amazonaws.com"
+          ]
         }
       },
       "credentials_exposure": false,
@@ -2446,16 +2475,6 @@
     },
     {
       "access_level": "List",
-      "action": "ec2:DescribeAddresses",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:DescribeAddresses",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
       "action": "cloudformation:ListStacks",
       "condition": null,
       "credentials_exposure": false,
@@ -2521,6 +2540,6 @@
   "resource_exposure": true,
   "undocumented_actions": false,
   "unknown_actions": [],
-  "updatedate": "2023-09-06T20:47:03+00:00",
-  "version": "v16"
+  "updatedate": "2023-11-27T17:33:10+00:00",
+  "version": "v17"
 }
