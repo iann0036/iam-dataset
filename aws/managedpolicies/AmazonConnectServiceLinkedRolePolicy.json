@@ -7,7 +7,7 @@
     "Permissions management"
   ],
   "arn": "arn:aws:iam::aws:policy/aws-service-role/AmazonConnectServiceLinkedRolePolicy",
-  "createdate": "2023-11-15T22:04:36Z",
+  "createdate": "2023-11-28T16:05:08Z",
   "credentials_exposure": true,
   "data_access": true,
   "deprecated": false,
@@ -193,6 +193,20 @@
         "Effect": "Allow",
         "Resource": "*",
         "Sid": "AllowPutMetricsForConnectNamespace"
+      },
+      {
+        "Action": [
+          "sms-voice:SendTextMessage",
+          "sms-voice:DescribePhoneNumbers"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:sms-voice:*:*:phone-number/*",
+        "Sid": "AllowSMSVoiceOperationsForConnect"
       }
     ],
     "Version": "2012-10-17"
@@ -3171,6 +3185,34 @@
       "effective_action": "cloudwatch:PutMetricData",
       "privesc": false,
       "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "sms-voice:SendTextMessage",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sms-voice:SendTextMessage",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "sms-voice:DescribePhoneNumbers",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sms-voice:DescribePhoneNumbers",
+      "privesc": false,
+      "resource_exposure": false
     }
   ],
   "malformed": false,
@@ -3179,6 +3221,6 @@
   "resource_exposure": true,
   "undocumented_actions": false,
   "unknown_actions": [],
-  "updatedate": "2023-11-15T22:04:36+00:00",
-  "version": "v13"
+  "updatedate": "2023-11-28T16:05:08+00:00",
+  "version": "v14"
 }
