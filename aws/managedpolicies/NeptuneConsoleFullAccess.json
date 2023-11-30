@@ -6,7 +6,7 @@
     "Write"
   ],
   "arn": "arn:aws:iam::aws:policy/NeptuneConsoleFullAccess",
-  "createdate": "2020-09-02T17:25:07Z",
+  "createdate": "2023-11-30T07:32:44Z",
   "credentials_exposure": false,
   "data_access": true,
   "deprecated": false,
@@ -28,7 +28,8 @@
         "Effect": "Allow",
         "Resource": [
           "arn:aws:rds:*:*:*"
-        ]
+        ],
+        "Sid": "AllowNeptuneCreate"
       },
       {
         "Action": [
@@ -97,7 +98,8 @@
         "Effect": "Allow",
         "Resource": [
           "*"
-        ]
+        ],
+        "Sid": "AllowManagementPermissionsForRDS"
       },
       {
         "Action": [
@@ -164,7 +166,8 @@
         "Effect": "Allow",
         "Resource": [
           "*"
-        ]
+        ],
+        "Sid": "AllowOtherDepedentPermissions"
       },
       {
         "Action": [
@@ -176,7 +179,8 @@
           }
         },
         "Effect": "Allow",
-        "Resource": "*"
+        "Resource": "*",
+        "Sid": "AllowPassRoleForNeptune"
       },
       {
         "Action": [
@@ -188,7 +192,62 @@
           }
         },
         "Effect": "Allow",
-        "Resource": "arn:aws:iam::*:role/aws-service-role/rds.amazonaws.com/AWSServiceRoleForRDS"
+        "Resource": "arn:aws:iam::*:role/aws-service-role/rds.amazonaws.com/AWSServiceRoleForRDS",
+        "Sid": "AllowCreateSLRForNeptune"
+      },
+      {
+        "Action": [
+          "neptune-graph:CreateGraph",
+          "neptune-graph:DeleteGraph",
+          "neptune-graph:GetGraph",
+          "neptune-graph:ListGraphs",
+          "neptune-graph:UpdateGraph",
+          "neptune-graph:ResetGraph",
+          "neptune-graph:CreateGraphSnapshot",
+          "neptune-graph:DeleteGraphSnapshot",
+          "neptune-graph:GetGraphSnapshot",
+          "neptune-graph:ListGraphSnapshots",
+          "neptune-graph:RestoreGraphFromSnapshot",
+          "neptune-graph:CreatePrivateGraphEndpoint",
+          "neptune-graph:GetPrivateGraphEndpoint",
+          "neptune-graph:ListPrivateGraphEndpoints",
+          "neptune-graph:DeletePrivateGraphEndpoint",
+          "neptune-graph:CreateGraphUsingImportTask",
+          "neptune-graph:GetImportTask",
+          "neptune-graph:ListImportTasks",
+          "neptune-graph:CancelImportTask"
+        ],
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:neptune-graph:*:*:*"
+        ],
+        "Sid": "AllowManagementPermissionsForNeptuneAnalytics"
+      },
+      {
+        "Action": [
+          "iam:PassRole"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "iam:passedToService": "neptune-graph.amazonaws.com"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "AllowPassRoleForNeptuneAnalytics"
+      },
+      {
+        "Action": [
+          "iam:CreateServiceLinkedRole"
+        ],
+        "Condition": {
+          "StringLike": {
+            "iam:AWSServiceName": "neptune-graph.amazonaws.com"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:iam::*:role/aws-service-role/neptune-graph.amazonaws.com/AWSServiceRoleForNeptuneGraph",
+        "Sid": "AllowCreateSLRForNeptuneAnalytics"
       }
     ],
     "Version": "2012-10-17"
@@ -1455,6 +1514,34 @@
       "effective_action": "iam:CreateServiceLinkedRole",
       "privesc": true,
       "resource_exposure": true
+    },
+    {
+      "access_level": "Write",
+      "action": "iam:PassRole",
+      "condition": {
+        "StringEquals": {
+          "iam:passedToService": "neptune-graph.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "iam:PassRole",
+      "privesc": true,
+      "resource_exposure": true
+    },
+    {
+      "access_level": "Write",
+      "action": "iam:CreateServiceLinkedRole",
+      "condition": {
+        "StringLike": {
+          "iam:AWSServiceName": "neptune-graph.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "iam:CreateServiceLinkedRole",
+      "privesc": true,
+      "resource_exposure": true
     }
   ],
   "malformed": false,
@@ -1462,7 +1549,84 @@
   "privesc": true,
   "resource_exposure": true,
   "undocumented_actions": false,
-  "unknown_actions": [],
-  "updatedate": "2020-09-02T17:25:07+00:00",
-  "version": "v4"
+  "unknown_actions": [
+    {
+      "action": "neptune-graph:CreateGraph",
+      "condition": null
+    },
+    {
+      "action": "neptune-graph:DeleteGraph",
+      "condition": null
+    },
+    {
+      "action": "neptune-graph:GetGraph",
+      "condition": null
+    },
+    {
+      "action": "neptune-graph:ListGraphs",
+      "condition": null
+    },
+    {
+      "action": "neptune-graph:UpdateGraph",
+      "condition": null
+    },
+    {
+      "action": "neptune-graph:ResetGraph",
+      "condition": null
+    },
+    {
+      "action": "neptune-graph:CreateGraphSnapshot",
+      "condition": null
+    },
+    {
+      "action": "neptune-graph:DeleteGraphSnapshot",
+      "condition": null
+    },
+    {
+      "action": "neptune-graph:GetGraphSnapshot",
+      "condition": null
+    },
+    {
+      "action": "neptune-graph:ListGraphSnapshots",
+      "condition": null
+    },
+    {
+      "action": "neptune-graph:RestoreGraphFromSnapshot",
+      "condition": null
+    },
+    {
+      "action": "neptune-graph:CreatePrivateGraphEndpoint",
+      "condition": null
+    },
+    {
+      "action": "neptune-graph:GetPrivateGraphEndpoint",
+      "condition": null
+    },
+    {
+      "action": "neptune-graph:ListPrivateGraphEndpoints",
+      "condition": null
+    },
+    {
+      "action": "neptune-graph:DeletePrivateGraphEndpoint",
+      "condition": null
+    },
+    {
+      "action": "neptune-graph:CreateGraphUsingImportTask",
+      "condition": null
+    },
+    {
+      "action": "neptune-graph:GetImportTask",
+      "condition": null
+    },
+    {
+      "action": "neptune-graph:ListImportTasks",
+      "condition": null
+    },
+    {
+      "action": "neptune-graph:CancelImportTask",
+      "condition": null
+    }
+  ],
+  "updatedate": "2023-11-30T07:32:44+00:00",
+  "version": "v5"
 }

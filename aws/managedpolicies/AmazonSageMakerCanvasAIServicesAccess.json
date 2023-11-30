@@ -2,10 +2,11 @@
   "access_levels": [
     "List",
     "Read",
+    "Tagging",
     "Write"
   ],
   "arn": "arn:aws:iam::aws:policy/AmazonSageMakerCanvasAIServicesAccess",
-  "createdate": "2023-09-30T00:15:02Z",
+  "createdate": "2023-11-29T14:47:09Z",
   "credentials_exposure": false,
   "data_access": false,
   "deprecated": false,
@@ -22,7 +23,8 @@
           "textract:GetExpenseAnalysis"
         ],
         "Effect": "Allow",
-        "Resource": "*"
+        "Resource": "*",
+        "Sid": "Textract"
       },
       {
         "Action": [
@@ -30,7 +32,8 @@
           "rekognition:DetectText"
         ],
         "Effect": "Allow",
-        "Resource": "*"
+        "Resource": "*",
+        "Sid": "Rekognition"
       },
       {
         "Action": [
@@ -43,15 +46,93 @@
           "comprehend:DetectDominantLanguage"
         ],
         "Effect": "Allow",
-        "Resource": "*"
+        "Resource": "*",
+        "Sid": "Comprehend"
       },
       {
         "Action": [
           "bedrock:InvokeModel",
-          "bedrock:ListFoundationModels"
+          "bedrock:ListFoundationModels",
+          "bedrock:InvokeModelWithResponseStream"
         ],
         "Effect": "Allow",
-        "Resource": "*"
+        "Resource": "*",
+        "Sid": "Bedrock"
+      },
+      {
+        "Action": [
+          "bedrock:CreateModelCustomizationJob",
+          "bedrock:CreateProvisionedModelThroughput",
+          "bedrock:TagResource"
+        ],
+        "Condition": {
+          "ForAnyValue:StringEquals": {
+            "aws:TagKeys": [
+              "SageMaker",
+              "Canvas"
+            ]
+          },
+          "StringEquals": {
+            "aws:RequestTag/Canvas": "true",
+            "aws:RequestTag/SageMaker": "true",
+            "aws:ResourceTag/Canvas": "true",
+            "aws:ResourceTag/SageMaker": "true"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:bedrock:*:*:model-customization-job/*",
+          "arn:aws:bedrock:*:*:custom-model/*",
+          "arn:aws:bedrock:*:*:provisioned-model/*"
+        ],
+        "Sid": "CreateBedrockResourcesPermission"
+      },
+      {
+        "Action": [
+          "bedrock:GetModelCustomizationJob",
+          "bedrock:GetCustomModel",
+          "bedrock:GetProvisionedModelThroughput",
+          "bedrock:StopModelCustomizationJob",
+          "bedrock:DeleteProvisionedModelThroughput"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceTag/Canvas": "true",
+            "aws:ResourceTag/SageMaker": "true"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:bedrock:*:*:model-customization-job/*",
+          "arn:aws:bedrock:*:*:custom-model/*",
+          "arn:aws:bedrock:*:*:provisioned-model/*"
+        ],
+        "Sid": "GetStopAndDeleteBedrockResourcesPermission"
+      },
+      {
+        "Action": [
+          "bedrock:CreateModelCustomizationJob"
+        ],
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:bedrock:*::foundation-model/*"
+        ],
+        "Sid": "FoundationModelPermission"
+      },
+      {
+        "Action": [
+          "iam:PassRole"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "iam:PassedToService": "bedrock.amazonaws.com"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:iam::*:role/*"
+        ],
+        "Sid": "BedrockFineTuningPassRole"
       }
     ],
     "Version": "2012-10-17"
@@ -236,14 +317,192 @@
       "effective_action": "bedrock:ListFoundationModels",
       "privesc": false,
       "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "bedrock:InvokeModelWithResponseStream",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "bedrock:InvokeModelWithResponseStream",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "bedrock:CreateModelCustomizationJob",
+      "condition": {
+        "ForAnyValue:StringEquals": {
+          "aws:TagKeys": [
+            "SageMaker",
+            "Canvas"
+          ]
+        },
+        "StringEquals": {
+          "aws:RequestTag/Canvas": "true",
+          "aws:RequestTag/SageMaker": "true",
+          "aws:ResourceTag/Canvas": "true",
+          "aws:ResourceTag/SageMaker": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "bedrock:CreateModelCustomizationJob",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "bedrock:CreateProvisionedModelThroughput",
+      "condition": {
+        "ForAnyValue:StringEquals": {
+          "aws:TagKeys": [
+            "SageMaker",
+            "Canvas"
+          ]
+        },
+        "StringEquals": {
+          "aws:RequestTag/Canvas": "true",
+          "aws:RequestTag/SageMaker": "true",
+          "aws:ResourceTag/Canvas": "true",
+          "aws:ResourceTag/SageMaker": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "bedrock:CreateProvisionedModelThroughput",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Tagging",
+      "action": "bedrock:TagResource",
+      "condition": {
+        "ForAnyValue:StringEquals": {
+          "aws:TagKeys": [
+            "SageMaker",
+            "Canvas"
+          ]
+        },
+        "StringEquals": {
+          "aws:RequestTag/Canvas": "true",
+          "aws:RequestTag/SageMaker": "true",
+          "aws:ResourceTag/Canvas": "true",
+          "aws:ResourceTag/SageMaker": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "bedrock:TagResource",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "bedrock:GetModelCustomizationJob",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/Canvas": "true",
+          "aws:ResourceTag/SageMaker": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "bedrock:GetModelCustomizationJob",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "bedrock:GetCustomModel",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/Canvas": "true",
+          "aws:ResourceTag/SageMaker": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "bedrock:GetCustomModel",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "bedrock:GetProvisionedModelThroughput",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/Canvas": "true",
+          "aws:ResourceTag/SageMaker": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "bedrock:GetProvisionedModelThroughput",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "bedrock:StopModelCustomizationJob",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/Canvas": "true",
+          "aws:ResourceTag/SageMaker": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "bedrock:StopModelCustomizationJob",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "bedrock:DeleteProvisionedModelThroughput",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/Canvas": "true",
+          "aws:ResourceTag/SageMaker": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "bedrock:DeleteProvisionedModelThroughput",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "bedrock:CreateModelCustomizationJob",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "bedrock:CreateModelCustomizationJob",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "iam:PassRole",
+      "condition": {
+        "StringEquals": {
+          "iam:PassedToService": "bedrock.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "iam:PassRole",
+      "privesc": true,
+      "resource_exposure": true
     }
   ],
   "malformed": false,
   "name": "AmazonSageMakerCanvasAIServicesAccess",
-  "privesc": false,
-  "resource_exposure": false,
+  "privesc": true,
+  "resource_exposure": true,
   "undocumented_actions": false,
   "unknown_actions": [],
-  "updatedate": "2023-09-30T00:15:02+00:00",
-  "version": "v2"
+  "updatedate": "2023-11-29T14:47:09+00:00",
+  "version": "v3"
 }
