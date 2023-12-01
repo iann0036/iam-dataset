@@ -7,7 +7,7 @@
     "Permissions management"
   ],
   "arn": "arn:aws:iam::aws:policy/AmazonSageMakerFullAccess",
-  "createdate": "2022-11-30T17:14:54Z",
+  "createdate": "2023-11-30T13:40:20Z",
   "credentials_exposure": true,
   "data_access": true,
   "deprecated": false,
@@ -25,7 +25,8 @@
           "arn:aws:sagemaker:*:*:app/*",
           "arn:aws:sagemaker:*:*:space/*",
           "arn:aws:sagemaker:*:*:flow-definition/*"
-        ]
+        ],
+        "Sid": "AllowAllNonAdminSageMakerActions"
       },
       {
         "Action": [
@@ -34,7 +35,8 @@
         "Effect": "Allow",
         "Resource": [
           "arn:aws:sagemaker:*:*:app/*"
-        ]
+        ],
+        "Sid": "AllowAddTagsForApp"
       },
       {
         "Action": [
@@ -45,11 +47,97 @@
           "sagemaker:ListUserProfiles",
           "sagemaker:DescribeSpace",
           "sagemaker:ListSpaces",
-          "sagemaker:*App",
+          "sagemaker:DescribeApp",
           "sagemaker:ListApps"
         ],
         "Effect": "Allow",
-        "Resource": "*"
+        "Resource": "*",
+        "Sid": "AllowStudioActions"
+      },
+      {
+        "Action": [
+          "sagemaker:CreateApp",
+          "sagemaker:DeleteApp"
+        ],
+        "Condition": {
+          "Null": {
+            "sagemaker:OwnerUserProfileArn": "true"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:sagemaker:*:*:app/*/*/*/*",
+        "Sid": "AllowAppActionsForUserProfile"
+      },
+      {
+        "Action": [
+          "sagemaker:CreateApp",
+          "sagemaker:DeleteApp"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "sagemaker:SpaceSharingType": [
+              "Shared"
+            ]
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:sagemaker:*:*:app/${sagemaker:DomainId}/*/*/*",
+        "Sid": "AllowAppActionsForSharedSpaces"
+      },
+      {
+        "Action": [
+          "sagemaker:CreateSpace",
+          "sagemaker:UpdateSpace",
+          "sagemaker:DeleteSpace"
+        ],
+        "Condition": {
+          "Null": {
+            "sagemaker:OwnerUserProfileArn": "true"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:sagemaker:*:*:space/${sagemaker:DomainId}/*",
+        "Sid": "AllowMutatingActionsOnSharedSpacesWithoutOwner"
+      },
+      {
+        "Action": [
+          "sagemaker:CreateSpace",
+          "sagemaker:UpdateSpace",
+          "sagemaker:DeleteSpace"
+        ],
+        "Condition": {
+          "ArnLike": {
+            "sagemaker:OwnerUserProfileArn": "arn:aws:sagemaker:*:*:user-profile/${sagemaker:DomainId}/${sagemaker:UserProfileName}"
+          },
+          "StringEquals": {
+            "sagemaker:SpaceSharingType": [
+              "Private",
+              "Shared"
+            ]
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:sagemaker:*:*:space/${sagemaker:DomainId}/*",
+        "Sid": "RestrictMutatingActionsOnSpacesToOwnerUserProfile"
+      },
+      {
+        "Action": [
+          "sagemaker:CreateApp",
+          "sagemaker:DeleteApp"
+        ],
+        "Condition": {
+          "ArnLike": {
+            "sagemaker:OwnerUserProfileArn": "arn:aws:sagemaker:*:*:user-profile/${sagemaker:DomainId}/${sagemaker:UserProfileName}"
+          },
+          "StringEquals": {
+            "sagemaker:SpaceSharingType": [
+              "Private"
+            ]
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:sagemaker:*:*:app/${sagemaker:DomainId}/*/*/*",
+        "Sid": "RestrictMutatingActionsOnPrivateSpaceAppsToOwnerUserProfile"
       },
       {
         "Action": [
@@ -66,7 +154,8 @@
         "Effect": "Allow",
         "Resource": [
           "arn:aws:sagemaker:*:*:flow-definition/*"
-        ]
+        ],
+        "Sid": "AllowFlowDefinitionActions"
       },
       {
         "Action": [
@@ -172,7 +261,8 @@
           "tag:GetResources"
         ],
         "Effect": "Allow",
-        "Resource": "*"
+        "Resource": "*",
+        "Sid": "AllowAWSServiceActions"
       },
       {
         "Action": [
@@ -188,7 +278,8 @@
         "Effect": "Allow",
         "Resource": [
           "arn:aws:ecr:*:*:repository/*sagemaker*"
-        ]
+        ],
+        "Sid": "AllowECRActions"
       },
       {
         "Action": [
@@ -200,7 +291,8 @@
           "arn:aws:codecommit:*:*:*sagemaker*",
           "arn:aws:codecommit:*:*:*SageMaker*",
           "arn:aws:codecommit:*:*:*Sagemaker*"
-        ]
+        ],
+        "Sid": "AllowCodeCommitActions"
       },
       {
         "Action": [
@@ -211,7 +303,8 @@
         "Resource": [
           "arn:aws:codebuild:*:*:project/sagemaker*",
           "arn:aws:codebuild:*:*:build/*"
-        ]
+        ],
+        "Sid": "AllowCodeBuildActions"
       },
       {
         "Action": [
@@ -225,7 +318,8 @@
         "Resource": [
           "arn:aws:states:*:*:statemachine:*sagemaker*",
           "arn:aws:states:*:*:execution:*sagemaker*:*"
-        ]
+        ],
+        "Sid": "AllowStepFunctionsActions"
       },
       {
         "Action": [
@@ -236,7 +330,8 @@
         "Effect": "Allow",
         "Resource": [
           "arn:aws:secretsmanager:*:*:secret:AmazonSageMaker-*"
-        ]
+        ],
+        "Sid": "AllowSecretManagerActions"
       },
       {
         "Action": [
@@ -249,14 +344,16 @@
           }
         },
         "Effect": "Allow",
-        "Resource": "*"
+        "Resource": "*",
+        "Sid": "AllowReadOnlySecretManagerActions"
       },
       {
         "Action": [
           "servicecatalog:ProvisionProduct"
         ],
         "Effect": "Allow",
-        "Resource": "*"
+        "Resource": "*",
+        "Sid": "AllowServiceCatalogProvisionProduct"
       },
       {
         "Action": [
@@ -269,7 +366,8 @@
           }
         },
         "Effect": "Allow",
-        "Resource": "*"
+        "Resource": "*",
+        "Sid": "AllowServiceCatalogTerminateUpdateProvisionProduct"
       },
       {
         "Action": [
@@ -284,7 +382,8 @@
           "arn:aws:s3:::*Sagemaker*",
           "arn:aws:s3:::*sagemaker*",
           "arn:aws:s3:::*aws-glue*"
-        ]
+        ],
+        "Sid": "AllowS3ObjectActions"
       },
       {
         "Action": [
@@ -298,7 +397,8 @@
         "Effect": "Allow",
         "Resource": [
           "arn:aws:s3:::*"
-        ]
+        ],
+        "Sid": "AllowS3GetObjectWithSageMakerExistingObjectTag"
       },
       {
         "Action": [
@@ -312,7 +412,8 @@
         "Effect": "Allow",
         "Resource": [
           "arn:aws:s3:::*"
-        ]
+        ],
+        "Sid": "AllowS3GetObjectWithServiceCatalogProvisioningExistingObjectTag"
       },
       {
         "Action": [
@@ -324,7 +425,8 @@
           "s3:PutBucketCors"
         ],
         "Effect": "Allow",
-        "Resource": "*"
+        "Resource": "*",
+        "Sid": "AllowS3BucketActions"
       },
       {
         "Action": [
@@ -336,7 +438,8 @@
           "arn:aws:s3:::*SageMaker*",
           "arn:aws:s3:::*Sagemaker*",
           "arn:aws:s3:::*sagemaker*"
-        ]
+        ],
+        "Sid": "AllowS3BucketACL"
       },
       {
         "Action": [
@@ -348,7 +451,8 @@
           "arn:aws:lambda:*:*:function:*sagemaker*",
           "arn:aws:lambda:*:*:function:*Sagemaker*",
           "arn:aws:lambda:*:*:function:*LabelingFunction*"
-        ]
+        ],
+        "Sid": "AllowLambdaInvokeFunction"
       },
       {
         "Action": [
@@ -360,7 +464,8 @@
           }
         },
         "Effect": "Allow",
-        "Resource": "arn:aws:iam::*:role/aws-service-role/sagemaker.application-autoscaling.amazonaws.com/AWSServiceRoleForApplicationAutoScaling_SageMakerEndpoint"
+        "Resource": "arn:aws:iam::*:role/aws-service-role/sagemaker.application-autoscaling.amazonaws.com/AWSServiceRoleForApplicationAutoScaling_SageMakerEndpoint",
+        "Sid": "AllowCreateServiceLinkedRoleForSageMakerApplicationAutoscaling"
       },
       {
         "Action": [
@@ -372,7 +477,8 @@
           }
         },
         "Effect": "Allow",
-        "Resource": "*"
+        "Resource": "*",
+        "Sid": "AllowCreateServiceLinkedRoleForRobomaker"
       },
       {
         "Action": [
@@ -385,7 +491,8 @@
           "arn:aws:sns:*:*:*SageMaker*",
           "arn:aws:sns:*:*:*Sagemaker*",
           "arn:aws:sns:*:*:*sagemaker*"
-        ]
+        ],
+        "Sid": "AllowSNSActions"
       },
       {
         "Action": [
@@ -401,7 +508,8 @@
           }
         },
         "Effect": "Allow",
-        "Resource": "arn:aws:iam::*:role/*AmazonSageMaker*"
+        "Resource": "arn:aws:iam::*:role/*AmazonSageMaker*",
+        "Sid": "AllowPassRoleForSageMakerRoles"
       },
       {
         "Action": [
@@ -413,7 +521,8 @@
           }
         },
         "Effect": "Allow",
-        "Resource": "arn:aws:iam::*:role/*"
+        "Resource": "arn:aws:iam::*:role/*",
+        "Sid": "AllowPassRoleToSageMaker"
       },
       {
         "Action": [
@@ -428,7 +537,8 @@
         "Effect": "Allow",
         "Resource": [
           "*"
-        ]
+        ],
+        "Sid": "AllowAthenaActions"
       },
       {
         "Action": [
@@ -440,7 +550,8 @@
           "arn:aws:glue:*:*:table/sagemaker_featurestore/*",
           "arn:aws:glue:*:*:catalog",
           "arn:aws:glue:*:*:database/*"
-        ]
+        ],
+        "Sid": "AllowGlueCreateTable"
       },
       {
         "Action": [
@@ -451,7 +562,8 @@
           "arn:aws:glue:*:*:table/sagemaker_featurestore/*",
           "arn:aws:glue:*:*:catalog",
           "arn:aws:glue:*:*:database/sagemaker_featurestore"
-        ]
+        ],
+        "Sid": "AllowGlueUpdateTable"
       },
       {
         "Action": [
@@ -462,7 +574,8 @@
           "arn:aws:glue:*:*:table/*/sagemaker_tmp_*",
           "arn:aws:glue:*:*:catalog",
           "arn:aws:glue:*:*:database/*"
-        ]
+        ],
+        "Sid": "AllowGlueDeleteTable"
       },
       {
         "Action": [
@@ -475,7 +588,8 @@
           "arn:aws:glue:*:*:table/*",
           "arn:aws:glue:*:*:catalog",
           "arn:aws:glue:*:*:database/*"
-        ]
+        ],
+        "Sid": "AllowGlueGetTablesAndDatabases"
       },
       {
         "Action": [
@@ -489,7 +603,8 @@
           "arn:aws:glue:*:*:database/sagemaker_processing",
           "arn:aws:glue:*:*:database/default",
           "arn:aws:glue:*:*:database/sagemaker_data_wrangler"
-        ]
+        ],
+        "Sid": "AllowGlueGetAndCreateDatabase"
       },
       {
         "Action": [
@@ -503,7 +618,8 @@
         "Effect": "Allow",
         "Resource": [
           "*"
-        ]
+        ],
+        "Sid": "AllowRedshiftDataActions"
       },
       {
         "Action": [
@@ -513,7 +629,8 @@
         "Resource": [
           "arn:aws:redshift:*:*:dbuser:*/sagemaker_access*",
           "arn:aws:redshift:*:*:dbname:*"
-        ]
+        ],
+        "Sid": "AllowRedshiftGetClusterCredentials"
       },
       {
         "Action": [
@@ -522,14 +639,59 @@
         "Effect": "Allow",
         "Resource": [
           "arn:aws:sagemaker:*:*:user-profile/*"
-        ]
+        ],
+        "Sid": "AllowListTagsForUserProfile"
       },
       {
         "Action": [
           "cloudformation:ListStackResources"
         ],
         "Effect": "Allow",
-        "Resource": "arn:aws:cloudformation:*:*:stack/SC-*"
+        "Resource": "arn:aws:cloudformation:*:*:stack/SC-*",
+        "Sid": "AllowCloudformationListStackResources"
+      },
+      {
+        "Action": [
+          "s3express:CreateSession"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:s3express:*:*:bucket/*SageMaker*",
+          "arn:aws:s3express:*:*:bucket/*Sagemaker*",
+          "arn:aws:s3express:*:*:bucket/*sagemaker*",
+          "arn:aws:s3express:*:*:bucket/*aws-glue*"
+        ],
+        "Sid": "AllowS3ExpressObjectActions"
+      },
+      {
+        "Action": [
+          "s3express:CreateBucket"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:s3express:*:*:bucket/*SageMaker*",
+          "arn:aws:s3express:*:*:bucket/*Sagemaker*",
+          "arn:aws:s3express:*:*:bucket/*sagemaker*"
+        ],
+        "Sid": "AllowS3ExpressCreateBucketActions"
+      },
+      {
+        "Action": [
+          "s3express:ListAllMyDirectoryBuckets"
+        ],
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "AllowS3ExpressListBucketActions"
       }
     ],
     "Version": "2012-10-17"
@@ -4176,28 +4338,8 @@
       "resource_exposure": false
     },
     {
-      "access_level": "Write",
-      "action": "sagemaker:*App",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "sagemaker:CreateApp",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Write",
-      "action": "sagemaker:*App",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "sagemaker:DeleteApp",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
       "access_level": "Read",
-      "action": "sagemaker:*App",
+      "action": "sagemaker:DescribeApp",
       "condition": null,
       "credentials_exposure": false,
       "data_access": false,
@@ -4212,6 +4354,206 @@
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "sagemaker:ListApps",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "sagemaker:CreateApp",
+      "condition": {
+        "Null": {
+          "sagemaker:OwnerUserProfileArn": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sagemaker:CreateApp",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "sagemaker:DeleteApp",
+      "condition": {
+        "Null": {
+          "sagemaker:OwnerUserProfileArn": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sagemaker:DeleteApp",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "sagemaker:CreateApp",
+      "condition": {
+        "StringEquals": {
+          "sagemaker:SpaceSharingType": [
+            "Shared"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sagemaker:CreateApp",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "sagemaker:DeleteApp",
+      "condition": {
+        "StringEquals": {
+          "sagemaker:SpaceSharingType": [
+            "Shared"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sagemaker:DeleteApp",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "sagemaker:CreateSpace",
+      "condition": {
+        "Null": {
+          "sagemaker:OwnerUserProfileArn": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sagemaker:CreateSpace",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "sagemaker:UpdateSpace",
+      "condition": {
+        "Null": {
+          "sagemaker:OwnerUserProfileArn": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sagemaker:UpdateSpace",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "sagemaker:DeleteSpace",
+      "condition": {
+        "Null": {
+          "sagemaker:OwnerUserProfileArn": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sagemaker:DeleteSpace",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "sagemaker:CreateSpace",
+      "condition": {
+        "ArnLike": {
+          "sagemaker:OwnerUserProfileArn": "arn:aws:sagemaker:*:*:user-profile/${sagemaker:DomainId}/${sagemaker:UserProfileName}"
+        },
+        "StringEquals": {
+          "sagemaker:SpaceSharingType": [
+            "Private",
+            "Shared"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sagemaker:CreateSpace",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "sagemaker:UpdateSpace",
+      "condition": {
+        "ArnLike": {
+          "sagemaker:OwnerUserProfileArn": "arn:aws:sagemaker:*:*:user-profile/${sagemaker:DomainId}/${sagemaker:UserProfileName}"
+        },
+        "StringEquals": {
+          "sagemaker:SpaceSharingType": [
+            "Private",
+            "Shared"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sagemaker:UpdateSpace",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "sagemaker:DeleteSpace",
+      "condition": {
+        "ArnLike": {
+          "sagemaker:OwnerUserProfileArn": "arn:aws:sagemaker:*:*:user-profile/${sagemaker:DomainId}/${sagemaker:UserProfileName}"
+        },
+        "StringEquals": {
+          "sagemaker:SpaceSharingType": [
+            "Private",
+            "Shared"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sagemaker:DeleteSpace",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "sagemaker:CreateApp",
+      "condition": {
+        "ArnLike": {
+          "sagemaker:OwnerUserProfileArn": "arn:aws:sagemaker:*:*:user-profile/${sagemaker:DomainId}/${sagemaker:UserProfileName}"
+        },
+        "StringEquals": {
+          "sagemaker:SpaceSharingType": [
+            "Private"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sagemaker:CreateApp",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "sagemaker:DeleteApp",
+      "condition": {
+        "ArnLike": {
+          "sagemaker:OwnerUserProfileArn": "arn:aws:sagemaker:*:*:user-profile/${sagemaker:DomainId}/${sagemaker:UserProfileName}"
+        },
+        "StringEquals": {
+          "sagemaker:SpaceSharingType": [
+            "Private"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sagemaker:DeleteApp",
       "privesc": false,
       "resource_exposure": false
     },
@@ -12534,7 +12876,28 @@
   "privesc": true,
   "resource_exposure": true,
   "undocumented_actions": false,
-  "unknown_actions": [],
-  "updatedate": "2022-11-30T17:14:54+00:00",
-  "version": "v24"
+  "unknown_actions": [
+    {
+      "action": "s3express:CreateSession",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      }
+    },
+    {
+      "action": "s3express:CreateBucket",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      }
+    },
+    {
+      "action": "s3express:ListAllMyDirectoryBuckets",
+      "condition": null
+    }
+  ],
+  "updatedate": "2023-11-30T13:40:20+00:00",
+  "version": "v25"
 }
