@@ -6,7 +6,7 @@
     "Write"
   ],
   "arn": "arn:aws:iam::aws:policy/AWSMigrationHubOrchestratorConsoleFullAccess",
-  "createdate": "2022-04-20T02:26:28Z",
+  "createdate": "2023-12-05T17:34:16Z",
   "credentials_exposure": false,
   "data_access": true,
   "deprecated": false,
@@ -17,14 +17,16 @@
           "migrationhub-orchestrator:*"
         ],
         "Effect": "Allow",
-        "Resource": "*"
+        "Resource": "*",
+        "Sid": "MHO"
       },
       {
         "Action": [
           "s3:ListAllMyBuckets"
         ],
         "Effect": "Allow",
-        "Resource": "arn:aws:s3:::*"
+        "Resource": "arn:aws:s3:::*",
+        "Sid": "ListAllMyBuckets"
       },
       {
         "Action": [
@@ -39,14 +41,16 @@
         "Resource": [
           "arn:aws:s3:::migrationhub-orchestrator-*",
           "arn:aws:s3:::migrationhub-orchestrator-*/*"
-        ]
+        ],
+        "Sid": "S3MHO"
       },
       {
         "Action": [
           "secretsmanager:ListSecrets"
         ],
         "Effect": "Allow",
-        "Resource": "*"
+        "Resource": "*",
+        "Sid": "ListSecrets"
       },
       {
         "Action": [
@@ -55,28 +59,59 @@
           "discovery:GetDiscoverySummary"
         ],
         "Effect": "Allow",
-        "Resource": "*"
+        "Resource": "*",
+        "Sid": "Configuration"
       },
       {
         "Action": [
           "mgh:GetHomeRegion"
         ],
         "Effect": "Allow",
-        "Resource": "*"
+        "Resource": "*",
+        "Sid": "GetHomeRegion"
       },
       {
         "Action": [
-          "ec2:DescribeInstances"
+          "ec2:DescribeInstances",
+          "ec2:DescribeVpcs"
         ],
         "Effect": "Allow",
-        "Resource": "*"
+        "Resource": "*",
+        "Sid": "EC2Describe"
       },
       {
         "Action": [
-          "iam:ListInstanceProfiles"
+          "kms:ListKeys",
+          "kms:ListAliases"
         ],
         "Effect": "Allow",
-        "Resource": "*"
+        "Resource": "*",
+        "Sid": "KMS"
+      },
+      {
+        "Action": [
+          "iam:ListInstanceProfiles",
+          "iam:ListRoles"
+        ],
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "IAMListProfileRole"
+      },
+      {
+        "Action": [
+          "ecs:ListClusters"
+        ],
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "ECS"
+      },
+      {
+        "Action": [
+          "account:ListRegions"
+        ],
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "Account"
       },
       {
         "Action": [
@@ -88,14 +123,16 @@
           }
         },
         "Effect": "Allow",
-        "Resource": "*"
+        "Resource": "*",
+        "Sid": "CreateServiceRole"
       },
       {
         "Action": [
           "iam:GetRole"
         ],
         "Effect": "Allow",
-        "Resource": "arn:aws:iam::*:role/aws-service-role/migrationhub-orchestrator.amazonaws.com/AWSServiceRoleForMigrationHubOrchestrator*"
+        "Resource": "arn:aws:iam::*:role/aws-service-role/migrationhub-orchestrator.amazonaws.com/AWSServiceRoleForMigrationHubOrchestrator*",
+        "Sid": "GetRole"
       }
     ],
     "Version": "2012-10-17"
@@ -543,11 +580,71 @@
     },
     {
       "access_level": "List",
+      "action": "ec2:DescribeVpcs",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:DescribeVpcs",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "kms:ListKeys",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "kms:ListKeys",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "kms:ListAliases",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "kms:ListAliases",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
       "action": "iam:ListInstanceProfiles",
       "condition": null,
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "iam:ListInstanceProfiles",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "iam:ListRoles",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "iam:ListRoles",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "ecs:ListClusters",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ecs:ListClusters",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "account:ListRegions",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "account:ListRegions",
       "privesc": false,
       "resource_exposure": false
     },
@@ -582,6 +679,6 @@
   "resource_exposure": true,
   "undocumented_actions": false,
   "unknown_actions": [],
-  "updatedate": "2022-04-20T02:26:28+00:00",
-  "version": "v1"
+  "updatedate": "2023-12-05T17:34:16+00:00",
+  "version": "v2"
 }

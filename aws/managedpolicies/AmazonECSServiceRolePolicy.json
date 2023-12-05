@@ -7,7 +7,7 @@
     "Permissions management"
   ],
   "arn": "arn:aws:iam::aws:policy/aws-service-role/AmazonECSServiceRolePolicy",
-  "createdate": "2023-10-10T16:57:39Z",
+  "createdate": "2023-12-04T19:32:25Z",
   "credentials_exposure": false,
   "data_access": false,
   "deprecated": false,
@@ -56,7 +56,11 @@
           "autoscaling:DeletePolicy",
           "autoscaling:PutScalingPolicy",
           "autoscaling:SetInstanceProtection",
-          "autoscaling:UpdateAutoScalingGroup"
+          "autoscaling:UpdateAutoScalingGroup",
+          "autoscaling:PutLifecycleHook",
+          "autoscaling:DeleteLifecycleHook",
+          "autoscaling:CompleteLifecycleAction",
+          "autoscaling:RecordLifecycleActionHeartbeat"
         ],
         "Condition": {
           "Null": {
@@ -71,11 +75,35 @@
         "Action": [
           "autoscaling-plans:CreateScalingPlan",
           "autoscaling-plans:DeleteScalingPlan",
-          "autoscaling-plans:DescribeScalingPlans"
+          "autoscaling-plans:DescribeScalingPlans",
+          "autoscaling-plans:DescribeScalingPlanResources"
         ],
         "Effect": "Allow",
         "Resource": "*",
         "Sid": "AutoScalingPlanManagement"
+      },
+      {
+        "Action": [
+          "events:DescribeRule",
+          "events:ListTargetsByRule"
+        ],
+        "Effect": "Allow",
+        "Resource": "arn:aws:events:*:*:rule/ecs-managed-*",
+        "Sid": "EventBridge"
+      },
+      {
+        "Action": [
+          "events:PutRule",
+          "events:PutTargets"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "events:ManagedBy": "ecs.amazonaws.com"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "EventBridgeRuleManagement"
       },
       {
         "Action": [
@@ -2777,6 +2805,62 @@
     },
     {
       "access_level": "Write",
+      "action": "autoscaling:PutLifecycleHook",
+      "condition": {
+        "Null": {
+          "autoscaling:ResourceTag/AmazonECSManaged": "false"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "autoscaling:PutLifecycleHook",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "autoscaling:DeleteLifecycleHook",
+      "condition": {
+        "Null": {
+          "autoscaling:ResourceTag/AmazonECSManaged": "false"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "autoscaling:DeleteLifecycleHook",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "autoscaling:CompleteLifecycleAction",
+      "condition": {
+        "Null": {
+          "autoscaling:ResourceTag/AmazonECSManaged": "false"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "autoscaling:CompleteLifecycleAction",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "autoscaling:RecordLifecycleActionHeartbeat",
+      "condition": {
+        "Null": {
+          "autoscaling:ResourceTag/AmazonECSManaged": "false"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "autoscaling:RecordLifecycleActionHeartbeat",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
       "action": "autoscaling-plans:CreateScalingPlan",
       "condition": null,
       "credentials_exposure": false,
@@ -2802,6 +2886,64 @@
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "autoscaling-plans:DescribeScalingPlans",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "autoscaling-plans:DescribeScalingPlanResources",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "autoscaling-plans:DescribeScalingPlanResources",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "events:DescribeRule",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "events:DescribeRule",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "events:ListTargetsByRule",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "events:ListTargetsByRule",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "events:PutRule",
+      "condition": {
+        "StringEquals": {
+          "events:ManagedBy": "ecs.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "events:PutRule",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "events:PutTargets",
+      "condition": {
+        "StringEquals": {
+          "events:ManagedBy": "ecs.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "events:PutTargets",
       "privesc": false,
       "resource_exposure": false
     },
@@ -3012,6 +3154,6 @@
   "resource_exposure": true,
   "undocumented_actions": false,
   "unknown_actions": [],
-  "updatedate": "2023-10-10T16:57:39+00:00",
-  "version": "v10"
+  "updatedate": "2023-12-04T19:32:25+00:00",
+  "version": "v11"
 }
