@@ -6,7 +6,7 @@
     "Write"
   ],
   "arn": "arn:aws:iam::aws:policy/AmazonSageMakerCanvasDataPrepFullAccess",
-  "createdate": "2023-10-27T22:56:13Z",
+  "createdate": "2023-12-08T02:53:24Z",
   "credentials_exposure": true,
   "data_access": true,
   "deprecated": false,
@@ -33,7 +33,7 @@
         "Action": [
           "sagemaker:CreateProcessingJob",
           "sagemaker:DescribeProcessingJob",
-          "sagemaker:addTags"
+          "sagemaker:AddTags"
         ],
         "Effect": "Allow",
         "Resource": "arn:aws:sagemaker:*:*:processing-job/*canvas-data-prep*",
@@ -148,7 +148,7 @@
           "StringEquals": {
             "iam:PassedToService": [
               "sagemaker.amazonaws.com",
-              "events.amazon.com"
+              "events.amazonaws.com"
             ]
           }
         },
@@ -158,19 +158,38 @@
       },
       {
         "Action": [
+          "events:PutRule"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:RequestTag/sagemaker:is-canvas-data-prep-job": "true"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:events:*:*:rule/*",
+        "Sid": "EventBridgePutOperation"
+      },
+      {
+        "Action": [
           "events:DescribeRule",
-          "events:PutRule",
-          "events:PutTargets",
+          "events:PutTargets"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceTag/sagemaker:is-canvas-data-prep-job": "true"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:events:*:*:rule/*",
+        "Sid": "EventBridgeOperations"
+      },
+      {
+        "Action": [
           "events:TagResource"
         ],
         "Condition": {
-          "ForAllValues:StringEquals": {
-            "aws:TagKeys": [
-              "sagemaker:is-canvas-data-prep-job",
-              "sm_canvas_user_profile"
-            ]
-          },
           "StringEquals": {
+            "aws:RequestTag/sagemaker:is-canvas-data-prep-job": "true",
             "aws:ResourceTag/sagemaker:is-canvas-data-prep-job": "true"
           }
         },
@@ -287,18 +306,13 @@
       },
       {
         "Action": [
-          "secretsmanager:TagResource",
           "secretsmanager:DescribeSecret",
           "secretsmanager:GetSecretValue"
         ],
         "Condition": {
-          "ForAllValues:StringEquals": {
-            "aws:TagKeys": [
-              "SageMaker"
-            ]
-          },
           "StringEquals": {
-            "aws:RequestTag/SageMaker": "true"
+            "aws:ResourceAccount": "${aws:PrincipalAccount}",
+            "aws:ResourceTag/SageMaker": "true"
           }
         },
         "Effect": "Allow",
@@ -379,7 +393,7 @@
     },
     {
       "access_level": "Tagging",
-      "action": "sagemaker:addTags",
+      "action": "sagemaker:AddTags",
       "condition": null,
       "credentials_exposure": false,
       "data_access": false,
@@ -635,7 +649,7 @@
         "StringEquals": {
           "iam:PassedToService": [
             "sagemaker.amazonaws.com",
-            "events.amazon.com"
+            "events.amazonaws.com"
           ]
         }
       },
@@ -646,15 +660,23 @@
       "resource_exposure": true
     },
     {
+      "access_level": "Write",
+      "action": "events:PutRule",
+      "condition": {
+        "StringEquals": {
+          "aws:RequestTag/sagemaker:is-canvas-data-prep-job": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "events:PutRule",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
       "access_level": "Read",
       "action": "events:DescribeRule",
       "condition": {
-        "ForAllValues:StringEquals": {
-          "aws:TagKeys": [
-            "sagemaker:is-canvas-data-prep-job",
-            "sm_canvas_user_profile"
-          ]
-        },
         "StringEquals": {
           "aws:ResourceTag/sagemaker:is-canvas-data-prep-job": "true"
         }
@@ -667,34 +689,8 @@
     },
     {
       "access_level": "Write",
-      "action": "events:PutRule",
-      "condition": {
-        "ForAllValues:StringEquals": {
-          "aws:TagKeys": [
-            "sagemaker:is-canvas-data-prep-job",
-            "sm_canvas_user_profile"
-          ]
-        },
-        "StringEquals": {
-          "aws:ResourceTag/sagemaker:is-canvas-data-prep-job": "true"
-        }
-      },
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "events:PutRule",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Write",
       "action": "events:PutTargets",
       "condition": {
-        "ForAllValues:StringEquals": {
-          "aws:TagKeys": [
-            "sagemaker:is-canvas-data-prep-job",
-            "sm_canvas_user_profile"
-          ]
-        },
         "StringEquals": {
           "aws:ResourceTag/sagemaker:is-canvas-data-prep-job": "true"
         }
@@ -709,13 +705,8 @@
       "access_level": "Tagging",
       "action": "events:TagResource",
       "condition": {
-        "ForAllValues:StringEquals": {
-          "aws:TagKeys": [
-            "sagemaker:is-canvas-data-prep-job",
-            "sm_canvas_user_profile"
-          ]
-        },
         "StringEquals": {
+          "aws:RequestTag/sagemaker:is-canvas-data-prep-job": "true",
           "aws:ResourceTag/sagemaker:is-canvas-data-prep-job": "true"
         }
       },
@@ -956,35 +947,12 @@
       "resource_exposure": false
     },
     {
-      "access_level": "Tagging",
-      "action": "secretsmanager:TagResource",
-      "condition": {
-        "ForAllValues:StringEquals": {
-          "aws:TagKeys": [
-            "SageMaker"
-          ]
-        },
-        "StringEquals": {
-          "aws:RequestTag/SageMaker": "true"
-        }
-      },
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "secretsmanager:TagResource",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
       "access_level": "Read",
       "action": "secretsmanager:DescribeSecret",
       "condition": {
-        "ForAllValues:StringEquals": {
-          "aws:TagKeys": [
-            "SageMaker"
-          ]
-        },
         "StringEquals": {
-          "aws:RequestTag/SageMaker": "true"
+          "aws:ResourceAccount": "${aws:PrincipalAccount}",
+          "aws:ResourceTag/SageMaker": "true"
         }
       },
       "credentials_exposure": false,
@@ -997,13 +965,9 @@
       "access_level": "Read",
       "action": "secretsmanager:GetSecretValue",
       "condition": {
-        "ForAllValues:StringEquals": {
-          "aws:TagKeys": [
-            "SageMaker"
-          ]
-        },
         "StringEquals": {
-          "aws:RequestTag/SageMaker": "true"
+          "aws:ResourceAccount": "${aws:PrincipalAccount}",
+          "aws:ResourceTag/SageMaker": "true"
         }
       },
       "credentials_exposure": false,
@@ -1059,6 +1023,6 @@
   "resource_exposure": true,
   "undocumented_actions": false,
   "unknown_actions": [],
-  "updatedate": "2023-10-27T22:56:13+00:00",
-  "version": "v1"
+  "updatedate": "2023-12-08T02:53:24+00:00",
+  "version": "v2"
 }
