@@ -5,12 +5,25 @@
     "Write"
   ],
   "arn": "arn:aws:iam::aws:policy/aws-service-role/AmazonChimeSDKMediaPipelinesServiceLinkedRolePolicy",
-  "createdate": "2023-09-07T20:08:32Z",
+  "createdate": "2023-12-08T19:14:31Z",
   "credentials_exposure": false,
   "data_access": true,
   "deprecated": false,
   "document": {
     "Statement": [
+      {
+        "Action": [
+          "cloudwatch:PutMetricData"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "cloudwatch:namespace": "AWS/ChimeSDK"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "AllowPutMetricsForChimeSDKNamespace"
+      },
       {
         "Action": [
           "kinesisvideo:GetDataEndpoint",
@@ -22,7 +35,8 @@
         "Effect": "Allow",
         "Resource": [
           "arn:aws:kinesisvideo:*:*:stream/ChimeMediaPipelines-*"
-        ]
+        ],
+        "Sid": "AllowKinesisVideoStreamsAccess"
       },
       {
         "Action": [
@@ -31,7 +45,8 @@
         "Effect": "Allow",
         "Resource": [
           "*"
-        ]
+        ],
+        "Sid": "AllowKinesisVideoStreamsListAccess"
       },
       {
         "Action": [
@@ -40,12 +55,27 @@
           "chime:DeleteAttendee"
         ],
         "Effect": "Allow",
-        "Resource": "*"
+        "Resource": "*",
+        "Sid": "AllowChimeMeetingAccess"
       }
     ],
     "Version": "2012-10-17"
   },
   "effective_actions": [
+    {
+      "access_level": "Write",
+      "action": "cloudwatch:PutMetricData",
+      "condition": {
+        "StringEquals": {
+          "cloudwatch:namespace": "AWS/ChimeSDK"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudwatch:PutMetricData",
+      "privesc": false,
+      "resource_exposure": false
+    },
     {
       "access_level": "Read",
       "action": "kinesisvideo:GetDataEndpoint",
@@ -143,6 +173,6 @@
   "resource_exposure": false,
   "undocumented_actions": false,
   "unknown_actions": [],
-  "updatedate": "2023-09-07T20:08:32+00:00",
-  "version": "v2"
+  "updatedate": "2023-12-08T19:14:31+00:00",
+  "version": "v3"
 }

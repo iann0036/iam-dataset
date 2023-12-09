@@ -7,7 +7,7 @@
     "Permissions management"
   ],
   "arn": "arn:aws:iam::aws:policy/AmazonSageMakerCanvasFullAccess",
-  "createdate": "2023-09-30T00:15:42Z",
+  "createdate": "2023-12-09T00:58:33Z",
   "credentials_exposure": true,
   "data_access": true,
   "deprecated": false,
@@ -72,7 +72,9 @@
         "Action": [
           "sagemaker:DeleteEndpointConfig",
           "sagemaker:DeleteModel",
-          "sagemaker:InvokeEndpoint"
+          "sagemaker:InvokeEndpoint",
+          "sagemaker:UpdateEndpointWeightsAndCapacities",
+          "sagemaker:InvokeEndpointAsync"
         ],
         "Effect": "Allow",
         "Resource": [
@@ -314,6 +316,44 @@
         "Effect": "Allow",
         "Resource": "arn:aws:application-autoscaling:*:*:scalable-target/*",
         "Sid": "AutoscalingOperations"
+      },
+      {
+        "Action": [
+          "cloudwatch:DescribeAlarms",
+          "sagemaker:DescribeEndpointConfig"
+        ],
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "AsyncEndpointOperations"
+      },
+      {
+        "Action": [
+          "cloudwatch:PutMetricAlarm",
+          "cloudwatch:DeleteAlarms"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:CalledViaLast": "application-autoscaling.amazonaws.com"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:cloudwatch:*:*:alarm:TargetTracking*"
+        ],
+        "Sid": "SageMakerCloudWatchUpdate"
+      },
+      {
+        "Action": [
+          "iam:CreateServiceLinkedRole"
+        ],
+        "Condition": {
+          "StringLike": {
+            "iam:AWSServiceName": "sagemaker.application-autoscaling.amazonaws.com"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:iam::*:role/aws-service-role/sagemaker.application-autoscaling.amazonaws.com/AWSServiceRoleForApplicationAutoScaling_SageMakerEndpoint",
+        "Sid": "AutoscalingSageMakerEndpointOperation"
       }
     ],
     "Version": "2012-10-17"
@@ -616,6 +656,26 @@
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "sagemaker:InvokeEndpoint",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "sagemaker:UpdateEndpointWeightsAndCapacities",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sagemaker:UpdateEndpointWeightsAndCapacities",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "sagemaker:InvokeEndpointAsync",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sagemaker:InvokeEndpointAsync",
       "privesc": false,
       "resource_exposure": false
     },
@@ -1324,6 +1384,68 @@
       "effective_action": "application-autoscaling:RegisterScalableTarget",
       "privesc": false,
       "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "cloudwatch:DescribeAlarms",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudwatch:DescribeAlarms",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "sagemaker:DescribeEndpointConfig",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sagemaker:DescribeEndpointConfig",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "cloudwatch:PutMetricAlarm",
+      "condition": {
+        "StringEquals": {
+          "aws:CalledViaLast": "application-autoscaling.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudwatch:PutMetricAlarm",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "cloudwatch:DeleteAlarms",
+      "condition": {
+        "StringEquals": {
+          "aws:CalledViaLast": "application-autoscaling.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudwatch:DeleteAlarms",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "iam:CreateServiceLinkedRole",
+      "condition": {
+        "StringLike": {
+          "iam:AWSServiceName": "sagemaker.application-autoscaling.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "iam:CreateServiceLinkedRole",
+      "privesc": true,
+      "resource_exposure": true
     }
   ],
   "malformed": false,
@@ -1332,6 +1454,6 @@
   "resource_exposure": true,
   "undocumented_actions": false,
   "unknown_actions": [],
-  "updatedate": "2023-09-30T00:15:42+00:00",
-  "version": "v7"
+  "updatedate": "2023-12-09T00:58:33+00:00",
+  "version": "v8"
 }
