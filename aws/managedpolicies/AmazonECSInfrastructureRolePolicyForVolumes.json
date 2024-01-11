@@ -1,0 +1,228 @@
+{
+  "access_levels": [
+    "List",
+    "Tagging",
+    "Write"
+  ],
+  "arn": "arn:aws:iam::aws:policy/service-role/AmazonECSInfrastructureRolePolicyForVolumes",
+  "createdate": "2024-01-10T22:56:41Z",
+  "credentials_exposure": false,
+  "data_access": false,
+  "deprecated": false,
+  "document": {
+    "Statement": [
+      {
+        "Action": [
+          "ec2:CreateVolume"
+        ],
+        "Condition": {
+          "ArnLike": {
+            "aws:RequestTag/AmazonECSCreated": "arn:aws:ecs:*:*:task/*"
+          },
+          "StringEquals": {
+            "aws:RequestTag/AmazonECSManaged": "true"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:ec2:*:*:volume/*",
+        "Sid": "CreateEBSManagedVolume"
+      },
+      {
+        "Action": [
+          "ec2:CreateTags"
+        ],
+        "Condition": {
+          "ArnLike": {
+            "aws:RequestTag/AmazonECSCreated": "arn:aws:ecs:*:*:task/*"
+          },
+          "StringEquals": {
+            "aws:RequestTag/AmazonECSManaged": "true",
+            "ec2:CreateAction": "CreateVolume"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:ec2:*:*:volume/*",
+        "Sid": "TagOnCreateVolume"
+      },
+      {
+        "Action": [
+          "ec2:DescribeVolumes",
+          "ec2:DescribeAvailabilityZones"
+        ],
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "DescribeVolumesForLifecycle"
+      },
+      {
+        "Action": [
+          "ec2:AttachVolume",
+          "ec2:DetachVolume"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceTag/AmazonECSManaged": "true"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:ec2:*:*:volume/*",
+        "Sid": "ManageEBSVolumeLifecycle"
+      },
+      {
+        "Action": [
+          "ec2:AttachVolume",
+          "ec2:DetachVolume"
+        ],
+        "Effect": "Allow",
+        "Resource": "arn:aws:ec2:*:*:instance/*",
+        "Sid": "ManageVolumeAttachmentsForEC2"
+      },
+      {
+        "Action": [
+          "ec2:DeleteVolume"
+        ],
+        "Condition": {
+          "ArnLike": {
+            "aws:ResourceTag/AmazonECSCreated": "arn:aws:ecs:*:*:task/*"
+          },
+          "StringEquals": {
+            "aws:ResourceTag/AmazonECSManaged": "true"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:ec2:*:*:volume/*",
+        "Sid": "DeleteEBSManagedVolume"
+      }
+    ],
+    "Version": "2012-10-17"
+  },
+  "effective_actions": [
+    {
+      "access_level": "Write",
+      "action": "ec2:CreateVolume",
+      "condition": {
+        "ArnLike": {
+          "aws:RequestTag/AmazonECSCreated": "arn:aws:ecs:*:*:task/*"
+        },
+        "StringEquals": {
+          "aws:RequestTag/AmazonECSManaged": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:CreateVolume",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Tagging",
+      "action": "ec2:CreateTags",
+      "condition": {
+        "ArnLike": {
+          "aws:RequestTag/AmazonECSCreated": "arn:aws:ecs:*:*:task/*"
+        },
+        "StringEquals": {
+          "aws:RequestTag/AmazonECSManaged": "true",
+          "ec2:CreateAction": "CreateVolume"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:CreateTags",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "ec2:DescribeVolumes",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:DescribeVolumes",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "ec2:DescribeAvailabilityZones",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:DescribeAvailabilityZones",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:AttachVolume",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/AmazonECSManaged": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:AttachVolume",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:DetachVolume",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/AmazonECSManaged": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:DetachVolume",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:AttachVolume",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:AttachVolume",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:DetachVolume",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:DetachVolume",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:DeleteVolume",
+      "condition": {
+        "ArnLike": {
+          "aws:ResourceTag/AmazonECSCreated": "arn:aws:ecs:*:*:task/*"
+        },
+        "StringEquals": {
+          "aws:ResourceTag/AmazonECSManaged": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:DeleteVolume",
+      "privesc": false,
+      "resource_exposure": false
+    }
+  ],
+  "malformed": false,
+  "name": "AmazonECSInfrastructureRolePolicyForVolumes",
+  "privesc": false,
+  "resource_exposure": false,
+  "undocumented_actions": false,
+  "unknown_actions": [],
+  "updatedate": "2024-01-10T22:56:41+00:00",
+  "version": "v1"
+}
