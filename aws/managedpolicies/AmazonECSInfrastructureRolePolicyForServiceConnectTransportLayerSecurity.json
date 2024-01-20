@@ -1,0 +1,320 @@
+{
+  "access_levels": [
+    "Read",
+    "Tagging",
+    "Write"
+  ],
+  "arn": "arn:aws:iam::aws:policy/service-role/AmazonECSInfrastructureRolePolicyForServiceConnectTransportLayerSecurity",
+  "createdate": "2024-01-19T20:08:36Z",
+  "credentials_exposure": false,
+  "data_access": false,
+  "deprecated": false,
+  "document": {
+    "Statement": [
+      {
+        "Action": [
+          "secretsmanager:CreateSecret"
+        ],
+        "Condition": {
+          "ArnLike": {
+            "aws:RequestTag/AmazonECSCreated": [
+              "arn:aws:ecs:*:*:service/*/*",
+              "arn:aws:ecs:*:*:task-set/*/*"
+            ]
+          },
+          "StringEquals": {
+            "aws:RequestTag/AmazonECSManaged": "true",
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:secretsmanager:*:*:secret:ecs-sc!*",
+        "Sid": "CreateSecret"
+      },
+      {
+        "Action": [
+          "secretsmanager:TagResource"
+        ],
+        "Condition": {
+          "ArnLike": {
+            "aws:RequestTag/AmazonECSCreated": [
+              "arn:aws:ecs:*:*:service/*/*",
+              "arn:aws:ecs:*:*:task-set/*/*"
+            ]
+          },
+          "StringEquals": {
+            "aws:RequestTag/AmazonECSManaged": "true",
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:secretsmanager:*:*:secret:ecs-sc!*",
+        "Sid": "TagOnCreateSecret"
+      },
+      {
+        "Action": [
+          "secretsmanager:DescribeSecret",
+          "secretsmanager:UpdateSecret",
+          "secretsmanager:GetSecretValue",
+          "secretsmanager:PutSecretValue",
+          "secretsmanager:DeleteSecret",
+          "secretsmanager:RotateSecret",
+          "secretsmanager:UpdateSecretVersionStage"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}",
+            "secretsmanager:ResourceTag/aws:secretsmanager:owningService": "ecs-sc"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:secretsmanager:*:*:secret:ecs-sc!*",
+        "Sid": "RotateTLSCertificateSecret"
+      },
+      {
+        "Action": [
+          "acm-pca:GetCertificate",
+          "acm-pca:GetCertificateAuthorityCertificate",
+          "acm-pca:DescribeCertificateAuthority"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceTag/AmazonECSManaged": "true"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "ManagePrivateCertificateAuthority"
+      },
+      {
+        "Action": [
+          "acm-pca:IssueCertificate"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "acm-pca:TemplateArn": "arn:aws:acm-pca:::template/EndEntityCertificate/V1",
+            "aws:ResourceTag/AmazonECSManaged": "true"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "ManagePrivateCertificateAuthorityForIssuingEndEntityCertificate"
+      }
+    ],
+    "Version": "2012-10-17"
+  },
+  "effective_actions": [
+    {
+      "access_level": "Write",
+      "action": "secretsmanager:CreateSecret",
+      "condition": {
+        "ArnLike": {
+          "aws:RequestTag/AmazonECSCreated": [
+            "arn:aws:ecs:*:*:service/*/*",
+            "arn:aws:ecs:*:*:task-set/*/*"
+          ]
+        },
+        "StringEquals": {
+          "aws:RequestTag/AmazonECSManaged": "true",
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "secretsmanager:CreateSecret",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Tagging",
+      "action": "secretsmanager:TagResource",
+      "condition": {
+        "ArnLike": {
+          "aws:RequestTag/AmazonECSCreated": [
+            "arn:aws:ecs:*:*:service/*/*",
+            "arn:aws:ecs:*:*:task-set/*/*"
+          ]
+        },
+        "StringEquals": {
+          "aws:RequestTag/AmazonECSManaged": "true",
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "secretsmanager:TagResource",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "secretsmanager:DescribeSecret",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}",
+          "secretsmanager:ResourceTag/aws:secretsmanager:owningService": "ecs-sc"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "secretsmanager:DescribeSecret",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "secretsmanager:UpdateSecret",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}",
+          "secretsmanager:ResourceTag/aws:secretsmanager:owningService": "ecs-sc"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "secretsmanager:UpdateSecret",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "secretsmanager:GetSecretValue",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}",
+          "secretsmanager:ResourceTag/aws:secretsmanager:owningService": "ecs-sc"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "secretsmanager:GetSecretValue",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "secretsmanager:PutSecretValue",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}",
+          "secretsmanager:ResourceTag/aws:secretsmanager:owningService": "ecs-sc"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "secretsmanager:PutSecretValue",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "secretsmanager:DeleteSecret",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}",
+          "secretsmanager:ResourceTag/aws:secretsmanager:owningService": "ecs-sc"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "secretsmanager:DeleteSecret",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "secretsmanager:RotateSecret",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}",
+          "secretsmanager:ResourceTag/aws:secretsmanager:owningService": "ecs-sc"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "secretsmanager:RotateSecret",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "secretsmanager:UpdateSecretVersionStage",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}",
+          "secretsmanager:ResourceTag/aws:secretsmanager:owningService": "ecs-sc"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "secretsmanager:UpdateSecretVersionStage",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "acm-pca:GetCertificate",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/AmazonECSManaged": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "acm-pca:GetCertificate",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "acm-pca:GetCertificateAuthorityCertificate",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/AmazonECSManaged": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "acm-pca:GetCertificateAuthorityCertificate",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "acm-pca:DescribeCertificateAuthority",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/AmazonECSManaged": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "acm-pca:DescribeCertificateAuthority",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "acm-pca:IssueCertificate",
+      "condition": {
+        "StringEquals": {
+          "acm-pca:TemplateArn": "arn:aws:acm-pca:::template/EndEntityCertificate/V1",
+          "aws:ResourceTag/AmazonECSManaged": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "acm-pca:IssueCertificate",
+      "privesc": false,
+      "resource_exposure": false
+    }
+  ],
+  "malformed": false,
+  "name": "AmazonECSInfrastructureRolePolicyForServiceConnectTransportLayerSecurity",
+  "privesc": false,
+  "resource_exposure": false,
+  "undocumented_actions": false,
+  "unknown_actions": [],
+  "updatedate": "2024-01-19T20:08:36+00:00",
+  "version": "v1"
+}
