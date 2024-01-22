@@ -5,7 +5,7 @@
     "Write"
   ],
   "arn": "arn:aws:iam::aws:policy/aws-service-role/AmazonInspector2ServiceRolePolicy",
-  "createdate": "2023-09-07T13:20:55Z",
+  "createdate": "2024-01-22T14:06:01Z",
   "credentials_exposure": true,
   "data_access": true,
   "deprecated": false,
@@ -116,11 +116,11 @@
         ],
         "Effect": "Allow",
         "Resource": [
-          "arn:*:ec2:*:*:instance/*",
-          "arn:*:ssm:*:*:document/AmazonInspector2-*",
-          "arn:*:ssm:*:*:document/AWS-GatherSoftwareInventory",
-          "arn:*:ssm:*:*:managed-instance/*",
-          "arn:*:ssm:*:*:association/*"
+          "arn:aws:ec2:*:*:instance/*",
+          "arn:aws:ssm:*:*:document/AmazonInspector2-*",
+          "arn:aws:ssm:*:*:document/AWS-GatherSoftwareInventory",
+          "arn:aws:ssm:*:*:managed-instance/*",
+          "arn:aws:ssm:*:*:association/*"
         ],
         "Sid": "GatherInventory"
       },
@@ -131,7 +131,7 @@
         ],
         "Effect": "Allow",
         "Resource": [
-          "arn:*:ssm:*:*:resource-data-sync/InspectorResourceDataSync-do-not-delete"
+          "arn:aws:ssm:*:*:resource-data-sync/InspectorResourceDataSync-do-not-delete"
         ],
         "Sid": "DataSyncCleanup"
       },
@@ -146,7 +146,7 @@
         ],
         "Effect": "Allow",
         "Resource": [
-          "arn:*:events:*:*:rule/DO-NOT-DELETE-AmazonInspector*ManagedRule"
+          "arn:aws:events:*:*:rule/DO-NOT-DELETE-AmazonInspector*ManagedRule"
         ],
         "Sid": "ManagedRules"
       },
@@ -204,7 +204,7 @@
         },
         "Effect": "Allow",
         "Resource": [
-          "arn:*:ssm:*:*:parameter/inspector-aws/service/inspector-linux-application-paths"
+          "arn:aws:ssm:*:*:parameter/inspector-aws/service/inspector-linux-application-paths"
         ],
         "Sid": "Ec2DeepInspection"
       },
@@ -220,7 +220,7 @@
         },
         "Effect": "Allow",
         "Resource": [
-          "arn:*:cloudtrail:*:*:channel/aws-service-channel/inspector2/*"
+          "arn:aws:cloudtrail:*:*:channel/aws-service-channel/inspector2/*"
         ],
         "Sid": "AllowManagementOfServiceLinkedChannel"
       },
@@ -238,6 +238,47 @@
           "*"
         ],
         "Sid": "AllowListServiceLinkedChannels"
+      },
+      {
+        "Action": [
+          "ssm:SendCommand",
+          "ssm:GetCommandInvocation"
+        ],
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:ssm:*:*:document/AmazonInspector2-InvokeInspectorSsmPluginCIS"
+        ],
+        "Sid": "AllowToRunInvokeCisSpecificDocuments"
+      },
+      {
+        "Action": [
+          "ssm:SendCommand"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:ec2:*:*:instance/*"
+        ],
+        "Sid": "AllowToRunCisCommandsToSpecificResources"
+      },
+      {
+        "Action": [
+          "cloudwatch:PutMetricData"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "cloudwatch:namespace": "AWS/Inspector2"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "*"
+        ],
+        "Sid": "AllowToPutCloudwatchMetricData"
       }
     ],
     "Version": "2012-10-17"
@@ -1390,6 +1431,54 @@
       "effective_action": "cloudtrail:ListServiceLinkedChannels",
       "privesc": false,
       "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ssm:SendCommand",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ssm:SendCommand",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "ssm:GetCommandInvocation",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ssm:GetCommandInvocation",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ssm:SendCommand",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ssm:SendCommand",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "cloudwatch:PutMetricData",
+      "condition": {
+        "StringEquals": {
+          "cloudwatch:namespace": "AWS/Inspector2"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudwatch:PutMetricData",
+      "privesc": false,
+      "resource_exposure": false
     }
   ],
   "malformed": false,
@@ -1398,6 +1487,6 @@
   "resource_exposure": false,
   "undocumented_actions": false,
   "unknown_actions": [],
-  "updatedate": "2023-09-07T13:20:55+00:00",
-  "version": "v11"
+  "updatedate": "2024-01-22T14:06:01+00:00",
+  "version": "v12"
 }
