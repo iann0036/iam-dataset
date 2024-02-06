@@ -6,7 +6,7 @@
     "Permissions management"
   ],
   "arn": "arn:aws:iam::aws:policy/AWSMigrationHubStrategyCollector",
-  "createdate": "2023-10-12T16:44:29Z",
+  "createdate": "2024-02-05T18:57:29Z",
   "credentials_exposure": false,
   "data_access": true,
   "deprecated": false,
@@ -23,6 +23,11 @@
           "s3:PutBucketVersioning",
           "s3:PutLifecycleConfiguration"
         ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          }
+        },
         "Effect": "Allow",
         "Resource": "arn:aws:s3:::migrationhub-strategy-*",
         "Sid": "MHSRAllowS3Resources"
@@ -31,9 +36,23 @@
         "Action": [
           "s3:ListAllMyBuckets"
         ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          }
+        },
         "Effect": "Allow",
         "Resource": "arn:aws:s3:::*",
         "Sid": "MHSRAllowS3ListBucket"
+      },
+      {
+        "Action": [
+          "application-transformation:PutMetricData",
+          "application-transformation:PutLogData"
+        ],
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "MHSRAllowMetricsAndLogs"
       },
       {
         "Action": [
@@ -65,6 +84,11 @@
         "Action": [
           "secretsmanager:GetSecretValue"
         ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          }
+        },
         "Effect": "Allow",
         "Resource": "arn:aws:secretsmanager:*:*:secret:migrationhub-strategy-*",
         "Sid": "MHSRAllowSecretsManager"
@@ -76,7 +100,11 @@
     {
       "access_level": "Read",
       "action": "s3:GetObject",
-      "condition": null,
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
       "credentials_exposure": false,
       "data_access": true,
       "effective_action": "s3:GetObject",
@@ -86,7 +114,11 @@
     {
       "access_level": "Write",
       "action": "s3:PutObject",
-      "condition": null,
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "s3:PutObject",
@@ -96,7 +128,11 @@
     {
       "access_level": "Read",
       "action": "s3:GetBucketAcl",
-      "condition": null,
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "s3:GetBucketAcl",
@@ -106,7 +142,11 @@
     {
       "access_level": "Write",
       "action": "s3:CreateBucket",
-      "condition": null,
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "s3:CreateBucket",
@@ -116,7 +156,11 @@
     {
       "access_level": "Write",
       "action": "s3:PutEncryptionConfiguration",
-      "condition": null,
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "s3:PutEncryptionConfiguration",
@@ -126,7 +170,11 @@
     {
       "access_level": "Permissions management",
       "action": "s3:PutBucketPublicAccessBlock",
-      "condition": null,
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "s3:PutBucketPublicAccessBlock",
@@ -136,7 +184,11 @@
     {
       "access_level": "Write",
       "action": "s3:PutBucketVersioning",
-      "condition": null,
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "s3:PutBucketVersioning",
@@ -146,7 +198,11 @@
     {
       "access_level": "Write",
       "action": "s3:PutLifecycleConfiguration",
-      "condition": null,
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "s3:PutLifecycleConfiguration",
@@ -156,10 +212,34 @@
     {
       "access_level": "List",
       "action": "s3:ListAllMyBuckets",
-      "condition": null,
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "s3:ListAllMyBuckets",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "application-transformation:PutMetricData",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "application-transformation:PutMetricData",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "application-transformation:PutLogData",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "application-transformation:PutLogData",
       "privesc": false,
       "resource_exposure": false
     },
@@ -256,7 +336,11 @@
     {
       "access_level": "Read",
       "action": "secretsmanager:GetSecretValue",
-      "condition": null,
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "secretsmanager:GetSecretValue",
@@ -270,6 +354,6 @@
   "resource_exposure": true,
   "undocumented_actions": false,
   "unknown_actions": [],
-  "updatedate": "2023-10-12T16:44:29+00:00",
-  "version": "v4"
+  "updatedate": "2024-02-05T18:57:29+00:00",
+  "version": "v5"
 }
