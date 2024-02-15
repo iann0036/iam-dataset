@@ -5,7 +5,7 @@
     "Write"
   ],
   "arn": "arn:aws:iam::aws:policy/aws-service-role/AWSServiceRolePolicyForBackupRestoreTesting",
-  "createdate": "2023-11-10T23:37:45Z",
+  "createdate": "2024-02-14T22:42:37Z",
   "credentials_exposure": false,
   "data_access": false,
   "deprecated": false,
@@ -13,11 +13,15 @@
     "Statement": [
       {
         "Action": [
+          "backup:DescribeRecoveryPoint",
           "backup:DescribeRestoreJob",
+          "backup:DescribeProtectedResource",
           "backup:GetRecoveryPointRestoreMetadata",
           "backup:ListBackupVaults",
+          "backup:ListProtectedResources",
           "backup:ListProtectedResourcesByBackupVault",
           "backup:ListRecoveryPointsByBackupVault",
+          "backup:ListRecoveryPointsByResource",
           "backup:ListTags",
           "backup:StartRestoreJob"
         ],
@@ -41,6 +45,7 @@
       {
         "Action": [
           "ec2:DescribeInstances",
+          "ec2:DescribeSnapshotTierStatus",
           "ec2:DescribeTags",
           "ec2:DescribeVolumes",
           "elasticfilesystem:DescribeFileSystems",
@@ -51,7 +56,9 @@
           "rds:DescribeDBInstances",
           "rds:DescribeDBClusters",
           "rds:DescribeDBInstanceAutomatedBackups",
-          "rds:ListTagsForResource"
+          "rds:DescribeDBClusterAutomatedBackups",
+          "rds:ListTagsForResource",
+          "redshift:DescribeClusters"
         ],
         "Effect": "Allow",
         "Resource": "*",
@@ -93,6 +100,14 @@
       },
       {
         "Action": [
+          "redshift:DeleteCluster"
+        ],
+        "Effect": "Allow",
+        "Resource": "arn:aws:redshift:*:*:cluster:awsbackup-restore-test-*",
+        "Sid": "RedshiftDeleteActions"
+      },
+      {
+        "Action": [
           "s3:DeleteBucket",
           "s3:GetLifecycleConfiguration",
           "s3:PutLifecycleConfiguration"
@@ -105,6 +120,14 @@
         "Effect": "Allow",
         "Resource": "arn:aws:s3:::awsbackup-restore-test-*",
         "Sid": "S3DeleteActions"
+      },
+      {
+        "Action": [
+          "timestream:DeleteTable"
+        ],
+        "Effect": "Allow",
+        "Resource": "arn:aws:timestream:*:*:database/*/table/awsbackup-restore-test-*",
+        "Sid": "TimestreamDeleteActions"
       }
     ],
     "Version": "2012-10-17"
@@ -112,11 +135,31 @@
   "effective_actions": [
     {
       "access_level": "Read",
+      "action": "backup:DescribeRecoveryPoint",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "backup:DescribeRecoveryPoint",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
       "action": "backup:DescribeRestoreJob",
       "condition": null,
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "backup:DescribeRestoreJob",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "backup:DescribeProtectedResource",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "backup:DescribeProtectedResource",
       "privesc": false,
       "resource_exposure": false
     },
@@ -142,6 +185,16 @@
     },
     {
       "access_level": "List",
+      "action": "backup:ListProtectedResources",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "backup:ListProtectedResources",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
       "action": "backup:ListProtectedResourcesByBackupVault",
       "condition": null,
       "credentials_exposure": false,
@@ -157,6 +210,16 @@
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "backup:ListRecoveryPointsByBackupVault",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "backup:ListRecoveryPointsByResource",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "backup:ListRecoveryPointsByResource",
       "privesc": false,
       "resource_exposure": false
     },
@@ -201,6 +264,16 @@
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "ec2:DescribeInstances",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "ec2:DescribeSnapshotTierStatus",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:DescribeSnapshotTierStatus",
       "privesc": false,
       "resource_exposure": false
     },
@@ -305,12 +378,32 @@
       "resource_exposure": false
     },
     {
+      "access_level": "List",
+      "action": "rds:DescribeDBClusterAutomatedBackups",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "rds:DescribeDBClusterAutomatedBackups",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
       "access_level": "Read",
       "action": "rds:ListTagsForResource",
       "condition": null,
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "rds:ListTagsForResource",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "redshift:DescribeClusters",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "redshift:DescribeClusters",
       "privesc": false,
       "resource_exposure": false
     },
@@ -456,6 +549,16 @@
     },
     {
       "access_level": "Write",
+      "action": "redshift:DeleteCluster",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "redshift:DeleteCluster",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
       "action": "s3:DeleteBucket",
       "condition": {
         "StringEquals": {
@@ -495,6 +598,16 @@
       "effective_action": "s3:PutLifecycleConfiguration",
       "privesc": false,
       "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "timestream:DeleteTable",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "timestream:DeleteTable",
+      "privesc": false,
+      "resource_exposure": false
     }
   ],
   "malformed": false,
@@ -503,6 +616,6 @@
   "resource_exposure": true,
   "undocumented_actions": false,
   "unknown_actions": [],
-  "updatedate": "2023-11-10T23:37:45+00:00",
-  "version": "v1"
+  "updatedate": "2024-02-14T22:42:37+00:00",
+  "version": "v2"
 }
