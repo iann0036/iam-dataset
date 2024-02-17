@@ -102,7 +102,15 @@ for opservice in ops:
                             candidates.append(op)
                             continue
 
+                        # 3:2 w/ By
+                        if len(method_parts) == 2 and len(opname_parts) == 3 and method_parts[0].lower() == opname_parts[1].lower() and opname_parts[2].lower() == "read" and method_parts[1].lower() in ["listby"+opname_parts[0].lower()]:
+                            candidates.append(op)
+                            continue
+
                         method_parts0plural = p.plural_noun(method_parts[0].lower())
+                        method_parts1plural = 'XXXXX'
+                        if len(method_parts) > 1:
+                            method_parts1plural = p.plural_noun(method_parts[1].lower())
 
                         # 2:2 plural
                         if len(method_parts) == 2 and len(opname_parts) == 2 and method_parts0plural == opname_parts[0].lower() and opname_parts[1].lower() == "read" and method_parts[1].lower() in ["list", "get"]:
@@ -123,6 +131,14 @@ for opservice in ops:
                             candidates.append(op)
                             continue
                         elif len(method_parts) == 2 and len(opname_parts) == 3 and method_parts0plural == opname_parts[0].lower() and opname_parts[2].lower() == "write" and method_parts[1].lower() in ["create"+opname_parts[1].lower(), "update"+opname_parts[1].lower(), "createorupdate"+opname_parts[1].lower()]:
+                            candidates.append(op)
+                            continue
+
+                        # 3:2 plural w/ By [Usages_ListByVaults == vaults/usages/read]
+                        if len(method_parts) == 2 and len(opname_parts) == 3 and method_parts[0].lower() == opname_parts[1].lower() and opname_parts[2].lower() == "read" and method_parts1plural.lower() in ["listby"+opname_parts[0].lower()]:
+                            candidates.append(op)
+                            continue
+                        if len(method_parts) == 2 and len(opname_parts) == 3 and method_parts0plural.lower() == opname_parts[1].lower() and opname_parts[2].lower() == "read" and method_parts[1].lower() in ["listby"+opname_parts[0].lower()]:
                             candidates.append(op)
                             continue
 
@@ -232,17 +248,17 @@ for opservice in ops:
                                     continue
                     
                     ## End
-                    if len(candidates) == 1:
-                        if httpmethodname.upper() not in result:
-                            result[httpmethodname.upper()] = {}
-                        if pathname not in result[httpmethodname.upper()]:
-                            result[httpmethodname.upper()][pathname] = {}
-                        if candidates[0]['name'] not in result[httpmethodname.upper()][pathname]:
-                            result[httpmethodname.upper()][pathname][candidates[0]['name']] = {}
-                        result[httpmethodname.upper()][pathname][candidates[0]['name']]['automated'] = True
-                        if candidates[0]['isDataAction']:
-                            result[httpmethodname.upper()][pathname][candidates[0]['name']]['isDataAction'] = True
-
+                    if len(candidates) > 0:
+                        for candidate_entry in candidates:
+                            if httpmethodname.upper() not in result:
+                                result[httpmethodname.upper()] = {}
+                            if pathname not in result[httpmethodname.upper()]:
+                                result[httpmethodname.upper()][pathname] = {}
+                            if candidate_entry['name'] not in result[httpmethodname.upper()][pathname]:
+                                result[httpmethodname.upper()][pathname][candidate_entry['name']] = {}
+                            result[httpmethodname.upper()][pathname][candidate_entry['name']]['automated'] = True
+                            if candidate_entry['isDataAction']:
+                                result[httpmethodname.upper()][pathname][candidate_entry['name']]['isDataAction'] = True
 
 with open("azure/map.json", "w") as f:
     f.write(json.dumps(result, indent=2, sort_keys=True))
