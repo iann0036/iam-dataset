@@ -17,6 +17,19 @@ for provideropid, providerop in enumerate(provider_ops):
                     providerop['operations'] = providerop['operations'][:j] + providerop['operations'][j+1:]
             j += 1
         i += 1
+    if 'resourceTypes' in providerop:
+        for resourcetypeid, resourcetype in enumerate(providerop['resourceTypes']):
+            i = 0
+            while i < len(resourcetype['operations']):
+                j = i + 1
+                while j < len(resourcetype['operations']):
+                    if resourcetype['operations'][j]['name'].lower() == resourcetype['operations'][i]['name'].lower():
+                        if resourcetype['operations'][j]['origin'] != resourcetype['operations'][j]['origin']:
+                            print('origin mismatch for ' + resourcetype['name'] + " " + resourcetype['operations'][i]['name'])
+                        else:
+                            resourcetype['operations'] = resourcetype['operations'][:j] + resourcetype['operations'][j+1:]
+                    j += 1
+                i += 1
 
 with open("azure/provider-operations.json", "w") as f:
     f.write(json.dumps(provider_ops, indent=2, sort_keys=True))
