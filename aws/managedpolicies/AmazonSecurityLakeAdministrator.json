@@ -7,7 +7,7 @@
     "Permissions management"
   ],
   "arn": "arn:aws:iam::aws:policy/AmazonSecurityLakeAdministrator",
-  "createdate": "2023-05-30T22:04:10Z",
+  "createdate": "2024-02-23T16:01:57Z",
   "credentials_exposure": false,
   "data_access": true,
   "deprecated": false,
@@ -39,6 +39,7 @@
           "events:ListConnections",
           "events:ListApiDestinations",
           "iam:GetRole",
+          "iam:ListAttachedRolePolicies",
           "kms:DescribeKey"
         ],
         "Condition": {
@@ -84,8 +85,30 @@
           }
         },
         "Effect": "Allow",
-        "Resource": "arn:aws:lambda:*:*:function:SecurityLake_Glue_Partition_Updater_Lambda*",
+        "Resource": [
+          "arn:aws:lambda:*:*:function:SecurityLake_Glue_Partition_Updater_Lambda*",
+          "arn:aws:lambda:*:*:function:AmazonSecurityLake*"
+        ],
         "Sid": "AllowLambdaCreateFunction"
+      },
+      {
+        "Action": [
+          "lambda:AddPermission"
+        ],
+        "Condition": {
+          "ForAnyValue:StringEquals": {
+            "aws:CalledVia": "securitylake.amazonaws.com"
+          },
+          "StringEquals": {
+            "lambda:Principal": "securitylake.amazonaws.com"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:lambda:*:*:function:SecurityLake_Glue_Partition_Updater_Lambda*",
+          "arn:aws:lambda:*:*:function:AmazonSecurityLake*"
+        ],
+        "Sid": "AllowLambdaAddPermission"
       },
       {
         "Action": [
@@ -165,7 +188,8 @@
           "ForAllValues:StringEquals": {
             "kms:GrantOperations": [
               "GenerateDataKey",
-              "RetireGrant"
+              "RetireGrant",
+              "Decrypt"
             ]
           },
           "ForAnyValue:StringEquals": {
@@ -247,7 +271,10 @@
           }
         },
         "Effect": "Allow",
-        "Resource": "arn:aws:iam::*:role/service-role/AmazonSecurityLakeMetaStoreManager",
+        "Resource": [
+          "arn:aws:iam::*:role/service-role/AmazonSecurityLakeMetaStoreManager",
+          "arn:aws:iam::*:role/service-role/AmazonSecurityLakeMetaStoreManagerV2"
+        ],
         "Sid": "AllowPassRoleForUpdatingGluePartitionsSecLakeArn"
       },
       {
@@ -262,11 +289,17 @@
             "iam:PassedToService": "lambda.amazonaws.com"
           },
           "StringLike": {
-            "iam:AssociatedResourceARN": "arn:aws:lambda:*:*:function:SecurityLake_Glue_Partition_Updater_Lambda*"
+            "iam:AssociatedResourceARN": [
+              "arn:aws:lambda:*:*:function:SecurityLake_Glue_Partition_Updater_Lambda*",
+              "arn:aws:lambda:*:*:function:AmazonSecurityLake*"
+            ]
           }
         },
         "Effect": "Allow",
-        "Resource": "arn:aws:iam::*:role/service-role/AmazonSecurityLakeMetaStoreManager",
+        "Resource": [
+          "arn:aws:iam::*:role/service-role/AmazonSecurityLakeMetaStoreManager",
+          "arn:aws:iam::*:role/service-role/AmazonSecurityLakeMetaStoreManagerV2"
+        ],
         "Sid": "AllowPassRoleForUpdatingGluePartitionsLambdaArn"
       },
       {
@@ -446,6 +479,15 @@
         "Effect": "Allow",
         "Resource": "arn:aws:s3:::aws-security-data-lake-*",
         "Sid": "S3ReadAccessToSecurityLakes"
+      },
+      {
+        "Action": [
+          "s3:GetObject",
+          "s3:GetObjectVersion"
+        ],
+        "Effect": "Allow",
+        "Resource": "arn:aws:s3:::security-lake-meta-store-manager-*",
+        "Sid": "S3ReadAccessToSecurityLakeMetastoreObject"
       },
       {
         "Action": [
@@ -976,6 +1018,20 @@
       "resource_exposure": false
     },
     {
+      "access_level": "List",
+      "action": "iam:ListAttachedRolePolicies",
+      "condition": {
+        "ForAnyValue:StringEquals": {
+          "aws:CalledVia": "securitylake.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "iam:ListAttachedRolePolicies",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
       "access_level": "Read",
       "action": "kms:DescribeKey",
       "condition": {
@@ -1170,6 +1226,23 @@
       "effective_action": "lambda:CreateFunction",
       "privesc": false,
       "resource_exposure": false
+    },
+    {
+      "access_level": "Permissions management",
+      "action": "lambda:AddPermission",
+      "condition": {
+        "ForAnyValue:StringEquals": {
+          "aws:CalledVia": "securitylake.amazonaws.com"
+        },
+        "StringEquals": {
+          "lambda:Principal": "securitylake.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "lambda:AddPermission",
+      "privesc": false,
+      "resource_exposure": true
     },
     {
       "access_level": "Write",
@@ -1486,7 +1559,8 @@
         "ForAllValues:StringEquals": {
           "kms:GrantOperations": [
             "GenerateDataKey",
-            "RetireGrant"
+            "RetireGrant",
+            "Decrypt"
           ]
         },
         "ForAnyValue:StringEquals": {
@@ -1682,7 +1756,10 @@
           "iam:PassedToService": "lambda.amazonaws.com"
         },
         "StringLike": {
-          "iam:AssociatedResourceARN": "arn:aws:lambda:*:*:function:SecurityLake_Glue_Partition_Updater_Lambda*"
+          "iam:AssociatedResourceARN": [
+            "arn:aws:lambda:*:*:function:SecurityLake_Glue_Partition_Updater_Lambda*",
+            "arn:aws:lambda:*:*:function:AmazonSecurityLake*"
+          ]
         }
       },
       "credentials_exposure": false,
@@ -2656,6 +2733,26 @@
     },
     {
       "access_level": "Read",
+      "action": "s3:GetObject",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": true,
+      "effective_action": "s3:GetObject",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "s3:GetObjectVersion",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": true,
+      "effective_action": "s3:GetObjectVersion",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
       "action": "s3:GetAccountPublicAccessBlock",
       "condition": null,
       "credentials_exposure": false,
@@ -2691,6 +2788,6 @@
   "resource_exposure": true,
   "undocumented_actions": false,
   "unknown_actions": [],
-  "updatedate": "2023-05-30T22:04:10+00:00",
-  "version": "v1"
+  "updatedate": "2024-02-23T16:01:57+00:00",
+  "version": "v2"
 }
