@@ -5,7 +5,7 @@
     "Write"
   ],
   "arn": "arn:aws:iam::aws:policy/aws-service-role/SecurityLakeServiceLinkedRole",
-  "createdate": "2022-11-29T14:03:33Z",
+  "createdate": "2024-02-29T19:14:11Z",
   "credentials_exposure": false,
   "data_access": false,
   "deprecated": false,
@@ -71,6 +71,43 @@
         "Effect": "Allow",
         "Resource": "*",
         "Sid": "ListDelegatedAdmins"
+      },
+      {
+        "Action": [
+          "wafv2:PutLoggingConfiguration",
+          "wafv2:GetLoggingConfiguration",
+          "wafv2:ListLoggingConfigurations",
+          "wafv2:DeleteLoggingConfiguration"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "wafv2:LogScope": "SecurityLake"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "AllowWafLoggingConfiguration"
+      },
+      {
+        "Action": [
+          "wafv2:PutLoggingConfiguration"
+        ],
+        "Condition": {
+          "ArnLike": {
+            "wafv2:LogDestinationResource": "arn:aws:s3:::aws-waf-logs-security-lake-*"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "AllowPutLoggingConfiguration"
+      },
+      {
+        "Action": [
+          "wafv2:ListWebACLs"
+        ],
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "ListWebACLs"
       }
     ],
     "Version": "2012-10-17"
@@ -179,6 +216,86 @@
       "effective_action": "organizations:ListDelegatedAdministrators",
       "privesc": false,
       "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "wafv2:PutLoggingConfiguration",
+      "condition": {
+        "StringEquals": {
+          "wafv2:LogScope": "SecurityLake"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "wafv2:PutLoggingConfiguration",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "wafv2:GetLoggingConfiguration",
+      "condition": {
+        "StringEquals": {
+          "wafv2:LogScope": "SecurityLake"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "wafv2:GetLoggingConfiguration",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "wafv2:ListLoggingConfigurations",
+      "condition": {
+        "StringEquals": {
+          "wafv2:LogScope": "SecurityLake"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "wafv2:ListLoggingConfigurations",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "wafv2:DeleteLoggingConfiguration",
+      "condition": {
+        "StringEquals": {
+          "wafv2:LogScope": "SecurityLake"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "wafv2:DeleteLoggingConfiguration",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "wafv2:PutLoggingConfiguration",
+      "condition": {
+        "ArnLike": {
+          "wafv2:LogDestinationResource": "arn:aws:s3:::aws-waf-logs-security-lake-*"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "wafv2:PutLoggingConfiguration",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "wafv2:ListWebACLs",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "wafv2:ListWebACLs",
+      "privesc": false,
+      "resource_exposure": false
     }
   ],
   "malformed": false,
@@ -187,6 +304,6 @@
   "resource_exposure": false,
   "undocumented_actions": false,
   "unknown_actions": [],
-  "updatedate": "2022-11-29T14:03:33+00:00",
-  "version": "v1"
+  "updatedate": "2024-02-29T19:14:11+00:00",
+  "version": "v2"
 }
