@@ -24,8 +24,11 @@ for rootitem in os.listdir('azure-rest-api-specs/specification/'):
                                         for versionfile in os.listdir('azure-rest-api-specs/specification/' + rootitem + '/resource-manager/' + servicenamewithsubresource + '/' + stability + '/' + apiversion + '/'):
                                             if versionfile.endswith(".json"):
                                                 spec = {}
-                                                with open('azure-rest-api-specs/specification/' + rootitem + '/resource-manager/' + servicenamewithsubresource + '/' + stability + '/' + apiversion + '/' + versionfile, "r") as f:
-                                                    spec = json.loads(f.read())
+                                                try:
+                                                    with open('azure-rest-api-specs/specification/' + rootitem + '/resource-manager/' + servicenamewithsubresource + '/' + stability + '/' + apiversion + '/' + versionfile, "r") as f:
+                                                        spec = json.loads(f.read())
+                                                except:
+                                                    print("ERROR: failure to process " + 'azure-rest-api-specs/specification/' + rootitem + '/resource-manager/' + servicenamewithsubresource + '/' + stability + '/' + apiversion + '/' + versionfile)
                                                 for pathname, pathdetail in spec['paths'].items():
                                                     for httpmethodname, httpmethoddetail in pathdetail.items():            
                                                         if httpmethodname == "parameters":
