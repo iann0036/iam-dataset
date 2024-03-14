@@ -29,6 +29,7 @@ for rootitem in os.listdir('azure-rest-api-specs/specification/'):
                                                         spec = json.loads(f.read())
                                                 except:
                                                     print("ERROR: failure to process " + 'azure-rest-api-specs/specification/' + rootitem + '/resource-manager/' + servicenamewithsubresource + '/' + stability + '/' + apiversion + '/' + versionfile)
+                                                    continue
                                                 for pathname, pathdetail in spec['paths'].items():
                                                     for httpmethodname, httpmethoddetail in pathdetail.items():            
                                                         if httpmethodname == "parameters":
