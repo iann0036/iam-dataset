@@ -25,7 +25,7 @@ for rootitem in os.listdir('azure-rest-api-specs/specification/'):
                                             if versionfile.endswith(".json"):
                                                 spec = {}
                                                 try:
-                                                    with open('azure-rest-api-specs/specification/' + rootitem + '/resource-manager/' + servicenamewithsubresource + '/' + stability + '/' + apiversion + '/' + versionfile, "r") as f:
+                                                    with open('azure-rest-api-specs/specification/' + rootitem + '/resource-manager/' + servicenamewithsubresource + '/' + stability + '/' + apiversion + '/' + versionfile, mode="r", encoding='utf-8') as f:
                                                         spec = json.loads(f.read())
                                                 except:
                                                     print("ERROR: failure to process " + 'azure-rest-api-specs/specification/' + rootitem + '/resource-manager/' + servicenamewithsubresource + '/' + stability + '/' + apiversion + '/' + versionfile)
