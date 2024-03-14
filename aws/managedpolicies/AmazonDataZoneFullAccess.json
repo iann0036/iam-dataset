@@ -7,7 +7,7 @@
     "Permissions management"
   ],
   "arn": "arn:aws:iam::aws:policy/AmazonDataZoneFullAccess",
-  "createdate": "2023-09-22T20:06:52Z",
+  "createdate": "2024-03-12T16:34:41Z",
   "credentials_exposure": false,
   "data_access": false,
   "deprecated": false,
@@ -20,7 +20,8 @@
         "Effect": "Allow",
         "Resource": [
           "*"
-        ]
+        ],
+        "Sid": "AmazonDataZoneStatement"
       },
       {
         "Action": [
@@ -28,12 +29,18 @@
           "kms:ListAliases",
           "iam:ListRoles",
           "sso:DescribeRegisteredRegions",
-          "s3:ListAllMyBuckets"
+          "s3:ListAllMyBuckets",
+          "redshift:DescribeClusters",
+          "redshift-serverless:ListWorkgroups",
+          "ec2:DescribeSubnets",
+          "ec2:DescribeVpcs",
+          "secretsmanager:ListSecrets"
         ],
         "Effect": "Allow",
         "Resource": [
           "*"
-        ]
+        ],
+        "Sid": "ReadOnlyStatement"
       },
       {
         "Action": [
@@ -41,14 +48,16 @@
           "s3:GetBucketLocation"
         ],
         "Effect": "Allow",
-        "Resource": "arn:aws:s3:::*"
+        "Resource": "arn:aws:s3:::*",
+        "Sid": "BucketReadOnlyStatement"
       },
       {
         "Action": [
           "s3:CreateBucket"
         ],
         "Effect": "Allow",
-        "Resource": "arn:aws:s3:::amazon-datazone*"
+        "Resource": "arn:aws:s3:::amazon-datazone*",
+        "Sid": "CreateBucketStatement"
       },
       {
         "Action": [
@@ -60,7 +69,8 @@
           }
         },
         "Effect": "Allow",
-        "Resource": "*"
+        "Resource": "*",
+        "Sid": "RamCreateResourceStatement"
       },
       {
         "Action": [
@@ -77,7 +87,8 @@
           }
         },
         "Effect": "Allow",
-        "Resource": "*"
+        "Resource": "*",
+        "Sid": "RamResourceStatement"
       },
       {
         "Action": [
@@ -86,7 +97,8 @@
           "ram:GetResourceShareAssociations"
         ],
         "Effect": "Allow",
-        "Resource": "*"
+        "Resource": "*",
+        "Sid": "RamResourceReadOnlyStatement"
       },
       {
         "Action": [
@@ -101,7 +113,43 @@
         "Resource": [
           "arn:aws:iam::*:role/AmazonDataZone*",
           "arn:aws:iam::*:role/service-role/AmazonDataZone*"
-        ]
+        ],
+        "Sid": "IAMPassRoleStatement"
+      },
+      {
+        "Action": [
+          "secretsmanager:TagResource"
+        ],
+        "Condition": {
+          "ForAllValues:StringEquals": {
+            "aws:TagKeys": [
+              "AmazonDataZoneDomain"
+            ]
+          },
+          "Null": {
+            "aws:TagKeys": "false"
+          },
+          "StringLike": {
+            "aws:RequestTag/AmazonDataZoneDomain": "dzd_*",
+            "aws:ResourceTag/AmazonDataZoneDomain": "dzd_*"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:secretsmanager:*:*:secret:AmazonDataZone-*",
+        "Sid": "DataZoneTagOnCreate"
+      },
+      {
+        "Action": [
+          "secretsmanager:CreateSecret"
+        ],
+        "Condition": {
+          "StringLike": {
+            "aws:RequestTag/AmazonDataZoneDomain": "dzd_*"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:secretsmanager:*:*:secret:AmazonDataZone-*",
+        "Sid": "CreateSecretStatement"
       }
     ],
     "Version": "2012-10-17"
@@ -1399,6 +1447,56 @@
     },
     {
       "access_level": "List",
+      "action": "redshift:DescribeClusters",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "redshift:DescribeClusters",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "redshift-serverless:ListWorkgroups",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "redshift-serverless:ListWorkgroups",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "ec2:DescribeSubnets",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:DescribeSubnets",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "ec2:DescribeVpcs",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:DescribeVpcs",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "secretsmanager:ListSecrets",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "secretsmanager:ListSecrets",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
       "action": "s3:ListBucket",
       "condition": null,
       "credentials_exposure": false,
@@ -1548,6 +1646,43 @@
       "effective_action": "iam:PassRole",
       "privesc": true,
       "resource_exposure": true
+    },
+    {
+      "access_level": "Tagging",
+      "action": "secretsmanager:TagResource",
+      "condition": {
+        "ForAllValues:StringEquals": {
+          "aws:TagKeys": [
+            "AmazonDataZoneDomain"
+          ]
+        },
+        "Null": {
+          "aws:TagKeys": "false"
+        },
+        "StringLike": {
+          "aws:RequestTag/AmazonDataZoneDomain": "dzd_*",
+          "aws:ResourceTag/AmazonDataZoneDomain": "dzd_*"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "secretsmanager:TagResource",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "secretsmanager:CreateSecret",
+      "condition": {
+        "StringLike": {
+          "aws:RequestTag/AmazonDataZoneDomain": "dzd_*"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "secretsmanager:CreateSecret",
+      "privesc": false,
+      "resource_exposure": false
     }
   ],
   "malformed": false,
@@ -1556,6 +1691,6 @@
   "resource_exposure": true,
   "undocumented_actions": false,
   "unknown_actions": [],
-  "updatedate": "2023-09-22T20:06:52+00:00",
-  "version": "v1"
+  "updatedate": "2024-03-12T16:34:41+00:00",
+  "version": "v2"
 }

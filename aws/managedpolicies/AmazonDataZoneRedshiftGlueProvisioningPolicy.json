@@ -7,7 +7,7 @@
     "Permissions management"
   ],
   "arn": "arn:aws:iam::aws:policy/AmazonDataZoneRedshiftGlueProvisioningPolicy",
-  "createdate": "2023-09-23T00:50:47Z",
+  "createdate": "2024-03-12T16:44:23Z",
   "credentials_exposure": false,
   "data_access": true,
   "deprecated": false,
@@ -51,7 +51,8 @@
         "Effect": "Allow",
         "Resource": [
           "arn:aws:iam::*:role/datazone*"
-        ]
+        ],
+        "Sid": "IamPassRolePermissions"
       },
       {
         "Action": [
@@ -305,6 +306,39 @@
         "Effect": "Allow",
         "Resource": "*",
         "Sid": "PermissionsToGetAmazonDataZoneEnvironmentBlueprintTemplates"
+      },
+      {
+        "Action": [
+          "redshift-data:ListSchemas",
+          "redshift-data:ExecuteStatement"
+        ],
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:redshift-serverless:*:*:workgroup/*",
+          "arn:aws:redshift:*:*:cluster:*"
+        ],
+        "Sid": "RedshiftDataPermissions"
+      },
+      {
+        "Action": [
+          "redshift-data:DescribeStatement"
+        ],
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "DescribeStatementPermissions"
+      },
+      {
+        "Action": [
+          "secretsmanager:GetSecretValue"
+        ],
+        "Condition": {
+          "StringLike": {
+            "secretsmanager:ResourceTag/AmazonDataZoneDomain": "dzd*"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "GetSecretValuePermissions"
       }
     ],
     "Version": "2012-10-17"
@@ -1044,6 +1078,50 @@
       "effective_action": "s3:GetObject",
       "privesc": false,
       "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "redshift-data:ListSchemas",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "redshift-data:ListSchemas",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "redshift-data:ExecuteStatement",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "redshift-data:ExecuteStatement",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "redshift-data:DescribeStatement",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "redshift-data:DescribeStatement",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "secretsmanager:GetSecretValue",
+      "condition": {
+        "StringLike": {
+          "secretsmanager:ResourceTag/AmazonDataZoneDomain": "dzd*"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "secretsmanager:GetSecretValue",
+      "privesc": false,
+      "resource_exposure": false
     }
   ],
   "malformed": false,
@@ -1052,6 +1130,6 @@
   "resource_exposure": true,
   "undocumented_actions": false,
   "unknown_actions": [],
-  "updatedate": "2023-09-23T00:50:47+00:00",
-  "version": "v2"
+  "updatedate": "2024-03-12T16:44:23+00:00",
+  "version": "v3"
 }
