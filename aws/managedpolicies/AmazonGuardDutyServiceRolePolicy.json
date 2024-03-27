@@ -6,7 +6,7 @@
     "Write"
   ],
   "arn": "arn:aws:iam::aws:policy/aws-service-role/AmazonGuardDutyServiceRolePolicy",
-  "createdate": "2024-02-09T18:30:50Z",
+  "createdate": "2024-03-27T00:58:20Z",
   "credentials_exposure": false,
   "data_access": false,
   "deprecated": false,
@@ -223,6 +223,69 @@
         "Effect": "Allow",
         "Resource": "*",
         "Sid": "GuardDutyEcsPutAccountSettingsDefaultPolicy"
+      },
+      {
+        "Action": [
+          "ssm:DescribeAssociation",
+          "ssm:DeleteAssociation",
+          "ssm:UpdateAssociation",
+          "ssm:CreateAssociation",
+          "ssm:StartAssociationsOnce"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceTag/GuardDutyManaged": "true"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:ssm:*:*:association/*",
+        "Sid": "SsmCreateDescribeUpdateDeleteStartAssociationPermission"
+      },
+      {
+        "Action": [
+          "ssm:AddTagsToResource"
+        ],
+        "Condition": {
+          "ForAllValues:StringEquals": {
+            "aws:TagKeys": [
+              "GuardDutyManaged"
+            ]
+          },
+          "StringEquals": {
+            "aws:ResourceTag/GuardDutyManaged": "true"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:ssm:*:*:association/*",
+        "Sid": "SsmAddTagsToResourcePermission"
+      },
+      {
+        "Action": [
+          "ssm:CreateAssociation",
+          "ssm:UpdateAssociation"
+        ],
+        "Effect": "Allow",
+        "Resource": "arn:aws:ssm:*:*:document/AmazonGuardDuty-ConfigureRuntimeMonitoringSsmPlugin",
+        "Sid": "SsmCreateUpdateAssociationInstanceDocumentPermission"
+      },
+      {
+        "Action": [
+          "ssm:SendCommand"
+        ],
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:ec2:*:*:instance/*",
+          "arn:aws:ssm:*:*:document/AmazonGuardDuty-ConfigureRuntimeMonitoringSsmPlugin"
+        ],
+        "Sid": "SsmSendCommandPermission"
+      },
+      {
+        "Action": [
+          "ssm:GetCommandInvocation"
+        ],
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "SsmGetCommandStatus"
       }
     ],
     "Version": "2012-10-17"
@@ -761,6 +824,135 @@
       "effective_action": "ecs:PutAccountSettingDefault",
       "privesc": false,
       "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "ssm:DescribeAssociation",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/GuardDutyManaged": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ssm:DescribeAssociation",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ssm:DeleteAssociation",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/GuardDutyManaged": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ssm:DeleteAssociation",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ssm:UpdateAssociation",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/GuardDutyManaged": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ssm:UpdateAssociation",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ssm:CreateAssociation",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/GuardDutyManaged": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ssm:CreateAssociation",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ssm:StartAssociationsOnce",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/GuardDutyManaged": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ssm:StartAssociationsOnce",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Tagging",
+      "action": "ssm:AddTagsToResource",
+      "condition": {
+        "ForAllValues:StringEquals": {
+          "aws:TagKeys": [
+            "GuardDutyManaged"
+          ]
+        },
+        "StringEquals": {
+          "aws:ResourceTag/GuardDutyManaged": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ssm:AddTagsToResource",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ssm:CreateAssociation",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ssm:CreateAssociation",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ssm:UpdateAssociation",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ssm:UpdateAssociation",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ssm:SendCommand",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ssm:SendCommand",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "ssm:GetCommandInvocation",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ssm:GetCommandInvocation",
+      "privesc": false,
+      "resource_exposure": false
     }
   ],
   "malformed": false,
@@ -769,6 +961,6 @@
   "resource_exposure": true,
   "undocumented_actions": false,
   "unknown_actions": [],
-  "updatedate": "2024-02-09T18:30:50+00:00",
-  "version": "v8"
+  "updatedate": "2024-03-27T00:58:20+00:00",
+  "version": "v9"
 }
