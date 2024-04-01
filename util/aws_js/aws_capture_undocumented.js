@@ -9,39 +9,28 @@ AWS.config.region = 'us-east-1';
 
 var long_undocumented_test_list = `
 APIGateway.TagResource {3} - apigateway
-Iot.CreateCertificateProvider {3} - iot
-Iot.DeleteCertificateProvider {3} - iot
-Iot.DescribeCertificateProvider {3} - iot
-Iot.ListCertificateProviders {3} - iot
-Iot.UpdateCertificateProvider {3} - iot
+CloudFormation.ListStackSetAutoDeploymentTargets {3} - cloudformation
+CloudTrail.ListInsightsMetricData {3} - cloudtrail
 Lambda.InvokeWithResponseStream {3} - lambda
+RDS.ModifyIntegration {3} - rds
 S3.CreateSession {3} - s3
 S3.ListDirectoryBuckets {3} - s3
 S3Control.DeleteBucketReplication {3} - s3
 S3Control.GetBucketReplication {3} - s3
 S3Control.PutBucketReplication {3} - s3
 Glue.BatchGetDataQualityResult {3} - glue
-SageMaker.DeleteCompilationJob {3} - sagemaker
-Connect.AssociateAnalyticsDataSet {3} - connect
-Connect.DisassociateAnalyticsDataSet {3} - connect
-Connect.ListAnalyticsDataAssociations {3} - connect
-Connect.PauseContact {3} - connect
-Connect.ResumeContact {3} - connect
-Connect.TagContact {3} - connect
-Connect.UntagContact {3} - connect
 QuickSight.DescribeAnalysisDefinition {3} - quicksight
 QuickSight.DescribeDashboardDefinition {3} - quicksight
 QuickSight.DescribeTemplateDefinition {3} - quicksight
-QuickSight.UpdateDashboardLinks {3} - quicksight
 LakeFormation.AssumeDecoratedRoleWithSAML {3} - lakeformation
-LakeFormation.CreateLakeFormationIdentityCenterConfiguration {3} - lakeformation
-LakeFormation.DeleteLakeFormationIdentityCenterConfiguration {3} - lakeformation
-LakeFormation.DescribeLakeFormationIdentityCenterConfiguration {3} - lakeformation
 LakeFormation.GetTemporaryGluePartitionCredentials {3} - lakeformation
 LakeFormation.GetTemporaryGlueTableCredentials {3} - lakeformation
-LakeFormation.UpdateLakeFormationIdentityCenterConfiguration {3} - lakeformation
+MarketplaceCatalog.BatchDescribeEntities {3} - awsmarketplace
 AccessAnalyzer.GetFindingV2 {3} - accessanalyzer
 AccessAnalyzer.ListFindingsV2 {3} - accessanalyzer
+IoTWireless.GetMetricConfiguration {3} - iotwireless
+IoTWireless.GetMetrics {3} - iotwireless
+IoTWireless.UpdateMetricConfiguration {3} - iotwireless
 LexModelsV2.ListUtteranceAnalyticsData {3} - lex
 LexModelsV2.ListUtteranceMetrics {3} - lex
 Finspacedata.CreateDataView {3} - finspaceapi
@@ -50,7 +39,7 @@ ChimeSDKMessaging.DeleteMessagingStreamingConfigurations {3} - chimesdkmessaging
 ChimeSDKMessaging.GetMessagingStreamingConfigurations {3} - chimesdkmessaging
 ChimeSDKMessaging.PutChannelExpirationSettings {3} - chimesdkmessaging
 ChimeSDKMessaging.PutMessagingStreamingConfigurations {3} - chimesdkmessaging
-Billingconductor.GetBillingGroupCostReport {3} - billingconductor
+Keyspaces.GetTableAutoScalingSettings {3} - keyspaces
 PinpointSMSVoiceV2.CreateRegistration {3} - pinpointsmsvoicev2
 PinpointSMSVoiceV2.CreateRegistrationAssociation {3} - pinpointsmsvoicev2
 PinpointSMSVoiceV2.CreateRegistrationAttachment {3} - pinpointsmsvoicev2
@@ -107,6 +96,7 @@ ConnectCases.CreateRelatedItem {3} - connectcases
 ConnectCases.CreateTemplate {3} - connectcases
 ConnectCases.DeleteDomain {3} - connectcases
 ConnectCases.GetCase {3} - connectcases
+ConnectCases.GetCaseAuditEvents {3} - connectcases
 ConnectCases.GetCaseEventConfiguration {3} - connectcases
 ConnectCases.GetDomain {3} - connectcases
 ConnectCases.GetLayout {3} - connectcases
@@ -257,6 +247,47 @@ OpenSearchServerless.UpdateLifecyclePolicy {3} - opensearchserverless
 OpenSearchServerless.UpdateSecurityConfig {3} - opensearchserverless
 OpenSearchServerless.UpdateSecurityPolicy {3} - opensearchserverless
 OpenSearchServerless.UpdateVpcEndpoint {3} - opensearchserverless
+DocDBElastic.CopyClusterSnapshot {3} - docdbelastic
+DocDBElastic.StartCluster {3} - docdbelastic
+DocDBElastic.StopCluster {3} - docdbelastic
+CodeCatalyst.CreateAccessToken {3} - codecatalyst
+CodeCatalyst.CreateDevEnvironment {3} - codecatalyst
+CodeCatalyst.CreateProject {3} - codecatalyst
+CodeCatalyst.CreateSourceRepository {3} - codecatalyst
+CodeCatalyst.CreateSourceRepositoryBranch {3} - codecatalyst
+CodeCatalyst.DeleteAccessToken {3} - codecatalyst
+CodeCatalyst.DeleteDevEnvironment {3} - codecatalyst
+CodeCatalyst.DeleteProject {3} - codecatalyst
+CodeCatalyst.DeleteSourceRepository {3} - codecatalyst
+CodeCatalyst.DeleteSpace {3} - codecatalyst
+CodeCatalyst.GetDevEnvironment {3} - codecatalyst
+CodeCatalyst.GetProject {3} - codecatalyst
+CodeCatalyst.GetSourceRepository {3} - codecatalyst
+CodeCatalyst.GetSourceRepositoryCloneUrls {3} - codecatalyst
+CodeCatalyst.GetSpace {3} - codecatalyst
+CodeCatalyst.GetSubscription {3} - codecatalyst
+CodeCatalyst.GetUserDetails {3} - codecatalyst
+CodeCatalyst.GetWorkflow {3} - codecatalyst
+CodeCatalyst.GetWorkflowRun {3} - codecatalyst
+CodeCatalyst.ListAccessTokens {3} - codecatalyst
+CodeCatalyst.ListDevEnvironmentSessions {3} - codecatalyst
+CodeCatalyst.ListDevEnvironments {3} - codecatalyst
+CodeCatalyst.ListEventLogs {3} - codecatalyst
+CodeCatalyst.ListProjects {3} - codecatalyst
+CodeCatalyst.ListSourceRepositories {3} - codecatalyst
+CodeCatalyst.ListSourceRepositoryBranches {3} - codecatalyst
+CodeCatalyst.ListSpaces {3} - codecatalyst
+CodeCatalyst.ListWorkflowRuns {3} - codecatalyst
+CodeCatalyst.ListWorkflows {3} - codecatalyst
+CodeCatalyst.StartDevEnvironment {3} - codecatalyst
+CodeCatalyst.StartDevEnvironmentSession {3} - codecatalyst
+CodeCatalyst.StartWorkflowRun {3} - codecatalyst
+CodeCatalyst.StopDevEnvironment {3} - codecatalyst
+CodeCatalyst.StopDevEnvironmentSession {3} - codecatalyst
+CodeCatalyst.UpdateDevEnvironment {3} - codecatalyst
+CodeCatalyst.UpdateProject {3} - codecatalyst
+CodeCatalyst.UpdateSpace {3} - codecatalyst
+CodeCatalyst.VerifySession {3} - codecatalyst
 SageMakerMetrics.BatchPutMetrics {3} - sagemakermetrics
 KinesisVideoWebRTCStorage.JoinStorageSession {3} - kinesisvideowebrtcstorage
 IVSRealTime.CreateEncoderConfiguration {3} - ivsrealtime
@@ -298,7 +329,8 @@ PaymentCryptographyData.VerifyAuthRequestCryptogram {3} - paymentcryptographydat
 PaymentCryptographyData.VerifyCardValidationData {3} - paymentcryptographydata
 PaymentCryptographyData.VerifyMac {3} - paymentcryptographydata
 PaymentCryptographyData.VerifyPinData {3} - paymentcryptographydata
-VerifiedPermissions.BatchIsAuthorized {3} - verifiedpermissions
+medicalimaging (datasource)
+managedblockchainquery (datasource)
 Neptunedata.CancelGremlinQuery {3} - neptunedata
 Neptunedata.CancelLoaderJob {3} - neptunedata
 Neptunedata.CancelMLDataProcessingJob {3} - neptunedata
@@ -342,6 +374,16 @@ Neptunedata.StartLoaderJob {3} - neptunedata
 Neptunedata.StartMLDataProcessingJob {3} - neptunedata
 Neptunedata.StartMLModelTrainingJob {3} - neptunedata
 Neptunedata.StartMLModelTransformJob {3} - neptunedata
+pcaconnectorad (datasource)
+bedrockruntime (datasource)
+launchwizard (datasource)
+inspectorscan (datasource)
+bcmdataexports (datasource)
+costoptimizationhub (datasource)
+eksauth (datasource)
+workspacesthinclient (datasource)
+bedrockagent (datasource)
+bedrockagentruntime (datasource)
 QConnect.CreateAssistant {3} - qconnect
 QConnect.CreateAssistantAssociation {3} - qconnect
 QConnect.CreateContent {3} - qconnect
@@ -384,6 +426,38 @@ QConnect.UntagResource {3} - qconnect
 QConnect.UpdateContent {3} - qconnect
 QConnect.UpdateKnowledgeBaseTemplateUri {3} - qconnect
 QConnect.UpdateQuickResponse {3} - qconnect
+marketplaceagreement (datasource)
+marketplacedeployment (datasource)
+SupplyChain.CreateBillOfMaterialsImportJob {3} - supplychain
+SupplyChain.GetBillOfMaterialsImportJob {3} - supplychain
+timestreaminfluxdb (datasource)
+CodeConnections.CreateConnection {3} - codeconnections
+CodeConnections.CreateHost {3} - codeconnections
+CodeConnections.CreateRepositoryLink {3} - codeconnections
+CodeConnections.CreateSyncConfiguration {3} - codeconnections
+CodeConnections.DeleteConnection {3} - codeconnections
+CodeConnections.DeleteHost {3} - codeconnections
+CodeConnections.DeleteRepositoryLink {3} - codeconnections
+CodeConnections.DeleteSyncConfiguration {3} - codeconnections
+CodeConnections.GetConnection {3} - codeconnections
+CodeConnections.GetHost {3} - codeconnections
+CodeConnections.GetRepositoryLink {3} - codeconnections
+CodeConnections.GetRepositorySyncStatus {3} - codeconnections
+CodeConnections.GetResourceSyncStatus {3} - codeconnections
+CodeConnections.GetSyncBlockerSummary {3} - codeconnections
+CodeConnections.GetSyncConfiguration {3} - codeconnections
+CodeConnections.ListConnections {3} - codeconnections
+CodeConnections.ListHosts {3} - codeconnections
+CodeConnections.ListRepositoryLinks {3} - codeconnections
+CodeConnections.ListRepositorySyncDefinitions {3} - codeconnections
+CodeConnections.ListSyncConfigurations {3} - codeconnections
+CodeConnections.ListTagsForResource {3} - codeconnections
+CodeConnections.TagResource {3} - codeconnections
+CodeConnections.UntagResource {3} - codeconnections
+CodeConnections.UpdateHost {3} - codeconnections
+CodeConnections.UpdateRepositoryLink {3} - codeconnections
+CodeConnections.UpdateSyncBlocker {3} - codeconnections
+CodeConnections.UpdateSyncConfiguration {3} - codeconnections
 SSMContacts.GetContactPolicy {1}
 `;
 
@@ -413,6 +487,13 @@ async function go() {
         }
         
         for (let test_item of long_undocumented_test_list.split("\n")) {
+            if (test_item.includes(" (datasource)")) {
+                continue
+            }
+            if (test_item.includes("CodeCatalyst.")) { // breaks CLI
+                continue
+            }
+
             try {
                 test_item = test_item.split(" ")[0];
                 if (test_item != "") {
