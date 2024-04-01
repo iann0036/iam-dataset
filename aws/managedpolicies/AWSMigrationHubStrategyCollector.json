@@ -6,7 +6,7 @@
     "Permissions management"
   ],
   "arn": "arn:aws:iam::aws:policy/AWSMigrationHubStrategyCollector",
-  "createdate": "2024-02-05T18:57:29Z",
+  "createdate": "2024-04-01T16:21:02Z",
   "credentials_exposure": false,
   "data_access": true,
   "deprecated": false,
@@ -21,7 +21,9 @@
           "s3:PutEncryptionConfiguration",
           "s3:PutBucketPublicAccessBlock",
           "s3:PutBucketVersioning",
-          "s3:PutLifecycleConfiguration"
+          "s3:PutLifecycleConfiguration",
+          "s3:ListBucket",
+          "s3:GetBucketLocation"
         ],
         "Condition": {
           "StringEquals": {
@@ -48,7 +50,11 @@
       {
         "Action": [
           "application-transformation:PutMetricData",
-          "application-transformation:PutLogData"
+          "application-transformation:PutLogData",
+          "application-transformation:StartPortingCompatibilityAssessment",
+          "application-transformation:GetPortingCompatibilityAssessment",
+          "application-transformation:StartPortingRecommendationAssessment",
+          "application-transformation:GetPortingRecommendationAssessment"
         ],
         "Effect": "Allow",
         "Resource": "*",
@@ -74,7 +80,9 @@
           "migrationhub-strategy:SendMessage",
           "migrationhub-strategy:ListAntiPatterns",
           "migrationhub-strategy:ListJarArtifacts",
-          "migrationhub-strategy:UpdateCollectorConfiguration"
+          "migrationhub-strategy:UpdateCollectorConfiguration",
+          "migrationhub-strategy:PutLogData",
+          "migrationhub-strategy:PutMetricData"
         ],
         "Effect": "Allow",
         "Resource": "arn:aws:migrationhub-strategy:*:*:*",
@@ -211,6 +219,34 @@
     },
     {
       "access_level": "List",
+      "action": "s3:ListBucket",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3:ListBucket",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "s3:GetBucketLocation",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3:GetBucketLocation",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
       "action": "s3:ListAllMyBuckets",
       "condition": {
         "StringEquals": {
@@ -240,6 +276,46 @@
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "application-transformation:PutLogData",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "application-transformation:StartPortingCompatibilityAssessment",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "application-transformation:StartPortingCompatibilityAssessment",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "application-transformation:GetPortingCompatibilityAssessment",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "application-transformation:GetPortingCompatibilityAssessment",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "application-transformation:StartPortingRecommendationAssessment",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "application-transformation:StartPortingRecommendationAssessment",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "application-transformation:GetPortingRecommendationAssessment",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "application-transformation:GetPortingRecommendationAssessment",
       "privesc": false,
       "resource_exposure": false
     },
@@ -334,6 +410,26 @@
       "resource_exposure": false
     },
     {
+      "access_level": "Write",
+      "action": "migrationhub-strategy:PutLogData",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "migrationhub-strategy:PutLogData",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "migrationhub-strategy:PutMetricData",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "migrationhub-strategy:PutMetricData",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
       "access_level": "Read",
       "action": "secretsmanager:GetSecretValue",
       "condition": {
@@ -354,6 +450,6 @@
   "resource_exposure": true,
   "undocumented_actions": false,
   "unknown_actions": [],
-  "updatedate": "2024-02-05T18:57:29+00:00",
-  "version": "v5"
+  "updatedate": "2024-04-01T16:21:02+00:00",
+  "version": "v6"
 }

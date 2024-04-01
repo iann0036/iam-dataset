@@ -1,0 +1,413 @@
+{
+  "access_levels": [
+    "List",
+    "Read"
+  ],
+  "arn": "arn:aws:iam::aws:policy/AWSDeadlineCloud-UserAccessFleets",
+  "createdate": "2024-04-01T17:01:50Z",
+  "credentials_exposure": false,
+  "data_access": false,
+  "deprecated": false,
+  "document": {
+    "Statement": [
+      {
+        "Action": [
+          "identitystore:DescribeGroup",
+          "identitystore:DescribeUser",
+          "identitystore:ListGroupMembershipsForMember",
+          "deadline:GetApplicationVersion",
+          "ec2:DescribeInstanceTypes",
+          "identitystore:ListUsers"
+        ],
+        "Effect": "Allow",
+        "Resource": [
+          "*"
+        ],
+        "Sid": "AdditionalPermissions"
+      },
+      {
+        "Action": [
+          "deadline:AssociateMemberToFleet",
+          "deadline:DisassociateMemberFromFleet"
+        ],
+        "Condition": {
+          "ForAnyValue:StringEquals": {
+            "deadline:FleetMembershipLevels": [
+              "OWNER"
+            ]
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "*"
+        ],
+        "Sid": "OwnerLevelPermissions"
+      },
+      {
+        "Action": [
+          "deadline:AssociateMemberToFleet"
+        ],
+        "Condition": {
+          "ForAnyValue:StringEquals": {
+            "deadline:FleetMembershipLevels": [
+              "MANAGER"
+            ]
+          },
+          "StringEquals": {
+            "deadline:AssociatedMembershipLevel": [
+              "MANAGER",
+              "CONTRIBUTOR",
+              "VIEWER",
+              ""
+            ],
+            "deadline:MembershipLevel": [
+              "MANAGER",
+              "CONTRIBUTOR",
+              "VIEWER"
+            ]
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "*"
+        ],
+        "Sid": "ManagerLevelMemberAssociation"
+      },
+      {
+        "Action": [
+          "deadline:DisassociateMemberFromFleet"
+        ],
+        "Condition": {
+          "ForAnyValue:StringEquals": {
+            "deadline:FleetMembershipLevels": [
+              "MANAGER"
+            ]
+          },
+          "StringEquals": {
+            "deadline:AssociatedMembershipLevel": [
+              "MANAGER",
+              "CONTRIBUTOR",
+              "VIEWER",
+              ""
+            ]
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "*"
+        ],
+        "Sid": "ManagerLevelMemberDisassociation"
+      },
+      {
+        "Action": [
+          "deadline:ListFleetMembers"
+        ],
+        "Condition": {
+          "ForAnyValue:StringEquals": {
+            "deadline:FleetMembershipLevels": [
+              "OWNER",
+              "MANAGER"
+            ]
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "*"
+        ],
+        "Sid": "OwnerManagerPermissions"
+      },
+      {
+        "Action": [
+          "deadline:AssumeFleetRoleForRead",
+          "deadline:GetFleet",
+          "deadline:GetQueueFleetAssociation",
+          "deadline:GetWorker",
+          "deadline:ListQueueFleetAssociations",
+          "deadline:ListSessionsForWorker",
+          "deadline:ListWorkers",
+          "deadline:SearchWorkers"
+        ],
+        "Condition": {
+          "ForAnyValue:StringEquals": {
+            "deadline:FleetMembershipLevels": [
+              "OWNER",
+              "MANAGER",
+              "CONTRIBUTOR",
+              "VIEWER"
+            ]
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "*"
+        ],
+        "Sid": "AllLevelsPermissions"
+      },
+      {
+        "Action": [
+          "deadline:ListFleets"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "deadline:RequesterPrincipalId": "${deadline:PrincipalId}"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "*"
+        ],
+        "Sid": "ListBasedOnMembership"
+      }
+    ],
+    "Version": "2012-10-17"
+  },
+  "effective_actions": [
+    {
+      "access_level": "Read",
+      "action": "identitystore:DescribeGroup",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "identitystore:DescribeGroup",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "identitystore:DescribeUser",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "identitystore:DescribeUser",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "identitystore:ListGroupMembershipsForMember",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "identitystore:ListGroupMembershipsForMember",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "ec2:DescribeInstanceTypes",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:DescribeInstanceTypes",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "identitystore:ListUsers",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "identitystore:ListUsers",
+      "privesc": false,
+      "resource_exposure": false
+    }
+  ],
+  "malformed": false,
+  "name": "AWSDeadlineCloud-UserAccessFleets",
+  "privesc": false,
+  "resource_exposure": false,
+  "undocumented_actions": false,
+  "unknown_actions": [
+    {
+      "action": "deadline:GetApplicationVersion",
+      "condition": null
+    },
+    {
+      "action": "deadline:AssociateMemberToFleet",
+      "condition": {
+        "ForAnyValue:StringEquals": {
+          "deadline:FleetMembershipLevels": [
+            "OWNER"
+          ]
+        }
+      }
+    },
+    {
+      "action": "deadline:DisassociateMemberFromFleet",
+      "condition": {
+        "ForAnyValue:StringEquals": {
+          "deadline:FleetMembershipLevels": [
+            "OWNER"
+          ]
+        }
+      }
+    },
+    {
+      "action": "deadline:AssociateMemberToFleet",
+      "condition": {
+        "ForAnyValue:StringEquals": {
+          "deadline:FleetMembershipLevels": [
+            "MANAGER"
+          ]
+        },
+        "StringEquals": {
+          "deadline:AssociatedMembershipLevel": [
+            "MANAGER",
+            "CONTRIBUTOR",
+            "VIEWER",
+            ""
+          ],
+          "deadline:MembershipLevel": [
+            "MANAGER",
+            "CONTRIBUTOR",
+            "VIEWER"
+          ]
+        }
+      }
+    },
+    {
+      "action": "deadline:DisassociateMemberFromFleet",
+      "condition": {
+        "ForAnyValue:StringEquals": {
+          "deadline:FleetMembershipLevels": [
+            "MANAGER"
+          ]
+        },
+        "StringEquals": {
+          "deadline:AssociatedMembershipLevel": [
+            "MANAGER",
+            "CONTRIBUTOR",
+            "VIEWER",
+            ""
+          ]
+        }
+      }
+    },
+    {
+      "action": "deadline:ListFleetMembers",
+      "condition": {
+        "ForAnyValue:StringEquals": {
+          "deadline:FleetMembershipLevels": [
+            "OWNER",
+            "MANAGER"
+          ]
+        }
+      }
+    },
+    {
+      "action": "deadline:AssumeFleetRoleForRead",
+      "condition": {
+        "ForAnyValue:StringEquals": {
+          "deadline:FleetMembershipLevels": [
+            "OWNER",
+            "MANAGER",
+            "CONTRIBUTOR",
+            "VIEWER"
+          ]
+        }
+      }
+    },
+    {
+      "action": "deadline:GetFleet",
+      "condition": {
+        "ForAnyValue:StringEquals": {
+          "deadline:FleetMembershipLevels": [
+            "OWNER",
+            "MANAGER",
+            "CONTRIBUTOR",
+            "VIEWER"
+          ]
+        }
+      }
+    },
+    {
+      "action": "deadline:GetQueueFleetAssociation",
+      "condition": {
+        "ForAnyValue:StringEquals": {
+          "deadline:FleetMembershipLevels": [
+            "OWNER",
+            "MANAGER",
+            "CONTRIBUTOR",
+            "VIEWER"
+          ]
+        }
+      }
+    },
+    {
+      "action": "deadline:GetWorker",
+      "condition": {
+        "ForAnyValue:StringEquals": {
+          "deadline:FleetMembershipLevels": [
+            "OWNER",
+            "MANAGER",
+            "CONTRIBUTOR",
+            "VIEWER"
+          ]
+        }
+      }
+    },
+    {
+      "action": "deadline:ListQueueFleetAssociations",
+      "condition": {
+        "ForAnyValue:StringEquals": {
+          "deadline:FleetMembershipLevels": [
+            "OWNER",
+            "MANAGER",
+            "CONTRIBUTOR",
+            "VIEWER"
+          ]
+        }
+      }
+    },
+    {
+      "action": "deadline:ListSessionsForWorker",
+      "condition": {
+        "ForAnyValue:StringEquals": {
+          "deadline:FleetMembershipLevels": [
+            "OWNER",
+            "MANAGER",
+            "CONTRIBUTOR",
+            "VIEWER"
+          ]
+        }
+      }
+    },
+    {
+      "action": "deadline:ListWorkers",
+      "condition": {
+        "ForAnyValue:StringEquals": {
+          "deadline:FleetMembershipLevels": [
+            "OWNER",
+            "MANAGER",
+            "CONTRIBUTOR",
+            "VIEWER"
+          ]
+        }
+      }
+    },
+    {
+      "action": "deadline:SearchWorkers",
+      "condition": {
+        "ForAnyValue:StringEquals": {
+          "deadline:FleetMembershipLevels": [
+            "OWNER",
+            "MANAGER",
+            "CONTRIBUTOR",
+            "VIEWER"
+          ]
+        }
+      }
+    },
+    {
+      "action": "deadline:ListFleets",
+      "condition": {
+        "StringEquals": {
+          "deadline:RequesterPrincipalId": "${deadline:PrincipalId}"
+        }
+      }
+    }
+  ],
+  "updatedate": "2024-04-01T17:01:50+00:00",
+  "version": "v1"
+}

@@ -5,7 +5,7 @@
     "Write"
   ],
   "arn": "arn:aws:iam::aws:policy/service-role/AmazonSecurityLakeMetastoreManager",
-  "createdate": "2024-01-23T15:26:57Z",
+  "createdate": "2024-04-01T20:04:24Z",
   "credentials_exposure": false,
   "data_access": true,
   "deprecated": false,
@@ -82,6 +82,22 @@
           "arn:aws:s3:::aws-security-data-lake*"
         ],
         "Sid": "AllowMetaDataReadWrite"
+      },
+      {
+        "Action": [
+          "s3:DeleteObject"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:s3:::aws-security-data-lake*/metadata/*.avro",
+          "arn:aws:s3:::aws-security-data-lake*/metadata/*.metadata.json"
+        ],
+        "Sid": "AllowMetaDataCleanup"
       }
     ],
     "Version": "2012-10-17"
@@ -268,6 +284,20 @@
       "effective_action": "s3:GetObject",
       "privesc": false,
       "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "s3:DeleteObject",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3:DeleteObject",
+      "privesc": false,
+      "resource_exposure": false
     }
   ],
   "malformed": false,
@@ -276,6 +306,6 @@
   "resource_exposure": false,
   "undocumented_actions": false,
   "unknown_actions": [],
-  "updatedate": "2024-01-23T15:26:57+00:00",
-  "version": "v1"
+  "updatedate": "2024-04-01T20:04:24+00:00",
+  "version": "v2"
 }

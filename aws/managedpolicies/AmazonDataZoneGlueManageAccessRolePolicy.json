@@ -6,12 +6,26 @@
     "Permissions management"
   ],
   "arn": "arn:aws:iam::aws:policy/service-role/AmazonDataZoneGlueManageAccessRolePolicy",
-  "createdate": "2023-12-14T23:03:20Z",
+  "createdate": "2024-04-01T19:05:41Z",
   "credentials_exposure": false,
   "data_access": false,
   "deprecated": false,
   "document": {
     "Statement": [
+      {
+        "Action": [
+          "glue:ListDataQualityResults",
+          "glue:GetDataQualityResult"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:glue:*:*:dataQualityRuleset/*",
+        "Sid": "GlueDataQualityPermissions"
+      },
       {
         "Action": [
           "glue:CreateTable",
@@ -42,6 +56,7 @@
           "lakeformation:GetResourceLFTags",
           "lakeformation:ListLakeFormationOptIns",
           "lakeformation:ListPermissions",
+          "lakeformation:RegisterResource",
           "lakeformation:RevokePermissions",
           "glue:GetDatabase",
           "glue:GetTable",
@@ -158,11 +173,68 @@
         "Effect": "Allow",
         "Resource": "*",
         "Sid": "KMSDecryptPermission"
+      },
+      {
+        "Action": [
+          "iam:GetRole"
+        ],
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:iam::*:role/AmazonDataZone*",
+          "arn:aws:iam::*:role/service-role/AmazonDataZone*"
+        ],
+        "Sid": "GetRoleForDataZone"
+      },
+      {
+        "Action": [
+          "iam:PassRole"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "iam:PassedToService": [
+              "lakeformation.amazonaws.com"
+            ]
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:iam::*:role/AmazonDataZone*",
+          "arn:aws:iam::*:role/service-role/AmazonDataZone*"
+        ],
+        "Sid": "PassRoleForDataLocationRegistration"
       }
     ],
     "Version": "2012-10-17"
   },
   "effective_actions": [
+    {
+      "access_level": "List",
+      "action": "glue:ListDataQualityResults",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "glue:ListDataQualityResults",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "glue:GetDataQualityResult",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "glue:GetDataQualityResult",
+      "privesc": false,
+      "resource_exposure": false
+    },
     {
       "access_level": "Write",
       "action": "glue:CreateTable",
@@ -296,6 +368,16 @@
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "lakeformation:ListPermissions",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "lakeformation:RegisterResource",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "lakeformation:RegisterResource",
       "privesc": false,
       "resource_exposure": false
     },
@@ -582,14 +664,40 @@
       "effective_action": "kms:Decrypt",
       "privesc": false,
       "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "iam:GetRole",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "iam:GetRole",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "iam:PassRole",
+      "condition": {
+        "StringEquals": {
+          "iam:PassedToService": [
+            "lakeformation.amazonaws.com"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "iam:PassRole",
+      "privesc": true,
+      "resource_exposure": true
     }
   ],
   "malformed": false,
   "name": "AmazonDataZoneGlueManageAccessRolePolicy",
-  "privesc": false,
+  "privesc": true,
   "resource_exposure": true,
   "undocumented_actions": false,
   "unknown_actions": [],
-  "updatedate": "2023-12-14T23:03:20+00:00",
-  "version": "v3"
+  "updatedate": "2024-04-01T19:05:41+00:00",
+  "version": "v4"
 }
