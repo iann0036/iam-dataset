@@ -5,7 +5,7 @@
     "Write"
   ],
   "arn": "arn:aws:iam::aws:policy/service-role/AmplifyBackendDeployFullAccess",
-  "createdate": "2024-01-02T21:13:46Z",
+  "createdate": "2024-04-05T18:24:13Z",
   "credentials_exposure": true,
   "data_access": true,
   "deprecated": false,
@@ -17,8 +17,14 @@
           "cloudformation:DescribeStackEvents",
           "cloudformation:GetTemplate",
           "cloudformation:ListStackResources",
-          "cloudformation:GetTemplateSummary"
+          "cloudformation:GetTemplateSummary",
+          "cloudformation:DeleteStack"
         ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          }
+        },
         "Effect": "Allow",
         "Resource": [
           "arn:aws:cloudformation:*:*:stack/amplify-*",
@@ -58,7 +64,9 @@
       {
         "Action": [
           "lambda:InvokeFunction",
-          "lambda:UpdateFunctionCode"
+          "lambda:UpdateFunctionCode",
+          "lambda:GetFunction",
+          "lambda:UpdateFunctionConfiguration"
         ],
         "Condition": {
           "StringEquals": {
@@ -69,7 +77,7 @@
         "Resource": [
           "arn:aws:lambda:*:*:function:amplify-*"
         ],
-        "Sid": "AmplifyHotSwappableSchemaResource"
+        "Sid": "AmplifyHotSwappableFunctionResource"
       },
       {
         "Action": [
@@ -144,7 +152,11 @@
     {
       "access_level": "List",
       "action": "cloudformation:DescribeStacks",
-      "condition": null,
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "cloudformation:DescribeStacks",
@@ -154,7 +166,11 @@
     {
       "access_level": "Read",
       "action": "cloudformation:DescribeStackEvents",
-      "condition": null,
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "cloudformation:DescribeStackEvents",
@@ -164,7 +180,11 @@
     {
       "access_level": "Read",
       "action": "cloudformation:GetTemplate",
-      "condition": null,
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
       "credentials_exposure": false,
       "data_access": true,
       "effective_action": "cloudformation:GetTemplate",
@@ -174,7 +194,11 @@
     {
       "access_level": "List",
       "action": "cloudformation:ListStackResources",
-      "condition": null,
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "cloudformation:ListStackResources",
@@ -184,10 +208,28 @@
     {
       "access_level": "Read",
       "action": "cloudformation:GetTemplateSummary",
-      "condition": null,
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "cloudformation:GetTemplateSummary",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "cloudformation:DeleteStack",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudformation:DeleteStack",
       "privesc": false,
       "resource_exposure": false
     },
@@ -331,6 +373,34 @@
     },
     {
       "access_level": "Read",
+      "action": "lambda:GetFunction",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": true,
+      "effective_action": "lambda:GetFunction",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "lambda:UpdateFunctionConfiguration",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "lambda:UpdateFunctionConfiguration",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
       "action": "s3:GetObject",
       "condition": {
         "StringEquals": {
@@ -448,6 +518,6 @@
   "resource_exposure": false,
   "undocumented_actions": false,
   "unknown_actions": [],
-  "updatedate": "2024-01-02T21:13:46+00:00",
-  "version": "v4"
+  "updatedate": "2024-04-05T18:24:13+00:00",
+  "version": "v5"
 }
