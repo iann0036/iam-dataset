@@ -6,7 +6,7 @@
     "Write"
   ],
   "arn": "arn:aws:iam::aws:policy/aws-service-role/AmazonRDSCustomServiceRolePolicy",
-  "createdate": "2023-09-20T19:16:42Z",
+  "createdate": "2024-04-08T19:39:46Z",
   "credentials_exposure": false,
   "data_access": true,
   "deprecated": false,
@@ -21,6 +21,7 @@
           "ec2:DescribeNetworkInterfaces",
           "ec2:DescribeVolumes",
           "ec2:DescribeInstanceStatus",
+          "ec2:DescribeInstanceTypes",
           "ec2:DescribeIamInstanceProfileAssociations",
           "ec2:DescribeImages",
           "ec2:DescribeVpcs",
@@ -176,6 +177,24 @@
           "arn:aws:ec2:*::snapshot/*"
         ],
         "Sid": "eccRunInstances3"
+      },
+      {
+        "Action": [
+          "ec2:ModifyInstanceAttribute"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceTag/AWSRDSCustom": [
+              "custom-sqlserver"
+            ],
+            "ec2:Attribute": "InstanceType"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:ec2:*:*:instance/*"
+        ],
+        "Sid": "eccModifyInstanceAttribute1"
       },
       {
         "Action": "ec2:RunInstances",
@@ -837,6 +856,16 @@
     },
     {
       "access_level": "List",
+      "action": "ec2:DescribeInstanceTypes",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:DescribeInstanceTypes",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
       "action": "ec2:DescribeIamInstanceProfileAssociations",
       "condition": null,
       "credentials_exposure": false,
@@ -1261,6 +1290,23 @@
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "ec2:RunInstances",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:ModifyInstanceAttribute",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/AWSRDSCustom": [
+            "custom-sqlserver"
+          ],
+          "ec2:Attribute": "InstanceType"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:ModifyInstanceAttribute",
       "privesc": false,
       "resource_exposure": false
     },
@@ -2445,6 +2491,6 @@
   "resource_exposure": true,
   "undocumented_actions": false,
   "unknown_actions": [],
-  "updatedate": "2023-09-20T19:16:42+00:00",
-  "version": "v7"
+  "updatedate": "2024-04-08T19:39:46+00:00",
+  "version": "v8"
 }
