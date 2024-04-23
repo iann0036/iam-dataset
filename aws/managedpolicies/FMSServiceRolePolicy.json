@@ -7,7 +7,7 @@
     "Permissions management"
   ],
   "arn": "arn:aws:iam::aws:policy/aws-service-role/FMSServiceRolePolicy",
-  "createdate": "2023-04-21T18:33:58Z",
+  "createdate": "2024-04-22T19:12:13Z",
   "credentials_exposure": true,
   "data_access": false,
   "deprecated": false,
@@ -42,7 +42,8 @@
           "arn:aws:waf-regional:*:*:rulegroup/*",
           "arn:aws:elasticloadbalancing:*:*:loadbalancer/app/*",
           "arn:aws:apigateway:*::/restapis/*/stages/*"
-        ]
+        ],
+        "Sid": "WafGeneral"
       },
       {
         "Action": [
@@ -55,7 +56,8 @@
         "Resource": [
           "arn:aws:wafv2:*:*:regional/webacl/*",
           "arn:aws:wafv2:*:*:global/webacl/*"
-        ]
+        ],
+        "Sid": "Wafv2Logging"
       },
       {
         "Action": [
@@ -69,7 +71,8 @@
         "Resource": [
           "arn:aws:waf:*:*:*",
           "arn:aws:waf-regional:*:*:*"
-        ]
+        ],
+        "Sid": "WafWebaclCreation"
       },
       {
         "Action": [
@@ -77,7 +80,8 @@
           "elasticloadbalancing:DescribeTags"
         ],
         "Effect": "Allow",
-        "Resource": "*"
+        "Resource": "*",
+        "Sid": "ElbGeneral"
       },
       {
         "Action": [
@@ -94,33 +98,40 @@
           "arn:aws:waf:*:*:rulegroup/*",
           "arn:aws:waf-regional:*:*:webacl/*",
           "arn:aws:waf-regional:*:*:rulegroup/*"
-        ]
+        ],
+        "Sid": "WafPermissionPolicy"
       },
       {
         "Action": [
           "cloudfront:GetDistribution",
           "cloudfront:UpdateDistribution",
           "cloudfront:ListDistributionsByWebACLId",
-          "cloudfront:ListDistributions"
+          "cloudfront:ListDistributions",
+          "cloudfront:ListTagsForResource"
         ],
         "Effect": "Allow",
-        "Resource": "*"
+        "Resource": "*",
+        "Sid": "CloudfrontGeneral"
       },
       {
         "Action": [
           "config:DeleteConfigRule",
           "config:GetComplianceDetailsByConfigRule",
           "config:PutConfigRule",
-          "config:StartConfigRulesEvaluation"
+          "config:StartConfigRulesEvaluation",
+          "config:DeleteEvaluationResults"
         ],
         "Effect": "Allow",
-        "Resource": "arn:aws:config:*:*:config-rule/aws-service-rule/fms.amazonaws.com/*"
+        "Resource": "arn:aws:config:*:*:config-rule/aws-service-rule/fms.amazonaws.com/*",
+        "Sid": "ConfigScoped"
       },
       {
         "Action": [
           "config:DescribeComplianceByConfigRule",
           "config:DescribeConfigurationRecorders",
           "config:DescribeConfigurationRecorderStatus",
+          "config:DescribeConfigRules",
+          "config:DescribeConfigRuleEvaluationStatus",
           "config:PutConfigurationRecorder",
           "config:StartConfigurationRecorder",
           "config:PutDeliveryChannel",
@@ -132,7 +143,8 @@
           "config:SelectResourceConfig"
         ],
         "Effect": "Allow",
-        "Resource": "*"
+        "Resource": "*",
+        "Sid": "ConfigUnscoped"
       },
       {
         "Action": [
@@ -142,14 +154,13 @@
         "Effect": "Allow",
         "Resource": [
           "arn:aws:iam::*:role/aws-service-role/fms.amazonaws.com/AWSServiceRoleForFMS"
-        ]
+        ],
+        "Sid": "SlrDeletion"
       },
       {
         "Action": [
           "organizations:DescribeAccount",
           "organizations:DescribeOrganization",
-          "config:DescribeConfigRuleEvaluationStatus",
-          "config:DescribeConfigRules",
           "organizations:ListAccounts",
           "organizations:DescribeOrganizationalUnit",
           "organizations:ListChildren",
@@ -161,7 +172,8 @@
         "Effect": "Allow",
         "Resource": [
           "*"
-        ]
+        ],
+        "Sid": "OrganizationsGeneral"
       },
       {
         "Action": [
@@ -183,7 +195,8 @@
           "shield:UpdateApplicationLayerAutomaticResponse"
         ],
         "Effect": "Allow",
-        "Resource": "*"
+        "Resource": "*",
+        "Sid": "ShieldGeneral"
       },
       {
         "Action": [
@@ -200,15 +213,8 @@
           "arn:aws:ec2:*:*:network-interface/*",
           "arn:aws:ec2:*:*:security-group/*",
           "arn:aws:ec2:*:*:instance/*"
-        ]
-      },
-      {
-        "Action": [
-          "ec2:DescribeNetworkInterfaceAttribute",
-          "ec2:DescribeInstances"
         ],
-        "Effect": "Allow",
-        "Resource": "*"
+        "Sid": "EC2SecurityGroupScoped"
       },
       {
         "Action": [
@@ -222,7 +228,8 @@
         "Effect": "Allow",
         "Resource": [
           "arn:aws:ec2:*:*:security-group/*"
-        ]
+        ],
+        "Sid": "SecurityGroupTagCreation"
       },
       {
         "Action": [
@@ -237,7 +244,8 @@
         "Effect": "Allow",
         "Resource": [
           "arn:aws:ec2:*:*:security-group/*"
-        ]
+        ],
+        "Sid": "SecurityGroupTagManagement"
       },
       {
         "Action": [
@@ -248,12 +256,21 @@
           "ec2:DescribeNetworkInterfaces",
           "ec2:ModifyNetworkInterfaceAttribute",
           "ec2:DescribeVpcs",
-          "ec2:DescribeVpcPeeringConnections"
+          "ec2:DescribeVpcPeeringConnections",
+          "ec2:DescribeNetworkInterfaceAttribute",
+          "ec2:DescribeInstances",
+          "ec2:AssociateRouteTable",
+          "ec2:CreateSubnet",
+          "ec2:CreateRouteTable",
+          "ec2:DeleteSubnet",
+          "ec2:DisassociateRouteTable",
+          "ec2:ReplaceRouteTableAssociation"
         ],
         "Effect": "Allow",
         "Resource": [
           "*"
-        ]
+        ],
+        "Sid": "Ec2Unscoped"
       },
       {
         "Action": [
@@ -271,7 +288,8 @@
         "Resource": [
           "arn:aws:wafv2:*:*:global/webacl/*",
           "arn:aws:wafv2:*:*:regional/webacl/*"
-        ]
+        ],
+        "Sid": "Wafv2General"
       },
       {
         "Action": [
@@ -292,7 +310,8 @@
           "arn:aws:wafv2:*:*:regional/ipset/*",
           "arn:aws:wafv2:*:*:global/regexpatternset/*",
           "arn:aws:wafv2:*:*:regional/regexpatternset/*"
-        ]
+        ],
+        "Sid": "Wafv2WebAclAndRuleGroupMutation"
       },
       {
         "Action": [
@@ -304,14 +323,8 @@
         "Resource": [
           "arn:aws:wafv2:*:*:global/rulegroup/*",
           "arn:aws:wafv2:*:*:regional/rulegroup/*"
-        ]
-      },
-      {
-        "Action": [
-          "cloudfront:ListTagsForResource"
         ],
-        "Effect": "Allow",
-        "Resource": "*"
+        "Sid": "Wafv2PermissionPolicy"
       },
       {
         "Action": [
@@ -320,7 +333,8 @@
         "Effect": "Allow",
         "Resource": [
           "arn:aws:wafv2:*:*:regional/webacl/*"
-        ]
+        ],
+        "Sid": "Wafv2WebaclDescribe"
       },
       {
         "Action": [
@@ -338,7 +352,8 @@
           }
         },
         "Effect": "Allow",
-        "Resource": "arn:aws:ec2:*:*:route-table/*"
+        "Resource": "arn:aws:ec2:*:*:route-table/*",
+        "Sid": "RouteTableTagManagement"
       },
       {
         "Action": [
@@ -355,7 +370,8 @@
         "Effect": "Allow",
         "Resource": [
           "arn:aws:ec2:*:*:subnet/*"
-        ]
+        ],
+        "Sid": "SubnetTagManagement"
       },
       {
         "Action": [
@@ -375,7 +391,8 @@
         "Effect": "Allow",
         "Resource": [
           "arn:aws:ec2:*:*:vpc-endpoint/*"
-        ]
+        ],
+        "Sid": "VPCEndpointTagManagement"
       },
       {
         "Action": [
@@ -387,19 +404,8 @@
           }
         },
         "Effect": "Allow",
-        "Resource": "arn:aws:ec2:*:*:route-table/*"
-      },
-      {
-        "Action": [
-          "ec2:AssociateRouteTable",
-          "ec2:CreateSubnet",
-          "ec2:CreateRouteTable",
-          "ec2:DeleteSubnet",
-          "ec2:DisassociateRouteTable",
-          "ec2:ReplaceRouteTableAssociation"
-        ],
-        "Effect": "Allow",
-        "Resource": "*"
+        "Resource": "arn:aws:ec2:*:*:route-table/*",
+        "Sid": "RouteTableCleanup"
       },
       {
         "Action": [
@@ -411,7 +417,8 @@
           "ec2:DescribeAvailabilityZones"
         ],
         "Effect": "Allow",
-        "Resource": "*"
+        "Resource": "*",
+        "Sid": "Ec2DescribeUnscoped"
       },
       {
         "Action": [
@@ -427,7 +434,8 @@
         "Effect": "Allow",
         "Resource": [
           "arn:aws:ec2:*:*:vpc-endpoint/*"
-        ]
+        ],
+        "Sid": "CreateVpcEndpointScoped"
       },
       {
         "Action": [
@@ -437,7 +445,8 @@
         "Resource": [
           "arn:aws:ec2:*:*:subnet/*",
           "arn:aws:ec2:*:*:vpc/*"
-        ]
+        ],
+        "Sid": "CreateVpcEndpointUnscoped"
       },
       {
         "Action": [
@@ -449,7 +458,8 @@
           }
         },
         "Effect": "Allow",
-        "Resource": "arn:aws:ec2:*:*:vpc-endpoint/*"
+        "Resource": "arn:aws:ec2:*:*:vpc-endpoint/*",
+        "Sid": "VpcEndpointsDeletion"
       },
       {
         "Action": [
@@ -466,7 +476,8 @@
         "Effect": "Allow",
         "Resource": [
           "arn:aws:ram:*:*:resource-share/*"
-        ]
+        ],
+        "Sid": "RamTagManagement"
       },
       {
         "Action": [
@@ -480,7 +491,8 @@
           }
         },
         "Effect": "Allow",
-        "Resource": "arn:aws:ram:*:*:resource-share/*"
+        "Resource": "arn:aws:ram:*:*:resource-share/*",
+        "Sid": "RamMutation"
       },
       {
         "Action": [
@@ -500,7 +512,8 @@
           }
         },
         "Effect": "Allow",
-        "Resource": "*"
+        "Resource": "*",
+        "Sid": "RamCreation"
       },
       {
         "Action": [
@@ -509,7 +522,7 @@
         ],
         "Effect": "Allow",
         "Resource": "*",
-        "Sid": "ram"
+        "Sid": "RamDescribe"
       },
       {
         "Action": [
@@ -524,14 +537,16 @@
           }
         },
         "Effect": "Allow",
-        "Resource": "*"
+        "Resource": "*",
+        "Sid": "SlrCreation"
       },
       {
         "Action": [
           "iam:GetRole"
         ],
         "Effect": "Allow",
-        "Resource": "*"
+        "Resource": "*",
+        "Sid": "IamDescribe"
       },
       {
         "Action": [
@@ -546,7 +561,8 @@
           }
         },
         "Effect": "Allow",
-        "Resource": "*"
+        "Resource": "*",
+        "Sid": "NetworkFirewallTagManagement"
       },
       {
         "Action": [
@@ -572,7 +588,8 @@
           "network-firewall:UpdateLoggingConfiguration"
         ],
         "Effect": "Allow",
-        "Resource": "*"
+        "Resource": "*",
+        "Sid": "NetworkFirewallGeneral"
       },
       {
         "Action": [
@@ -585,7 +602,8 @@
           }
         },
         "Effect": "Allow",
-        "Resource": "*"
+        "Resource": "*",
+        "Sid": "NetworkFirewallCleanup"
       },
       {
         "Action": [
@@ -596,7 +614,8 @@
           "logs:DeleteLogDelivery"
         ],
         "Effect": "Allow",
-        "Resource": "*"
+        "Resource": "*",
+        "Sid": "LogsGeneral"
       },
       {
         "Action": [
@@ -609,7 +628,8 @@
           "route53resolver:PutFirewallRuleGroupPolicy"
         ],
         "Effect": "Allow",
-        "Resource": "*"
+        "Resource": "*",
+        "Sid": "Route53ResolverRuleGroupUnscoped"
       },
       {
         "Action": [
@@ -622,7 +642,8 @@
           }
         },
         "Effect": "Allow",
-        "Resource": "arn:aws:route53resolver:*:*:firewall-rule-group-association/*"
+        "Resource": "arn:aws:route53resolver:*:*:firewall-rule-group-association/*",
+        "Sid": "Route53ResolverRuleGroupCleanup"
       },
       {
         "Action": [
@@ -635,7 +656,75 @@
           }
         },
         "Effect": "Allow",
-        "Resource": "arn:aws:route53resolver:*:*:firewall-rule-group-association/*"
+        "Resource": "arn:aws:route53resolver:*:*:firewall-rule-group-association/*",
+        "Sid": "Route53ResolverRuleGroupScoped"
+      },
+      {
+        "Action": [
+          "ec2:CreateTags"
+        ],
+        "Condition": {
+          "ForAllValues:StringEquals": {
+            "aws:TagKeys": [
+              "Name",
+              "FMManaged",
+              "FMPolicies"
+            ]
+          },
+          "StringEquals": {
+            "ec2:CreateAction": "CreateNetworkAcl"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:ec2:*:*:network-acl/*",
+        "Sid": "NaclTagCreation"
+      },
+      {
+        "Action": [
+          "ec2:CreateTags",
+          "ec2:DeleteTags"
+        ],
+        "Condition": {
+          "ForAllValues:StringEquals": {
+            "aws:TagKeys": [
+              "Name",
+              "FMManaged",
+              "FMPolicies"
+            ]
+          },
+          "StringEquals": {
+            "aws:ResourceTag/FMManaged": "true"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:ec2:*:*:network-acl/*",
+        "Sid": "NaclTagManagement"
+      },
+      {
+        "Action": [
+          "ec2:DeleteNetworkAclEntry",
+          "ec2:CreateNetworkAclEntry",
+          "ec2:ReplaceNetworkAclEntry",
+          "ec2:DeleteNetworkAcl"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceTag/FMManaged": "true"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "NaclScoped"
+      },
+      {
+        "Action": [
+          "ec2:ReplaceNetworkAclAssociation",
+          "ec2:DescribeNetworkAcls",
+          "ec2:CreateNetworkAcl"
+        ],
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "NaclUnscoped"
       }
     ],
     "Version": "2012-10-17"
@@ -1032,6 +1121,16 @@
       "resource_exposure": false
     },
     {
+      "access_level": "Read",
+      "action": "cloudfront:ListTagsForResource",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudfront:ListTagsForResource",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
       "access_level": "Write",
       "action": "config:DeleteConfigRule",
       "condition": null,
@@ -1072,6 +1171,16 @@
       "resource_exposure": false
     },
     {
+      "access_level": "Write",
+      "action": "config:DeleteEvaluationResults",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "config:DeleteEvaluationResults",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
       "access_level": "Read",
       "action": "config:DescribeComplianceByConfigRule",
       "condition": null,
@@ -1098,6 +1207,26 @@
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "config:DescribeConfigurationRecorderStatus",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "config:DescribeConfigRules",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "config:DescribeConfigRules",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "config:DescribeConfigRuleEvaluationStatus",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "config:DescribeConfigRuleEvaluationStatus",
       "privesc": false,
       "resource_exposure": false
     },
@@ -1228,26 +1357,6 @@
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "organizations:DescribeOrganization",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Read",
-      "action": "config:DescribeConfigRuleEvaluationStatus",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "config:DescribeConfigRuleEvaluationStatus",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "config:DescribeConfigRules",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "config:DescribeConfigRules",
       "privesc": false,
       "resource_exposure": false
     },
@@ -1552,26 +1661,6 @@
       "resource_exposure": false
     },
     {
-      "access_level": "List",
-      "action": "ec2:DescribeNetworkInterfaceAttribute",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:DescribeNetworkInterfaceAttribute",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "ec2:DescribeInstances",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:DescribeInstances",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
       "access_level": "Tagging",
       "action": "ec2:CreateTags",
       "condition": {
@@ -1690,6 +1779,86 @@
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "ec2:DescribeVpcPeeringConnections",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "ec2:DescribeNetworkInterfaceAttribute",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:DescribeNetworkInterfaceAttribute",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "ec2:DescribeInstances",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:DescribeInstances",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:AssociateRouteTable",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:AssociateRouteTable",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:CreateSubnet",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:CreateSubnet",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:CreateRouteTable",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:CreateRouteTable",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:DeleteSubnet",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:DeleteSubnet",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:DisassociateRouteTable",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:DisassociateRouteTable",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:ReplaceRouteTableAssociation",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:ReplaceRouteTableAssociation",
       "privesc": false,
       "resource_exposure": false
     },
@@ -1855,16 +2024,6 @@
     },
     {
       "access_level": "Read",
-      "action": "cloudfront:ListTagsForResource",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "cloudfront:ListTagsForResource",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Read",
       "action": "wafv2:GetWebACLForResource",
       "condition": null,
       "credentials_exposure": false,
@@ -1941,66 +2100,6 @@
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "ec2:DeleteRouteTable",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Write",
-      "action": "ec2:AssociateRouteTable",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:AssociateRouteTable",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Write",
-      "action": "ec2:CreateSubnet",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:CreateSubnet",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Write",
-      "action": "ec2:CreateRouteTable",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:CreateRouteTable",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Write",
-      "action": "ec2:DeleteSubnet",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:DeleteSubnet",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Write",
-      "action": "ec2:DisassociateRouteTable",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:DisassociateRouteTable",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Write",
-      "action": "ec2:ReplaceRouteTableAssociation",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:ReplaceRouteTableAssociation",
       "privesc": false,
       "resource_exposure": false
     },
@@ -2652,6 +2751,155 @@
       "effective_action": "route53resolver:TagResource",
       "privesc": false,
       "resource_exposure": false
+    },
+    {
+      "access_level": "Tagging",
+      "action": "ec2:CreateTags",
+      "condition": {
+        "ForAllValues:StringEquals": {
+          "aws:TagKeys": [
+            "Name",
+            "FMManaged",
+            "FMPolicies"
+          ]
+        },
+        "StringEquals": {
+          "ec2:CreateAction": "CreateNetworkAcl"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:CreateTags",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Tagging",
+      "action": "ec2:CreateTags",
+      "condition": {
+        "ForAllValues:StringEquals": {
+          "aws:TagKeys": [
+            "Name",
+            "FMManaged",
+            "FMPolicies"
+          ]
+        },
+        "StringEquals": {
+          "aws:ResourceTag/FMManaged": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:CreateTags",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Tagging",
+      "action": "ec2:DeleteTags",
+      "condition": {
+        "ForAllValues:StringEquals": {
+          "aws:TagKeys": [
+            "Name",
+            "FMManaged",
+            "FMPolicies"
+          ]
+        },
+        "StringEquals": {
+          "aws:ResourceTag/FMManaged": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:DeleteTags",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:DeleteNetworkAclEntry",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/FMManaged": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:DeleteNetworkAclEntry",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:CreateNetworkAclEntry",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/FMManaged": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:CreateNetworkAclEntry",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:ReplaceNetworkAclEntry",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/FMManaged": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:ReplaceNetworkAclEntry",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:DeleteNetworkAcl",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/FMManaged": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:DeleteNetworkAcl",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:ReplaceNetworkAclAssociation",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:ReplaceNetworkAclAssociation",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "ec2:DescribeNetworkAcls",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:DescribeNetworkAcls",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:CreateNetworkAcl",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:CreateNetworkAcl",
+      "privesc": false,
+      "resource_exposure": false
     }
   ],
   "malformed": false,
@@ -2660,6 +2908,6 @@
   "resource_exposure": true,
   "undocumented_actions": false,
   "unknown_actions": [],
-  "updatedate": "2023-04-21T18:33:58+00:00",
-  "version": "v28"
+  "updatedate": "2024-04-22T19:12:13+00:00",
+  "version": "v29"
 }
