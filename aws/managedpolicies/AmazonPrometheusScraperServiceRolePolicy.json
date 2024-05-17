@@ -6,7 +6,7 @@
     "Write"
   ],
   "arn": "arn:aws:iam::aws:policy/aws-service-role/AmazonPrometheusScraperServiceRolePolicy",
-  "createdate": "2023-11-26T14:19:52Z",
+  "createdate": "2024-04-26T20:25:54+00:00",
   "credentials_exposure": false,
   "data_access": false,
   "deprecated": false,
@@ -58,7 +58,7 @@
           }
         },
         "Effect": "Allow",
-        "Resource": "arn:*:ec2:*:*:network-interface/*",
+        "Resource": "arn:aws:ec2:*:*:network-interface/*",
         "Sid": "TagManagement"
       },
       {
@@ -80,8 +80,24 @@
           "eks:DescribeCluster"
         ],
         "Effect": "Allow",
-        "Resource": "arn:*:eks:*:*:cluster/*",
+        "Resource": "arn:aws:eks:*:*:cluster/*",
         "Sid": "EKSAccess"
+      },
+      {
+        "Action": [
+          "eks:DeleteAccessEntry"
+        ],
+        "Condition": {
+          "ArnLike": {
+            "eks:principalArn": "arn:aws:iam::*:role/aws-service-role/scraper.aps.amazonaws.com/AWSServiceRoleForAmazonPrometheusScraper*"
+          },
+          "StringEquals": {
+            "aws:PrincipalAccount": "${aws:ResourceAccount}"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:eks:*:*:access-entry/*/role/*",
+        "Sid": "DeleteEKSAccessEntry"
       },
       {
         "Action": [
@@ -93,7 +109,7 @@
           }
         },
         "Effect": "Allow",
-        "Resource": "arn:*:aps:*:*:workspace/*",
+        "Resource": "arn:aws:aps:*:*:workspace/*",
         "Sid": "APSWriting"
       }
     ],
@@ -213,6 +229,23 @@
     },
     {
       "access_level": "Write",
+      "action": "eks:DeleteAccessEntry",
+      "condition": {
+        "ArnLike": {
+          "eks:principalArn": "arn:aws:iam::*:role/aws-service-role/scraper.aps.amazonaws.com/AWSServiceRoleForAmazonPrometheusScraper*"
+        },
+        "StringEquals": {
+          "aws:PrincipalAccount": "${aws:ResourceAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "eks:DeleteAccessEntry",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
       "action": "aps:RemoteWrite",
       "condition": {
         "StringEquals": {
@@ -232,6 +265,6 @@
   "resource_exposure": true,
   "undocumented_actions": false,
   "unknown_actions": [],
-  "updatedate": "2023-11-26T14:19:52+00:00",
-  "version": "v1"
+  "updatedate": "2024-04-26T20:25:54+00:00",
+  "version": "v2"
 }

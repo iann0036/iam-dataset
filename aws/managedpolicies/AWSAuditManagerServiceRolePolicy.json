@@ -5,7 +5,7 @@
     "Write"
   ],
   "arn": "arn:aws:iam::aws:policy/aws-service-role/AWSAuditManagerServiceRolePolicy",
-  "createdate": "2023-12-06T20:39:40Z",
+  "createdate": "2024-05-09T16:51:51+00:00",
   "credentials_exposure": false,
   "data_access": true,
   "deprecated": false,
@@ -15,6 +15,8 @@
         "Action": [
           "acm:GetAccountConfiguration",
           "acm:ListCertificates",
+          "autoscaling:DescribeAutoScalingGroups",
+          "backup:ListBackupPlans",
           "backup:ListRecoveryPointsByResource",
           "bedrock:GetCustomModel",
           "bedrock:GetFoundationModel",
@@ -23,6 +25,11 @@
           "bedrock:ListCustomModels",
           "bedrock:ListFoundationModels",
           "bedrock:ListModelCustomizationJobs",
+          "cloudfront:GetDistribution",
+          "cloudfront:GetDistributionConfig",
+          "cloudfront:ListDistributions",
+          "cloudtrail:GetTrail",
+          "cloudtrail:ListTrails",
           "cloudtrail:DescribeTrails",
           "cloudtrail:LookupEvents",
           "cloudwatch:DescribeAlarms",
@@ -35,10 +42,19 @@
           "config:ListDiscoveredResources",
           "directconnect:DescribeDirectConnectGateways",
           "directconnect:DescribeVirtualGateways",
+          "dynamodb:DescribeContinuousBackups",
+          "dynamodb:DescribeBackup",
+          "dynamodb:DescribeTableReplicaAutoScaling",
           "dynamodb:DescribeTable",
           "dynamodb:ListBackups",
           "dynamodb:ListGlobalTables",
           "dynamodb:ListTables",
+          "ec2:DescribeInstanceCreditSpecifications",
+          "ec2:DescribeInstanceAttribute",
+          "ec2:DescribeSecurityGroupRules",
+          "ec2:DescribeVpcEndpointConnections",
+          "ec2:DescribeVpcEndpointServiceConfigurations",
+          "ec2:GetLaunchTemplateData",
           "ec2:DescribeAddresses",
           "ec2:DescribeCustomerGateways",
           "ec2:DescribeEgressOnlyInternetGateways",
@@ -83,9 +99,16 @@
           "guardduty:ListDetectors",
           "iam:GenerateCredentialReport",
           "iam:GetAccountAuthorizationDetails",
+          "iam:GetAccessKeyLastUsed",
+          "iam:GetCredentialReport",
+          "iam:GetGroupPolicy",
+          "iam:GetPolicy",
+          "iam:GetPolicyVersion",
+          "iam:GetRolePolicy",
+          "iam:GetUser",
+          "iam:GetUserPolicy",
           "iam:GetAccountPasswordPolicy",
           "iam:GetAccountSummary",
-          "iam:GetCredentialReport",
           "iam:ListEntitiesForPolicy",
           "iam:ListGroupPolicies",
           "iam:ListGroups",
@@ -97,6 +120,11 @@
           "iam:ListUserPolicies",
           "iam:ListUsers",
           "iam:ListVirtualMFADevices",
+          "iam:ListPolicyVersions",
+          "iam:ListAccessKeys",
+          "iam:ListAttachedRolePolicies",
+          "iam:ListMfaDeviceTags",
+          "iam:ListMfaDevices",
           "kafka:ListClusters",
           "kafka:ListKafkaVersions",
           "kinesis:ListStreams",
@@ -116,37 +144,62 @@
           "logs:DescribeMetricFilters",
           "logs:DescribeResourcePolicies",
           "logs:FilterLogEvents",
+          "logs:GetDataProtectionPolicy",
+          "es:DescribeDomains",
+          "es:DescribeDomain",
+          "es:DescribeDomainConfig",
           "organizations:DescribeOrganization",
           "organizations:DescribePolicy",
           "rds:DescribeCertificates",
-          "rds:DescribeDbClusterEndpoints",
-          "rds:DescribeDbClusterParameterGroups",
-          "rds:DescribeDbClusters",
+          "rds:DescribeDBClusterEndpoints",
+          "rds:DescribeDBClusterParameterGroups",
           "rds:DescribeDBInstances",
-          "rds:DescribeDbSecurityGroups",
+          "rds:DescribeDBSecurityGroups",
+          "rds:DescribeDBClusters",
+          "rds:DescribeDBInstanceAutomatedBackups",
           "redshift:DescribeClusters",
+          "redshift:DescribeClusterSnapshots",
+          "redshift:DescribeLoggingStatus",
           "route53:GetQueryLoggingConfig",
+          "sagemaker:ListEndpointConfigs",
           "s3:GetBucketPublicAccessBlock",
           "s3:GetBucketVersioning",
           "s3:GetEncryptionConfiguration",
           "s3:GetLifecycleConfiguration",
           "s3:ListAllMyBuckets",
+          "sagemaker:DescribeEndpointConfig",
+          "secretsmanager:DescribeSecret",
+          "secretsmanager:ListSecrets",
           "securityhub:DescribeStandards",
+          "sns:ListTagsForResource",
           "sns:ListTopics",
           "sqs:ListQueues",
+          "waf-regional:GetRule",
+          "waf-regional:GetWebAcl",
+          "waf:GetRule",
+          "waf:GetRuleGroup",
+          "waf:ListActivatedRulesInRuleGroup",
+          "waf:ListWebAcls",
+          "wafv2:ListWebAcls",
           "waf-regional:GetLoggingConfiguration",
           "waf-regional:ListRuleGroups",
           "waf-regional:ListSubscribedRuleGroups",
           "waf-regional:ListWebACLs",
-          "waf:ListActivatedRulesInRuleGroup"
+          "waf-regional:ListRules",
+          "waf:ListRuleGroups",
+          "waf:ListRules"
         ],
         "Effect": "Allow",
         "Resource": "*",
-        "Sid": "AuditManagerAPICallAccess"
+        "Sid": "APIsAccess"
       },
       {
         "Action": [
-          "s3:GetBucketPolicy"
+          "s3:GetBucketAcl",
+          "s3:GetBucketLogging",
+          "s3:GetBucketOwnershipControls",
+          "s3:GetBucketPolicy",
+          "s3:GetBucketTagging"
         ],
         "Condition": {
           "StringEquals": {
@@ -157,7 +210,25 @@
         },
         "Effect": "Allow",
         "Resource": "*",
-        "Sid": "AuditManagerS3GetBucketPolicyAccess"
+        "Sid": "S3Access"
+      },
+      {
+        "Action": [
+          "apigateway:GET"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceAccount": [
+              "${aws:PrincipalAccount}"
+            ]
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:apigateway:*::/restapis/*/stages/*",
+          "arn:aws:apigateway:*::/restapis/*/stages"
+        ],
+        "Sid": "APIGatewayAccess"
       },
       {
         "Action": [
@@ -215,6 +286,26 @@
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "acm:ListCertificates",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "autoscaling:DescribeAutoScalingGroups",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "autoscaling:DescribeAutoScalingGroups",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "backup:ListBackupPlans",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "backup:ListBackupPlans",
       "privesc": false,
       "resource_exposure": false
     },
@@ -295,6 +386,56 @@
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "bedrock:ListModelCustomizationJobs",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "cloudfront:GetDistribution",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudfront:GetDistribution",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "cloudfront:GetDistributionConfig",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudfront:GetDistributionConfig",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "cloudfront:ListDistributions",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudfront:ListDistributions",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "cloudtrail:GetTrail",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudtrail:GetTrail",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "cloudtrail:ListTrails",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudtrail:ListTrails",
       "privesc": false,
       "resource_exposure": false
     },
@@ -420,6 +561,36 @@
     },
     {
       "access_level": "Read",
+      "action": "dynamodb:DescribeContinuousBackups",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "dynamodb:DescribeContinuousBackups",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "dynamodb:DescribeBackup",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "dynamodb:DescribeBackup",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "dynamodb:DescribeTableReplicaAutoScaling",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "dynamodb:DescribeTableReplicaAutoScaling",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
       "action": "dynamodb:DescribeTable",
       "condition": null,
       "credentials_exposure": false,
@@ -455,6 +626,66 @@
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "dynamodb:ListTables",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "ec2:DescribeInstanceCreditSpecifications",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:DescribeInstanceCreditSpecifications",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "ec2:DescribeInstanceAttribute",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:DescribeInstanceAttribute",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "ec2:DescribeSecurityGroupRules",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:DescribeSecurityGroupRules",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "ec2:DescribeVpcEndpointConnections",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:DescribeVpcEndpointConnections",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "ec2:DescribeVpcEndpointServiceConfigurations",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:DescribeVpcEndpointServiceConfigurations",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "ec2:GetLaunchTemplateData",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:GetLaunchTemplateData",
       "privesc": false,
       "resource_exposure": false
     },
@@ -900,6 +1131,86 @@
     },
     {
       "access_level": "Read",
+      "action": "iam:GetAccessKeyLastUsed",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "iam:GetAccessKeyLastUsed",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "iam:GetCredentialReport",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "iam:GetCredentialReport",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "iam:GetGroupPolicy",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "iam:GetGroupPolicy",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "iam:GetPolicy",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "iam:GetPolicy",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "iam:GetPolicyVersion",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "iam:GetPolicyVersion",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "iam:GetRolePolicy",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "iam:GetRolePolicy",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "iam:GetUser",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "iam:GetUser",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "iam:GetUserPolicy",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "iam:GetUserPolicy",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
       "action": "iam:GetAccountPasswordPolicy",
       "condition": null,
       "credentials_exposure": false,
@@ -915,16 +1226,6 @@
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "iam:GetAccountSummary",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Read",
-      "action": "iam:GetCredentialReport",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "iam:GetCredentialReport",
       "privesc": false,
       "resource_exposure": false
     },
@@ -1035,6 +1336,56 @@
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "iam:ListVirtualMFADevices",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "iam:ListPolicyVersions",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "iam:ListPolicyVersions",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "iam:ListAccessKeys",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "iam:ListAccessKeys",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "iam:ListAttachedRolePolicies",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "iam:ListAttachedRolePolicies",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "iam:ListMfaDeviceTags",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "iam:ListMFADeviceTags",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "iam:ListMfaDevices",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "iam:ListMFADevices",
       "privesc": false,
       "resource_exposure": false
     },
@@ -1230,6 +1581,46 @@
     },
     {
       "access_level": "Read",
+      "action": "logs:GetDataProtectionPolicy",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "logs:GetDataProtectionPolicy",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "es:DescribeDomains",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "es:DescribeDomains",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "es:DescribeDomain",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "es:DescribeDomain",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "es:DescribeDomainConfig",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "es:DescribeDomainConfig",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
       "action": "organizations:DescribeOrganization",
       "condition": null,
       "credentials_exposure": false,
@@ -1260,7 +1651,7 @@
     },
     {
       "access_level": "List",
-      "action": "rds:DescribeDbClusterEndpoints",
+      "action": "rds:DescribeDBClusterEndpoints",
       "condition": null,
       "credentials_exposure": false,
       "data_access": false,
@@ -1270,21 +1661,11 @@
     },
     {
       "access_level": "List",
-      "action": "rds:DescribeDbClusterParameterGroups",
+      "action": "rds:DescribeDBClusterParameterGroups",
       "condition": null,
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "rds:DescribeDBClusterParameterGroups",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "rds:DescribeDbClusters",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "rds:DescribeDBClusters",
       "privesc": false,
       "resource_exposure": false
     },
@@ -1300,11 +1681,31 @@
     },
     {
       "access_level": "List",
-      "action": "rds:DescribeDbSecurityGroups",
+      "action": "rds:DescribeDBSecurityGroups",
       "condition": null,
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "rds:DescribeDBSecurityGroups",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "rds:DescribeDBClusters",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "rds:DescribeDBClusters",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "rds:DescribeDBInstanceAutomatedBackups",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "rds:DescribeDBInstanceAutomatedBackups",
       "privesc": false,
       "resource_exposure": false
     },
@@ -1320,11 +1721,41 @@
     },
     {
       "access_level": "Read",
+      "action": "redshift:DescribeClusterSnapshots",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "redshift:DescribeClusterSnapshots",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "redshift:DescribeLoggingStatus",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "redshift:DescribeLoggingStatus",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
       "action": "route53:GetQueryLoggingConfig",
       "condition": null,
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "route53:GetQueryLoggingConfig",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "sagemaker:ListEndpointConfigs",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sagemaker:ListEndpointConfigs",
       "privesc": false,
       "resource_exposure": false
     },
@@ -1380,11 +1811,51 @@
     },
     {
       "access_level": "Read",
+      "action": "sagemaker:DescribeEndpointConfig",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sagemaker:DescribeEndpointConfig",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "secretsmanager:DescribeSecret",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "secretsmanager:DescribeSecret",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "secretsmanager:ListSecrets",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "secretsmanager:ListSecrets",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
       "action": "securityhub:DescribeStandards",
       "condition": null,
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "securityhub:DescribeStandards",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "sns:ListTagsForResource",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sns:ListTagsForResource",
       "privesc": false,
       "resource_exposure": false
     },
@@ -1405,6 +1876,76 @@
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "sqs:ListQueues",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "waf-regional:GetRule",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "waf-regional:GetRule",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "waf-regional:GetWebAcl",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "waf-regional:GetWebACL",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "waf:GetRule",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "waf:GetRule",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "waf:GetRuleGroup",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "waf:GetRuleGroup",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "waf:ListActivatedRulesInRuleGroup",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "waf:ListActivatedRulesInRuleGroup",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "waf:ListWebAcls",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "waf:ListWebACLs",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "wafv2:ListWebAcls",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "wafv2:ListWebACLs",
       "privesc": false,
       "resource_exposure": false
     },
@@ -1450,11 +1991,79 @@
     },
     {
       "access_level": "List",
-      "action": "waf:ListActivatedRulesInRuleGroup",
+      "action": "waf-regional:ListRules",
       "condition": null,
       "credentials_exposure": false,
       "data_access": false,
-      "effective_action": "waf:ListActivatedRulesInRuleGroup",
+      "effective_action": "waf-regional:ListRules",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "waf:ListRuleGroups",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "waf:ListRuleGroups",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "waf:ListRules",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "waf:ListRules",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "s3:GetBucketAcl",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": [
+            "${aws:PrincipalAccount}"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3:GetBucketAcl",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "s3:GetBucketLogging",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": [
+            "${aws:PrincipalAccount}"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3:GetBucketLogging",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "s3:GetBucketOwnershipControls",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": [
+            "${aws:PrincipalAccount}"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3:GetBucketOwnershipControls",
       "privesc": false,
       "resource_exposure": false
     },
@@ -1471,6 +2080,38 @@
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "s3:GetBucketPolicy",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "s3:GetBucketTagging",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": [
+            "${aws:PrincipalAccount}"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3:GetBucketTagging",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "apigateway:GET",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": [
+            "${aws:PrincipalAccount}"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "apigateway:GET",
       "privesc": false,
       "resource_exposure": false
     },
@@ -1573,6 +2214,6 @@
   "resource_exposure": false,
   "undocumented_actions": false,
   "unknown_actions": [],
-  "updatedate": "2023-12-06T20:39:40+00:00",
-  "version": "v6"
+  "updatedate": "2024-05-09T16:51:51+00:00",
+  "version": "v7"
 }
