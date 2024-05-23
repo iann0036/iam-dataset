@@ -7,7 +7,7 @@
     "Permissions management"
   ],
   "arn": "arn:aws:iam::aws:policy/aws-service-role/AmazonSageMakerNotebooksServiceRolePolicy",
-  "createdate": "2023-03-09T18:20:35+00:00",
+  "createdate": "2024-05-22T19:18:48+00:00",
   "credentials_exposure": false,
   "data_access": false,
   "deprecated": false,
@@ -24,7 +24,8 @@
           }
         },
         "Effect": "Allow",
-        "Resource": "arn:aws:elasticfilesystem:*:*:file-system/*"
+        "Resource": "arn:aws:elasticfilesystem:*:*:file-system/*",
+        "Sid": "AllowEFSAccessPointCreation"
       },
       {
         "Action": [
@@ -36,7 +37,8 @@
           }
         },
         "Effect": "Allow",
-        "Resource": "arn:aws:elasticfilesystem:*:*:access-point/*"
+        "Resource": "arn:aws:elasticfilesystem:*:*:access-point/*",
+        "Sid": "AllowEFSAccessPointDeletion"
       },
       {
         "Action": [
@@ -48,7 +50,8 @@
           }
         },
         "Effect": "Allow",
-        "Resource": "*"
+        "Resource": "*",
+        "Sid": "AllowEFSCreation"
       },
       {
         "Action": [
@@ -62,7 +65,8 @@
           }
         },
         "Effect": "Allow",
-        "Resource": "*"
+        "Resource": "*",
+        "Sid": "AllowEFSMountWithDeletion"
       },
       {
         "Action": [
@@ -71,7 +75,8 @@
           "elasticfilesystem:DescribeMountTargets"
         ],
         "Effect": "Allow",
-        "Resource": "*"
+        "Resource": "*",
+        "Sid": "AllowEFSDescribe"
       },
       {
         "Action": [
@@ -86,7 +91,8 @@
         "Resource": [
           "arn:aws:elasticfilesystem:*:*:access-point/*",
           "arn:aws:elasticfilesystem:*:*:file-system/*"
-        ]
+        ],
+        "Sid": "AllowEFSTagging"
       },
       {
         "Action": [
@@ -96,7 +102,8 @@
         "Resource": [
           "arn:aws:ec2:*:*:network-interface/*",
           "arn:aws:ec2:*:*:security-group/*"
-        ]
+        ],
+        "Sid": "AllowEC2Tagging"
       },
       {
         "Action": [
@@ -111,7 +118,8 @@
           "ec2:ModifyNetworkInterfaceAttribute"
         ],
         "Effect": "Allow",
-        "Resource": "*"
+        "Resource": "*",
+        "Sid": "AllowEC2Operations"
       },
       {
         "Action": [
@@ -129,7 +137,8 @@
           }
         },
         "Effect": "Allow",
-        "Resource": "*"
+        "Resource": "*",
+        "Sid": "AllowEC2AuthZ"
       },
       {
         "Action": [
@@ -138,7 +147,8 @@
           "sso:GetManagedApplicationInstance"
         ],
         "Effect": "Allow",
-        "Resource": "*"
+        "Resource": "*",
+        "Sid": "AllowIdcOperations"
       },
       {
         "Action": [
@@ -146,7 +156,32 @@
           "sagemaker:DescribeUserProfile"
         ],
         "Effect": "Allow",
-        "Resource": "*"
+        "Resource": "*",
+        "Sid": "AllowSagemakerProfileCreation"
+      },
+      {
+        "Action": [
+          "sagemaker:CreateSpace",
+          "sagemaker:DescribeSpace",
+          "sagemaker:DeleteSpace",
+          "sagemaker:ListTags"
+        ],
+        "Effect": "Allow",
+        "Resource": "arn:aws:sagemaker:*:*:space/*/CanvasManagedSpace-*",
+        "Sid": "AllowSagemakerSpaceOperationsForCanvasManagedSpaces"
+      },
+      {
+        "Action": [
+          "sagemaker:AddTags"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "sagemaker:TaggingAction": "CreateSpace"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:sagemaker:*:*:space/*/CanvasManagedSpace-*",
+        "Sid": "AllowSagemakerAddTagsForAppManagedSpaces"
       }
     ],
     "Version": "2012-10-17"
@@ -528,6 +563,60 @@
       "effective_action": "sagemaker:DescribeUserProfile",
       "privesc": false,
       "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "sagemaker:CreateSpace",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sagemaker:CreateSpace",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "sagemaker:DescribeSpace",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sagemaker:DescribeSpace",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "sagemaker:DeleteSpace",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sagemaker:DeleteSpace",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "sagemaker:ListTags",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sagemaker:ListTags",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Tagging",
+      "action": "sagemaker:AddTags",
+      "condition": {
+        "StringEquals": {
+          "sagemaker:TaggingAction": "CreateSpace"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sagemaker:AddTags",
+      "privesc": false,
+      "resource_exposure": false
     }
   ],
   "malformed": false,
@@ -536,6 +625,6 @@
   "resource_exposure": true,
   "undocumented_actions": false,
   "unknown_actions": [],
-  "updatedate": "2023-03-09T18:20:35+00:00",
-  "version": "v7"
+  "updatedate": "2024-05-22T19:18:48+00:00",
+  "version": "v8"
 }
