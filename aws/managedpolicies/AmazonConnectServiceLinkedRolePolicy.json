@@ -8,7 +8,7 @@
     "Unknown"
   ],
   "arn": "arn:aws:iam::aws:policy/aws-service-role/AmazonConnectServiceLinkedRolePolicy",
-  "createdate": "2024-05-16T23:07:54+00:00",
+  "createdate": "2024-05-24T01:42:32+00:00",
   "credentials_exposure": true,
   "data_access": true,
   "deprecated": false,
@@ -209,6 +209,30 @@
         "Effect": "Allow",
         "Resource": "arn:aws:sms-voice:*:*:phone-number/*",
         "Sid": "AllowSMSVoiceOperationsForConnect"
+      },
+      {
+        "Action": [
+          "cognito-idp:DescribeUserPool",
+          "cognito-idp:ListUserPoolClients"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceTag/AmazonConnectEnabled": "True"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:cognito-idp:*:*:userpool/*",
+        "Sid": "AllowCognitoForConnectEnabledTaggedResources"
+      },
+      {
+        "Action": [
+          "profile:PutProfileObject"
+        ],
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:profile:*:*:domains/amazon-connect-*/object-types/*"
+        ],
+        "Sid": "AllowWritePermissionForCustomerProfileObjects"
       }
     ],
     "Version": "2012-10-17"
@@ -3509,6 +3533,44 @@
       "effective_action": "sms-voice:DescribePhoneNumbers",
       "privesc": false,
       "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "cognito-idp:DescribeUserPool",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/AmazonConnectEnabled": "True"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cognito-idp:DescribeUserPool",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "cognito-idp:ListUserPoolClients",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/AmazonConnectEnabled": "True"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cognito-idp:ListUserPoolClients",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "profile:PutProfileObject",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "profile:PutProfileObject",
+      "privesc": false,
+      "resource_exposure": false
     }
   ],
   "malformed": false,
@@ -3517,6 +3579,6 @@
   "resource_exposure": true,
   "undocumented_actions": true,
   "unknown_actions": [],
-  "updatedate": "2024-05-16T23:07:54+00:00",
-  "version": "v15"
+  "updatedate": "2024-05-24T01:42:32+00:00",
+  "version": "v16"
 }
