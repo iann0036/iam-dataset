@@ -2,16 +2,35 @@
   "access_levels": [
     "List",
     "Read",
+    "Tagging",
     "Write",
     "Permissions management"
   ],
   "arn": "arn:aws:iam::aws:policy/service-role/AmazonDataZoneGlueManageAccessRolePolicy",
-  "createdate": "2024-04-01T19:05:41+00:00",
+  "createdate": "2024-06-03T23:29:25+00:00",
   "credentials_exposure": false,
   "data_access": false,
   "deprecated": false,
   "document": {
     "Statement": [
+      {
+        "Action": [
+          "glue:TagResource",
+          "glue:UntagResource",
+          "glue:GetTags"
+        ],
+        "Condition": {
+          "ForAnyValue:StringLikeIfExists": {
+            "aws:TagKeys": "DataZoneDiscoverable_*"
+          },
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "GlueTagDatabasePermissions"
+      },
       {
         "Action": [
           "glue:ListDataQualityResults",
@@ -207,6 +226,57 @@
     "Version": "2012-10-17"
   },
   "effective_actions": [
+    {
+      "access_level": "Tagging",
+      "action": "glue:TagResource",
+      "condition": {
+        "ForAnyValue:StringLikeIfExists": {
+          "aws:TagKeys": "DataZoneDiscoverable_*"
+        },
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "glue:TagResource",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Tagging",
+      "action": "glue:UntagResource",
+      "condition": {
+        "ForAnyValue:StringLikeIfExists": {
+          "aws:TagKeys": "DataZoneDiscoverable_*"
+        },
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "glue:UntagResource",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "glue:GetTags",
+      "condition": {
+        "ForAnyValue:StringLikeIfExists": {
+          "aws:TagKeys": "DataZoneDiscoverable_*"
+        },
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "glue:GetTags",
+      "privesc": false,
+      "resource_exposure": false
+    },
     {
       "access_level": "List",
       "action": "glue:ListDataQualityResults",
@@ -698,6 +768,6 @@
   "resource_exposure": true,
   "undocumented_actions": false,
   "unknown_actions": [],
-  "updatedate": "2024-04-01T19:05:41+00:00",
-  "version": "v4"
+  "updatedate": "2024-06-03T23:29:25+00:00",
+  "version": "v5"
 }
