@@ -5,7 +5,7 @@
     "Write"
   ],
   "arn": "arn:aws:iam::aws:policy/AWSProtonDeveloperAccess",
-  "createdate": "2022-11-18T18:35:07+00:00",
+  "createdate": "2024-06-06T18:26:38+00:00",
   "credentials_exposure": false,
   "data_access": true,
   "deprecated": false,
@@ -72,7 +72,8 @@
           "s3:ListBucket"
         ],
         "Effect": "Allow",
-        "Resource": "*"
+        "Resource": "*",
+        "Sid": "ProtonPermissions"
       },
       {
         "Action": [
@@ -84,7 +85,27 @@
           }
         },
         "Effect": "Allow",
-        "Resource": "arn:aws:codestar-connections:*:*:connection/*"
+        "Resource": [
+          "arn:aws:codestar-connections:*:*:connection/*",
+          "arn:aws:codeconnections:*:*:connection/*"
+        ],
+        "Sid": "CodeStarConnectionsPermissions"
+      },
+      {
+        "Action": [
+          "codeconnections:PassConnection"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "codeconnections:PassedToService": "proton.amazonaws.com"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:codestar-connections:*:*:connection/*",
+          "arn:aws:codeconnections:*:*:connection/*"
+        ],
+        "Sid": "CodeConnectionsPermissions"
       }
     ],
     "Version": "2012-10-17"
@@ -673,6 +694,20 @@
       "effective_action": "codestar-connections:PassConnection",
       "privesc": false,
       "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "codeconnections:PassConnection",
+      "condition": {
+        "StringEquals": {
+          "codeconnections:PassedToService": "proton.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "codeconnections:PassConnection",
+      "privesc": false,
+      "resource_exposure": false
     }
   ],
   "malformed": false,
@@ -681,6 +716,6 @@
   "resource_exposure": false,
   "undocumented_actions": false,
   "unknown_actions": [],
-  "updatedate": "2022-11-18T18:35:07+00:00",
-  "version": "v3"
+  "updatedate": "2024-06-06T18:26:38+00:00",
+  "version": "v4"
 }

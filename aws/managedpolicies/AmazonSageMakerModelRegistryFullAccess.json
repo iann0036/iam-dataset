@@ -3,10 +3,11 @@
     "List",
     "Read",
     "Tagging",
-    "Write"
+    "Write",
+    "Permissions management"
   ],
   "arn": "arn:aws:iam::aws:policy/AmazonSageMakerModelRegistryFullAccess",
-  "createdate": "2023-04-13T05:20:48+00:00",
+  "createdate": "2024-06-06T18:48:51+00:00",
   "credentials_exposure": false,
   "data_access": true,
   "deprecated": false,
@@ -28,7 +29,8 @@
           "sagemaker:GetSearchSuggestions"
         ],
         "Effect": "Allow",
-        "Resource": "*"
+        "Resource": "*",
+        "Sid": "AmazonSageMakerModelRegistrySageMakerReadPermission"
       },
       {
         "Action": [
@@ -45,7 +47,8 @@
           "sagemaker:UpdateModelPackage"
         ],
         "Effect": "Allow",
-        "Resource": "*"
+        "Resource": "*",
+        "Sid": "AmazonSageMakerModelRegistrySageMakerWritePermission"
       },
       {
         "Action": [
@@ -56,7 +59,8 @@
           "arn:aws:s3:::*SageMaker*",
           "arn:aws:s3:::*Sagemaker*",
           "arn:aws:s3:::*sagemaker*"
-        ]
+        ],
+        "Sid": "AmazonSageMakerModelRegistryS3GetPermission"
       },
       {
         "Action": [
@@ -64,7 +68,8 @@
           "s3:ListAllMyBuckets"
         ],
         "Effect": "Allow",
-        "Resource": "*"
+        "Resource": "*",
+        "Sid": "AmazonSageMakerModelRegistryS3ListPermission"
       },
       {
         "Action": [
@@ -72,7 +77,8 @@
           "ecr:DescribeImages"
         ],
         "Effect": "Allow",
-        "Resource": "*"
+        "Resource": "*",
+        "Sid": "AmazonSageMakerModelRegistryECRReadPermission"
       },
       {
         "Action": [
@@ -84,28 +90,32 @@
           }
         },
         "Effect": "Allow",
-        "Resource": "arn:aws:iam::*:role/*"
+        "Resource": "arn:aws:iam::*:role/*",
+        "Sid": "AmazonSageMakerModelRegistryIAMPassRolePermission"
       },
       {
         "Action": [
           "tag:GetResources"
         ],
         "Effect": "Allow",
-        "Resource": "*"
+        "Resource": "*",
+        "Sid": "AmazonSageMakerModelRegistryTagReadPermission"
       },
       {
         "Action": [
           "resource-groups:GetGroupQuery"
         ],
         "Effect": "Allow",
-        "Resource": "arn:aws:resource-groups:*:*:group/*"
+        "Resource": "arn:aws:resource-groups:*:*:group/*",
+        "Sid": "AmazonSageMakerModelRegistryResourceGroupGetPermission"
       },
       {
         "Action": [
           "resource-groups:ListGroupResources"
         ],
         "Effect": "Allow",
-        "Resource": "*"
+        "Resource": "*",
+        "Sid": "AmazonSageMakerModelRegistryResourceGroupListPermission"
       },
       {
         "Action": [
@@ -118,7 +128,8 @@
           }
         },
         "Effect": "Allow",
-        "Resource": "arn:aws:resource-groups:*:*:group/*"
+        "Resource": "arn:aws:resource-groups:*:*:group/*",
+        "Sid": "AmazonSageMakerModelRegistryResourceGroupWritePermission"
       },
       {
         "Action": [
@@ -130,7 +141,27 @@
           }
         },
         "Effect": "Allow",
-        "Resource": "arn:aws:resource-groups:*:*:group/*"
+        "Resource": "arn:aws:resource-groups:*:*:group/*",
+        "Sid": "AmazonSageMakerModelRegistryResourceGroupDeletePermission"
+      },
+      {
+        "Action": [
+          "kms:CreateGrant",
+          "kms:DescribeKey",
+          "kms:GenerateDataKey",
+          "kms:Decrypt"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceTag/sagemaker": "true"
+          },
+          "StringLike": {
+            "kms:ViaService": "sagemaker.*.amazonaws.com"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:kms:*:*:key/*",
+        "Sid": "AmazonSageMakerModelRegistryResourceKMSPermission"
       }
     ],
     "Version": "2012-10-17"
@@ -501,6 +532,74 @@
       "effective_action": "resource-groups:DeleteGroup",
       "privesc": false,
       "resource_exposure": false
+    },
+    {
+      "access_level": "Permissions management",
+      "action": "kms:CreateGrant",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/sagemaker": "true"
+        },
+        "StringLike": {
+          "kms:ViaService": "sagemaker.*.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "kms:CreateGrant",
+      "privesc": false,
+      "resource_exposure": true
+    },
+    {
+      "access_level": "Read",
+      "action": "kms:DescribeKey",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/sagemaker": "true"
+        },
+        "StringLike": {
+          "kms:ViaService": "sagemaker.*.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "kms:DescribeKey",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "kms:GenerateDataKey",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/sagemaker": "true"
+        },
+        "StringLike": {
+          "kms:ViaService": "sagemaker.*.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "kms:GenerateDataKey",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "kms:Decrypt",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/sagemaker": "true"
+        },
+        "StringLike": {
+          "kms:ViaService": "sagemaker.*.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "kms:Decrypt",
+      "privesc": false,
+      "resource_exposure": false
     }
   ],
   "malformed": false,
@@ -509,6 +608,6 @@
   "resource_exposure": true,
   "undocumented_actions": false,
   "unknown_actions": [],
-  "updatedate": "2023-04-13T05:20:48+00:00",
-  "version": "v1"
+  "updatedate": "2024-06-06T18:48:51+00:00",
+  "version": "v2"
 }

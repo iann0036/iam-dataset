@@ -7,7 +7,7 @@
     "Permissions management"
   ],
   "arn": "arn:aws:iam::aws:policy/AWSProtonFullAccess",
-  "createdate": "2022-06-20T12:36:26+00:00",
+  "createdate": "2024-06-06T18:29:00+00:00",
   "credentials_exposure": false,
   "data_access": false,
   "deprecated": false,
@@ -21,7 +21,8 @@
           "kms:DescribeKey"
         ],
         "Effect": "Allow",
-        "Resource": "*"
+        "Resource": "*",
+        "Sid": "ProtonPermissions"
       },
       {
         "Action": [
@@ -33,7 +34,8 @@
           }
         },
         "Effect": "Allow",
-        "Resource": "*"
+        "Resource": "*",
+        "Sid": "CreateGrantPermissions"
       },
       {
         "Action": [
@@ -45,7 +47,8 @@
           }
         },
         "Effect": "Allow",
-        "Resource": "*"
+        "Resource": "*",
+        "Sid": "PassRolePermissions"
       },
       {
         "Action": [
@@ -57,7 +60,8 @@
           }
         },
         "Effect": "Allow",
-        "Resource": "arn:aws:iam::*:role/aws-service-role/sync.proton.amazonaws.com/AWSServiceRoleForProtonSync"
+        "Resource": "arn:aws:iam::*:role/aws-service-role/sync.proton.amazonaws.com/AWSServiceRoleForProtonSync",
+        "Sid": "CreateServiceLinkedRolePermissions"
       },
       {
         "Action": [
@@ -69,7 +73,27 @@
           }
         },
         "Effect": "Allow",
-        "Resource": "arn:aws:codestar-connections:*:*:connection/*"
+        "Resource": [
+          "arn:aws:codestar-connections:*:*:connection/*",
+          "arn:aws:codeconnections:*:*:connection/*"
+        ],
+        "Sid": "CodeStarConnectionsPermissions"
+      },
+      {
+        "Action": [
+          "codeconnections:PassConnection"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "codeconnections:PassedToService": "proton.amazonaws.com"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:codestar-connections:*:*:connection/*",
+          "arn:aws:codeconnections:*:*:connection/*"
+        ],
+        "Sid": "CodeConnectionsPermissions"
       }
     ],
     "Version": "2012-10-17"
@@ -1270,6 +1294,20 @@
       "effective_action": "codestar-connections:PassConnection",
       "privesc": false,
       "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "codeconnections:PassConnection",
+      "condition": {
+        "StringEquals": {
+          "codeconnections:PassedToService": "proton.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "codeconnections:PassConnection",
+      "privesc": false,
+      "resource_exposure": false
     }
   ],
   "malformed": false,
@@ -1278,6 +1316,6 @@
   "resource_exposure": true,
   "undocumented_actions": false,
   "unknown_actions": [],
-  "updatedate": "2022-06-20T12:36:26+00:00",
-  "version": "v2"
+  "updatedate": "2024-06-06T18:29:00+00:00",
+  "version": "v3"
 }
