@@ -7,7 +7,7 @@
     "Permissions management"
   ],
   "arn": "arn:aws:iam::aws:policy/service-role/AmazonSageMakerServiceCatalogProductsLambdaServiceRolePolicy",
-  "createdate": "2022-04-04T16:34:43+00:00",
+  "createdate": "2024-06-11T18:57:13+00:00",
   "credentials_exposure": false,
   "data_access": true,
   "deprecated": false,
@@ -27,7 +27,8 @@
         "Effect": "Allow",
         "Resource": [
           "arn:aws:ecr:*:*:repository/sagemaker-*"
-        ]
+        ],
+        "Sid": "AmazonSageMakerLambdaECRPermission"
       },
       {
         "Action": [
@@ -40,7 +41,8 @@
         "Effect": "Allow",
         "Resource": [
           "arn:aws:events:*:*:rule/sagemaker-*"
-        ]
+        ],
+        "Sid": "AmazonSageMakerLambdaEventBridgePermission"
       },
       {
         "Action": [
@@ -58,7 +60,8 @@
         "Resource": [
           "arn:aws:s3:::aws-glue-*",
           "arn:aws:s3:::sagemaker-*"
-        ]
+        ],
+        "Sid": "AmazonSageMakerLambdaS3BucketPermission"
       },
       {
         "Action": [
@@ -72,7 +75,8 @@
         "Resource": [
           "arn:aws:s3:::aws-glue-*",
           "arn:aws:s3:::sagemaker-*"
-        ]
+        ],
+        "Sid": "AmazonSageMakerLambdaS3ObjectPermission"
       },
       {
         "Action": [
@@ -385,7 +389,8 @@
           "arn:aws:sagemaker:*:*:transform-job/*",
           "arn:aws:sagemaker:*:*:workforce/*",
           "arn:aws:sagemaker:*:*:workteam/*"
-        ]
+        ],
+        "Sid": "AmazonSageMakerLambdaSageMakerPermission"
       },
       {
         "Action": [
@@ -394,7 +399,8 @@
         "Effect": "Allow",
         "Resource": [
           "arn:aws:iam::*:role/service-role/AmazonSageMakerServiceCatalogProductsExecutionRole"
-        ]
+        ],
+        "Sid": "AmazonSageMakerLambdaPassRolePermission"
       },
       {
         "Action": [
@@ -419,7 +425,22 @@
           "logs:UpdateLogDelivery"
         ],
         "Effect": "Allow",
-        "Resource": "arn:aws:logs:*:*:log-group:/aws/lambda/*"
+        "Resource": "arn:aws:logs:*:*:log-group:/aws/lambda/*",
+        "Sid": "AmazonSageMakerLambdaLogPermission"
+      },
+      {
+        "Action": [
+          "codebuild:StartBuild",
+          "codebuild:BatchGetBuilds"
+        ],
+        "Condition": {
+          "StringLike": {
+            "aws:ResourceTag/sagemaker:project-name": "*"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:codebuild:*:*:project/sagemaker-*",
+        "Sid": "AmazonSageMakerLambdaCodeBuildPermission"
       }
     ],
     "Version": "2012-10-17"
@@ -3534,6 +3555,34 @@
       "effective_action": "logs:UpdateLogDelivery",
       "privesc": false,
       "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "codebuild:StartBuild",
+      "condition": {
+        "StringLike": {
+          "aws:ResourceTag/sagemaker:project-name": "*"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "codebuild:StartBuild",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "codebuild:BatchGetBuilds",
+      "condition": {
+        "StringLike": {
+          "aws:ResourceTag/sagemaker:project-name": "*"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "codebuild:BatchGetBuilds",
+      "privesc": false,
+      "resource_exposure": false
     }
   ],
   "malformed": false,
@@ -3542,6 +3591,6 @@
   "resource_exposure": true,
   "undocumented_actions": false,
   "unknown_actions": [],
-  "updatedate": "2022-04-04T16:34:43+00:00",
-  "version": "v1"
+  "updatedate": "2024-06-11T18:57:13+00:00",
+  "version": "v2"
 }

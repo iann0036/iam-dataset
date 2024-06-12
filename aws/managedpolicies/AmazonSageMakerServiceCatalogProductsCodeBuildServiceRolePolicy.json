@@ -7,7 +7,7 @@
     "Permissions management"
   ],
   "arn": "arn:aws:iam::aws:policy/AmazonSageMakerServiceCatalogProductsCodeBuildServiceRolePolicy",
-  "createdate": "2022-03-25T04:27:46+00:00",
+  "createdate": "2024-06-11T18:45:27+00:00",
   "credentials_exposure": true,
   "data_access": true,
   "deprecated": false,
@@ -22,7 +22,8 @@
           "codecommit:UploadArchive"
         ],
         "Effect": "Allow",
-        "Resource": "arn:aws:codecommit:*:*:sagemaker-*"
+        "Resource": "arn:aws:codecommit:*:*:sagemaker-*",
+        "Sid": "AmazonSageMakerCodeBuildCodeCommitPermission"
       },
       {
         "Action": [
@@ -39,7 +40,8 @@
         "Effect": "Allow",
         "Resource": [
           "*"
-        ]
+        ],
+        "Sid": "AmazonSageMakerCodeBuildECRReadPermission"
       },
       {
         "Action": [
@@ -52,7 +54,8 @@
         "Effect": "Allow",
         "Resource": [
           "arn:aws:ecr:*:*:repository/sagemaker-*"
-        ]
+        ],
+        "Sid": "AmazonSageMakerCodeBuildECRWritePermission"
       },
       {
         "Action": [
@@ -76,7 +79,8 @@
           "arn:aws:iam::*:role/service-role/AmazonSageMakerServiceCatalogProductsCloudformationRole",
           "arn:aws:iam::*:role/service-role/AmazonSageMakerServiceCatalogProductsCodeBuildRole",
           "arn:aws:iam::*:role/service-role/AmazonSageMakerServiceCatalogProductsExecutionRole"
-        ]
+        ],
+        "Sid": "AmazonSageMakerCodeBuildPassRoletPermission"
       },
       {
         "Action": [
@@ -101,7 +105,8 @@
           "logs:UpdateLogDelivery"
         ],
         "Effect": "Allow",
-        "Resource": "arn:aws:logs:*:*:log-group:/aws/codebuild/*"
+        "Resource": "arn:aws:logs:*:*:log-group:/aws/codebuild/*",
+        "Sid": "AmazonSageMakerCodeBuildLogPermission"
       },
       {
         "Action": [
@@ -124,7 +129,8 @@
         "Resource": [
           "arn:aws:s3:::aws-glue-*",
           "arn:aws:s3:::sagemaker-*"
-        ]
+        ],
+        "Sid": "AmazonSageMakerCodeBuildS3Permission"
       },
       {
         "Action": [
@@ -401,7 +407,38 @@
           "arn:aws:sagemaker:*:*:pipeline/*",
           "arn:aws:sagemaker:*:*:project/*",
           "arn:aws:sagemaker:*:*:model-package/*"
-        ]
+        ],
+        "Sid": "AmazonSageMakerCodeBuildSageMakerPermission"
+      },
+      {
+        "Action": [
+          "codestar-connections:UseConnection"
+        ],
+        "Condition": {
+          "StringEqualsIgnoreCase": {
+            "aws:ResourceTag/sagemaker": "true"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:codestar-connections:*:*:connection/*"
+        ],
+        "Sid": "AmazonSageMakerCodeBuildCodeStarConnectionPermission"
+      },
+      {
+        "Action": [
+          "codeconnections:UseConnection"
+        ],
+        "Condition": {
+          "StringEqualsIgnoreCase": {
+            "aws:ResourceTag/sagemaker": "true"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:codeconnections:*:*:connection/*"
+        ],
+        "Sid": "AmazonSageMakerCodeBuildCodeConnectionPermission"
       }
     ],
     "Version": "2012-10-17"
@@ -3586,6 +3623,34 @@
       "effective_action": "sagemaker:UpdateWorkteam",
       "privesc": false,
       "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "codestar-connections:UseConnection",
+      "condition": {
+        "StringEqualsIgnoreCase": {
+          "aws:ResourceTag/sagemaker": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "codestar-connections:UseConnection",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "codeconnections:UseConnection",
+      "condition": {
+        "StringEqualsIgnoreCase": {
+          "aws:ResourceTag/sagemaker": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "codeconnections:UseConnection",
+      "privesc": false,
+      "resource_exposure": false
     }
   ],
   "malformed": false,
@@ -3594,6 +3659,6 @@
   "resource_exposure": true,
   "undocumented_actions": false,
   "unknown_actions": [],
-  "updatedate": "2022-03-25T04:27:46+00:00",
-  "version": "v1"
+  "updatedate": "2024-06-11T18:45:27+00:00",
+  "version": "v2"
 }

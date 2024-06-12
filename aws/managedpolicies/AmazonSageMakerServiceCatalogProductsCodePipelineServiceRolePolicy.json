@@ -2,11 +2,12 @@
   "access_levels": [
     "List",
     "Read",
+    "Tagging",
     "Write",
     "Permissions management"
   ],
   "arn": "arn:aws:iam::aws:policy/service-role/AmazonSageMakerServiceCatalogProductsCodePipelineServiceRolePolicy",
-  "createdate": "2022-02-22T09:53:17+00:00",
+  "createdate": "2024-06-11T18:37:51+00:00",
   "credentials_exposure": false,
   "data_access": true,
   "deprecated": false,
@@ -25,7 +26,24 @@
           "cloudformation:UpdateStack"
         ],
         "Effect": "Allow",
-        "Resource": "arn:aws:cloudformation:*:*:stack/sagemaker-*"
+        "Resource": "arn:aws:cloudformation:*:*:stack/sagemaker-*",
+        "Sid": "AmazonSageMakerCodePipelineCFnPermission"
+      },
+      {
+        "Action": [
+          "cloudformation:TagResource",
+          "cloudformation:UntagResource"
+        ],
+        "Condition": {
+          "ForAnyValue:StringEquals": {
+            "aws:TagKeys": [
+              "sagemaker:project-name"
+            ]
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:cloudformation:*:*:stack/sagemaker-*",
+        "Sid": "AmazonSageMakerCodePipelineCFnTagPermission"
       },
       {
         "Action": [
@@ -38,7 +56,8 @@
         "Effect": "Allow",
         "Resource": [
           "arn:aws:s3:::sagemaker-*"
-        ]
+        ],
+        "Sid": "AmazonSageMakerCodePipelineS3Permission"
       },
       {
         "Action": [
@@ -47,7 +66,8 @@
         "Effect": "Allow",
         "Resource": [
           "arn:aws:iam::*:role/service-role/AmazonSageMakerServiceCatalogProductsCloudformationRole"
-        ]
+        ],
+        "Sid": "AmazonSageMakerCodePipelinePassRolePermission"
       },
       {
         "Action": [
@@ -58,7 +78,8 @@
         "Resource": [
           "arn:aws:codebuild:*:*:project/sagemaker-*",
           "arn:aws:codebuild:*:*:build/sagemaker-*"
-        ]
+        ],
+        "Sid": "AmazonSageMakerCodePipelineCodeBuildPermission"
       },
       {
         "Action": [
@@ -69,7 +90,38 @@
           "codecommit:UploadArchive"
         ],
         "Effect": "Allow",
-        "Resource": "arn:aws:codecommit:*:*:sagemaker-*"
+        "Resource": "arn:aws:codecommit:*:*:sagemaker-*",
+        "Sid": "AmazonSageMakerCodePipelineCodeCommitPermission"
+      },
+      {
+        "Action": [
+          "codestar-connections:UseConnection"
+        ],
+        "Condition": {
+          "StringEqualsIgnoreCase": {
+            "aws:ResourceTag/sagemaker": "true"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:codestar-connections:*:*:connection/*"
+        ],
+        "Sid": "AmazonSageMakerCodePipelineCodeStarConnectionPermission"
+      },
+      {
+        "Action": [
+          "codeconnections:UseConnection"
+        ],
+        "Condition": {
+          "StringEqualsIgnoreCase": {
+            "aws:ResourceTag/sagemaker": "true"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:codeconnections:*:*:connection/*"
+        ],
+        "Sid": "AmazonSageMakerCodePipelineCodeConnectionPermission"
       }
     ],
     "Version": "2012-10-17"
@@ -162,6 +214,38 @@
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "cloudformation:UpdateStack",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Tagging",
+      "action": "cloudformation:TagResource",
+      "condition": {
+        "ForAnyValue:StringEquals": {
+          "aws:TagKeys": [
+            "sagemaker:project-name"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudformation:TagResource",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Tagging",
+      "action": "cloudformation:UntagResource",
+      "condition": {
+        "ForAnyValue:StringEquals": {
+          "aws:TagKeys": [
+            "sagemaker:project-name"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudformation:UntagResource",
       "privesc": false,
       "resource_exposure": false
     },
@@ -294,6 +378,34 @@
       "effective_action": "codecommit:UploadArchive",
       "privesc": false,
       "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "codestar-connections:UseConnection",
+      "condition": {
+        "StringEqualsIgnoreCase": {
+          "aws:ResourceTag/sagemaker": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "codestar-connections:UseConnection",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "codeconnections:UseConnection",
+      "condition": {
+        "StringEqualsIgnoreCase": {
+          "aws:ResourceTag/sagemaker": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "codeconnections:UseConnection",
+      "privesc": false,
+      "resource_exposure": false
     }
   ],
   "malformed": false,
@@ -302,6 +414,6 @@
   "resource_exposure": true,
   "undocumented_actions": false,
   "unknown_actions": [],
-  "updatedate": "2022-02-22T09:53:17+00:00",
-  "version": "v1"
+  "updatedate": "2024-06-11T18:37:51+00:00",
+  "version": "v2"
 }
