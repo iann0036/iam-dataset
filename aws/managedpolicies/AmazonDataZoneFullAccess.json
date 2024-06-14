@@ -7,7 +7,7 @@
     "Permissions management"
   ],
   "arn": "arn:aws:iam::aws:policy/AmazonDataZoneFullAccess",
-  "createdate": "2024-04-23T21:36:18+00:00",
+  "createdate": "2024-06-13T19:02:55+00:00",
   "credentials_exposure": false,
   "data_access": false,
   "deprecated": false,
@@ -95,7 +95,8 @@
         "Action": [
           "ram:GetResourceShares",
           "ram:GetResourceShareInvitations",
-          "ram:GetResourceShareAssociations"
+          "ram:GetResourceShareAssociations",
+          "ram:ListResourceSharePermissions"
         ],
         "Effect": "Allow",
         "Resource": "*",
@@ -134,11 +135,28 @@
         "Condition": {
           "ForAllValues:StringEquals": {
             "aws:TagKeys": [
-              "AmazonDataZoneDomain"
+              "AmazonDataZoneDomain",
+              "AmazonDataZoneProject"
             ]
           },
-          "Null": {
-            "aws:TagKeys": "false"
+          "StringLike": {
+            "aws:RequestTag/AmazonDataZoneDomain": "dzd_*",
+            "aws:ResourceTag/AmazonDataZoneDomain": "dzd_*"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:secretsmanager:*:*:secret:AmazonDataZone-*",
+        "Sid": "DataZoneTagOnCreateDomainProjectTags"
+      },
+      {
+        "Action": [
+          "secretsmanager:TagResource"
+        ],
+        "Condition": {
+          "ForAllValues:StringEquals": {
+            "aws:TagKeys": [
+              "AmazonDataZoneDomain"
+            ]
           },
           "StringLike": {
             "aws:RequestTag/AmazonDataZoneDomain": "dzd_*",
@@ -1735,6 +1753,16 @@
       "resource_exposure": false
     },
     {
+      "access_level": "List",
+      "action": "ram:ListResourceSharePermissions",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ram:ListResourceSharePermissions",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
       "access_level": "Write",
       "action": "iam:PassRole",
       "condition": {
@@ -1764,11 +1792,29 @@
       "condition": {
         "ForAllValues:StringEquals": {
           "aws:TagKeys": [
-            "AmazonDataZoneDomain"
+            "AmazonDataZoneDomain",
+            "AmazonDataZoneProject"
           ]
         },
-        "Null": {
-          "aws:TagKeys": "false"
+        "StringLike": {
+          "aws:RequestTag/AmazonDataZoneDomain": "dzd_*",
+          "aws:ResourceTag/AmazonDataZoneDomain": "dzd_*"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "secretsmanager:TagResource",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Tagging",
+      "action": "secretsmanager:TagResource",
+      "condition": {
+        "ForAllValues:StringEquals": {
+          "aws:TagKeys": [
+            "AmazonDataZoneDomain"
+          ]
         },
         "StringLike": {
           "aws:RequestTag/AmazonDataZoneDomain": "dzd_*",
@@ -1802,6 +1848,6 @@
   "resource_exposure": true,
   "undocumented_actions": false,
   "unknown_actions": [],
-  "updatedate": "2024-04-23T21:36:18+00:00",
-  "version": "v3"
+  "updatedate": "2024-06-13T19:02:55+00:00",
+  "version": "v4"
 }
