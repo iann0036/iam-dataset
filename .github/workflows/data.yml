@@ -25,7 +25,6 @@ jobs:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
       - name: Manual
         run: |
-          curl https://raw.githubusercontent.com/duo-labs/parliament/57f45649f512df3302d4185ecf1ec25226006336/utils/update_iam_data.py -o update_iam_data.py
           pip3 install bs4 requests pyyaml inflect
           mkdir -p gcp/roles/
           cd gcp
@@ -55,7 +54,7 @@ jobs:
           az role definition list --query '[?roleType == `BuiltInRole`].{assignableScopes: assignableScopes, description: description, permissions: permissions, roleName: roleName, roleType: roleType, type: type}' > azure/built-in-roles-raw.json
           python3 util/azure_process_roles.py > azure/built-in-roles.json
           python3 util/azure_generate_map.py
-          python3 update_iam_data.py > util/aws_js/iam_definition.json
+          python3 util/aws_parliament_update_iam_data.py > util/aws_js/iam_definition.json
           sleep 1
           python3 util/aws_patch_iam_definition.py
           sleep 1
