@@ -16,12 +16,12 @@ BASE_DOCUMENTATION_URL = "https://docs.aws.amazon.com/service-authorization/late
 def get_links_from_base_actions_resources_conditions_page():
     """Gets the links from the actions, resources, and conditions keys page, and returns their filenames."""
     html = requests.get(BASE_DOCUMENTATION_URL)
-    print("--", end="\n")
-    print(html.status_code, end="\n")
-    print(html.raw, end="\n")
-    print(html.reason, end="\n")
-    print(html.content, end="\n")
-    print("##", end="\n", flush=True)
+    print("--\n")
+    print(html.status_code)
+    print(html.raw)
+    print(html.reason)
+    print(html.content)
+    print("\n##", flush=True)
     soup = BeautifulSoup(html.content, "html.parser")
     html_filenames = []
     try:
