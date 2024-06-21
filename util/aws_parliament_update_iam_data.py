@@ -22,7 +22,9 @@ def get_links_from_base_actions_resources_conditions_page():
         for i in soup.find("div", {"class": "highlights"}).findAll("a"):
             html_filenames.append(i["href"])
     except:
-        print(json.dumps(html.content))
+        print(html.status_code)
+        print(html.raw)
+        print(html.content)
         print(json.dumps(html_filenames))
         print(json.dumps(soup))
         raise Exception("Failed to parse base ARC page")
