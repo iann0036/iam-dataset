@@ -24,6 +24,7 @@ def get_links_from_base_actions_resources_conditions_page():
     except:
         print(html.status_code)
         print(html.raw)
+        print(html.reason)
         print(html.content)
         print(json.dumps(html_filenames))
         raise Exception("Failed to parse base ARC page")
