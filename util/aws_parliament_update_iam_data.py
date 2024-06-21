@@ -26,7 +26,6 @@ def get_links_from_base_actions_resources_conditions_page():
         print(html.raw)
         print(html.content)
         print(json.dumps(html_filenames))
-        print(json.dumps(soup))
         raise Exception("Failed to parse base ARC page")
     return html_filenames
 
