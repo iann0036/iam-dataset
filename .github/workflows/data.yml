@@ -13,7 +13,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v1
       - name: Set up Cloud SDK
-        uses: google-github-actions/setup-gcloud@v0
+        uses: google-github-actions/setup-gcloud@v2
         with:
           project_id: ${{ secrets.GCP_PROJECT_ID }}
           service_account_key: ${{ secrets.GCP_SA_KEY }}
@@ -26,6 +26,8 @@ jobs:
       - name: Manual
         run: |
           curl -v "https://docs.aws.amazon.com/service-authorization/latest/reference/reference_policies_actions-resources-contextkeys.html"
+          python3 util/aws_parliament_update_iam_data.py > util/aws_js/iam_definition.json
+          sleep 1
           pip3 install bs4 requests pyyaml inflect
           mkdir -p gcp/roles/
           cd gcp
@@ -55,8 +57,6 @@ jobs:
           az role definition list --query '[?roleType == `BuiltInRole`].{assignableScopes: assignableScopes, description: description, permissions: permissions, roleName: roleName, roleType: roleType, type: type}' > azure/built-in-roles-raw.json
           python3 util/azure_process_roles.py > azure/built-in-roles.json
           python3 util/azure_generate_map.py
-          python3 util/aws_parliament_update_iam_data.py > util/aws_js/iam_definition.json
-          sleep 1
           python3 util/aws_patch_iam_definition.py
           sleep 1
           rm -rf docs/ update_iam_data.py
