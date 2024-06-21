@@ -22,6 +22,7 @@ def get_links_from_base_actions_resources_conditions_page():
     print(html.reason)
     print(html.content)
     print("\n##", flush=True)
+    quit()
     soup = BeautifulSoup(html.content, "html.parser")
     html_filenames = []
     try:
