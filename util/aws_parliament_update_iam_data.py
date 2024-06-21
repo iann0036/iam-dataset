@@ -16,16 +16,18 @@ BASE_DOCUMENTATION_URL = "https://docs.aws.amazon.com/service-authorization/late
 def get_links_from_base_actions_resources_conditions_page():
     """Gets the links from the actions, resources, and conditions keys page, and returns their filenames."""
     html = requests.get(BASE_DOCUMENTATION_URL)
+    print("--")
+    print(html.status_code)
+    print(html.raw)
+    print(html.reason)
+    print(html.content)
+    print("##")
     soup = BeautifulSoup(html.content, "html.parser")
     html_filenames = []
     try:
         for i in soup.find("div", {"class": "highlights"}).findAll("a"):
             html_filenames.append(i["href"])
     except:
-        print(html.status_code)
-        print(html.raw)
-        print(html.reason)
-        print(html.content)
         print(json.dumps(html_filenames))
         raise Exception("Failed to parse base ARC page")
     return html_filenames
