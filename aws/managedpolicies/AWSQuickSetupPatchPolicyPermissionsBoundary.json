@@ -1,0 +1,2765 @@
+{
+  "access_levels": [
+    "List",
+    "Read",
+    "Tagging",
+    "Write",
+    "Permissions management"
+  ],
+  "arn": "arn:aws:iam::aws:policy/AWSQuickSetupPatchPolicyPermissionsBoundary",
+  "createdate": "2024-06-26T09:46:54+00:00",
+  "credentials_exposure": false,
+  "data_access": true,
+  "deprecated": false,
+  "document": {
+    "Statement": [
+      {
+        "Action": [
+          "iam:GetRole"
+        ],
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:iam::*:role/AWS-QuickSetup-AutomationRole-*"
+        ],
+        "Sid": "PatchingAutomationRoleGetPermissions"
+      },
+      {
+        "Action": [
+          "iam:PassRole"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "iam:PassedToService": [
+              "ssm.amazonaws.com"
+            ]
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:iam::*:role/AWS-QuickSetup-AutomationRole-*"
+        ],
+        "Sid": "PatchingAutomationRolePassPermissions"
+      },
+      {
+        "Action": [
+          "iam:CreateRole",
+          "iam:DeleteRole",
+          "iam:UpdateRole",
+          "iam:GetRole"
+        ],
+        "Condition": {
+          "ArnLike": {
+            "aws:PrincipalArn": "arn:aws:iam::*:role/AWS-QuickSetup-AutomationRole-*"
+          },
+          "StringLike": {
+            "aws:PrincipalTag/QuickSetupManagerID": "*"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:iam::*:role/AmazonSSMRoleForInstancesQuickSetup"
+        ],
+        "Sid": "DefaultInstanceRolePermissions"
+      },
+      {
+        "Action": [
+          "iam:PassRole"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "iam:PassedToService": [
+              "ec2.amazonaws.com",
+              "ssm.amazonaws.com"
+            ]
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:iam::*:role/AmazonSSMRoleForInstancesQuickSetup"
+        ],
+        "Sid": "DefaultInstanceRolePassPermissions"
+      },
+      {
+        "Action": [
+          "iam:AttachRolePolicy",
+          "iam:DetachRolePolicy"
+        ],
+        "Condition": {
+          "ArnEquals": {
+            "iam:PolicyARN": [
+              "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore",
+              "arn:aws:iam::aws:policy/AWSQuickSetupPatchPolicyBaselineAccess"
+            ]
+          },
+          "ArnLike": {
+            "aws:PrincipalArn": "arn:aws:iam::*:role/AWS-QuickSetup-AutomationRole-*"
+          },
+          "StringLike": {
+            "aws:PrincipalTag/QuickSetupManagerID": "*"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:iam::*:role/*",
+        "Sid": "PoliciesAttachPermissions"
+      },
+      {
+        "Action": [
+          "iam:CreateServiceLinkedRole"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "iam:AWSServiceName": "ssm.amazonaws.com"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:iam::*:role/aws-service-role/ssm.amazonaws.com/AWSServiceRoleForAmazonSSM"
+        ],
+        "Sid": "CreateSLRPermissions"
+      },
+      {
+        "Action": [
+          "iam:AddRoleToInstanceProfile"
+        ],
+        "Effect": "Allow",
+        "Resource": [
+          "*"
+        ],
+        "Sid": "InstanceRoleAddPermissions"
+      },
+      {
+        "Action": [
+          "ssm:UpdateManagedInstanceRole"
+        ],
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "ManagedInstanceRoleUpdatePermissions"
+      },
+      {
+        "Action": [
+          "iam:GetInstanceProfile",
+          "iam:GetRolePolicy",
+          "iam:ListInstanceProfilesForRole",
+          "iam:ListRoles"
+        ],
+        "Effect": "Allow",
+        "Resource": [
+          "*"
+        ],
+        "Sid": "IAMReadOnlyPermissions"
+      },
+      {
+        "Action": [
+          "iam:CreateInstanceProfile"
+        ],
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:iam::*:instance-profile/AmazonSSMRoleForInstancesQuickSetup"
+        ],
+        "Sid": "InstanceProfileCreatePermissions"
+      },
+      {
+        "Action": [
+          "ec2:AssociateIamInstanceProfile"
+        ],
+        "Condition": {
+          "ArnLike": {
+            "ec2:NewInstanceProfile": "arn:aws:iam::*:instance-profile/AmazonSSMRoleForInstancesQuickSetup"
+          },
+          "Null": {
+            "ec2:InstanceProfile": "true"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "InstanceProfileAssociationPermissions"
+      },
+      {
+        "Action": [
+          "ec2:DisassociateIamInstanceProfile"
+        ],
+        "Condition": {
+          "ArnLike": {
+            "ec2:InstanceProfile": "arn:aws:iam::*:instance-profile/AmazonSSMRoleForInstancesQuickSetup"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "InstanceProfileDisassociationPermissions"
+      },
+      {
+        "Action": [
+          "ssm:DescribeAssociationExecutions",
+          "ssm:UpdateAssociation",
+          "ssm:DescribeAssociation"
+        ],
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:ssm:*:*:document/AWSQuickSetup-*",
+          "arn:aws:ec2:*:*:instance/*",
+          "arn:aws:ssm:*:*:managed-instance/*",
+          "arn:aws:ssm:*:*:association/*"
+        ],
+        "Sid": "SSMAssociationsPermissions"
+      },
+      {
+        "Action": [
+          "s3:CreateBucket",
+          "s3:Put*",
+          "s3:Get*",
+          "s3:List*",
+          "s3:DeleteObject",
+          "s3:DeleteObjectVersion",
+          "s3:DeleteBucket"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceAccount": [
+              "${aws:PrincipalAccount}"
+            ]
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:s3:::aws-quicksetup-patchpolicy-*",
+        "Sid": "BaselineS3Permissions"
+      },
+      {
+        "Action": [
+          "lambda:InvokeFunction"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceAccount": [
+              "${aws:PrincipalAccount}"
+            ]
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:lambda:*:*:function:baseline-overrides-*",
+          "arn:aws:lambda:*:*:function:delete-name-tags-*"
+        ],
+        "Sid": "PatchingFunctionsPermissions"
+      },
+      {
+        "Action": [
+          "logs:CreateLogStream",
+          "logs:PutLogEvents"
+        ],
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:logs:*:*:log-group:/aws/lambda/baseline-overrides-*",
+          "arn:aws:logs:*:*:log-group:/aws/lambda/delete-name-tags-*"
+        ],
+        "Sid": "LoggingPermissions"
+      },
+      {
+        "Action": [
+          "ssm:AddTagsToResource",
+          "ssm:RemoveTagsFromResource"
+        ],
+        "Condition": {
+          "ForAllValues:StringLike": {
+            "aws:TagKeys": "QSConfigName-*"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:ssm:*:*:managed-instance/*",
+        "Sid": "SSMTaggingPermissions"
+      },
+      {
+        "Action": [
+          "ec2:CreateTags",
+          "ec2:DeleteTags"
+        ],
+        "Condition": {
+          "ForAllValues:StringLike": {
+            "aws:TagKeys": "QSConfigName-*"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:ec2:*:*:instance/*",
+        "Sid": "EC2TaggingPermissions"
+      },
+      {
+        "Action": [
+          "iam:TagRole",
+          "iam:UntagRole"
+        ],
+        "Condition": {
+          "ForAllValues:StringLike": {
+            "aws:TagKeys": "QSConfigId-*"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "RoleTaggingPermissions"
+      },
+      {
+        "Action": [
+          "ssm:GetPatchBaseline",
+          "ssm:GetInventory",
+          "ssm:DescribeInstanceInformation",
+          "ssm:DescribeAssociation",
+          "ssm:GetAutomationExecution",
+          "ssm:ListTagsForResource",
+          "ec2:DescribeIamInstanceProfileAssociations",
+          "ec2:DescribeInstances"
+        ],
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "PatchingReadOnlyPermissions"
+      },
+      {
+        "Action": [
+          "ssm:StartAutomationExecution"
+        ],
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:ssm:*:*:automation-definition/AWS-EnableExplorer*",
+          "arn:aws:ssm:*:*:automation-definition/AWS-RunPatchBaseline*",
+          "arn:aws:ssm:*:*:automation-definition/AWS-AttachIAMToInstance*",
+          "arn:aws:ssm:*:*:automation-definition/QuickSetup-*",
+          "arn:aws:ssm:*:*:automation-definition/AWSQuickSetup-*"
+        ],
+        "Sid": "PatchingAutomationsStartPermissions"
+      },
+      {
+        "Action": [
+          "iam:ListRoles",
+          "config:DescribeConfigurationRecorders",
+          "compute-optimizer:GetEnrollmentStatus",
+          "support:DescribeTrustedAdvisorChecks"
+        ],
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "ReadOnlyPermissionsForEnablingExplorer"
+      },
+      {
+        "Action": [
+          "ssm:UpdateServiceSetting",
+          "ssm:GetServiceSetting"
+        ],
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:ssm:*:*:servicesetting/ssm/opsitem/ssm-patchmanager",
+          "arn:aws:ssm:*:*:servicesetting/ssm/opsitem/EC2",
+          "arn:aws:ssm:*:*:servicesetting/ssm/opsdata/ExplorerOnboarded",
+          "arn:aws:ssm:*:*:servicesetting/ssm/opsdata/Association",
+          "arn:aws:ssm:*:*:servicesetting/ssm/opsdata/ComputeOptimizer",
+          "arn:aws:ssm:*:*:servicesetting/ssm/opsdata/ConfigCompliance",
+          "arn:aws:ssm:*:*:servicesetting/ssm/opsdata/OpsData-TrustedAdvisor",
+          "arn:aws:ssm:*:*:servicesetting/ssm/opsdata/SupportCenterCase"
+        ],
+        "Sid": "ExplorerServiceSettingsPermissions"
+      }
+    ],
+    "Version": "2012-10-17"
+  },
+  "effective_actions": [
+    {
+      "access_level": "Read",
+      "action": "iam:GetRole",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "iam:GetRole",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "iam:PassRole",
+      "condition": {
+        "StringEquals": {
+          "iam:PassedToService": [
+            "ssm.amazonaws.com"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "iam:PassRole",
+      "privesc": true,
+      "resource_exposure": true
+    },
+    {
+      "access_level": "Write",
+      "action": "iam:CreateRole",
+      "condition": {
+        "ArnLike": {
+          "aws:PrincipalArn": "arn:aws:iam::*:role/AWS-QuickSetup-AutomationRole-*"
+        },
+        "StringLike": {
+          "aws:PrincipalTag/QuickSetupManagerID": "*"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "iam:CreateRole",
+      "privesc": false,
+      "resource_exposure": true
+    },
+    {
+      "access_level": "Write",
+      "action": "iam:DeleteRole",
+      "condition": {
+        "ArnLike": {
+          "aws:PrincipalArn": "arn:aws:iam::*:role/AWS-QuickSetup-AutomationRole-*"
+        },
+        "StringLike": {
+          "aws:PrincipalTag/QuickSetupManagerID": "*"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "iam:DeleteRole",
+      "privesc": false,
+      "resource_exposure": true
+    },
+    {
+      "access_level": "Write",
+      "action": "iam:UpdateRole",
+      "condition": {
+        "ArnLike": {
+          "aws:PrincipalArn": "arn:aws:iam::*:role/AWS-QuickSetup-AutomationRole-*"
+        },
+        "StringLike": {
+          "aws:PrincipalTag/QuickSetupManagerID": "*"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "iam:UpdateRole",
+      "privesc": false,
+      "resource_exposure": true
+    },
+    {
+      "access_level": "Read",
+      "action": "iam:GetRole",
+      "condition": {
+        "ArnLike": {
+          "aws:PrincipalArn": "arn:aws:iam::*:role/AWS-QuickSetup-AutomationRole-*"
+        },
+        "StringLike": {
+          "aws:PrincipalTag/QuickSetupManagerID": "*"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "iam:GetRole",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "iam:PassRole",
+      "condition": {
+        "StringEquals": {
+          "iam:PassedToService": [
+            "ec2.amazonaws.com",
+            "ssm.amazonaws.com"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "iam:PassRole",
+      "privesc": true,
+      "resource_exposure": true
+    },
+    {
+      "access_level": "Permissions management",
+      "action": "iam:AttachRolePolicy",
+      "condition": {
+        "ArnEquals": {
+          "iam:PolicyARN": [
+            "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore",
+            "arn:aws:iam::aws:policy/AWSQuickSetupPatchPolicyBaselineAccess"
+          ]
+        },
+        "ArnLike": {
+          "aws:PrincipalArn": "arn:aws:iam::*:role/AWS-QuickSetup-AutomationRole-*"
+        },
+        "StringLike": {
+          "aws:PrincipalTag/QuickSetupManagerID": "*"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "iam:AttachRolePolicy",
+      "privesc": true,
+      "resource_exposure": true
+    },
+    {
+      "access_level": "Permissions management",
+      "action": "iam:DetachRolePolicy",
+      "condition": {
+        "ArnEquals": {
+          "iam:PolicyARN": [
+            "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore",
+            "arn:aws:iam::aws:policy/AWSQuickSetupPatchPolicyBaselineAccess"
+          ]
+        },
+        "ArnLike": {
+          "aws:PrincipalArn": "arn:aws:iam::*:role/AWS-QuickSetup-AutomationRole-*"
+        },
+        "StringLike": {
+          "aws:PrincipalTag/QuickSetupManagerID": "*"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "iam:DetachRolePolicy",
+      "privesc": false,
+      "resource_exposure": true
+    },
+    {
+      "access_level": "Write",
+      "action": "iam:CreateServiceLinkedRole",
+      "condition": {
+        "StringEquals": {
+          "iam:AWSServiceName": "ssm.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "iam:CreateServiceLinkedRole",
+      "privesc": true,
+      "resource_exposure": true
+    },
+    {
+      "access_level": "Write",
+      "action": "iam:AddRoleToInstanceProfile",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "iam:AddRoleToInstanceProfile",
+      "privesc": false,
+      "resource_exposure": true
+    },
+    {
+      "access_level": "Write",
+      "action": "ssm:UpdateManagedInstanceRole",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ssm:UpdateManagedInstanceRole",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "iam:GetInstanceProfile",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "iam:GetInstanceProfile",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "iam:GetRolePolicy",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "iam:GetRolePolicy",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "iam:ListInstanceProfilesForRole",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "iam:ListInstanceProfilesForRole",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "iam:ListRoles",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "iam:ListRoles",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "iam:CreateInstanceProfile",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "iam:CreateInstanceProfile",
+      "privesc": false,
+      "resource_exposure": true
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:AssociateIamInstanceProfile",
+      "condition": {
+        "ArnLike": {
+          "ec2:NewInstanceProfile": "arn:aws:iam::*:instance-profile/AmazonSSMRoleForInstancesQuickSetup"
+        },
+        "Null": {
+          "ec2:InstanceProfile": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:AssociateIamInstanceProfile",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:DisassociateIamInstanceProfile",
+      "condition": {
+        "ArnLike": {
+          "ec2:InstanceProfile": "arn:aws:iam::*:instance-profile/AmazonSSMRoleForInstancesQuickSetup"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:DisassociateIamInstanceProfile",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "ssm:DescribeAssociationExecutions",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ssm:DescribeAssociationExecutions",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ssm:UpdateAssociation",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ssm:UpdateAssociation",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "ssm:DescribeAssociation",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ssm:DescribeAssociation",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "s3:CreateBucket",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": [
+            "${aws:PrincipalAccount}"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3:CreateBucket",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "s3:Put*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": [
+            "${aws:PrincipalAccount}"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3:PutAccelerateConfiguration",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "s3:Put*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": [
+            "${aws:PrincipalAccount}"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3:PutAccessGrantsInstanceResourcePolicy",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "s3:Put*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": [
+            "${aws:PrincipalAccount}"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3:PutAccessPointConfigurationForObjectLambda",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Permissions management",
+      "action": "s3:Put*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": [
+            "${aws:PrincipalAccount}"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3:PutAccessPointPolicy",
+      "privesc": false,
+      "resource_exposure": true
+    },
+    {
+      "access_level": "Permissions management",
+      "action": "s3:Put*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": [
+            "${aws:PrincipalAccount}"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3:PutAccessPointPolicyForObjectLambda",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Permissions management",
+      "action": "s3:Put*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": [
+            "${aws:PrincipalAccount}"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3:PutAccessPointPublicAccessBlock",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Permissions management",
+      "action": "s3:Put*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": [
+            "${aws:PrincipalAccount}"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3:PutAccountPublicAccessBlock",
+      "privesc": false,
+      "resource_exposure": true
+    },
+    {
+      "access_level": "Write",
+      "action": "s3:Put*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": [
+            "${aws:PrincipalAccount}"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3:PutAnalyticsConfiguration",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Permissions management",
+      "action": "s3:Put*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": [
+            "${aws:PrincipalAccount}"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3:PutBucketAcl",
+      "privesc": false,
+      "resource_exposure": true
+    },
+    {
+      "access_level": "Write",
+      "action": "s3:Put*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": [
+            "${aws:PrincipalAccount}"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3:PutBucketCORS",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "s3:Put*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": [
+            "${aws:PrincipalAccount}"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3:PutBucketLogging",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "s3:Put*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": [
+            "${aws:PrincipalAccount}"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3:PutBucketNotification",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "s3:Put*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": [
+            "${aws:PrincipalAccount}"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3:PutBucketObjectLockConfiguration",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "s3:Put*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": [
+            "${aws:PrincipalAccount}"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3:PutBucketOwnershipControls",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Permissions management",
+      "action": "s3:Put*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": [
+            "${aws:PrincipalAccount}"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3:PutBucketPolicy",
+      "privesc": false,
+      "resource_exposure": true
+    },
+    {
+      "access_level": "Permissions management",
+      "action": "s3:Put*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": [
+            "${aws:PrincipalAccount}"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3:PutBucketPublicAccessBlock",
+      "privesc": false,
+      "resource_exposure": true
+    },
+    {
+      "access_level": "Write",
+      "action": "s3:Put*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": [
+            "${aws:PrincipalAccount}"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3:PutBucketRequestPayment",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Tagging",
+      "action": "s3:Put*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": [
+            "${aws:PrincipalAccount}"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3:PutBucketTagging",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "s3:Put*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": [
+            "${aws:PrincipalAccount}"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3:PutBucketVersioning",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "s3:Put*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": [
+            "${aws:PrincipalAccount}"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3:PutBucketWebsite",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "s3:Put*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": [
+            "${aws:PrincipalAccount}"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3:PutEncryptionConfiguration",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "s3:Put*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": [
+            "${aws:PrincipalAccount}"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3:PutIntelligentTieringConfiguration",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "s3:Put*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": [
+            "${aws:PrincipalAccount}"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3:PutInventoryConfiguration",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Tagging",
+      "action": "s3:Put*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": [
+            "${aws:PrincipalAccount}"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3:PutJobTagging",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "s3:Put*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": [
+            "${aws:PrincipalAccount}"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3:PutLifecycleConfiguration",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "s3:Put*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": [
+            "${aws:PrincipalAccount}"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3:PutMetricsConfiguration",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Permissions management",
+      "action": "s3:Put*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": [
+            "${aws:PrincipalAccount}"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3:PutMultiRegionAccessPointPolicy",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "s3:Put*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": [
+            "${aws:PrincipalAccount}"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3:PutObject",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Permissions management",
+      "action": "s3:Put*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": [
+            "${aws:PrincipalAccount}"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3:PutObjectAcl",
+      "privesc": false,
+      "resource_exposure": true
+    },
+    {
+      "access_level": "Write",
+      "action": "s3:Put*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": [
+            "${aws:PrincipalAccount}"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3:PutObjectLegalHold",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "s3:Put*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": [
+            "${aws:PrincipalAccount}"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3:PutObjectRetention",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Tagging",
+      "action": "s3:Put*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": [
+            "${aws:PrincipalAccount}"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3:PutObjectTagging",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Permissions management",
+      "action": "s3:Put*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": [
+            "${aws:PrincipalAccount}"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3:PutObjectVersionAcl",
+      "privesc": false,
+      "resource_exposure": true
+    },
+    {
+      "access_level": "Tagging",
+      "action": "s3:Put*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": [
+            "${aws:PrincipalAccount}"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3:PutObjectVersionTagging",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "s3:Put*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": [
+            "${aws:PrincipalAccount}"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3:PutReplicationConfiguration",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "s3:Put*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": [
+            "${aws:PrincipalAccount}"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3:PutStorageLensConfiguration",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Tagging",
+      "action": "s3:Put*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": [
+            "${aws:PrincipalAccount}"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3:PutStorageLensConfigurationTagging",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "s3:Get*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": [
+            "${aws:PrincipalAccount}"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3:GetAccelerateConfiguration",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "s3:Get*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": [
+            "${aws:PrincipalAccount}"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3:GetAccessGrant",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "s3:Get*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": [
+            "${aws:PrincipalAccount}"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3:GetAccessGrantsInstance",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "s3:Get*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": [
+            "${aws:PrincipalAccount}"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3:GetAccessGrantsInstanceForPrefix",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "s3:Get*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": [
+            "${aws:PrincipalAccount}"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3:GetAccessGrantsInstanceResourcePolicy",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "s3:Get*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": [
+            "${aws:PrincipalAccount}"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3:GetAccessGrantsLocation",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "s3:Get*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": [
+            "${aws:PrincipalAccount}"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3:GetAccessPoint",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "s3:Get*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": [
+            "${aws:PrincipalAccount}"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3:GetAccessPointConfigurationForObjectLambda",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "s3:Get*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": [
+            "${aws:PrincipalAccount}"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3:GetAccessPointForObjectLambda",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "s3:Get*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": [
+            "${aws:PrincipalAccount}"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3:GetAccessPointPolicy",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "s3:Get*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": [
+            "${aws:PrincipalAccount}"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3:GetAccessPointPolicyForObjectLambda",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "s3:Get*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": [
+            "${aws:PrincipalAccount}"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3:GetAccessPointPolicyStatus",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "s3:Get*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": [
+            "${aws:PrincipalAccount}"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3:GetAccessPointPolicyStatusForObjectLambda",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "s3:Get*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": [
+            "${aws:PrincipalAccount}"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3:GetAccountPublicAccessBlock",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "s3:Get*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": [
+            "${aws:PrincipalAccount}"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3:GetAnalyticsConfiguration",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "s3:Get*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": [
+            "${aws:PrincipalAccount}"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3:GetBucketAcl",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "s3:Get*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": [
+            "${aws:PrincipalAccount}"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3:GetBucketCORS",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "s3:Get*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": [
+            "${aws:PrincipalAccount}"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3:GetBucketLocation",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "s3:Get*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": [
+            "${aws:PrincipalAccount}"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3:GetBucketLogging",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "s3:Get*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": [
+            "${aws:PrincipalAccount}"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3:GetBucketNotification",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "s3:Get*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": [
+            "${aws:PrincipalAccount}"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3:GetBucketObjectLockConfiguration",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "s3:Get*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": [
+            "${aws:PrincipalAccount}"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3:GetBucketOwnershipControls",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "s3:Get*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": [
+            "${aws:PrincipalAccount}"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3:GetBucketPolicy",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "s3:Get*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": [
+            "${aws:PrincipalAccount}"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3:GetBucketPolicyStatus",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "s3:Get*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": [
+            "${aws:PrincipalAccount}"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3:GetBucketPublicAccessBlock",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "s3:Get*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": [
+            "${aws:PrincipalAccount}"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3:GetBucketRequestPayment",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "s3:Get*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": [
+            "${aws:PrincipalAccount}"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3:GetBucketTagging",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "s3:Get*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": [
+            "${aws:PrincipalAccount}"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3:GetBucketVersioning",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "s3:Get*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": [
+            "${aws:PrincipalAccount}"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3:GetBucketWebsite",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "s3:Get*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": [
+            "${aws:PrincipalAccount}"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3:GetDataAccess",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "s3:Get*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": [
+            "${aws:PrincipalAccount}"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3:GetEncryptionConfiguration",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "s3:Get*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": [
+            "${aws:PrincipalAccount}"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3:GetIntelligentTieringConfiguration",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "s3:Get*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": [
+            "${aws:PrincipalAccount}"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3:GetInventoryConfiguration",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "s3:Get*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": [
+            "${aws:PrincipalAccount}"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3:GetJobTagging",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "s3:Get*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": [
+            "${aws:PrincipalAccount}"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3:GetLifecycleConfiguration",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "s3:Get*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": [
+            "${aws:PrincipalAccount}"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3:GetMetricsConfiguration",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "s3:Get*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": [
+            "${aws:PrincipalAccount}"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3:GetMultiRegionAccessPoint",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "s3:Get*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": [
+            "${aws:PrincipalAccount}"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3:GetMultiRegionAccessPointPolicy",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "s3:Get*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": [
+            "${aws:PrincipalAccount}"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3:GetMultiRegionAccessPointPolicyStatus",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "s3:Get*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": [
+            "${aws:PrincipalAccount}"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3:GetMultiRegionAccessPointRoutes",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "s3:Get*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": [
+            "${aws:PrincipalAccount}"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": true,
+      "effective_action": "s3:GetObject",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "s3:Get*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": [
+            "${aws:PrincipalAccount}"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3:GetObjectAcl",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "s3:Get*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": [
+            "${aws:PrincipalAccount}"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3:GetObjectAttributes",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "s3:Get*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": [
+            "${aws:PrincipalAccount}"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3:GetObjectLegalHold",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "s3:Get*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": [
+            "${aws:PrincipalAccount}"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3:GetObjectRetention",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "s3:Get*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": [
+            "${aws:PrincipalAccount}"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3:GetObjectTagging",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "s3:Get*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": [
+            "${aws:PrincipalAccount}"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3:GetObjectTorrent",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "s3:Get*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": [
+            "${aws:PrincipalAccount}"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": true,
+      "effective_action": "s3:GetObjectVersion",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "s3:Get*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": [
+            "${aws:PrincipalAccount}"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3:GetObjectVersionAcl",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "s3:Get*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": [
+            "${aws:PrincipalAccount}"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3:GetObjectVersionAttributes",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "s3:Get*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": [
+            "${aws:PrincipalAccount}"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3:GetObjectVersionForReplication",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "s3:Get*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": [
+            "${aws:PrincipalAccount}"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3:GetObjectVersionTagging",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "s3:Get*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": [
+            "${aws:PrincipalAccount}"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3:GetObjectVersionTorrent",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "s3:Get*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": [
+            "${aws:PrincipalAccount}"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3:GetReplicationConfiguration",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "s3:Get*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": [
+            "${aws:PrincipalAccount}"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3:GetStorageLensConfiguration",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "s3:Get*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": [
+            "${aws:PrincipalAccount}"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3:GetStorageLensConfigurationTagging",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "s3:Get*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": [
+            "${aws:PrincipalAccount}"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3:GetStorageLensDashboard",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "s3:Get*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": [
+            "${aws:PrincipalAccount}"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3:GetStorageLensGroup",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "s3:List*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": [
+            "${aws:PrincipalAccount}"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3:ListAccessGrants",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "s3:List*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": [
+            "${aws:PrincipalAccount}"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3:ListAccessGrantsInstances",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "s3:List*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": [
+            "${aws:PrincipalAccount}"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3:ListAccessGrantsLocations",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "s3:List*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": [
+            "${aws:PrincipalAccount}"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3:ListAccessPoints",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "s3:List*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": [
+            "${aws:PrincipalAccount}"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3:ListAccessPointsForObjectLambda",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "s3:List*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": [
+            "${aws:PrincipalAccount}"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3:ListAllMyBuckets",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "s3:List*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": [
+            "${aws:PrincipalAccount}"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3:ListBucket",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "s3:List*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": [
+            "${aws:PrincipalAccount}"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3:ListBucketMultipartUploads",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "s3:List*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": [
+            "${aws:PrincipalAccount}"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3:ListBucketVersions",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "s3:List*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": [
+            "${aws:PrincipalAccount}"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3:ListJobs",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "s3:List*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": [
+            "${aws:PrincipalAccount}"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3:ListMultiRegionAccessPoints",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "s3:List*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": [
+            "${aws:PrincipalAccount}"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3:ListMultipartUploadParts",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "s3:List*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": [
+            "${aws:PrincipalAccount}"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3:ListStorageLensConfigurations",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "s3:List*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": [
+            "${aws:PrincipalAccount}"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3:ListStorageLensGroups",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "s3:List*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": [
+            "${aws:PrincipalAccount}"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3:ListTagsForResource",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "s3:DeleteObject",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": [
+            "${aws:PrincipalAccount}"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3:DeleteObject",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "s3:DeleteObjectVersion",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": [
+            "${aws:PrincipalAccount}"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3:DeleteObjectVersion",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "s3:DeleteBucket",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": [
+            "${aws:PrincipalAccount}"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3:DeleteBucket",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "lambda:InvokeFunction",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": [
+            "${aws:PrincipalAccount}"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "lambda:InvokeFunction",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "logs:CreateLogStream",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "logs:CreateLogStream",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "logs:PutLogEvents",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "logs:PutLogEvents",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Tagging",
+      "action": "ssm:AddTagsToResource",
+      "condition": {
+        "ForAllValues:StringLike": {
+          "aws:TagKeys": "QSConfigName-*"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ssm:AddTagsToResource",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Tagging",
+      "action": "ssm:RemoveTagsFromResource",
+      "condition": {
+        "ForAllValues:StringLike": {
+          "aws:TagKeys": "QSConfigName-*"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ssm:RemoveTagsFromResource",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Tagging",
+      "action": "ec2:CreateTags",
+      "condition": {
+        "ForAllValues:StringLike": {
+          "aws:TagKeys": "QSConfigName-*"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:CreateTags",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Tagging",
+      "action": "ec2:DeleteTags",
+      "condition": {
+        "ForAllValues:StringLike": {
+          "aws:TagKeys": "QSConfigName-*"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:DeleteTags",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Tagging",
+      "action": "iam:TagRole",
+      "condition": {
+        "ForAllValues:StringLike": {
+          "aws:TagKeys": "QSConfigId-*"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "iam:TagRole",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Tagging",
+      "action": "iam:UntagRole",
+      "condition": {
+        "ForAllValues:StringLike": {
+          "aws:TagKeys": "QSConfigId-*"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "iam:UntagRole",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "ssm:GetPatchBaseline",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ssm:GetPatchBaseline",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "ssm:GetInventory",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ssm:GetInventory",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "ssm:DescribeInstanceInformation",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ssm:DescribeInstanceInformation",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "ssm:DescribeAssociation",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ssm:DescribeAssociation",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "ssm:GetAutomationExecution",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ssm:GetAutomationExecution",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "ssm:ListTagsForResource",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ssm:ListTagsForResource",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "ec2:DescribeIamInstanceProfileAssociations",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:DescribeIamInstanceProfileAssociations",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "ec2:DescribeInstances",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:DescribeInstances",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ssm:StartAutomationExecution",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ssm:StartAutomationExecution",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "iam:ListRoles",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "iam:ListRoles",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "config:DescribeConfigurationRecorders",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "config:DescribeConfigurationRecorders",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "compute-optimizer:GetEnrollmentStatus",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "compute-optimizer:GetEnrollmentStatus",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "support:DescribeTrustedAdvisorChecks",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "support:DescribeTrustedAdvisorChecks",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ssm:UpdateServiceSetting",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ssm:UpdateServiceSetting",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "ssm:GetServiceSetting",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ssm:GetServiceSetting",
+      "privesc": false,
+      "resource_exposure": false
+    }
+  ],
+  "malformed": false,
+  "name": "AWSQuickSetupPatchPolicyPermissionsBoundary",
+  "privesc": true,
+  "resource_exposure": true,
+  "undocumented_actions": false,
+  "unknown_actions": [],
+  "updatedate": "2024-06-26T09:46:54+00:00",
+  "version": "v1"
+}
