@@ -1,10 +1,11 @@
 {
   "access_levels": [
     "List",
-    "Read"
+    "Read",
+    "Write"
   ],
   "arn": "arn:aws:iam::aws:policy/aws-service-role/AWSLicenseManagerLinuxSubscriptionsServiceRolePolicy",
-  "createdate": "2022-12-20T18:54:54+00:00",
+  "createdate": "2024-07-08T22:04:56+00:00",
   "credentials_exposure": false,
   "data_access": false,
   "deprecated": false,
@@ -38,6 +39,43 @@
           "*"
         ],
         "Sid": "OrganizationPermissions"
+      },
+      {
+        "Action": [
+          "secretsmanager:GetSecretValue"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}",
+            "aws:ResourceTag/LicenseManagerLinuxSubscriptions": "enabled"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:secretsmanager:*:*:secret:*"
+        ],
+        "Sid": "SecretsManagerPermissions"
+      },
+      {
+        "Action": [
+          "kms:Decrypt"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}",
+            "aws:ResourceTag/LicenseManagerLinuxSubscriptions": "enabled"
+          },
+          "StringLike": {
+            "kms:ViaService": [
+              "secretsmanager.*.amazonaws.com"
+            ]
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:kms:*:*:key/*"
+        ],
+        "Sid": "KMSPermissions"
       }
     ],
     "Version": "2012-10-17"
@@ -152,6 +190,41 @@
       "effective_action": "organizations:ListDelegatedAdministrators",
       "privesc": false,
       "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "secretsmanager:GetSecretValue",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}",
+          "aws:ResourceTag/LicenseManagerLinuxSubscriptions": "enabled"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "secretsmanager:GetSecretValue",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "kms:Decrypt",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}",
+          "aws:ResourceTag/LicenseManagerLinuxSubscriptions": "enabled"
+        },
+        "StringLike": {
+          "kms:ViaService": [
+            "secretsmanager.*.amazonaws.com"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "kms:Decrypt",
+      "privesc": false,
+      "resource_exposure": false
     }
   ],
   "malformed": false,
@@ -160,6 +233,6 @@
   "resource_exposure": false,
   "undocumented_actions": false,
   "unknown_actions": [],
-  "updatedate": "2022-12-20T18:54:54+00:00",
-  "version": "v1"
+  "updatedate": "2024-07-08T22:04:56+00:00",
+  "version": "v2"
 }
