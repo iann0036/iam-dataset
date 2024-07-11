@@ -6,7 +6,7 @@
     "Write"
   ],
   "arn": "arn:aws:iam::aws:policy/AWSSystemsManagerForSAPFullAccess",
-  "createdate": "2022-11-18T21:58:54+00:00",
+  "createdate": "2024-07-10T21:54:54+00:00",
   "credentials_exposure": false,
   "data_access": false,
   "deprecated": false,
@@ -17,7 +17,8 @@
           "ssm-sap:*"
         ],
         "Effect": "Allow",
-        "Resource": "arn:*:ssm-sap:*:*:*"
+        "Resource": "arn:*:ssm-sap:*:*:*",
+        "Sid": "AwsSsmForSapPermissions"
       },
       {
         "Action": [
@@ -31,7 +32,22 @@
         "Effect": "Allow",
         "Resource": [
           "arn:aws:iam::*:role/aws-service-role/ssm-sap.amazonaws.com/AWSServiceRoleForAWSSSMForSAP"
-        ]
+        ],
+        "Sid": "AwsSsmForSapServiceRoleCreationPermission"
+      },
+      {
+        "Action": [
+          "ec2:StartInstances",
+          "ec2:StopInstances"
+        ],
+        "Condition": {
+          "StringEqualsIgnoreCase": {
+            "ec2:resourceTag/SSMForSAPManaged": "True"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:ec2:*:*:instance/*",
+        "Sid": "Ec2StartStopPermission"
       }
     ],
     "Version": "2012-10-17"
@@ -290,6 +306,34 @@
       "effective_action": "iam:CreateServiceLinkedRole",
       "privesc": true,
       "resource_exposure": true
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:StartInstances",
+      "condition": {
+        "StringEqualsIgnoreCase": {
+          "ec2:resourceTag/SSMForSAPManaged": "True"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:StartInstances",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:StopInstances",
+      "condition": {
+        "StringEqualsIgnoreCase": {
+          "ec2:resourceTag/SSMForSAPManaged": "True"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:StopInstances",
+      "privesc": false,
+      "resource_exposure": false
     }
   ],
   "malformed": false,
@@ -298,6 +342,6 @@
   "resource_exposure": true,
   "undocumented_actions": false,
   "unknown_actions": [],
-  "updatedate": "2022-11-18T21:58:54+00:00",
-  "version": "v2"
+  "updatedate": "2024-07-10T21:54:54+00:00",
+  "version": "v3"
 }
