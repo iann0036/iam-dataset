@@ -6,7 +6,7 @@
     "Write"
   ],
   "arn": "arn:aws:iam::aws:policy/AmazonSageMakerCanvasDataPrepFullAccess",
-  "createdate": "2023-12-08T02:53:24+00:00",
+  "createdate": "2024-07-18T23:21:28+00:00",
   "credentials_exposure": true,
   "data_access": true,
   "deprecated": false,
@@ -336,6 +336,119 @@
         "Effect": "Allow",
         "Resource": "arn:aws:logs:*:*:log-group:/aws/sagemaker/studio:*",
         "Sid": "LoggingOperation"
+      },
+      {
+        "Action": [
+          "emr-serverless:CreateApplication"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:RequestTag/sagemaker:is-canvas-resource": "True",
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:emr-serverless:*:*:/*",
+        "Sid": "EMRServerlessCreateApplicationOperation"
+      },
+      {
+        "Action": [
+          "emr-serverless:ListApplications"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:emr-serverless:*:*:/*",
+        "Sid": "EMRServerlessListApplicationOperation"
+      },
+      {
+        "Action": [
+          "emr-serverless:UpdateApplication",
+          "emr-serverless:GetApplication"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}",
+            "aws:ResourceTag/sagemaker:is-canvas-resource": "True"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:emr-serverless:*:*:/applications/*",
+        "Sid": "EMRServerlessApplicationOperations"
+      },
+      {
+        "Action": [
+          "emr-serverless:StartJobRun"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:RequestTag/sagemaker:is-canvas-resource": "True",
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:emr-serverless:*:*:/applications/*",
+        "Sid": "EMRServerlessStartJobRunOperation"
+      },
+      {
+        "Action": [
+          "emr-serverless:ListJobRuns"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}",
+            "aws:ResourceTag/sagemaker:is-canvas-resource": "True"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:emr-serverless:*:*:/applications/*",
+        "Sid": "EMRServerlessListJobRunOperation"
+      },
+      {
+        "Action": [
+          "emr-serverless:GetJobRun",
+          "emr-serverless:CancelJobRun"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}",
+            "aws:ResourceTag/sagemaker:is-canvas-resource": "True"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:emr-serverless:*:*:/applications/*/jobruns/*",
+        "Sid": "EMRServerlessJobRunOperations"
+      },
+      {
+        "Action": [
+          "emr-serverless:TagResource"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:RequestTag/sagemaker:is-canvas-resource": "True",
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:emr-serverless:*:*:/*",
+        "Sid": "EMRServerlessTagResourceOperation"
+      },
+      {
+        "Action": [
+          "iam:PassRole"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}",
+            "iam:PassedToService": "emr-serverless.amazonaws.com"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:iam::*:role/AmazonSageMakerCanvasEMRSExecutionAccess-*",
+        "Sid": "IAMPassOperationForEMRServerless"
       }
     ],
     "Version": "2012-10-17"
@@ -1015,6 +1128,155 @@
       "effective_action": "logs:PutLogEvents",
       "privesc": false,
       "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "emr-serverless:CreateApplication",
+      "condition": {
+        "StringEquals": {
+          "aws:RequestTag/sagemaker:is-canvas-resource": "True",
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "emr-serverless:CreateApplication",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "emr-serverless:ListApplications",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "emr-serverless:ListApplications",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "emr-serverless:UpdateApplication",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}",
+          "aws:ResourceTag/sagemaker:is-canvas-resource": "True"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "emr-serverless:UpdateApplication",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "emr-serverless:GetApplication",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}",
+          "aws:ResourceTag/sagemaker:is-canvas-resource": "True"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "emr-serverless:GetApplication",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "emr-serverless:StartJobRun",
+      "condition": {
+        "StringEquals": {
+          "aws:RequestTag/sagemaker:is-canvas-resource": "True",
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "emr-serverless:StartJobRun",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "emr-serverless:ListJobRuns",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}",
+          "aws:ResourceTag/sagemaker:is-canvas-resource": "True"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "emr-serverless:ListJobRuns",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "emr-serverless:GetJobRun",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}",
+          "aws:ResourceTag/sagemaker:is-canvas-resource": "True"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "emr-serverless:GetJobRun",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "emr-serverless:CancelJobRun",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}",
+          "aws:ResourceTag/sagemaker:is-canvas-resource": "True"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "emr-serverless:CancelJobRun",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Tagging",
+      "action": "emr-serverless:TagResource",
+      "condition": {
+        "StringEquals": {
+          "aws:RequestTag/sagemaker:is-canvas-resource": "True",
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "emr-serverless:TagResource",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "iam:PassRole",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}",
+          "iam:PassedToService": "emr-serverless.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "iam:PassRole",
+      "privesc": true,
+      "resource_exposure": true
     }
   ],
   "malformed": false,
@@ -1023,6 +1285,6 @@
   "resource_exposure": true,
   "undocumented_actions": false,
   "unknown_actions": [],
-  "updatedate": "2023-12-08T02:53:24+00:00",
-  "version": "v2"
+  "updatedate": "2024-07-18T23:21:28+00:00",
+  "version": "v3"
 }
