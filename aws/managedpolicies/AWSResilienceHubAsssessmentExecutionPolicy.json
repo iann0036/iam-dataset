@@ -5,7 +5,7 @@
     "Write"
   ],
   "arn": "arn:aws:iam::aws:policy/AWSResilienceHubAsssessmentExecutionPolicy",
-  "createdate": "2024-03-24T18:05:06+00:00",
+  "createdate": "2024-07-25T10:13:03+00:00",
   "credentials_exposure": false,
   "data_access": true,
   "deprecated": false,
@@ -32,6 +32,10 @@
           "devops-guru:ListMonitoredResources",
           "dlm:GetLifecyclePolicies",
           "dlm:GetLifecyclePolicy",
+          "docdb-elastic:GetCluster",
+          "docdb-elastic:GetClusterSnapshot",
+          "docdb-elastic:ListClusterSnapshots",
+          "docdb-elastic:ListTagsForResource",
           "drs:DescribeJobs",
           "drs:DescribeSourceServers",
           "drs:GetReplicationConfiguration",
@@ -76,6 +80,7 @@
           "elasticfilesystem:DescribeLifecycleConfiguration",
           "elasticfilesystem:DescribeMountTargets",
           "elasticfilesystem:DescribeReplicationConfigurations",
+          "elasticloadbalancing:DescribeListeners",
           "elasticloadbalancing:DescribeLoadBalancers",
           "elasticloadbalancing:DescribeTargetGroups",
           "elasticloadbalancing:DescribeTargetHealth",
@@ -86,6 +91,8 @@
           "lambda:GetFunctionConcurrency",
           "lambda:GetFunctionConfiguration",
           "lambda:ListAliases",
+          "lambda:ListEventSourceMappings",
+          "lambda:ListFunctionEventInvokeConfigs",
           "lambda:ListVersionsByFunction",
           "rds:DescribeDBClusterSnapshots",
           "rds:DescribeDBClusters",
@@ -95,6 +102,7 @@
           "rds:DescribeDBProxyTargets",
           "rds:DescribeDBSnapshots",
           "rds:DescribeGlobalClusters",
+          "rds:ListTagsForResource",
           "resource-groups:GetGroup",
           "resource-groups:ListGroupResources",
           "route53-recovery-control-config:ListClusters",
@@ -109,17 +117,7 @@
           "route53:ListResourceRecordSets",
           "route53resolver:ListResolverEndpoints",
           "route53resolver:ListResolverEndpointIpAddresses",
-          "s3:GetBucketLocation",
-          "s3:GetBucketLogging",
-          "s3:GetBucketObjectLockConfiguration",
-          "s3:GetBucketPolicyStatus",
-          "s3:GetBucketTagging",
-          "s3:GetBucketVersioning",
-          "s3:GetMultiRegionAccessPointRoutes",
-          "s3:GetReplicationConfiguration",
-          "s3:ListAllMyBuckets",
           "s3:ListBucket",
-          "s3:ListMultiRegionAccessPoints",
           "servicecatalog:GetApplication",
           "servicecatalog:ListAssociatedResources",
           "sns:GetSubscriptionAttributes",
@@ -155,9 +153,36 @@
           "s3:PutObject",
           "s3:GetObject"
         ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          }
+        },
         "Effect": "Allow",
         "Resource": "arn:aws:s3:::aws-resilience-hub-artifacts-*",
-        "Sid": "AWSResilienceHubS3Statement"
+        "Sid": "AWSResilienceHubS3ArtifactStatement"
+      },
+      {
+        "Action": [
+          "s3:GetBucketLocation",
+          "s3:GetBucketLogging",
+          "s3:GetBucketObjectLockConfiguration",
+          "s3:GetBucketPolicyStatus",
+          "s3:GetBucketTagging",
+          "s3:GetBucketVersioning",
+          "s3:GetMultiRegionAccessPointRoutes",
+          "s3:GetReplicationConfiguration",
+          "s3:ListAllMyBuckets",
+          "s3:ListMultiRegionAccessPoints"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "AWSResilienceHubS3AccessStatement"
       },
       {
         "Action": [
@@ -371,6 +396,46 @@
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "dlm:GetLifecyclePolicy",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "docdb-elastic:GetCluster",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "docdb-elastic:GetCluster",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "docdb-elastic:GetClusterSnapshot",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "docdb-elastic:GetClusterSnapshot",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "docdb-elastic:ListClusterSnapshots",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "docdb-elastic:ListClusterSnapshots",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "docdb-elastic:ListTagsForResource",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "docdb-elastic:ListTagsForResource",
       "privesc": false,
       "resource_exposure": false
     },
@@ -815,6 +880,16 @@
       "resource_exposure": false
     },
     {
+      "access_level": "Read",
+      "action": "elasticloadbalancing:DescribeListeners",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "elasticloadbalancing:DescribeListeners",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
       "access_level": "List",
       "action": "elasticloadbalancing:DescribeLoadBalancers",
       "condition": null,
@@ -916,6 +991,26 @@
     },
     {
       "access_level": "List",
+      "action": "lambda:ListEventSourceMappings",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "lambda:ListEventSourceMappings",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "lambda:ListFunctionEventInvokeConfigs",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "lambda:ListFunctionEventInvokeConfigs",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
       "action": "lambda:ListVersionsByFunction",
       "condition": null,
       "credentials_exposure": false,
@@ -1001,6 +1096,16 @@
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "rds:DescribeGlobalClusters",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "rds:ListTagsForResource",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "rds:ListTagsForResource",
       "privesc": false,
       "resource_exposure": false
     },
@@ -1145,112 +1250,12 @@
       "resource_exposure": false
     },
     {
-      "access_level": "Read",
-      "action": "s3:GetBucketLocation",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "s3:GetBucketLocation",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Read",
-      "action": "s3:GetBucketLogging",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "s3:GetBucketLogging",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Read",
-      "action": "s3:GetBucketObjectLockConfiguration",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "s3:GetBucketObjectLockConfiguration",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Read",
-      "action": "s3:GetBucketPolicyStatus",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "s3:GetBucketPolicyStatus",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Read",
-      "action": "s3:GetBucketTagging",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "s3:GetBucketTagging",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Read",
-      "action": "s3:GetBucketVersioning",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "s3:GetBucketVersioning",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Read",
-      "action": "s3:GetMultiRegionAccessPointRoutes",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "s3:GetMultiRegionAccessPointRoutes",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Read",
-      "action": "s3:GetReplicationConfiguration",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "s3:GetReplicationConfiguration",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "s3:ListAllMyBuckets",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "s3:ListAllMyBuckets",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
       "access_level": "List",
       "action": "s3:ListBucket",
       "condition": null,
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "s3:ListBucket",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "s3:ListMultiRegionAccessPoints",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "s3:ListMultiRegionAccessPoints",
       "privesc": false,
       "resource_exposure": false
     },
@@ -1387,7 +1392,11 @@
     {
       "access_level": "Write",
       "action": "s3:CreateBucket",
-      "condition": null,
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "s3:CreateBucket",
@@ -1397,7 +1406,11 @@
     {
       "access_level": "Write",
       "action": "s3:PutObject",
-      "condition": null,
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "s3:PutObject",
@@ -1407,10 +1420,154 @@
     {
       "access_level": "Read",
       "action": "s3:GetObject",
-      "condition": null,
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
       "credentials_exposure": false,
       "data_access": true,
       "effective_action": "s3:GetObject",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "s3:GetBucketLocation",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3:GetBucketLocation",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "s3:GetBucketLogging",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3:GetBucketLogging",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "s3:GetBucketObjectLockConfiguration",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3:GetBucketObjectLockConfiguration",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "s3:GetBucketPolicyStatus",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3:GetBucketPolicyStatus",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "s3:GetBucketTagging",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3:GetBucketTagging",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "s3:GetBucketVersioning",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3:GetBucketVersioning",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "s3:GetMultiRegionAccessPointRoutes",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3:GetMultiRegionAccessPointRoutes",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "s3:GetReplicationConfiguration",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3:GetReplicationConfiguration",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "s3:ListAllMyBuckets",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3:ListAllMyBuckets",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "s3:ListMultiRegionAccessPoints",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3:ListMultiRegionAccessPoints",
       "privesc": false,
       "resource_exposure": false
     },
@@ -1445,6 +1602,6 @@
   "resource_exposure": false,
   "undocumented_actions": false,
   "unknown_actions": [],
-  "updatedate": "2024-03-24T18:05:06+00:00",
-  "version": "v4"
+  "updatedate": "2024-07-25T10:13:03+00:00",
+  "version": "v5"
 }
