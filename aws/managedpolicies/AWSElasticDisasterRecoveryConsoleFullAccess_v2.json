@@ -6,7 +6,7 @@
     "Write"
   ],
   "arn": "arn:aws:iam::aws:policy/AWSElasticDisasterRecoveryConsoleFullAccess_v2",
-  "createdate": "2024-05-19T07:38:32+00:00",
+  "createdate": "2024-07-29T19:38:08+00:00",
   "credentials_exposure": false,
   "data_access": true,
   "deprecated": false,
@@ -49,7 +49,8 @@
           "ec2:GetEbsDefaultKmsKeyId",
           "ec2:DescribeKeyPairs",
           "ec2:DescribeCapacityReservations",
-          "ec2:DescribeHosts"
+          "ec2:DescribeHosts",
+          "ec2:GetInstanceTypesFromInstanceRequirements"
         ],
         "Effect": "Allow",
         "Resource": "*",
@@ -563,6 +564,71 @@
         "Effect": "Allow",
         "Resource": "arn:aws:ssm:*:*:automation-execution/*",
         "Sid": "ConsoleFullAccess37"
+      },
+      {
+        "Action": [
+          "ec2:AssociateIamInstanceProfile"
+        ],
+        "Condition": {
+          "Bool": {
+            "aws:ViaAWSService": "true"
+          },
+          "Null": {
+            "aws:ResourceTag/AWSElasticDisasterRecoveryManaged": "false"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:ec2:*:*:instance/*"
+        ],
+        "Sid": "ConsoleFullAccess38"
+      },
+      {
+        "Action": [
+          "ec2:CreateFleet"
+        ],
+        "Condition": {
+          "ForAnyValue:StringEquals": {
+            "aws:CalledVia": [
+              "drs.amazonaws.com"
+            ]
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:ec2:*:*:instance/*",
+          "arn:aws:ec2:*:*:fleet/*",
+          "arn:aws:ec2:*:*:volume/*",
+          "arn:aws:ec2:*:*:subnet/*",
+          "arn:aws:ec2:*:*:image/*",
+          "arn:aws:ec2:*:*:launch-template/*"
+        ],
+        "Sid": "ConsoleFullAccess39"
+      },
+      {
+        "Action": [
+          "ec2:CreateTags"
+        ],
+        "Condition": {
+          "ForAnyValue:StringEquals": {
+            "aws:CalledVia": [
+              "drs.amazonaws.com"
+            ]
+          },
+          "StringEquals": {
+            "ec2:CreateAction": [
+              "CreateFleet"
+            ]
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:ec2:*:*:security-group/*",
+          "arn:aws:ec2:*:*:volume/*",
+          "arn:aws:ec2:*:*:snapshot/*",
+          "arn:aws:ec2:*:*:instance/*"
+        ],
+        "Sid": "ConsoleFullAccess40"
       }
     ],
     "Version": "2012-10-17"
@@ -1679,6 +1745,16 @@
       "resource_exposure": false
     },
     {
+      "access_level": "List",
+      "action": "ec2:GetInstanceTypesFromInstanceRequirements",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:GetInstanceTypesFromInstanceRequirements",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
       "access_level": "Read",
       "action": "license-manager:ListLicenseConfigurations",
       "condition": null,
@@ -2538,6 +2614,60 @@
       "effective_action": "ssm:GetAutomationExecution",
       "privesc": false,
       "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:AssociateIamInstanceProfile",
+      "condition": {
+        "Bool": {
+          "aws:ViaAWSService": "true"
+        },
+        "Null": {
+          "aws:ResourceTag/AWSElasticDisasterRecoveryManaged": "false"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:AssociateIamInstanceProfile",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:CreateFleet",
+      "condition": {
+        "ForAnyValue:StringEquals": {
+          "aws:CalledVia": [
+            "drs.amazonaws.com"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:CreateFleet",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Tagging",
+      "action": "ec2:CreateTags",
+      "condition": {
+        "ForAnyValue:StringEquals": {
+          "aws:CalledVia": [
+            "drs.amazonaws.com"
+          ]
+        },
+        "StringEquals": {
+          "ec2:CreateAction": [
+            "CreateFleet"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:CreateTags",
+      "privesc": false,
+      "resource_exposure": false
     }
   ],
   "malformed": false,
@@ -2546,6 +2676,6 @@
   "resource_exposure": true,
   "undocumented_actions": false,
   "unknown_actions": [],
-  "updatedate": "2024-05-19T07:38:32+00:00",
-  "version": "v2"
+  "updatedate": "2024-07-29T19:38:08+00:00",
+  "version": "v3"
 }
