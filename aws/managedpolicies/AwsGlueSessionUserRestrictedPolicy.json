@@ -2,10 +2,11 @@
   "access_levels": [
     "List",
     "Read",
+    "Tagging",
     "Write"
   ],
   "arn": "arn:aws:iam::aws:policy/AwsGlueSessionUserRestrictedPolicy",
-  "createdate": "2024-04-29T22:45:28+00:00",
+  "createdate": "2024-08-05T23:06:45+00:00",
   "credentials_exposure": false,
   "data_access": false,
   "deprecated": false,
@@ -30,6 +31,20 @@
           "arn:aws:glue:*:*:session/*"
         ],
         "Sid": "AllowSessionActions"
+      },
+      {
+        "Action": [
+          "glue:TagResource"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:RequestTag/owner": "${aws:userid}",
+            "aws:ResourceTag/owner": "${aws:userid}"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:glue:*:*:session/*",
+        "Sid": "AllowGlueTaggingAction"
       },
       {
         "Action": [
@@ -75,7 +90,6 @@
       },
       {
         "Action": [
-          "glue:TagResource",
           "glue:UntagResource",
           "tag:TagResources",
           "tag:UntagResources"
@@ -130,6 +144,21 @@
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "glue:CreateSession",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Tagging",
+      "action": "glue:TagResource",
+      "condition": {
+        "StringEquals": {
+          "aws:RequestTag/owner": "${aws:userid}",
+          "aws:ResourceTag/owner": "${aws:userid}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "glue:TagResource",
       "privesc": false,
       "resource_exposure": false
     },
@@ -284,6 +313,6 @@
   "resource_exposure": true,
   "undocumented_actions": false,
   "unknown_actions": [],
-  "updatedate": "2024-04-29T22:45:28+00:00",
-  "version": "v2"
+  "updatedate": "2024-08-05T23:06:45+00:00",
+  "version": "v3"
 }
