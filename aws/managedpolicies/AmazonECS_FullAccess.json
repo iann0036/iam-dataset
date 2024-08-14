@@ -6,7 +6,7 @@
     "Write"
   ],
   "arn": "arn:aws:iam::aws:policy/AmazonECS_FullAccess",
-  "createdate": "2023-01-04T16:26:05+00:00",
+  "createdate": "2024-08-13T19:39:37+00:00",
   "credentials_exposure": false,
   "data_access": true,
   "deprecated": false,
@@ -132,7 +132,8 @@
         "Effect": "Allow",
         "Resource": [
           "*"
-        ]
+        ],
+        "Sid": "ECSIntegrationsManagementPolicy"
       },
       {
         "Action": [
@@ -141,7 +142,8 @@
           "ssm:GetParametersByPath"
         ],
         "Effect": "Allow",
-        "Resource": "arn:aws:ssm:*:*:parameter/aws/service/ecs*"
+        "Resource": "arn:aws:ssm:*:*:parameter/aws/service/ecs*",
+        "Sid": "SSMPolicy"
       },
       {
         "Action": [
@@ -158,7 +160,8 @@
         "Effect": "Allow",
         "Resource": [
           "*"
-        ]
+        ],
+        "Sid": "ManagedCloudformationResourcesCleanupPolicy"
       },
       {
         "Action": [
@@ -172,7 +175,23 @@
         "Effect": "Allow",
         "Resource": [
           "*"
-        ]
+        ],
+        "Sid": "TasksPassRolePolicy"
+      },
+      {
+        "Action": [
+          "iam:PassRole"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "iam:PassedToService": "ecs.amazonaws.com"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:iam::*:role/ecsInfrastructureRole"
+        ],
+        "Sid": "InfrastructurePassRolePolicy"
       },
       {
         "Action": [
@@ -189,7 +208,8 @@
         "Effect": "Allow",
         "Resource": [
           "arn:aws:iam::*:role/ecsInstanceRole*"
-        ]
+        ],
+        "Sid": "InstancePassRolePolicy"
       },
       {
         "Action": [
@@ -206,7 +226,8 @@
         "Effect": "Allow",
         "Resource": [
           "arn:aws:iam::*:role/ecsAutoscaleRole*"
-        ]
+        ],
+        "Sid": "AutoScalingPassRolePolicy"
       },
       {
         "Action": [
@@ -215,8 +236,8 @@
         "Condition": {
           "StringLike": {
             "iam:AWSServiceName": [
-              "autoscaling.amazonaws.com",
               "ecs.amazonaws.com",
+              "autoscaling.amazonaws.com",
               "ecs.application-autoscaling.amazonaws.com",
               "spot.amazonaws.com",
               "spotfleet.amazonaws.com"
@@ -224,7 +245,8 @@
           }
         },
         "Effect": "Allow",
-        "Resource": "*"
+        "Resource": "*",
+        "Sid": "ServiceLinkedRoleCreationPolicy"
       },
       {
         "Action": [
@@ -241,7 +263,8 @@
           }
         },
         "Effect": "Allow",
-        "Resource": "*"
+        "Resource": "*",
+        "Sid": "ELBTaggingPolicy"
       }
     ],
     "Version": "2012-10-17"
@@ -3871,6 +3894,20 @@
       "access_level": "Write",
       "action": "iam:PassRole",
       "condition": {
+        "StringEquals": {
+          "iam:PassedToService": "ecs.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "iam:PassRole",
+      "privesc": true,
+      "resource_exposure": true
+    },
+    {
+      "access_level": "Write",
+      "action": "iam:PassRole",
+      "condition": {
         "StringLike": {
           "iam:PassedToService": [
             "ec2.amazonaws.com",
@@ -3907,8 +3944,8 @@
       "condition": {
         "StringLike": {
           "iam:AWSServiceName": [
-            "autoscaling.amazonaws.com",
             "ecs.amazonaws.com",
+            "autoscaling.amazonaws.com",
             "ecs.application-autoscaling.amazonaws.com",
             "spot.amazonaws.com",
             "spotfleet.amazonaws.com"
@@ -3947,6 +3984,6 @@
   "resource_exposure": true,
   "undocumented_actions": false,
   "unknown_actions": [],
-  "updatedate": "2023-01-04T16:26:05+00:00",
-  "version": "v20"
+  "updatedate": "2024-08-13T19:39:37+00:00",
+  "version": "v21"
 }
