@@ -2,10 +2,11 @@
   "access_levels": [
     "List",
     "Read",
+    "Tagging",
     "Write"
   ],
   "arn": "arn:aws:iam::aws:policy/AwsGlueSessionUserRestrictedNotebookPolicy",
-  "createdate": "2023-11-22T01:32:43+00:00",
+  "createdate": "2024-08-15T20:51:03+00:00",
   "credentials_exposure": false,
   "data_access": false,
   "deprecated": false,
@@ -30,6 +31,20 @@
           "arn:aws:glue:*:*:session/*"
         ],
         "Sid": "NotebokAllowActions0"
+      },
+      {
+        "Action": [
+          "glue:TagResource"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:RequestTag/owner": "${aws:PrincipalTag/owner}",
+            "aws:ResourceTag/owner": "${aws:PrincipalTag/owner}"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:glue:*:*:session/*",
+        "Sid": "AllowGlueTaggingAction"
       },
       {
         "Action": [
@@ -75,7 +90,6 @@
       },
       {
         "Action": [
-          "glue:TagResource",
           "glue:UntagResource",
           "tag:TagResources",
           "tag:UntagResources"
@@ -106,7 +120,8 @@
         },
         "Effect": "Allow",
         "Resource": [
-          "arn:aws:iam::*:role/service-role/AwsGlueSessionServiceRoleUserRestrictedForNotebook*"
+          "arn:aws:iam::*:role/service-role/AwsGlueSessionServiceRoleUserRestrictedForNotebook*",
+          "arn:aws:iam::*:role/AwsGlueSessionUserRestrictedNotebookServiceRole*"
         ],
         "Sid": "NotebookPassRole"
       }
@@ -130,6 +145,21 @@
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "glue:CreateSession",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Tagging",
+      "action": "glue:TagResource",
+      "condition": {
+        "StringEquals": {
+          "aws:RequestTag/owner": "${aws:PrincipalTag/owner}",
+          "aws:ResourceTag/owner": "${aws:PrincipalTag/owner}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "glue:TagResource",
       "privesc": false,
       "resource_exposure": false
     },
@@ -284,6 +314,6 @@
   "resource_exposure": true,
   "undocumented_actions": false,
   "unknown_actions": [],
-  "updatedate": "2023-11-22T01:32:43+00:00",
-  "version": "v2"
+  "updatedate": "2024-08-15T20:51:03+00:00",
+  "version": "v3"
 }
