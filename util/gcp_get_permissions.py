@@ -14,13 +14,6 @@ parsed_frame_page = BeautifulSoup(frame_page)
 
 result = {}
 
-permissions_overrides = {}
-with open("gcp/permissions_overrides.json", "r") as f:
-    permissions_overrides = json.loads(f.read())
-
-for k in permissions_overrides.keys():
-    result[k] = permissions_overrides[k]
-
 for row in parsed_frame_page.find('tbody').find_all('tr'):
     permission = row.find_all('td')[0].get('id')
     result[permission] = []

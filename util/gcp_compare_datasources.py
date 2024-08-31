@@ -71,6 +71,14 @@ for filename in os.listdir("gcp/roles/"):
     except:
         print("Skipped " + filename)
 
+permissions_overrides = {}
+with open("gcp/permissions_overrides.json", "r") as f:
+    permissions_overrides = json.loads(f.read())
+
+for k in permissions_overrides.keys():
+    if k not in roles_json:
+        roles_json[k] = []
+
 for k in permissions_json.keys():
     permissions_json[k].sort(key=lambda x: x['id'])
 for k in roles_json.keys():
