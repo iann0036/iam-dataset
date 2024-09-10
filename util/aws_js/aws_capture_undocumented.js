@@ -9,28 +9,28 @@ AWS.config.region = 'us-east-1';
 
 var long_undocumented_test_list = `
 APIGateway.TagResource {3} - apigateway
-CloudFormation.ListStackSetAutoDeploymentTargets {3} - cloudformation
 CloudTrail.ListInsightsMetricData {3} - cloudtrail
 Lambda.InvokeWithResponseStream {3} - lambda
-RDS.ModifyIntegration {3} - rds
 S3.CreateSession {3} - s3
 S3.ListDirectoryBuckets {3} - s3
 S3Control.DeleteBucketReplication {3} - s3
 S3Control.GetBucketReplication {3} - s3
 S3Control.PutBucketReplication {3} - s3
 Glue.BatchGetDataQualityResult {3} - glue
+Glue.BatchPutDataQualityStatisticAnnotation {3} - glue
+Glue.ListDataQualityStatisticAnnotations {3} - glue
+Glue.ListDataQualityStatistics {3} - glue
 QuickSight.DescribeAnalysisDefinition {3} - quicksight
 QuickSight.DescribeDashboardDefinition {3} - quicksight
 QuickSight.DescribeTemplateDefinition {3} - quicksight
+MediaConnect.DescribeFlowSourceThumbnail {3} - mediaconnect
+Personalize.UpdateSolution {3} - personalize
 LakeFormation.AssumeDecoratedRoleWithSAML {3} - lakeformation
 LakeFormation.GetTemporaryGluePartitionCredentials {3} - lakeformation
 LakeFormation.GetTemporaryGlueTableCredentials {3} - lakeformation
 MarketplaceCatalog.BatchDescribeEntities {3} - awsmarketplace
 AccessAnalyzer.GetFindingV2 {3} - accessanalyzer
 AccessAnalyzer.ListFindingsV2 {3} - accessanalyzer
-IoTWireless.GetMetricConfiguration {3} - iotwireless
-IoTWireless.GetMetrics {3} - iotwireless
-IoTWireless.UpdateMetricConfiguration {3} - iotwireless
 LexModelsV2.ListUtteranceAnalyticsData {3} - lex
 LexModelsV2.ListUtteranceMetrics {3} - lex
 Finspacedata.CreateDataView {3} - finspaceapi
@@ -40,15 +40,21 @@ ChimeSDKMessaging.GetMessagingStreamingConfigurations {3} - chimesdkmessaging
 ChimeSDKMessaging.PutChannelExpirationSettings {3} - chimesdkmessaging
 ChimeSDKMessaging.PutMessagingStreamingConfigurations {3} - chimesdkmessaging
 Keyspaces.GetTableAutoScalingSettings {3} - keyspaces
+PinpointSMSVoiceV2.AssociateProtectConfiguration {3} - pinpointsmsvoicev2
+PinpointSMSVoiceV2.CreateProtectConfiguration {3} - pinpointsmsvoicev2
 PinpointSMSVoiceV2.CreateRegistration {3} - pinpointsmsvoicev2
 PinpointSMSVoiceV2.CreateRegistrationAssociation {3} - pinpointsmsvoicev2
 PinpointSMSVoiceV2.CreateRegistrationAttachment {3} - pinpointsmsvoicev2
 PinpointSMSVoiceV2.CreateRegistrationVersion {3} - pinpointsmsvoicev2
 PinpointSMSVoiceV2.CreateVerifiedDestinationNumber {3} - pinpointsmsvoicev2
+PinpointSMSVoiceV2.DeleteAccountDefaultProtectConfiguration {3} - pinpointsmsvoicev2
+PinpointSMSVoiceV2.DeleteMediaMessageSpendLimitOverride {3} - pinpointsmsvoicev2
+PinpointSMSVoiceV2.DeleteProtectConfiguration {3} - pinpointsmsvoicev2
 PinpointSMSVoiceV2.DeleteRegistration {3} - pinpointsmsvoicev2
 PinpointSMSVoiceV2.DeleteRegistrationAttachment {3} - pinpointsmsvoicev2
 PinpointSMSVoiceV2.DeleteRegistrationFieldValue {3} - pinpointsmsvoicev2
 PinpointSMSVoiceV2.DeleteVerifiedDestinationNumber {3} - pinpointsmsvoicev2
+PinpointSMSVoiceV2.DescribeProtectConfigurations {3} - pinpointsmsvoicev2
 PinpointSMSVoiceV2.DescribeRegistrationAttachments {3} - pinpointsmsvoicev2
 PinpointSMSVoiceV2.DescribeRegistrationFieldDefinitions {3} - pinpointsmsvoicev2
 PinpointSMSVoiceV2.DescribeRegistrationFieldValues {3} - pinpointsmsvoicev2
@@ -57,13 +63,20 @@ PinpointSMSVoiceV2.DescribeRegistrationTypeDefinitions {3} - pinpointsmsvoicev2
 PinpointSMSVoiceV2.DescribeRegistrationVersions {3} - pinpointsmsvoicev2
 PinpointSMSVoiceV2.DescribeRegistrations {3} - pinpointsmsvoicev2
 PinpointSMSVoiceV2.DescribeVerifiedDestinationNumbers {3} - pinpointsmsvoicev2
+PinpointSMSVoiceV2.DisassociateProtectConfiguration {3} - pinpointsmsvoicev2
 PinpointSMSVoiceV2.DiscardRegistrationVersion {3} - pinpointsmsvoicev2
+PinpointSMSVoiceV2.GetProtectConfigurationCountryRuleSet {3} - pinpointsmsvoicev2
 PinpointSMSVoiceV2.ListRegistrationAssociations {3} - pinpointsmsvoicev2
 PinpointSMSVoiceV2.PutRegistrationFieldValue {3} - pinpointsmsvoicev2
 PinpointSMSVoiceV2.ReleaseSenderId {3} - pinpointsmsvoicev2
 PinpointSMSVoiceV2.RequestSenderId {3} - pinpointsmsvoicev2
 PinpointSMSVoiceV2.SendDestinationNumberVerificationCode {3} - pinpointsmsvoicev2
+PinpointSMSVoiceV2.SendMediaMessage {3} - pinpointsmsvoicev2
+PinpointSMSVoiceV2.SetAccountDefaultProtectConfiguration {3} - pinpointsmsvoicev2
+PinpointSMSVoiceV2.SetMediaMessageSpendLimitOverride {3} - pinpointsmsvoicev2
 PinpointSMSVoiceV2.SubmitRegistrationVersion {3} - pinpointsmsvoicev2
+PinpointSMSVoiceV2.UpdateProtectConfiguration {3} - pinpointsmsvoicev2
+PinpointSMSVoiceV2.UpdateProtectConfigurationCountryRuleSet {3} - pinpointsmsvoicev2
 PinpointSMSVoiceV2.UpdateSenderId {3} - pinpointsmsvoicev2
 PinpointSMSVoiceV2.VerifyDestinationNumber {3} - pinpointsmsvoicev2
 ChimeSDKMediaPipelines.CreateMediaInsightsPipeline {3} - chimesdkmediapipelines
@@ -85,7 +98,6 @@ ChimeSDKMediaPipelines.StopVoiceToneAnalysisTask {3} - chimesdkmediapipelines
 ChimeSDKMediaPipelines.UpdateMediaInsightsPipelineConfiguration {3} - chimesdkmediapipelines
 ChimeSDKMediaPipelines.UpdateMediaInsightsPipelineStatus {3} - chimesdkmediapipelines
 ChimeSDKMediaPipelines.UpdateMediaPipelineKinesisVideoStreamPool {3} - chimesdkmediapipelines
-BackupStorage.DeleteObject {3} - backupstorage
 ConnectCases.BatchGetField {3} - connectcases
 ConnectCases.BatchPutFieldOptions {3} - connectcases
 ConnectCases.CreateCase {3} - connectcases
@@ -95,6 +107,9 @@ ConnectCases.CreateLayout {3} - connectcases
 ConnectCases.CreateRelatedItem {3} - connectcases
 ConnectCases.CreateTemplate {3} - connectcases
 ConnectCases.DeleteDomain {3} - connectcases
+ConnectCases.DeleteField {3} - connectcases
+ConnectCases.DeleteLayout {3} - connectcases
+ConnectCases.DeleteTemplate {3} - connectcases
 ConnectCases.GetCase {3} - connectcases
 ConnectCases.GetCaseAuditEvents {3} - connectcases
 ConnectCases.GetCaseEventConfiguration {3} - connectcases
@@ -247,9 +262,6 @@ OpenSearchServerless.UpdateLifecyclePolicy {3} - opensearchserverless
 OpenSearchServerless.UpdateSecurityConfig {3} - opensearchserverless
 OpenSearchServerless.UpdateSecurityPolicy {3} - opensearchserverless
 OpenSearchServerless.UpdateVpcEndpoint {3} - opensearchserverless
-DocDBElastic.CopyClusterSnapshot {3} - docdbelastic
-DocDBElastic.StartCluster {3} - docdbelastic
-DocDBElastic.StopCluster {3} - docdbelastic
 CodeCatalyst.CreateAccessToken {3} - codecatalyst
 CodeCatalyst.CreateDevEnvironment {3} - codecatalyst
 CodeCatalyst.CreateProject {3} - codecatalyst
@@ -290,24 +302,29 @@ CodeCatalyst.UpdateSpace {3} - codecatalyst
 CodeCatalyst.VerifySession {3} - codecatalyst
 SageMakerMetrics.BatchPutMetrics {3} - sagemakermetrics
 KinesisVideoWebRTCStorage.JoinStorageSession {3} - kinesisvideowebrtcstorage
+KinesisVideoWebRTCStorage.JoinStorageSessionAsViewer {3} - kinesisvideowebrtcstorage
 IVSRealTime.CreateEncoderConfiguration {3} - ivsrealtime
 IVSRealTime.CreateParticipantToken {3} - ivsrealtime
 IVSRealTime.CreateStage {3} - ivsrealtime
 IVSRealTime.CreateStorageConfiguration {3} - ivsrealtime
 IVSRealTime.DeleteEncoderConfiguration {3} - ivsrealtime
+IVSRealTime.DeletePublicKey {3} - ivsrealtime
 IVSRealTime.DeleteStage {3} - ivsrealtime
 IVSRealTime.DeleteStorageConfiguration {3} - ivsrealtime
 IVSRealTime.DisconnectParticipant {3} - ivsrealtime
 IVSRealTime.GetComposition {3} - ivsrealtime
 IVSRealTime.GetEncoderConfiguration {3} - ivsrealtime
 IVSRealTime.GetParticipant {3} - ivsrealtime
+IVSRealTime.GetPublicKey {3} - ivsrealtime
 IVSRealTime.GetStage {3} - ivsrealtime
 IVSRealTime.GetStageSession {3} - ivsrealtime
 IVSRealTime.GetStorageConfiguration {3} - ivsrealtime
+IVSRealTime.ImportPublicKey {3} - ivsrealtime
 IVSRealTime.ListCompositions {3} - ivsrealtime
 IVSRealTime.ListEncoderConfigurations {3} - ivsrealtime
 IVSRealTime.ListParticipantEvents {3} - ivsrealtime
 IVSRealTime.ListParticipants {3} - ivsrealtime
+IVSRealTime.ListPublicKeys {3} - ivsrealtime
 IVSRealTime.ListStageSessions {3} - ivsrealtime
 IVSRealTime.ListStages {3} - ivsrealtime
 IVSRealTime.ListStorageConfigurations {3} - ivsrealtime
@@ -329,8 +346,7 @@ PaymentCryptographyData.VerifyAuthRequestCryptogram {3} - paymentcryptographydat
 PaymentCryptographyData.VerifyCardValidationData {3} - paymentcryptographydata
 PaymentCryptographyData.VerifyMac {3} - paymentcryptographydata
 PaymentCryptographyData.VerifyPinData {3} - paymentcryptographydata
-medicalimaging (datasource)
-managedblockchainquery (datasource)
+VerifiedPermissions.BatchIsAuthorizedWithToken {3} - verifiedpermissions
 Neptunedata.CancelGremlinQuery {3} - neptunedata
 Neptunedata.CancelLoaderJob {3} - neptunedata
 Neptunedata.CancelMLDataProcessingJob {3} - neptunedata
@@ -374,31 +390,26 @@ Neptunedata.StartLoaderJob {3} - neptunedata
 Neptunedata.StartMLDataProcessingJob {3} - neptunedata
 Neptunedata.StartMLModelTrainingJob {3} - neptunedata
 Neptunedata.StartMLModelTransformJob {3} - neptunedata
-pcaconnectorad (datasource)
-bedrockruntime (datasource)
-launchwizard (datasource)
-inspectorscan (datasource)
-bcmdataexports (datasource)
-costoptimizationhub (datasource)
-eksauth (datasource)
-workspacesthinclient (datasource)
-bedrockagent (datasource)
-bedrockagentruntime (datasource)
+BedrockRuntime.Converse {3} - bedrock
+BedrockRuntime.ConverseStream {3} - bedrock
 QConnect.CreateAssistant {3} - qconnect
 QConnect.CreateAssistantAssociation {3} - qconnect
 QConnect.CreateContent {3} - qconnect
+QConnect.CreateContentAssociation {3} - qconnect
 QConnect.CreateKnowledgeBase {3} - qconnect
 QConnect.CreateQuickResponse {3} - qconnect
 QConnect.CreateSession {3} - qconnect
 QConnect.DeleteAssistant {3} - qconnect
 QConnect.DeleteAssistantAssociation {3} - qconnect
 QConnect.DeleteContent {3} - qconnect
+QConnect.DeleteContentAssociation {3} - qconnect
 QConnect.DeleteImportJob {3} - qconnect
 QConnect.DeleteKnowledgeBase {3} - qconnect
 QConnect.DeleteQuickResponse {3} - qconnect
 QConnect.GetAssistant {3} - qconnect
 QConnect.GetAssistantAssociation {3} - qconnect
 QConnect.GetContent {3} - qconnect
+QConnect.GetContentAssociation {3} - qconnect
 QConnect.GetContentSummary {3} - qconnect
 QConnect.GetImportJob {3} - qconnect
 QConnect.GetKnowledgeBase {3} - qconnect
@@ -407,6 +418,7 @@ QConnect.GetRecommendations {3} - qconnect
 QConnect.GetSession {3} - qconnect
 QConnect.ListAssistantAssociations {3} - qconnect
 QConnect.ListAssistants {3} - qconnect
+QConnect.ListContentAssociations {3} - qconnect
 QConnect.ListContents {3} - qconnect
 QConnect.ListImportJobs {3} - qconnect
 QConnect.ListKnowledgeBases {3} - qconnect
@@ -426,39 +438,65 @@ QConnect.UntagResource {3} - qconnect
 QConnect.UpdateContent {3} - qconnect
 QConnect.UpdateKnowledgeBaseTemplateUri {3} - qconnect
 QConnect.UpdateQuickResponse {3} - qconnect
-marketplaceagreement (datasource)
-marketplacedeployment (datasource)
+QConnect.UpdateSession {3} - qconnect
 SupplyChain.CreateBillOfMaterialsImportJob {3} - supplychain
 SupplyChain.GetBillOfMaterialsImportJob {3} - supplychain
-timestreaminfluxdb (datasource)
-CodeConnections.CreateConnection {3} - codeconnections
-CodeConnections.CreateHost {3} - codeconnections
-CodeConnections.CreateRepositoryLink {3} - codeconnections
-CodeConnections.CreateSyncConfiguration {3} - codeconnections
-CodeConnections.DeleteConnection {3} - codeconnections
-CodeConnections.DeleteHost {3} - codeconnections
-CodeConnections.DeleteRepositoryLink {3} - codeconnections
-CodeConnections.DeleteSyncConfiguration {3} - codeconnections
-CodeConnections.GetConnection {3} - codeconnections
-CodeConnections.GetHost {3} - codeconnections
-CodeConnections.GetRepositoryLink {3} - codeconnections
-CodeConnections.GetRepositorySyncStatus {3} - codeconnections
-CodeConnections.GetResourceSyncStatus {3} - codeconnections
-CodeConnections.GetSyncBlockerSummary {3} - codeconnections
-CodeConnections.GetSyncConfiguration {3} - codeconnections
-CodeConnections.ListConnections {3} - codeconnections
-CodeConnections.ListHosts {3} - codeconnections
-CodeConnections.ListRepositoryLinks {3} - codeconnections
-CodeConnections.ListRepositorySyncDefinitions {3} - codeconnections
-CodeConnections.ListSyncConfigurations {3} - codeconnections
-CodeConnections.ListTagsForResource {3} - codeconnections
-CodeConnections.TagResource {3} - codeconnections
-CodeConnections.UntagResource {3} - codeconnections
-CodeConnections.UpdateHost {3} - codeconnections
-CodeConnections.UpdateRepositoryLink {3} - codeconnections
-CodeConnections.UpdateSyncBlocker {3} - codeconnections
-CodeConnections.UpdateSyncConfiguration {3} - codeconnections
-SSMContacts.GetContactPolicy {1}
+SupplyChain.SendDataIntegrationEvent {3} - supplychain
+MailManager.CreateAddonInstance {3} - mailmanager
+MailManager.CreateAddonSubscription {3} - mailmanager
+MailManager.CreateArchive {3} - mailmanager
+MailManager.CreateIngressPoint {3} - mailmanager
+MailManager.CreateRelay {3} - mailmanager
+MailManager.CreateRuleSet {3} - mailmanager
+MailManager.CreateTrafficPolicy {3} - mailmanager
+MailManager.DeleteAddonInstance {3} - mailmanager
+MailManager.DeleteAddonSubscription {3} - mailmanager
+MailManager.DeleteArchive {3} - mailmanager
+MailManager.DeleteIngressPoint {3} - mailmanager
+MailManager.DeleteRelay {3} - mailmanager
+MailManager.DeleteRuleSet {3} - mailmanager
+MailManager.DeleteTrafficPolicy {3} - mailmanager
+MailManager.GetAddonInstance {3} - mailmanager
+MailManager.GetAddonSubscription {3} - mailmanager
+MailManager.GetArchive {3} - mailmanager
+MailManager.GetArchiveExport {3} - mailmanager
+MailManager.GetArchiveMessage {3} - mailmanager
+MailManager.GetArchiveMessageContent {3} - mailmanager
+MailManager.GetArchiveSearch {3} - mailmanager
+MailManager.GetArchiveSearchResults {3} - mailmanager
+MailManager.GetIngressPoint {3} - mailmanager
+MailManager.GetRelay {3} - mailmanager
+MailManager.GetRuleSet {3} - mailmanager
+MailManager.GetTrafficPolicy {3} - mailmanager
+MailManager.ListAddonInstances {3} - mailmanager
+MailManager.ListAddonSubscriptions {3} - mailmanager
+MailManager.ListArchiveExports {3} - mailmanager
+MailManager.ListArchiveSearches {3} - mailmanager
+MailManager.ListArchives {3} - mailmanager
+MailManager.ListIngressPoints {3} - mailmanager
+MailManager.ListRelays {3} - mailmanager
+MailManager.ListRuleSets {3} - mailmanager
+MailManager.ListTagsForResource {3} - mailmanager
+MailManager.ListTrafficPolicies {3} - mailmanager
+MailManager.StartArchiveExport {3} - mailmanager
+MailManager.StartArchiveSearch {3} - mailmanager
+MailManager.StopArchiveExport {3} - mailmanager
+MailManager.StopArchiveSearch {3} - mailmanager
+MailManager.TagResource {3} - mailmanager
+MailManager.UntagResource {3} - mailmanager
+MailManager.UpdateArchive {3} - mailmanager
+MailManager.UpdateIngressPoint {3} - mailmanager
+MailManager.UpdateRelay {3} - mailmanager
+MailManager.UpdateRuleSet {3} - mailmanager
+MailManager.UpdateTrafficPolicy {3} - mailmanager
+TaxSettings.BatchDeleteTaxRegistration {3} - taxsettings
+TaxSettings.BatchPutTaxRegistration {3} - taxsettings
+TaxSettings.DeleteTaxRegistration {3} - taxsettings
+TaxSettings.GetTaxRegistration {3} - taxsettings
+TaxSettings.GetTaxRegistrationDocument {3} - taxsettings
+TaxSettings.ListTaxRegistrations {3} - taxsettings
+TaxSettings.PutTaxRegistration {3} - taxsettings
+QApps.UpdateLibraryItemMetadata {3} - qapps
 `;
 
 var found_permissions = [];

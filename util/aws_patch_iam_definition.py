@@ -131,6 +131,26 @@ for i in range(len(iam_def)):
         iam_def[i]['service_name'] = 'Amazon OpenSearch Service'
     if iam_def[i]['prefix'] == 'cloudformation':
         iam_def[i]['service_name'] = 'AWS CloudFormation & Cloud Control API'
+    if iam_def[i]['prefix'] == 'private-networks':
+        iam_def[i]['service_name'] = 'AWS Private 5G'
+    if iam_def[i]['prefix'] == 'sagemaker-geospatial':
+        iam_def[i]['service_name'] = 'Amazon SageMaker Geospatial ML'
+    if iam_def[i]['prefix'] == 'route53profiles':
+        iam_def[i]['service_name'] = 'Amazon Route 53 Profiles'
+    if iam_def[i]['prefix'] == 'apptest':
+        iam_def[i]['service_name'] = 'AWS Mainframe Modernization Application Testing'
+    if iam_def[i]['prefix'] == 'inspector2':
+        iam_def[i]['service_name'] = 'Amazon Inspector V2'
+    if iam_def[i]['prefix'] == 'inspector-scan':
+        iam_def[i]['service_name'] = 'Amazon Inspector Scan'
+    if iam_def[i]['prefix'] == 'sso':
+        iam_def[i]['service_name'] = 'AWS IAM Identity Center'
+    if iam_def[i]['prefix'] == 'sso-directory':
+        iam_def[i]['service_name'] = 'AWS IAM Identity Center Directory'
+    if iam_def[i]['prefix'] == 'connect-campaigns':
+        iam_def[i]['service_name'] = 'Amazon Connect Outbound Campaigns'
+    if iam_def[i]['prefix'] == 'mediaimport':
+        iam_def[i]['service_name'] = 'Amazon RDS Custom Media Import'
 
 print("Undocumented method tagging")
 time.sleep(1)
