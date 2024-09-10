@@ -158,7 +158,7 @@ time.sleep(1)
 # Undocumented method tagging
 for k, v in mapdata['sdk_method_iam_mappings'].items():
     for mappingitem in v:
-        if 'undocumented' in mappingitem:
+        if 'undocumented' in mappingitem or mappingitem in ['BedrockRuntime.Converse', 'BedrockRuntime.ConverseStream']:
             servicename = mappingitem['action'].split(":")[0]
             methodname = mappingitem['action'].split(":")[1]
 
@@ -171,8 +171,12 @@ for k, v in mapdata['sdk_method_iam_mappings'].items():
                             skip = True
                     
                     if not skip:
+                        accesslevel = "Unknown"
+                        if mappingitem in ['BedrockRuntime.Converse', 'BedrockRuntime.ConverseStream']:
+                            accesslevel = "Read"
+
                         iam_def[i]['privileges'].append({
-                            "access_level": "Unknown",
+                            "access_level": accesslevel,
                             "description": "",
                             "privilege": methodname,
                             "resource_types": [
