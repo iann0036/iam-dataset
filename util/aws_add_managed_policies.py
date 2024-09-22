@@ -76,6 +76,7 @@ for policyname in os.listdir("MAMIP/policies/"):
     data_access = False
     malformed = False
     undocumented = False
+    grantless = True
     if not isinstance(policy['PolicyVersion']['Document']['Statement'], list):
         policy['PolicyVersion']['Document']['Statement'] = [policy['PolicyVersion']['Document']['Statement']]
 
@@ -85,6 +86,7 @@ for policyname in os.listdir("MAMIP/policies/"):
     unknown_actions = []
     for statement in policy['PolicyVersion']['Document']['Statement']:
         if 'Action' in statement and statement['Effect'] == "Allow":
+            grantless = False
             if not isinstance(statement['Action'], list):
                 statement['Action'] = [statement['Action']]
 
@@ -138,6 +140,7 @@ for policyname in os.listdir("MAMIP/policies/"):
         elif 'Action' in statement and statement['Effect'] == "Deny":
             pass
         elif 'NotAction' in statement and statement['Effect'] == "Allow":
+            grantless = False
             if not isinstance(statement['NotAction'], list):
                 statement['NotAction'] = [statement['NotAction']]
 
@@ -180,6 +183,8 @@ for policyname in os.listdir("MAMIP/policies/"):
                     'credentials_exposure': (potentialaction.lower() in CREDEXPOSURE_ACTIONS),
                     'data_access': (potentialaction.lower() in DATAACCESS_ACTIONS)
                 })
+        elif 'NotAction' in statement and statement['Effect'] == "Deny":
+            pass
         else:
             malformed = True
 
@@ -208,6 +213,7 @@ for policyname in os.listdir("MAMIP/policies/"):
         'unknown_actions': (len(unknown_actions) > 0),
         'access_levels': access_levels,
         'privesc': privesc,
+        'grantless': grantless,
         'resource_exposure': resource_exposure,
         'credentials_exposure': credentials_exposure,
         'data_access': data_access,
@@ -225,6 +231,7 @@ for policyname in os.listdir("MAMIP/policies/"):
         'unknown_actions': unknown_actions,
         'access_levels': access_levels,
         'privesc': privesc,
+        'grantless': grantless,
         'resource_exposure': resource_exposure,
         'credentials_exposure': credentials_exposure,
         'data_access': data_access,
