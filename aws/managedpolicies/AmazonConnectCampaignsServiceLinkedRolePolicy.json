@@ -1,10 +1,11 @@
 {
   "access_levels": [
     "List",
+    "Read",
     "Write"
   ],
   "arn": "arn:aws:iam::aws:policy/aws-service-role/AmazonConnectCampaignsServiceLinkedRolePolicy",
-  "createdate": "2023-11-08T16:16:16Z",
+  "createdate": "2024-10-03T20:20:01Z",
   "credentials_exposure": false,
   "data_access": false,
   "deprecated": false,
@@ -15,15 +16,76 @@
           "connect-campaigns:ListCampaigns"
         ],
         "Effect": "Allow",
-        "Resource": "*"
+        "Resource": "*",
+        "Sid": "ConnectCampaignAccess"
       },
       {
         "Action": [
           "connect:BatchPutContact",
-          "connect:StopContact"
+          "connect:StopContact",
+          "connect:DescribeContactFlow",
+          "connect:SendOutboundEmail"
         ],
         "Effect": "Allow",
-        "Resource": "arn:aws:connect:*:*:instance/*"
+        "Resource": "arn:aws:connect:*:*:instance/*",
+        "Sid": "ConnectAccess"
+      },
+      {
+        "Action": [
+          "events:ListRules"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:events:*:*:rule/*",
+        "Sid": "EventBridgeListRuleAccess"
+      },
+      {
+        "Action": [
+          "events:DeleteRule",
+          "events:PutRule",
+          "events:PutTargets",
+          "events:RemoveTargets"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}",
+            "events:ManagedBy": "connect-campaigns.amazonaws.com"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:events:*:*:rule/ConnectCampaignsRule*",
+        "Sid": "EventBridgeManagedResourceAccess"
+      },
+      {
+        "Action": [
+          "events:ListTargetsByRule"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:events:*:*:rule/ConnectCampaignsRule*",
+        "Sid": "EventBridgeListTargetsByRuleAccess"
+      },
+      {
+        "Action": [
+          "wisdom:GetMessageTemplate",
+          "wisdom:RenderMessageTemplate"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceTag/AmazonConnectCampaignsEnabled": "True"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "AllowWisdomForConnectCampaignsEnabledTaggedResources"
       }
     ],
     "Version": "2012-10-17"
@@ -58,6 +120,142 @@
       "effective_action": "connect:StopContact",
       "privesc": false,
       "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "connect:DescribeContactFlow",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "connect:DescribeContactFlow",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "connect:SendOutboundEmail",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "connect:SendOutboundEmail",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "events:ListRules",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "events:ListRules",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "events:DeleteRule",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}",
+          "events:ManagedBy": "connect-campaigns.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "events:DeleteRule",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "events:PutRule",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}",
+          "events:ManagedBy": "connect-campaigns.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "events:PutRule",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "events:PutTargets",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}",
+          "events:ManagedBy": "connect-campaigns.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "events:PutTargets",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "events:RemoveTargets",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}",
+          "events:ManagedBy": "connect-campaigns.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "events:RemoveTargets",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "events:ListTargetsByRule",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "events:ListTargetsByRule",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "wisdom:GetMessageTemplate",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/AmazonConnectCampaignsEnabled": "True"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "wisdom:GetMessageTemplate",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "wisdom:RenderMessageTemplate",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/AmazonConnectCampaignsEnabled": "True"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "wisdom:RenderMessageTemplate",
+      "privesc": false,
+      "resource_exposure": false
     }
   ],
   "grantless": false,
@@ -67,6 +265,6 @@
   "resource_exposure": false,
   "undocumented_actions": false,
   "unknown_actions": [],
-  "updatedate": "2023-11-08T16:16:16+00:00",
-  "version": "v2"
+  "updatedate": "2024-10-03T20:20:01+00:00",
+  "version": "v3"
 }

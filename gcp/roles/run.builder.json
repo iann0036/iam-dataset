@@ -10,6 +10,6 @@
     "storage.objects.get"
   ],
   "name": "roles/run.builder",
-  "stage": "ALPHA",
+  "stage": "BETA",
   "title": "Cloud Run Builder"
 }
