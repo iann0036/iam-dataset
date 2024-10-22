@@ -1,12 +1,13 @@
 {
   "access_levels": [
     "List",
+    "Read",
     "Tagging",
     "Write",
     "Permissions management"
   ],
   "arn": "arn:aws:iam::aws:policy/aws-service-role/AmazonEKSServiceRolePolicy",
-  "createdate": "2020-05-27T19:30:19Z",
+  "createdate": "2024-10-21T21:23:26Z",
   "credentials_exposure": false,
   "data_access": false,
   "deprecated": false,
@@ -25,7 +26,8 @@
           "ec2:DescribeVpcs",
           "ec2:CreateNetworkInterfacePermission",
           "iam:ListAttachedRolePolicies",
-          "ec2:CreateSecurityGroup"
+          "ec2:CreateSecurityGroup",
+          "ec2:GetSecurityGroupsForVpc"
         ],
         "Effect": "Allow",
         "Resource": "*"
@@ -37,7 +39,7 @@
           "ec2:AuthorizeSecurityGroupIngress"
         ],
         "Condition": {
-          "ForAnyValue:StringLike": {
+          "StringLike": {
             "ec2:ResourceTag/Name": "eks-cluster-sg*"
           }
         },
@@ -59,7 +61,9 @@
         "Effect": "Allow",
         "Resource": [
           "arn:aws:ec2:*:*:vpc/*",
-          "arn:aws:ec2:*:*:subnet/*"
+          "arn:aws:ec2:*:*:subnet/*",
+          "arn:aws:ec2:*:*:network-interface/*",
+          "arn:aws:ec2:*:*:security-group/*"
         ]
       },
       {
@@ -68,16 +72,14 @@
           "ec2:DeleteTags"
         ],
         "Condition": {
-          "ForAnyValue:StringLike": {
-            "aws:RequestTag/Name": "eks-cluster-sg*",
-            "aws:TagKeys": [
-              "kubernetes.io/cluster/*"
-            ]
+          "StringLike": {
+            "aws:RequestTag/Name": "eks-cluster-*"
           }
         },
         "Effect": "Allow",
         "Resource": [
-          "arn:aws:ec2:*:*:security-group/*"
+          "arn:aws:ec2:*:*:security-group/*",
+          "arn:aws:ec2:*:*:network-interface/*"
         ]
       },
       {
@@ -234,10 +236,20 @@
       "resource_exposure": false
     },
     {
+      "access_level": "Read",
+      "action": "ec2:GetSecurityGroupsForVpc",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:GetSecurityGroupsForVpc",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
       "access_level": "Write",
       "action": "ec2:DeleteSecurityGroup",
       "condition": {
-        "ForAnyValue:StringLike": {
+        "StringLike": {
           "ec2:ResourceTag/Name": "eks-cluster-sg*"
         }
       },
@@ -251,7 +263,7 @@
       "access_level": "Write",
       "action": "ec2:RevokeSecurityGroupIngress",
       "condition": {
-        "ForAnyValue:StringLike": {
+        "StringLike": {
           "ec2:ResourceTag/Name": "eks-cluster-sg*"
         }
       },
@@ -265,7 +277,7 @@
       "access_level": "Write",
       "action": "ec2:AuthorizeSecurityGroupIngress",
       "condition": {
-        "ForAnyValue:StringLike": {
+        "StringLike": {
           "ec2:ResourceTag/Name": "eks-cluster-sg*"
         }
       },
@@ -311,11 +323,8 @@
       "access_level": "Tagging",
       "action": "ec2:CreateTags",
       "condition": {
-        "ForAnyValue:StringLike": {
-          "aws:RequestTag/Name": "eks-cluster-sg*",
-          "aws:TagKeys": [
-            "kubernetes.io/cluster/*"
-          ]
+        "StringLike": {
+          "aws:RequestTag/Name": "eks-cluster-*"
         }
       },
       "credentials_exposure": false,
@@ -328,11 +337,8 @@
       "access_level": "Tagging",
       "action": "ec2:DeleteTags",
       "condition": {
-        "ForAnyValue:StringLike": {
-          "aws:RequestTag/Name": "eks-cluster-sg*",
-          "aws:TagKeys": [
-            "kubernetes.io/cluster/*"
-          ]
+        "StringLike": {
+          "aws:RequestTag/Name": "eks-cluster-*"
         }
       },
       "credentials_exposure": false,
@@ -399,6 +405,6 @@
   "resource_exposure": true,
   "undocumented_actions": false,
   "unknown_actions": [],
-  "updatedate": "2020-05-27T19:30:19+00:00",
-  "version": "v2"
+  "updatedate": "2024-10-21T21:23:26+00:00",
+  "version": "v3"
 }
