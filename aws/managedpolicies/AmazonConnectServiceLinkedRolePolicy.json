@@ -8,7 +8,7 @@
     "Unknown"
   ],
   "arn": "arn:aws:iam::aws:policy/aws-service-role/AmazonConnectServiceLinkedRolePolicy",
-  "createdate": "2024-09-11T20:44:09Z",
+  "createdate": "2024-10-25T22:33:28Z",
   "credentials_exposure": true,
   "data_access": true,
   "deprecated": false,
@@ -269,6 +269,33 @@
           "arn:aws:profile:*:*:domains/amazon-connect-*/object-types/*"
         ],
         "Sid": "AllowWritePermissionForCustomerProfileObjects"
+      },
+      {
+        "Action": [
+          "chime:GetVoiceConnector"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}",
+            "aws:ResourceTag/AmazonConnectEnabled": "True"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:chime:*:*:vc/*",
+        "Sid": "AllowChimeSDKVoiceConnectorGetOperationForConnect"
+      },
+      {
+        "Action": [
+          "chime:ListVoiceConnectors"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:chime:*:*:vc/*",
+        "Sid": "AllowChimeSDKVoiceConnectorListOperationForConnect"
       }
     ],
     "Version": "2012-10-17"
@@ -4093,6 +4120,35 @@
       "effective_action": "profile:PutProfileObject",
       "privesc": false,
       "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "chime:GetVoiceConnector",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}",
+          "aws:ResourceTag/AmazonConnectEnabled": "True"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "chime:GetVoiceConnector",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "chime:ListVoiceConnectors",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "chime:ListVoiceConnectors",
+      "privesc": false,
+      "resource_exposure": false
     }
   ],
   "grantless": false,
@@ -4102,6 +4158,6 @@
   "resource_exposure": true,
   "undocumented_actions": true,
   "unknown_actions": [],
-  "updatedate": "2024-09-11T20:44:09+00:00",
-  "version": "v17"
+  "updatedate": "2024-10-25T22:33:28+00:00",
+  "version": "v18"
 }
