@@ -1,0 +1,818 @@
+{
+  "access_levels": [
+    "List",
+    "Read",
+    "Tagging",
+    "Write"
+  ],
+  "arn": "arn:aws:iam::aws:policy/AmazonEKSLoadBalancingPolicy",
+  "createdate": "2024-10-30T20:18:06Z",
+  "credentials_exposure": true,
+  "data_access": false,
+  "deprecated": false,
+  "document": {
+    "Statement": [
+      {
+        "Action": [
+          "elasticloadbalancing:CreateLoadBalancer",
+          "elasticloadbalancing:CreateTargetGroup",
+          "elasticloadbalancing:CreateListener",
+          "elasticloadbalancing:CreateRule",
+          "ec2:CreateSecurityGroup"
+        ],
+        "Condition": {
+          "ForAllValues:StringEquals": {
+            "aws:TagKeys": [
+              "eks:eks-cluster-name",
+              "ingress.eks.amazonaws.com/stack",
+              "ingress.eks.amazonaws.com/resource",
+              "service.eks.amazonaws.com/stack",
+              "service.eks.amazonaws.com/resource"
+            ]
+          },
+          "StringEquals": {
+            "aws:RequestTag/eks:eks-cluster-name": "${aws:PrincipalTag/eks:eks-cluster-name}"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "*"
+      },
+      {
+        "Action": [
+          "ec2:CreateSecurityGroup"
+        ],
+        "Effect": "Allow",
+        "Resource": "arn:aws:ec2:*:*:vpc/*"
+      },
+      {
+        "Action": [
+          "elasticloadbalancing:RegisterTargets"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceTag/eks:eks-cluster-name": "${aws:PrincipalTag/eks:eks-cluster-name}"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:elasticloadbalancing:*:*:targetgroup/*/*"
+      },
+      {
+        "Action": [
+          "ec2:AuthorizeSecurityGroupIngress"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:RequestTag/eks:eks-cluster-name": "${aws:PrincipalTag/eks:eks-cluster-name}"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:ec2:*:*:security-group-rule/*"
+      },
+      {
+        "Action": [
+          "ec2:AuthorizeSecurityGroupIngress",
+          "ec2:RevokeSecurityGroupIngress"
+        ],
+        "Condition": {
+          "StringLike": {
+            "aws:ResourceTag/Name": "eks-cluster-sg*"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:ec2:*:*:security-group/*"
+      },
+      {
+        "Action": [
+          "ec2:AuthorizeSecurityGroupIngress",
+          "ec2:RevokeSecurityGroupIngress"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceTag/eks:eks-cluster-name": "${aws:PrincipalTag/eks:eks-cluster-name}"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:ec2:*:*:security-group/*"
+      },
+      {
+        "Action": [
+          "elasticloadbalancing:AddTags"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "elasticloadbalancing:CreateAction": [
+              "CreateLoadBalancer",
+              "CreateTargetGroup",
+              "CreateListener",
+              "CreateRule"
+            ]
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "*"
+      },
+      {
+        "Action": [
+          "ec2:CreateTags"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "ec2:CreateAction": [
+              "CreateSecurityGroup",
+              "AuthorizeSecurityGroupIngress"
+            ]
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "*"
+      },
+      {
+        "Action": [
+          "elasticloadbalancing:ModifyLoadBalancerAttributes",
+          "elasticloadbalancing:SetIpAddressType",
+          "elasticloadbalancing:SetSecurityGroups",
+          "elasticloadbalancing:SetSubnets",
+          "elasticloadbalancing:ModifyTargetGroup",
+          "elasticloadbalancing:ModifyTargetGroupAttributes",
+          "elasticloadbalancing:ModifyListener",
+          "elasticloadbalancing:AddListenerCertificates",
+          "elasticloadbalancing:ModifyListenerAttributes",
+          "elasticloadbalancing:RemoveListenerCertificates",
+          "elasticloadbalancing:ModifyRule"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceTag/eks:eks-cluster-name": "${aws:PrincipalTag/eks:eks-cluster-name}"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "*"
+      },
+      {
+        "Action": [
+          "wafv2:AssociateWebACL",
+          "wafv2:DisassociateWebACL"
+        ],
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:wafv2:*:*:*/webacl/*/*",
+          "arn:aws:elasticloadbalancing:*:*:loadbalancer/app/*/*"
+        ]
+      },
+      {
+        "Action": [
+          "shield:CreateProtection"
+        ],
+        "Condition": {
+          "ForAllValues:StringEquals": {
+            "aws:TagKeys": [
+              "eks:eks-cluster-name",
+              "ingress.eks.amazonaws.com/stack",
+              "ingress.eks.amazonaws.com/resource",
+              "service.eks.amazonaws.com/stack",
+              "service.eks.amazonaws.com/resource"
+            ]
+          },
+          "StringEquals": {
+            "aws:RequestTag/eks:eks-cluster-name": "${aws:PrincipalTag/eks:eks-cluster-name}"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "*"
+      },
+      {
+        "Action": [
+          "shield:DeleteProtection"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceTag/eks:eks-cluster-name": "${aws:PrincipalTag/eks:eks-cluster-name}"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "*"
+      },
+      {
+        "Action": [
+          "shield:TagResource"
+        ],
+        "Condition": {
+          "ForAllValues:StringEquals": {
+            "aws:TagKeys": [
+              "eks:eks-cluster-name",
+              "ingress.eks.amazonaws.com/stack",
+              "ingress.eks.amazonaws.com/resource",
+              "service.eks.amazonaws.com/stack",
+              "service.eks.amazonaws.com/resource"
+            ]
+          },
+          "StringEquals": {
+            "aws:RequestTag/eks:eks-cluster-name": "${aws:PrincipalTag/eks:eks-cluster-name}"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:shield::*:protection/*"
+      },
+      {
+        "Action": [
+          "cognito-idp:DescribeUserPoolClient",
+          "acm:ListCertificates",
+          "acm:DescribeCertificate",
+          "wafv2:GetWebACL",
+          "wafv2:GetWebACLForResource",
+          "elasticloadbalancing:SetWebAcl",
+          "elasticloadbalancing:DescribeTargetGroups"
+        ],
+        "Effect": "Allow",
+        "Resource": "*"
+      },
+      {
+        "Action": [
+          "iam:CreateServiceLinkedRole"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "iam:AWSServiceName": "elasticloadbalancing.amazonaws.com"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:iam::*:role/aws-service-role/elasticloadbalancing.amazonaws.com/AWSServiceRoleForElasticLoadBalancing"
+      }
+    ],
+    "Version": "2012-10-17"
+  },
+  "effective_actions": [
+    {
+      "access_level": "Write",
+      "action": "elasticloadbalancing:CreateLoadBalancer",
+      "condition": {
+        "ForAllValues:StringEquals": {
+          "aws:TagKeys": [
+            "eks:eks-cluster-name",
+            "ingress.eks.amazonaws.com/stack",
+            "ingress.eks.amazonaws.com/resource",
+            "service.eks.amazonaws.com/stack",
+            "service.eks.amazonaws.com/resource"
+          ]
+        },
+        "StringEquals": {
+          "aws:RequestTag/eks:eks-cluster-name": "${aws:PrincipalTag/eks:eks-cluster-name}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "elasticloadbalancing:CreateLoadBalancer",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "elasticloadbalancing:CreateTargetGroup",
+      "condition": {
+        "ForAllValues:StringEquals": {
+          "aws:TagKeys": [
+            "eks:eks-cluster-name",
+            "ingress.eks.amazonaws.com/stack",
+            "ingress.eks.amazonaws.com/resource",
+            "service.eks.amazonaws.com/stack",
+            "service.eks.amazonaws.com/resource"
+          ]
+        },
+        "StringEquals": {
+          "aws:RequestTag/eks:eks-cluster-name": "${aws:PrincipalTag/eks:eks-cluster-name}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "elasticloadbalancing:CreateTargetGroup",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "elasticloadbalancing:CreateListener",
+      "condition": {
+        "ForAllValues:StringEquals": {
+          "aws:TagKeys": [
+            "eks:eks-cluster-name",
+            "ingress.eks.amazonaws.com/stack",
+            "ingress.eks.amazonaws.com/resource",
+            "service.eks.amazonaws.com/stack",
+            "service.eks.amazonaws.com/resource"
+          ]
+        },
+        "StringEquals": {
+          "aws:RequestTag/eks:eks-cluster-name": "${aws:PrincipalTag/eks:eks-cluster-name}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "elasticloadbalancing:CreateListener",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "elasticloadbalancing:CreateRule",
+      "condition": {
+        "ForAllValues:StringEquals": {
+          "aws:TagKeys": [
+            "eks:eks-cluster-name",
+            "ingress.eks.amazonaws.com/stack",
+            "ingress.eks.amazonaws.com/resource",
+            "service.eks.amazonaws.com/stack",
+            "service.eks.amazonaws.com/resource"
+          ]
+        },
+        "StringEquals": {
+          "aws:RequestTag/eks:eks-cluster-name": "${aws:PrincipalTag/eks:eks-cluster-name}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "elasticloadbalancing:CreateRule",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:CreateSecurityGroup",
+      "condition": {
+        "ForAllValues:StringEquals": {
+          "aws:TagKeys": [
+            "eks:eks-cluster-name",
+            "ingress.eks.amazonaws.com/stack",
+            "ingress.eks.amazonaws.com/resource",
+            "service.eks.amazonaws.com/stack",
+            "service.eks.amazonaws.com/resource"
+          ]
+        },
+        "StringEquals": {
+          "aws:RequestTag/eks:eks-cluster-name": "${aws:PrincipalTag/eks:eks-cluster-name}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:CreateSecurityGroup",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:CreateSecurityGroup",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:CreateSecurityGroup",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "elasticloadbalancing:RegisterTargets",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/eks:eks-cluster-name": "${aws:PrincipalTag/eks:eks-cluster-name}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "elasticloadbalancing:RegisterTargets",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:AuthorizeSecurityGroupIngress",
+      "condition": {
+        "StringEquals": {
+          "aws:RequestTag/eks:eks-cluster-name": "${aws:PrincipalTag/eks:eks-cluster-name}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:AuthorizeSecurityGroupIngress",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:AuthorizeSecurityGroupIngress",
+      "condition": {
+        "StringLike": {
+          "aws:ResourceTag/Name": "eks-cluster-sg*"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:AuthorizeSecurityGroupIngress",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:RevokeSecurityGroupIngress",
+      "condition": {
+        "StringLike": {
+          "aws:ResourceTag/Name": "eks-cluster-sg*"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:RevokeSecurityGroupIngress",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:AuthorizeSecurityGroupIngress",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/eks:eks-cluster-name": "${aws:PrincipalTag/eks:eks-cluster-name}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:AuthorizeSecurityGroupIngress",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:RevokeSecurityGroupIngress",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/eks:eks-cluster-name": "${aws:PrincipalTag/eks:eks-cluster-name}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:RevokeSecurityGroupIngress",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Tagging",
+      "action": "elasticloadbalancing:AddTags",
+      "condition": {
+        "StringEquals": {
+          "elasticloadbalancing:CreateAction": [
+            "CreateLoadBalancer",
+            "CreateTargetGroup",
+            "CreateListener",
+            "CreateRule"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "elasticloadbalancing:AddTags",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Tagging",
+      "action": "ec2:CreateTags",
+      "condition": {
+        "StringEquals": {
+          "ec2:CreateAction": [
+            "CreateSecurityGroup",
+            "AuthorizeSecurityGroupIngress"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:CreateTags",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "elasticloadbalancing:ModifyLoadBalancerAttributes",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/eks:eks-cluster-name": "${aws:PrincipalTag/eks:eks-cluster-name}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "elasticloadbalancing:ModifyLoadBalancerAttributes",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "elasticloadbalancing:SetIpAddressType",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/eks:eks-cluster-name": "${aws:PrincipalTag/eks:eks-cluster-name}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "elasticloadbalancing:SetIpAddressType",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "elasticloadbalancing:SetSecurityGroups",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/eks:eks-cluster-name": "${aws:PrincipalTag/eks:eks-cluster-name}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "elasticloadbalancing:SetSecurityGroups",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "elasticloadbalancing:SetSubnets",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/eks:eks-cluster-name": "${aws:PrincipalTag/eks:eks-cluster-name}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "elasticloadbalancing:SetSubnets",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "elasticloadbalancing:ModifyTargetGroup",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/eks:eks-cluster-name": "${aws:PrincipalTag/eks:eks-cluster-name}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "elasticloadbalancing:ModifyTargetGroup",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "elasticloadbalancing:ModifyTargetGroupAttributes",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/eks:eks-cluster-name": "${aws:PrincipalTag/eks:eks-cluster-name}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "elasticloadbalancing:ModifyTargetGroupAttributes",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "elasticloadbalancing:ModifyListener",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/eks:eks-cluster-name": "${aws:PrincipalTag/eks:eks-cluster-name}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "elasticloadbalancing:ModifyListener",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "elasticloadbalancing:AddListenerCertificates",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/eks:eks-cluster-name": "${aws:PrincipalTag/eks:eks-cluster-name}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "elasticloadbalancing:AddListenerCertificates",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "elasticloadbalancing:ModifyListenerAttributes",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/eks:eks-cluster-name": "${aws:PrincipalTag/eks:eks-cluster-name}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "elasticloadbalancing:ModifyListenerAttributes",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "elasticloadbalancing:RemoveListenerCertificates",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/eks:eks-cluster-name": "${aws:PrincipalTag/eks:eks-cluster-name}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "elasticloadbalancing:RemoveListenerCertificates",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "elasticloadbalancing:ModifyRule",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/eks:eks-cluster-name": "${aws:PrincipalTag/eks:eks-cluster-name}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "elasticloadbalancing:ModifyRule",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "wafv2:AssociateWebACL",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "wafv2:AssociateWebACL",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "wafv2:DisassociateWebACL",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "wafv2:DisassociateWebACL",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "shield:CreateProtection",
+      "condition": {
+        "ForAllValues:StringEquals": {
+          "aws:TagKeys": [
+            "eks:eks-cluster-name",
+            "ingress.eks.amazonaws.com/stack",
+            "ingress.eks.amazonaws.com/resource",
+            "service.eks.amazonaws.com/stack",
+            "service.eks.amazonaws.com/resource"
+          ]
+        },
+        "StringEquals": {
+          "aws:RequestTag/eks:eks-cluster-name": "${aws:PrincipalTag/eks:eks-cluster-name}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "shield:CreateProtection",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "shield:DeleteProtection",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/eks:eks-cluster-name": "${aws:PrincipalTag/eks:eks-cluster-name}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "shield:DeleteProtection",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Tagging",
+      "action": "shield:TagResource",
+      "condition": {
+        "ForAllValues:StringEquals": {
+          "aws:TagKeys": [
+            "eks:eks-cluster-name",
+            "ingress.eks.amazonaws.com/stack",
+            "ingress.eks.amazonaws.com/resource",
+            "service.eks.amazonaws.com/stack",
+            "service.eks.amazonaws.com/resource"
+          ]
+        },
+        "StringEquals": {
+          "aws:RequestTag/eks:eks-cluster-name": "${aws:PrincipalTag/eks:eks-cluster-name}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "shield:TagResource",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "cognito-idp:DescribeUserPoolClient",
+      "condition": null,
+      "credentials_exposure": true,
+      "data_access": false,
+      "effective_action": "cognito-idp:DescribeUserPoolClient",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "acm:ListCertificates",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "acm:ListCertificates",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "acm:DescribeCertificate",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "acm:DescribeCertificate",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "wafv2:GetWebACL",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "wafv2:GetWebACL",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "wafv2:GetWebACLForResource",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "wafv2:GetWebACLForResource",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "elasticloadbalancing:SetWebAcl",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "elasticloadbalancing:SetWebAcl",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "elasticloadbalancing:DescribeTargetGroups",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "elasticloadbalancing:DescribeTargetGroups",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "iam:CreateServiceLinkedRole",
+      "condition": {
+        "StringEquals": {
+          "iam:AWSServiceName": "elasticloadbalancing.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "iam:CreateServiceLinkedRole",
+      "privesc": true,
+      "resource_exposure": true
+    }
+  ],
+  "grantless": false,
+  "malformed": false,
+  "name": "AmazonEKSLoadBalancingPolicy",
+  "privesc": true,
+  "resource_exposure": true,
+  "undocumented_actions": false,
+  "unknown_actions": [],
+  "updatedate": "2024-10-30T20:18:06+00:00",
+  "version": "v1"
+}
