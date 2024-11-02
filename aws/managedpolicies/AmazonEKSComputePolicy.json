@@ -1,0 +1,287 @@
+{
+  "access_levels": [
+    "Tagging",
+    "Write"
+  ],
+  "arn": "arn:aws:iam::aws:policy/AmazonEKSComputePolicy",
+  "createdate": "2024-11-01T21:46:52Z",
+  "credentials_exposure": false,
+  "data_access": false,
+  "deprecated": false,
+  "document": {
+    "Statement": [
+      {
+        "Action": [
+          "ec2:CreateFleet",
+          "ec2:RunInstances"
+        ],
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:ec2:*::image/*",
+          "arn:aws:ec2:*:*:security-group/*",
+          "arn:aws:ec2:*:*:subnet/*"
+        ]
+      },
+      {
+        "Action": [
+          "ec2:CreateFleet",
+          "ec2:RunInstances"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceTag/eks:eks-cluster-name": "${aws:PrincipalTag/eks:eks-cluster-name}"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:ec2:*:*:launch-template/*"
+      },
+      {
+        "Action": [
+          "ec2:CreateFleet",
+          "ec2:RunInstances",
+          "ec2:CreateLaunchTemplate"
+        ],
+        "Condition": {
+          "ForAllValues:StringLike": {
+            "aws:TagKeys": [
+              "eks:eks-cluster-name",
+              "eks:kubernetes-node-class-name",
+              "eks:kubernetes-node-pool-name",
+              "kubernetes.io/cluster/*"
+            ]
+          },
+          "StringEquals": {
+            "aws:RequestTag/eks:eks-cluster-name": "${aws:PrincipalTag/eks:eks-cluster-name}"
+          },
+          "StringLike": {
+            "aws:RequestTag/eks:kubernetes-node-class-name": "*",
+            "aws:RequestTag/eks:kubernetes-node-pool-name": "*"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "*"
+      },
+      {
+        "Action": [
+          "ec2:CreateTags"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "ec2:CreateAction": [
+              "CreateFleet",
+              "RunInstances",
+              "CreateLaunchTemplate"
+            ]
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "*"
+      },
+      {
+        "Action": [
+          "iam:AddRoleToInstanceProfile"
+        ],
+        "Effect": "Allow",
+        "Resource": "arn:aws:iam::*:instance-profile/eks-compute-*"
+      },
+      {
+        "Action": [
+          "iam:PassRole"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "iam:PassedToService": [
+              "ec2.amazonaws.com",
+              "ec2.amazonaws.com.cn"
+            ]
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "*"
+      }
+    ],
+    "Version": "2012-10-17"
+  },
+  "effective_actions": [
+    {
+      "access_level": "Write",
+      "action": "ec2:CreateFleet",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:CreateFleet",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:RunInstances",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:RunInstances",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:CreateFleet",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/eks:eks-cluster-name": "${aws:PrincipalTag/eks:eks-cluster-name}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:CreateFleet",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:RunInstances",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/eks:eks-cluster-name": "${aws:PrincipalTag/eks:eks-cluster-name}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:RunInstances",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:CreateFleet",
+      "condition": {
+        "ForAllValues:StringLike": {
+          "aws:TagKeys": [
+            "eks:eks-cluster-name",
+            "eks:kubernetes-node-class-name",
+            "eks:kubernetes-node-pool-name",
+            "kubernetes.io/cluster/*"
+          ]
+        },
+        "StringEquals": {
+          "aws:RequestTag/eks:eks-cluster-name": "${aws:PrincipalTag/eks:eks-cluster-name}"
+        },
+        "StringLike": {
+          "aws:RequestTag/eks:kubernetes-node-class-name": "*",
+          "aws:RequestTag/eks:kubernetes-node-pool-name": "*"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:CreateFleet",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:RunInstances",
+      "condition": {
+        "ForAllValues:StringLike": {
+          "aws:TagKeys": [
+            "eks:eks-cluster-name",
+            "eks:kubernetes-node-class-name",
+            "eks:kubernetes-node-pool-name",
+            "kubernetes.io/cluster/*"
+          ]
+        },
+        "StringEquals": {
+          "aws:RequestTag/eks:eks-cluster-name": "${aws:PrincipalTag/eks:eks-cluster-name}"
+        },
+        "StringLike": {
+          "aws:RequestTag/eks:kubernetes-node-class-name": "*",
+          "aws:RequestTag/eks:kubernetes-node-pool-name": "*"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:RunInstances",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:CreateLaunchTemplate",
+      "condition": {
+        "ForAllValues:StringLike": {
+          "aws:TagKeys": [
+            "eks:eks-cluster-name",
+            "eks:kubernetes-node-class-name",
+            "eks:kubernetes-node-pool-name",
+            "kubernetes.io/cluster/*"
+          ]
+        },
+        "StringEquals": {
+          "aws:RequestTag/eks:eks-cluster-name": "${aws:PrincipalTag/eks:eks-cluster-name}"
+        },
+        "StringLike": {
+          "aws:RequestTag/eks:kubernetes-node-class-name": "*",
+          "aws:RequestTag/eks:kubernetes-node-pool-name": "*"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:CreateLaunchTemplate",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Tagging",
+      "action": "ec2:CreateTags",
+      "condition": {
+        "StringEquals": {
+          "ec2:CreateAction": [
+            "CreateFleet",
+            "RunInstances",
+            "CreateLaunchTemplate"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:CreateTags",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "iam:AddRoleToInstanceProfile",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "iam:AddRoleToInstanceProfile",
+      "privesc": false,
+      "resource_exposure": true
+    },
+    {
+      "access_level": "Write",
+      "action": "iam:PassRole",
+      "condition": {
+        "StringEquals": {
+          "iam:PassedToService": [
+            "ec2.amazonaws.com",
+            "ec2.amazonaws.com.cn"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "iam:PassRole",
+      "privesc": true,
+      "resource_exposure": true
+    }
+  ],
+  "grantless": false,
+  "malformed": false,
+  "name": "AmazonEKSComputePolicy",
+  "privesc": true,
+  "resource_exposure": true,
+  "undocumented_actions": false,
+  "unknown_actions": [],
+  "updatedate": "2024-11-01T21:46:52+00:00",
+  "version": "v1"
+}
