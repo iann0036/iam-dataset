@@ -7,7 +7,7 @@
     "Permissions management"
   ],
   "arn": "arn:aws:iam::aws:policy/AmazonElasticFileSystemFullAccess",
-  "createdate": "2023-11-28T16:53:28Z",
+  "createdate": "2024-11-07T19:34:20Z",
   "credentials_exposure": false,
   "data_access": false,
   "deprecated": false,
@@ -60,6 +60,8 @@
           "elasticfilesystem:ListTagsForResource",
           "elasticfilesystem:Backup",
           "elasticfilesystem:Restore",
+          "elasticfilesystem:ReplicationRead",
+          "elasticfilesystem:ReplicationWrite",
           "kms:DescribeKey",
           "kms:ListAliases"
         ],
@@ -81,6 +83,19 @@
         "Effect": "Allow",
         "Resource": "*",
         "Sid": "CreateServiceLinkedRoleForEFS"
+      },
+      {
+        "Action": [
+          "iam:PassRole"
+        ],
+        "Condition": {
+          "StringLike": {
+            "iam:PassedToService": "elasticfilesystem.amazonaws.com"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:iam::*:role/*",
+        "Sid": "IAMPassRoleAccessForEFS"
       }
     ],
     "Version": "2012-10-17"
@@ -538,6 +553,26 @@
     },
     {
       "access_level": "Read",
+      "action": "elasticfilesystem:ReplicationRead",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "elasticfilesystem:ReplicationRead",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "elasticfilesystem:ReplicationWrite",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "elasticfilesystem:ReplicationWrite",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
       "action": "kms:DescribeKey",
       "condition": null,
       "credentials_exposure": false,
@@ -571,6 +606,20 @@
       "effective_action": "iam:CreateServiceLinkedRole",
       "privesc": true,
       "resource_exposure": true
+    },
+    {
+      "access_level": "Write",
+      "action": "iam:PassRole",
+      "condition": {
+        "StringLike": {
+          "iam:PassedToService": "elasticfilesystem.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "iam:PassRole",
+      "privesc": true,
+      "resource_exposure": true
     }
   ],
   "grantless": false,
@@ -580,6 +629,6 @@
   "resource_exposure": true,
   "undocumented_actions": false,
   "unknown_actions": [],
-  "updatedate": "2023-11-28T16:53:28+00:00",
-  "version": "v9"
+  "updatedate": "2024-11-07T19:34:20+00:00",
+  "version": "v10"
 }
