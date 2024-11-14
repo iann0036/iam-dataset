@@ -4,7 +4,7 @@
     "Write"
   ],
   "arn": "arn:aws:iam::aws:policy/AmazonQFullAccess",
-  "createdate": "2024-10-28T20:01:31Z",
+  "createdate": "2024-11-13T21:51:39Z",
   "credentials_exposure": false,
   "data_access": false,
   "deprecated": false,
@@ -24,7 +24,16 @@
           "q:GetIdentityMetadata",
           "q:CreateAssignment",
           "q:DeleteAssignment",
-          "q:GenerateCodeFromCommands"
+          "q:GenerateCodeFromCommands",
+          "q:CreatePlugin",
+          "q:DeletePlugin",
+          "q:GetPlugin",
+          "q:UsePlugin",
+          "q:ListPlugins",
+          "q:ListPluginProviders",
+          "q:ListTagsForResource",
+          "q:UntagResource",
+          "q:TagResource"
         ],
         "Effect": "Allow",
         "Resource": "*",
@@ -46,6 +55,21 @@
         "Effect": "Allow",
         "Resource": "arn:aws:sts::*:self",
         "Sid": "AllowSetTrustedIdentity"
+      },
+      {
+        "Action": [
+          "iam:PassRole"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "iam:PassedToService": [
+              "q.amazonaws.com"
+            ]
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:iam::*:role/*",
+        "Sid": "AllowPassRoleToAmazonQ"
       }
     ],
     "Version": "2012-10-17"
@@ -210,15 +234,68 @@
       "effective_action": "sts:SetContext",
       "privesc": false,
       "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "iam:PassRole",
+      "condition": {
+        "StringEquals": {
+          "iam:PassedToService": [
+            "q.amazonaws.com"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "iam:PassRole",
+      "privesc": true,
+      "resource_exposure": true
     }
   ],
   "grantless": false,
   "malformed": false,
   "name": "AmazonQFullAccess",
-  "privesc": false,
-  "resource_exposure": false,
+  "privesc": true,
+  "resource_exposure": true,
   "undocumented_actions": false,
-  "unknown_actions": [],
-  "updatedate": "2024-10-28T20:01:31+00:00",
-  "version": "v4"
+  "unknown_actions": [
+    {
+      "action": "q:CreatePlugin",
+      "condition": null
+    },
+    {
+      "action": "q:DeletePlugin",
+      "condition": null
+    },
+    {
+      "action": "q:GetPlugin",
+      "condition": null
+    },
+    {
+      "action": "q:UsePlugin",
+      "condition": null
+    },
+    {
+      "action": "q:ListPlugins",
+      "condition": null
+    },
+    {
+      "action": "q:ListPluginProviders",
+      "condition": null
+    },
+    {
+      "action": "q:ListTagsForResource",
+      "condition": null
+    },
+    {
+      "action": "q:UntagResource",
+      "condition": null
+    },
+    {
+      "action": "q:TagResource",
+      "condition": null
+    }
+  ],
+  "updatedate": "2024-11-13T21:51:39+00:00",
+  "version": "v5"
 }
