@@ -1,0 +1,65 @@
+{
+  "access_levels": [],
+  "arn": "arn:aws:iam::aws:policy/root-task/SQSUnlockQueuePolicy",
+  "createdate": "2024-11-06T21:51:02Z",
+  "credentials_exposure": false,
+  "data_access": false,
+  "deprecated": false,
+  "document": {
+    "Statement": [
+      {
+        "Effect": "Deny",
+        "NotAction": [
+          "sqs:SetQueueAttributes",
+          "sqs:GetQueueAttributes",
+          "sqs:ListQueues",
+          "sqs:GetQueueUrl"
+        ],
+        "Resource": "*",
+        "Sid": "DenyAllOtherActionsOnAnyResource"
+      },
+      {
+        "Action": [
+          "sqs:GetQueueAttributes"
+        ],
+        "Condition": {
+          "StringNotEqualsIfExists": {
+            "aws:ResourceAccount": [
+              "${aws:PrincipalAccount}"
+            ]
+          }
+        },
+        "Effect": "Deny",
+        "Resource": "arn:aws:sqs:*:*:*",
+        "Sid": "DenyGettingQueueAttributesOnNonOwnQueue"
+      },
+      {
+        "Action": [
+          "sqs:SetQueueAttributes",
+          "sqs:GetQueueAttributes",
+          "sqs:ListQueues",
+          "sqs:GetQueueUrl"
+        ],
+        "Condition": {
+          "StringNotLike": {
+            "aws:PrincipalArn": "arn:aws:iam::*:root"
+          }
+        },
+        "Effect": "Deny",
+        "Resource": "*",
+        "Sid": "DenyActionsForNonRootUser"
+      }
+    ],
+    "Version": "2012-10-17"
+  },
+  "effective_actions": [],
+  "grantless": true,
+  "malformed": false,
+  "name": "SQSUnlockQueuePolicy",
+  "privesc": false,
+  "resource_exposure": false,
+  "undocumented_actions": false,
+  "unknown_actions": [],
+  "updatedate": "2024-11-06T21:51:02+00:00",
+  "version": "v1"
+}
