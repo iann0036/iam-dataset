@@ -4,7 +4,7 @@
     "Write"
   ],
   "arn": "arn:aws:iam::aws:policy/aws-service-role/KeyspacesReplicationServiceRolePolicy",
-  "createdate": "2023-05-02T16:15:49Z",
+  "createdate": "2024-11-15T20:55:16Z",
   "credentials_exposure": false,
   "data_access": true,
   "deprecated": false,
@@ -13,12 +13,51 @@
       {
         "Action": [
           "cassandra:Select",
-          "cassandra:SelectMultiRegionResource",
           "cassandra:Modify",
-          "cassandra:ModifyMultiRegionResource"
+          "cassandra:Alter",
+          "cassandra:ModifyMultiRegionResource",
+          "cassandra:SelectMultiRegionResource",
+          "cassandra:AlterMultiRegionResource",
+          "application-autoscaling:RegisterScalableTarget",
+          "application-autoscaling:DeregisterScalableTarget",
+          "application-autoscaling:DescribeScalableTargets",
+          "application-autoscaling:DescribeScalingPolicies",
+          "application-autoscaling:PutScalingPolicy"
         ],
         "Effect": "Allow",
-        "Resource": "*"
+        "Resource": "*",
+        "Sid": "KeyspacesActionsNeededForSteadyStateReplication"
+      },
+      {
+        "Action": [
+          "cloudwatch:DeleteAlarms"
+        ],
+        "Effect": "Allow",
+        "Resource": "arn:aws:cloudwatch:*:*:alarm:TargetTracking-*",
+        "Sid": "CWDeleteAlarmPolicy"
+      },
+      {
+        "Action": [
+          "cloudwatch:DescribeAlarms"
+        ],
+        "Effect": "Allow",
+        "Resource": "arn:aws:cloudwatch:*:*:alarm:*",
+        "Sid": "CWDescribeAlarmPolicy"
+      },
+      {
+        "Action": [
+          "cloudwatch:PutMetricAlarm"
+        ],
+        "Condition": {
+          "ForAllValues:StringLike": {
+            "cloudwatch:AlarmActions": [
+              "arn:aws:autoscaling:*:*:scalingPolicy:*:resource/cassandra/keyspace/*/table/*:policyName/*:createdBy/*"
+            ]
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:cloudwatch:*:*:alarm:TargetTracking-*",
+        "Sid": "CWPutMetricAlarmPolicy"
       }
     ],
     "Version": "2012-10-17"
@@ -35,22 +74,22 @@
       "resource_exposure": false
     },
     {
-      "access_level": "Read",
-      "action": "cassandra:SelectMultiRegionResource",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "cassandra:SelectMultiRegionResource",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
       "access_level": "Write",
       "action": "cassandra:Modify",
       "condition": null,
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "cassandra:Modify",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "cassandra:Alter",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cassandra:Alter",
       "privesc": false,
       "resource_exposure": false
     },
@@ -63,6 +102,112 @@
       "effective_action": "cassandra:ModifyMultiRegionResource",
       "privesc": false,
       "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "cassandra:SelectMultiRegionResource",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cassandra:SelectMultiRegionResource",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "cassandra:AlterMultiRegionResource",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cassandra:AlterMultiRegionResource",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "application-autoscaling:RegisterScalableTarget",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "application-autoscaling:RegisterScalableTarget",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "application-autoscaling:DeregisterScalableTarget",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "application-autoscaling:DeregisterScalableTarget",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "application-autoscaling:DescribeScalableTargets",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "application-autoscaling:DescribeScalableTargets",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "application-autoscaling:DescribeScalingPolicies",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "application-autoscaling:DescribeScalingPolicies",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "application-autoscaling:PutScalingPolicy",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "application-autoscaling:PutScalingPolicy",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "cloudwatch:DeleteAlarms",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudwatch:DeleteAlarms",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "cloudwatch:DescribeAlarms",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudwatch:DescribeAlarms",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "cloudwatch:PutMetricAlarm",
+      "condition": {
+        "ForAllValues:StringLike": {
+          "cloudwatch:AlarmActions": [
+            "arn:aws:autoscaling:*:*:scalingPolicy:*:resource/cassandra/keyspace/*/table/*:policyName/*:createdBy/*"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudwatch:PutMetricAlarm",
+      "privesc": false,
+      "resource_exposure": false
     }
   ],
   "grantless": false,
@@ -72,6 +217,6 @@
   "resource_exposure": false,
   "undocumented_actions": false,
   "unknown_actions": [],
-  "updatedate": "2023-05-02T16:15:49+00:00",
-  "version": "v1"
+  "updatedate": "2024-11-15T20:55:16+00:00",
+  "version": "v2"
 }
