@@ -5,7 +5,7 @@
     "Write"
   ],
   "arn": "arn:aws:iam::aws:policy/aws-service-role/SSMQuickSetupRolePolicy",
-  "createdate": "2024-08-12T14:32:20Z",
+  "createdate": "2024-11-18T13:06:59Z",
   "credentials_exposure": false,
   "data_access": true,
   "deprecated": false,
@@ -26,6 +26,19 @@
         "Effect": "Allow",
         "Resource": "arn:aws:ssm:*:*:resource-data-sync/AWS-QuickSetup-*",
         "Sid": "SSMResourceDataSyncGetOpsSummaryPermissions"
+      },
+      {
+        "Action": [
+          "ssm:DeleteResourceDataSync"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "ssm:SyncType": "SyncFromSource"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:ssm:*:*:resource-data-sync/AWS-QuickSetup-*",
+        "Sid": "SSMResourceDataSyncManagePermissions"
       },
       {
         "Action": [
@@ -50,11 +63,13 @@
       },
       {
         "Action": [
+          "organizations:ListAccounts",
           "organizations:ListRoots",
           "organizations:ListAWSServiceAccessForOrganization",
           "organizations:ListDelegatedAdministrators",
           "organizations:ListAccountsForParent",
-          "organizations:ListOrganizationalUnitsForParent"
+          "organizations:ListOrganizationalUnitsForParent",
+          "organizations:ListDelegatedServicesForAccount"
         ],
         "Effect": "Allow",
         "Resource": "*",
@@ -62,11 +77,13 @@
       },
       {
         "Action": [
+          "cloudformation:DescribeStackInstance",
           "cloudformation:DescribeStackSet",
           "cloudformation:DescribeStackSetOperation",
           "cloudformation:ListStackInstances",
           "cloudformation:ListStackSetOperations",
-          "cloudformation:ListStackSetOperationResults"
+          "cloudformation:ListStackSetOperationResults",
+          "cloudformation:GetTemplate"
         ],
         "Effect": "Allow",
         "Resource": [
@@ -98,6 +115,17 @@
           "arn:aws:cloudformation:*:*:type/resource/*"
         ],
         "Sid": "QuickSetupStackSetDeletePermissions"
+      },
+      {
+        "Action": [
+          "cloudformation:DescribeStacks",
+          "cloudformation:ListStacks"
+        ],
+        "Effect": "Allow",
+        "Resource": [
+          "*"
+        ],
+        "Sid": "QuickSetupCfnStacksDescribePermissions"
       }
     ],
     "Version": "2012-10-17"
@@ -120,6 +148,20 @@
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "ssm:GetOpsSummary",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ssm:DeleteResourceDataSync",
+      "condition": {
+        "StringEquals": {
+          "ssm:SyncType": "SyncFromSource"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ssm:DeleteResourceDataSync",
       "privesc": false,
       "resource_exposure": false
     },
@@ -160,6 +202,16 @@
       "credentials_exposure": false,
       "data_access": true,
       "effective_action": "ssm:GetDocument",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "organizations:ListAccounts",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "organizations:ListAccounts",
       "privesc": false,
       "resource_exposure": false
     },
@@ -214,6 +266,26 @@
       "resource_exposure": false
     },
     {
+      "access_level": "List",
+      "action": "organizations:ListDelegatedServicesForAccount",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "organizations:ListDelegatedServicesForAccount",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "cloudformation:DescribeStackInstance",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudformation:DescribeStackInstance",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
       "access_level": "Read",
       "action": "cloudformation:DescribeStackSet",
       "condition": null,
@@ -264,6 +336,16 @@
       "resource_exposure": false
     },
     {
+      "access_level": "Read",
+      "action": "cloudformation:GetTemplate",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": true,
+      "effective_action": "cloudformation:GetTemplate",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
       "access_level": "Write",
       "action": "cloudformation:DeleteStackInstances",
       "condition": {
@@ -290,6 +372,26 @@
       "effective_action": "cloudformation:DeleteStackSet",
       "privesc": false,
       "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "cloudformation:DescribeStacks",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudformation:DescribeStacks",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "cloudformation:ListStacks",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudformation:ListStacks",
+      "privesc": false,
+      "resource_exposure": false
     }
   ],
   "grantless": false,
@@ -299,6 +401,6 @@
   "resource_exposure": false,
   "undocumented_actions": false,
   "unknown_actions": [],
-  "updatedate": "2024-08-12T14:32:20+00:00",
-  "version": "v2"
+  "updatedate": "2024-11-18T13:06:59+00:00",
+  "version": "v3"
 }

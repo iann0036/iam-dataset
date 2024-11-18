@@ -1,0 +1,279 @@
+{
+  "access_levels": [
+    "List",
+    "Read",
+    "Write"
+  ],
+  "arn": "arn:aws:iam::aws:policy/AWS-SSM-DiagnosisAutomation-ExecutionRolePolicy",
+  "createdate": "2024-11-16T00:08:07Z",
+  "credentials_exposure": false,
+  "data_access": false,
+  "deprecated": false,
+  "document": {
+    "Statement": [
+      {
+        "Action": [
+          "ec2:DescribeVpcs",
+          "ec2:DescribeVpcAttribute",
+          "ec2:DescribeVpcEndpoints",
+          "ec2:DescribeSubnets",
+          "ec2:DescribeSecurityGroups",
+          "ec2:DescribeInstances",
+          "ec2:DescribeInternetGateways"
+        ],
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "AllowReadOnlyAccessEC2Resource"
+      },
+      {
+        "Action": [
+          "ssm:DescribeAutomationStepExecutions",
+          "ssm:DescribeInstanceInformation",
+          "ssm:DescribeAutomationExecutions",
+          "ssm:GetAutomationExecution"
+        ],
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "AllowReadOnlyAccessSSMResource"
+      },
+      {
+        "Action": [
+          "ssm:StartAutomationExecution"
+        ],
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:ssm:*:*:automation-definition/AWS-*UnmanagedEC2*:*"
+        ],
+        "Sid": "AllowExecuteSSMAutomation"
+      },
+      {
+        "Action": [
+          "kms:Decrypt",
+          "kms:GenerateDataKey"
+        ],
+        "Condition": {
+          "ArnLike": {
+            "kms:EncryptionContext:aws:s3:arn": "arn:aws:s3:::do-not-delete-ssm-diagnosis-*"
+          },
+          "Bool": {
+            "aws:ViaAWSService": "true"
+          },
+          "StringEquals": {
+            "aws:ResourceTag/SystemsManagerManaged": "true"
+          },
+          "StringLike": {
+            "kms:ViaService": "s3.*.amazonaws.com"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:kms:*:*:key/*",
+        "Sid": "AllowKMSOperations"
+      },
+      {
+        "Action": [
+          "iam:PassRole"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "iam:PassedToService": "ssm.amazonaws.com"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:iam::*:role/AWS-SSM-DiagnosisExecutionRole*",
+        "Sid": "AllowPassRoleOnSelfToSsm"
+      }
+    ],
+    "Version": "2012-10-17"
+  },
+  "effective_actions": [
+    {
+      "access_level": "List",
+      "action": "ec2:DescribeVpcs",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:DescribeVpcs",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "ec2:DescribeVpcAttribute",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:DescribeVpcAttribute",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "ec2:DescribeVpcEndpoints",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:DescribeVpcEndpoints",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "ec2:DescribeSubnets",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:DescribeSubnets",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "ec2:DescribeSecurityGroups",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:DescribeSecurityGroups",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "ec2:DescribeInstances",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:DescribeInstances",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "ec2:DescribeInternetGateways",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:DescribeInternetGateways",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "ssm:DescribeAutomationStepExecutions",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ssm:DescribeAutomationStepExecutions",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "ssm:DescribeInstanceInformation",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ssm:DescribeInstanceInformation",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "ssm:DescribeAutomationExecutions",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ssm:DescribeAutomationExecutions",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "ssm:GetAutomationExecution",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ssm:GetAutomationExecution",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ssm:StartAutomationExecution",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ssm:StartAutomationExecution",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "kms:Decrypt",
+      "condition": {
+        "ArnLike": {
+          "kms:EncryptionContext:aws:s3:arn": "arn:aws:s3:::do-not-delete-ssm-diagnosis-*"
+        },
+        "Bool": {
+          "aws:ViaAWSService": "true"
+        },
+        "StringEquals": {
+          "aws:ResourceTag/SystemsManagerManaged": "true"
+        },
+        "StringLike": {
+          "kms:ViaService": "s3.*.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "kms:Decrypt",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "kms:GenerateDataKey",
+      "condition": {
+        "ArnLike": {
+          "kms:EncryptionContext:aws:s3:arn": "arn:aws:s3:::do-not-delete-ssm-diagnosis-*"
+        },
+        "Bool": {
+          "aws:ViaAWSService": "true"
+        },
+        "StringEquals": {
+          "aws:ResourceTag/SystemsManagerManaged": "true"
+        },
+        "StringLike": {
+          "kms:ViaService": "s3.*.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "kms:GenerateDataKey",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "iam:PassRole",
+      "condition": {
+        "StringEquals": {
+          "iam:PassedToService": "ssm.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "iam:PassRole",
+      "privesc": true,
+      "resource_exposure": true
+    }
+  ],
+  "grantless": false,
+  "malformed": false,
+  "name": "AWS-SSM-DiagnosisAutomation-ExecutionRolePolicy",
+  "privesc": true,
+  "resource_exposure": true,
+  "undocumented_actions": false,
+  "unknown_actions": [],
+  "updatedate": "2024-11-16T00:08:07+00:00",
+  "version": "v1"
+}

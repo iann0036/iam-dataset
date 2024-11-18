@@ -1,0 +1,296 @@
+{
+  "access_levels": [
+    "List",
+    "Read",
+    "Write"
+  ],
+  "arn": "arn:aws:iam::aws:policy/AWS-SSM-RemediationAutomation-AdministrationRolePolicy",
+  "createdate": "2024-11-16T00:14:44Z",
+  "credentials_exposure": true,
+  "data_access": true,
+  "deprecated": false,
+  "document": {
+    "Statement": [
+      {
+        "Action": [
+          "ssm:DescribeAutomationExecutions",
+          "ssm:DescribeAutomationStepExecutions",
+          "ssm:GetAutomationExecution"
+        ],
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "AllowReadOnlyAccessSSMResource"
+      },
+      {
+        "Action": [
+          "ssm:StartAutomationExecution"
+        ],
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:ssm:*:*:automation-definition/AWS-OrchestrateUnmanagedEC2Actions:*",
+          "arn:aws:ssm:*:*:automation-definition/AWS-RemediateSSMAgent*:*"
+        ],
+        "Sid": "AllowExecuteSSMAutomation"
+      },
+      {
+        "Action": [
+          "kms:Decrypt",
+          "kms:GenerateDataKey"
+        ],
+        "Condition": {
+          "ArnLike": {
+            "kms:EncryptionContext:aws:s3:arn": "arn:aws:s3:::do-not-delete-ssm-diagnosis-*"
+          },
+          "Bool": {
+            "aws:ViaAWSService": "true"
+          },
+          "StringEquals": {
+            "aws:ResourceTag/SystemsManagerManaged": "true"
+          },
+          "StringLike": {
+            "kms:ViaService": "s3.*.amazonaws.com"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:kms:*:*:key/*",
+        "Sid": "AllowKMSOperations"
+      },
+      {
+        "Action": [
+          "sts:AssumeRole"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:iam::*:role/AWS-SSM-RemediationExecutionRole*",
+        "Sid": "AllowAssumeRemediationExecutionRoleWithinAccount"
+      },
+      {
+        "Action": [
+          "iam:PassRole"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "iam:PassedToService": "ssm.amazonaws.com"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:iam::*:role/AWS-SSM-RemediationAdminRole*",
+        "Sid": "AllowPassRoleOnSelfToSsm"
+      },
+      {
+        "Action": [
+          "s3:PutObject",
+          "s3:GetObject",
+          "s3:DeleteObject"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:s3:::do-not-delete-ssm-diagnosis-*/actions/*",
+        "Sid": "AllowReadWriteToSsmDiagnosisBucketInSameAccount"
+      },
+      {
+        "Action": [
+          "s3:ListBucket"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:s3:::do-not-delete-ssm-diagnosis-*",
+        "Sid": "AllowListBucketOnSsmDiagnosisBucketInSameAccount"
+      }
+    ],
+    "Version": "2012-10-17"
+  },
+  "effective_actions": [
+    {
+      "access_level": "Read",
+      "action": "ssm:DescribeAutomationExecutions",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ssm:DescribeAutomationExecutions",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "ssm:DescribeAutomationStepExecutions",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ssm:DescribeAutomationStepExecutions",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "ssm:GetAutomationExecution",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ssm:GetAutomationExecution",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ssm:StartAutomationExecution",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ssm:StartAutomationExecution",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "kms:Decrypt",
+      "condition": {
+        "ArnLike": {
+          "kms:EncryptionContext:aws:s3:arn": "arn:aws:s3:::do-not-delete-ssm-diagnosis-*"
+        },
+        "Bool": {
+          "aws:ViaAWSService": "true"
+        },
+        "StringEquals": {
+          "aws:ResourceTag/SystemsManagerManaged": "true"
+        },
+        "StringLike": {
+          "kms:ViaService": "s3.*.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "kms:Decrypt",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "kms:GenerateDataKey",
+      "condition": {
+        "ArnLike": {
+          "kms:EncryptionContext:aws:s3:arn": "arn:aws:s3:::do-not-delete-ssm-diagnosis-*"
+        },
+        "Bool": {
+          "aws:ViaAWSService": "true"
+        },
+        "StringEquals": {
+          "aws:ResourceTag/SystemsManagerManaged": "true"
+        },
+        "StringLike": {
+          "kms:ViaService": "s3.*.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "kms:GenerateDataKey",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "sts:AssumeRole",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": true,
+      "data_access": false,
+      "effective_action": "sts:AssumeRole",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "iam:PassRole",
+      "condition": {
+        "StringEquals": {
+          "iam:PassedToService": "ssm.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "iam:PassRole",
+      "privesc": true,
+      "resource_exposure": true
+    },
+    {
+      "access_level": "Write",
+      "action": "s3:PutObject",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3:PutObject",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "s3:GetObject",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": true,
+      "effective_action": "s3:GetObject",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "s3:DeleteObject",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3:DeleteObject",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "s3:ListBucket",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3:ListBucket",
+      "privesc": false,
+      "resource_exposure": false
+    }
+  ],
+  "grantless": false,
+  "malformed": false,
+  "name": "AWS-SSM-RemediationAutomation-AdministrationRolePolicy",
+  "privesc": true,
+  "resource_exposure": true,
+  "undocumented_actions": false,
+  "unknown_actions": [],
+  "updatedate": "2024-11-16T00:14:44+00:00",
+  "version": "v1"
+}

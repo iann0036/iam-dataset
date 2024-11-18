@@ -7,7 +7,7 @@
     "Permissions management"
   ],
   "arn": "arn:aws:iam::aws:policy/aws-service-role/AmazonEKSServiceRolePolicy",
-  "createdate": "2024-10-29T22:39:46Z",
+  "createdate": "2024-11-16T17:42:18Z",
   "credentials_exposure": false,
   "data_access": false,
   "deprecated": false,
@@ -19,15 +19,52 @@
           "ec2:DeleteNetworkInterface",
           "ec2:DetachNetworkInterface",
           "ec2:ModifyNetworkInterfaceAttribute",
+          "ec2:CreateSecurityGroup",
+          "ec2:CreateNetworkInterfacePermission"
+        ],
+        "Effect": "Allow",
+        "Resource": "*"
+      },
+      {
+        "Action": [
+          "ec2:DescribeAccountAttributes",
+          "ec2:DescribeAddresses",
+          "ec2:DescribeAvailabilityZones",
+          "ec2:DescribeCoipPools",
           "ec2:DescribeInstances",
+          "ec2:DescribeInstanceTypeOfferings",
+          "ec2:DescribeInstanceTypes",
+          "ec2:DescribeInternetGateways",
+          "ec2:DescribeLaunchTemplates",
           "ec2:DescribeNetworkInterfaces",
           "ec2:DescribeSecurityGroups",
+          "ec2:DescribeSnapshots",
+          "ec2:DescribeSpotPriceHistory",
           "ec2:DescribeSubnets",
+          "ec2:DescribeTags",
+          "ec2:DescribeVolumes",
+          "ec2:DescribeVolumesModifications",
+          "ec2:DescribeVpcPeeringConnections",
           "ec2:DescribeVpcs",
-          "ec2:CreateNetworkInterfacePermission",
+          "ec2:GetCoipPoolUsage",
+          "ec2:GetSecurityGroupsForVpc",
+          "eks:DescribeCluster",
+          "elasticloadbalancing:DescribeListenerAttributes",
+          "elasticloadbalancing:DescribeListenerCertificates",
+          "elasticloadbalancing:DescribeListeners",
+          "elasticloadbalancing:DescribeLoadBalancerAttributes",
+          "elasticloadbalancing:DescribeLoadBalancers",
+          "elasticloadbalancing:DescribeRules",
+          "elasticloadbalancing:DescribeSSLPolicies",
+          "elasticloadbalancing:DescribeTags",
+          "elasticloadbalancing:DescribeTargetGroupAttributes",
+          "elasticloadbalancing:DescribeTargetGroups",
+          "elasticloadbalancing:DescribeTargetHealth",
+          "elasticloadbalancing:DescribeTrustStores",
           "iam:ListAttachedRolePolicies",
-          "ec2:CreateSecurityGroup",
-          "ec2:GetSecurityGroupsForVpc"
+          "pricing:GetProducts",
+          "shield:GetSubscriptionState",
+          "tag:GetResources"
         ],
         "Effect": "Allow",
         "Resource": "*"
@@ -122,6 +159,168 @@
         },
         "Effect": "Allow",
         "Resource": "*"
+      },
+      {
+        "Action": [
+          "eks:CreateAccessEntry",
+          "eks:DeleteAccessEntry"
+        ],
+        "Condition": {
+          "ArnLike": {
+            "eks:principalArn": "arn:aws:iam::*:role/aws-service-role/eks.amazonaws.com/AWSServiceRoleForAmazonEKS"
+          },
+          "StringEquals": {
+            "eks:accessEntryType": "STANDARD"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "*"
+      },
+      {
+        "Action": [
+          "eks:ListAssociatedAccessPolicies"
+        ],
+        "Effect": "Allow",
+        "Resource": "arn:aws:eks:*:*:access-entry/*/role/${aws:PrincipalAccount}/AWSServiceRoleForAmazonEKS/*"
+      },
+      {
+        "Action": [
+          "eks:AssociateAccessPolicy",
+          "eks:DisassociateAccessPolicy"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "eks:policyArn": [
+              "arn:aws:eks::aws:cluster-access-policy/AmazonEKSComputePolicy",
+              "arn:aws:eks::aws:cluster-access-policy/AmazonEKSComputeClusterPolicy",
+              "arn:aws:eks::aws:cluster-access-policy/AmazonEKSNetworkingPolicy",
+              "arn:aws:eks::aws:cluster-access-policy/AmazonEKSNetworkingClusterPolicy",
+              "arn:aws:eks::aws:cluster-access-policy/AmazonEKSLoadBalancingPolicy",
+              "arn:aws:eks::aws:cluster-access-policy/AmazonEKSLoadBalancingClusterPolicy",
+              "arn:aws:eks::aws:cluster-access-policy/AmazonEKSBlockStoragePolicy",
+              "arn:aws:eks::aws:cluster-access-policy/AmazonEKSBlockStorageClusterPolicy",
+              "arn:aws:eks::aws:cluster-access-policy/AmazonEKSHybridPolicy"
+            ]
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:eks:*:*:access-entry/*/role/${aws:PrincipalAccount}/AWSServiceRoleForAmazonEKS/*"
+      },
+      {
+        "Action": [
+          "ec2:DeleteNetworkInterface"
+        ],
+        "Condition": {
+          "StringLike": {
+            "aws:ResourceTag/eks:eks-cluster-name": "*"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "*"
+      },
+      {
+        "Action": [
+          "eks:DescribeAccessEntry"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "eks:accessEntryType": "EC2"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "*"
+      },
+      {
+        "Action": [
+          "events:PutRule"
+        ],
+        "Condition": {
+          "ForAllValues:StringEquals": {
+            "events:source": [
+              "aws.ec2",
+              "aws.health"
+            ]
+          },
+          "StringEquals": {
+            "events:ManagedBy": [
+              "eks.amazonaws.com"
+            ]
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:events:*:*:rule/EKS*"
+      },
+      {
+        "Action": [
+          "events:PutTargets"
+        ],
+        "Effect": "Allow",
+        "Resource": "arn:aws:events:*:*:rule/EKS*"
+      },
+      {
+        "Action": [
+          "iam:GetInstanceProfile",
+          "iam:CreateInstanceProfile",
+          "iam:DeleteInstanceProfile",
+          "iam:RemoveRoleFromInstanceProfile"
+        ],
+        "Effect": "Allow",
+        "Resource": "arn:aws:iam::*:instance-profile/eks*"
+      },
+      {
+        "Action": [
+          "ec2:DeleteLaunchTemplate",
+          "ec2:TerminateInstances"
+        ],
+        "Condition": {
+          "StringLike": {
+            "aws:ResourceTag/eks:eks-cluster-name": "*"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "*"
+      },
+      {
+        "Action": [
+          "ec2:DeleteVolume"
+        ],
+        "Condition": {
+          "StringLike": {
+            "aws:ResourceTag/eks:eks-cluster-name": "*"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "*"
+      },
+      {
+        "Action": [
+          "ec2:DeleteSnapshot"
+        ],
+        "Condition": {
+          "StringLike": {
+            "aws:ResourceTag/eks:eks-cluster-name": "*"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "*"
+      },
+      {
+        "Action": [
+          "elasticloadbalancing:DeleteListener",
+          "elasticloadbalancing:DeleteRule",
+          "elasticloadbalancing:DeregisterTargets",
+          "elasticloadbalancing:DeleteLoadBalancer",
+          "elasticloadbalancing:DeleteTargetGroup",
+          "ec2:DeleteSecurityGroup",
+          "shield:DescribeProtection"
+        ],
+        "Condition": {
+          "StringLike": {
+            "aws:ResourceTag/eks:eks-cluster-name": "*"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "*"
       }
     ],
     "Version": "2012-10-17"
@@ -168,12 +367,112 @@
       "resource_exposure": false
     },
     {
+      "access_level": "Write",
+      "action": "ec2:CreateSecurityGroup",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:CreateSecurityGroup",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Permissions management",
+      "action": "ec2:CreateNetworkInterfacePermission",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:CreateNetworkInterfacePermission",
+      "privesc": false,
+      "resource_exposure": true
+    },
+    {
+      "access_level": "List",
+      "action": "ec2:DescribeAccountAttributes",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:DescribeAccountAttributes",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "ec2:DescribeAddresses",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:DescribeAddresses",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "ec2:DescribeAvailabilityZones",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:DescribeAvailabilityZones",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "ec2:DescribeCoipPools",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:DescribeCoipPools",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
       "access_level": "List",
       "action": "ec2:DescribeInstances",
       "condition": null,
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "ec2:DescribeInstances",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "ec2:DescribeInstanceTypeOfferings",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:DescribeInstanceTypeOfferings",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "ec2:DescribeInstanceTypes",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:DescribeInstanceTypes",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "ec2:DescribeInternetGateways",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:DescribeInternetGateways",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "ec2:DescribeLaunchTemplates",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:DescribeLaunchTemplates",
       "privesc": false,
       "resource_exposure": false
     },
@@ -199,11 +498,71 @@
     },
     {
       "access_level": "List",
+      "action": "ec2:DescribeSnapshots",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:DescribeSnapshots",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "ec2:DescribeSpotPriceHistory",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:DescribeSpotPriceHistory",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
       "action": "ec2:DescribeSubnets",
       "condition": null,
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "ec2:DescribeSubnets",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "ec2:DescribeTags",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:DescribeTags",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "ec2:DescribeVolumes",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:DescribeVolumes",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "ec2:DescribeVolumesModifications",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:DescribeVolumesModifications",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "ec2:DescribeVpcPeeringConnections",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:DescribeVpcPeeringConnections",
       "privesc": false,
       "resource_exposure": false
     },
@@ -218,14 +577,154 @@
       "resource_exposure": false
     },
     {
-      "access_level": "Permissions management",
-      "action": "ec2:CreateNetworkInterfacePermission",
+      "access_level": "Read",
+      "action": "ec2:GetCoipPoolUsage",
       "condition": null,
       "credentials_exposure": false,
       "data_access": false,
-      "effective_action": "ec2:CreateNetworkInterfacePermission",
+      "effective_action": "ec2:GetCoipPoolUsage",
       "privesc": false,
-      "resource_exposure": true
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "ec2:GetSecurityGroupsForVpc",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:GetSecurityGroupsForVpc",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "eks:DescribeCluster",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "eks:DescribeCluster",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "elasticloadbalancing:DescribeListenerAttributes",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "elasticloadbalancing:DescribeListenerAttributes",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "elasticloadbalancing:DescribeListenerCertificates",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "elasticloadbalancing:DescribeListenerCertificates",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "elasticloadbalancing:DescribeListeners",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "elasticloadbalancing:DescribeListeners",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "elasticloadbalancing:DescribeLoadBalancerAttributes",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "elasticloadbalancing:DescribeLoadBalancerAttributes",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "elasticloadbalancing:DescribeLoadBalancers",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "elasticloadbalancing:DescribeLoadBalancers",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "elasticloadbalancing:DescribeRules",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "elasticloadbalancing:DescribeRules",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "elasticloadbalancing:DescribeSSLPolicies",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "elasticloadbalancing:DescribeSSLPolicies",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "elasticloadbalancing:DescribeTags",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "elasticloadbalancing:DescribeTags",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "elasticloadbalancing:DescribeTargetGroupAttributes",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "elasticloadbalancing:DescribeTargetGroupAttributes",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "elasticloadbalancing:DescribeTargetGroups",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "elasticloadbalancing:DescribeTargetGroups",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "elasticloadbalancing:DescribeTargetHealth",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "elasticloadbalancing:DescribeTargetHealth",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "elasticloadbalancing:DescribeTrustStores",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "elasticloadbalancing:DescribeTrustStores",
+      "privesc": false,
+      "resource_exposure": false
     },
     {
       "access_level": "List",
@@ -238,22 +737,32 @@
       "resource_exposure": false
     },
     {
-      "access_level": "Write",
-      "action": "ec2:CreateSecurityGroup",
+      "access_level": "Read",
+      "action": "pricing:GetProducts",
       "condition": null,
       "credentials_exposure": false,
       "data_access": false,
-      "effective_action": "ec2:CreateSecurityGroup",
+      "effective_action": "pricing:GetProducts",
       "privesc": false,
       "resource_exposure": false
     },
     {
       "access_level": "Read",
-      "action": "ec2:GetSecurityGroupsForVpc",
+      "action": "shield:GetSubscriptionState",
       "condition": null,
       "credentials_exposure": false,
       "data_access": false,
-      "effective_action": "ec2:GetSecurityGroupsForVpc",
+      "effective_action": "shield:GetSubscriptionState",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "tag:GetResources",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "tag:GetResources",
       "privesc": false,
       "resource_exposure": false
     },
@@ -422,6 +931,352 @@
       "effective_action": "cloudwatch:PutMetricData",
       "privesc": false,
       "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "eks:CreateAccessEntry",
+      "condition": {
+        "ArnLike": {
+          "eks:principalArn": "arn:aws:iam::*:role/aws-service-role/eks.amazonaws.com/AWSServiceRoleForAmazonEKS"
+        },
+        "StringEquals": {
+          "eks:accessEntryType": "STANDARD"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "eks:CreateAccessEntry",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "eks:DeleteAccessEntry",
+      "condition": {
+        "ArnLike": {
+          "eks:principalArn": "arn:aws:iam::*:role/aws-service-role/eks.amazonaws.com/AWSServiceRoleForAmazonEKS"
+        },
+        "StringEquals": {
+          "eks:accessEntryType": "STANDARD"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "eks:DeleteAccessEntry",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "eks:ListAssociatedAccessPolicies",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "eks:ListAssociatedAccessPolicies",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "eks:AssociateAccessPolicy",
+      "condition": {
+        "StringEquals": {
+          "eks:policyArn": [
+            "arn:aws:eks::aws:cluster-access-policy/AmazonEKSComputePolicy",
+            "arn:aws:eks::aws:cluster-access-policy/AmazonEKSComputeClusterPolicy",
+            "arn:aws:eks::aws:cluster-access-policy/AmazonEKSNetworkingPolicy",
+            "arn:aws:eks::aws:cluster-access-policy/AmazonEKSNetworkingClusterPolicy",
+            "arn:aws:eks::aws:cluster-access-policy/AmazonEKSLoadBalancingPolicy",
+            "arn:aws:eks::aws:cluster-access-policy/AmazonEKSLoadBalancingClusterPolicy",
+            "arn:aws:eks::aws:cluster-access-policy/AmazonEKSBlockStoragePolicy",
+            "arn:aws:eks::aws:cluster-access-policy/AmazonEKSBlockStorageClusterPolicy",
+            "arn:aws:eks::aws:cluster-access-policy/AmazonEKSHybridPolicy"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "eks:AssociateAccessPolicy",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "eks:DisassociateAccessPolicy",
+      "condition": {
+        "StringEquals": {
+          "eks:policyArn": [
+            "arn:aws:eks::aws:cluster-access-policy/AmazonEKSComputePolicy",
+            "arn:aws:eks::aws:cluster-access-policy/AmazonEKSComputeClusterPolicy",
+            "arn:aws:eks::aws:cluster-access-policy/AmazonEKSNetworkingPolicy",
+            "arn:aws:eks::aws:cluster-access-policy/AmazonEKSNetworkingClusterPolicy",
+            "arn:aws:eks::aws:cluster-access-policy/AmazonEKSLoadBalancingPolicy",
+            "arn:aws:eks::aws:cluster-access-policy/AmazonEKSLoadBalancingClusterPolicy",
+            "arn:aws:eks::aws:cluster-access-policy/AmazonEKSBlockStoragePolicy",
+            "arn:aws:eks::aws:cluster-access-policy/AmazonEKSBlockStorageClusterPolicy",
+            "arn:aws:eks::aws:cluster-access-policy/AmazonEKSHybridPolicy"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "eks:DisassociateAccessPolicy",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:DeleteNetworkInterface",
+      "condition": {
+        "StringLike": {
+          "aws:ResourceTag/eks:eks-cluster-name": "*"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:DeleteNetworkInterface",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "eks:DescribeAccessEntry",
+      "condition": {
+        "StringEquals": {
+          "eks:accessEntryType": "EC2"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "eks:DescribeAccessEntry",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "events:PutRule",
+      "condition": {
+        "ForAllValues:StringEquals": {
+          "events:source": [
+            "aws.ec2",
+            "aws.health"
+          ]
+        },
+        "StringEquals": {
+          "events:ManagedBy": [
+            "eks.amazonaws.com"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "events:PutRule",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "events:PutTargets",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "events:PutTargets",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "iam:GetInstanceProfile",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "iam:GetInstanceProfile",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "iam:CreateInstanceProfile",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "iam:CreateInstanceProfile",
+      "privesc": false,
+      "resource_exposure": true
+    },
+    {
+      "access_level": "Write",
+      "action": "iam:DeleteInstanceProfile",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "iam:DeleteInstanceProfile",
+      "privesc": false,
+      "resource_exposure": true
+    },
+    {
+      "access_level": "Write",
+      "action": "iam:RemoveRoleFromInstanceProfile",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "iam:RemoveRoleFromInstanceProfile",
+      "privesc": false,
+      "resource_exposure": true
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:DeleteLaunchTemplate",
+      "condition": {
+        "StringLike": {
+          "aws:ResourceTag/eks:eks-cluster-name": "*"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:DeleteLaunchTemplate",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:TerminateInstances",
+      "condition": {
+        "StringLike": {
+          "aws:ResourceTag/eks:eks-cluster-name": "*"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:TerminateInstances",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:DeleteVolume",
+      "condition": {
+        "StringLike": {
+          "aws:ResourceTag/eks:eks-cluster-name": "*"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:DeleteVolume",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:DeleteSnapshot",
+      "condition": {
+        "StringLike": {
+          "aws:ResourceTag/eks:eks-cluster-name": "*"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:DeleteSnapshot",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "elasticloadbalancing:DeleteListener",
+      "condition": {
+        "StringLike": {
+          "aws:ResourceTag/eks:eks-cluster-name": "*"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "elasticloadbalancing:DeleteListener",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "elasticloadbalancing:DeleteRule",
+      "condition": {
+        "StringLike": {
+          "aws:ResourceTag/eks:eks-cluster-name": "*"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "elasticloadbalancing:DeleteRule",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "elasticloadbalancing:DeregisterTargets",
+      "condition": {
+        "StringLike": {
+          "aws:ResourceTag/eks:eks-cluster-name": "*"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "elasticloadbalancing:DeregisterTargets",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "elasticloadbalancing:DeleteLoadBalancer",
+      "condition": {
+        "StringLike": {
+          "aws:ResourceTag/eks:eks-cluster-name": "*"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "elasticloadbalancing:DeleteLoadBalancer",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "elasticloadbalancing:DeleteTargetGroup",
+      "condition": {
+        "StringLike": {
+          "aws:ResourceTag/eks:eks-cluster-name": "*"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "elasticloadbalancing:DeleteTargetGroup",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:DeleteSecurityGroup",
+      "condition": {
+        "StringLike": {
+          "aws:ResourceTag/eks:eks-cluster-name": "*"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:DeleteSecurityGroup",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "shield:DescribeProtection",
+      "condition": {
+        "StringLike": {
+          "aws:ResourceTag/eks:eks-cluster-name": "*"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "shield:DescribeProtection",
+      "privesc": false,
+      "resource_exposure": false
     }
   ],
   "grantless": false,
@@ -431,6 +1286,6 @@
   "resource_exposure": true,
   "undocumented_actions": false,
   "unknown_actions": [],
-  "updatedate": "2024-10-29T22:39:46+00:00",
-  "version": "v4"
+  "updatedate": "2024-11-16T17:42:18+00:00",
+  "version": "v5"
 }
