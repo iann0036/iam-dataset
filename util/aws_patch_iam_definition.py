@@ -47,6 +47,11 @@ while i < len(iam_def):
     j = i + 1
     while j < len(iam_def):
         if iam_def[i]['prefix'] == iam_def[j]['prefix']:
+            # special case for mismatched permissions
+            if iam_def[j]['prefix'] == 'sms-voice' and iam_def[j]['service_name'] == 'Amazon Pinpoint SMS and Voice Service':
+                iam_def[j]['conditions'] = iam_def[i]['conditions']
+                iam_def[j]['resources'] = iam_def[i]['resources']
+            
             # merge conditions
             for condition in iam_def[i]['conditions']:
                 found = False
