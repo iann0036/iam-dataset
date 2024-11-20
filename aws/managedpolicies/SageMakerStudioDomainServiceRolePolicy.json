@@ -1,0 +1,88 @@
+{
+  "access_levels": [
+    "Read",
+    "Write"
+  ],
+  "arn": "arn:aws:iam::aws:policy/service-role/SageMakerStudioDomainServiceRolePolicy",
+  "createdate": "2024-11-20T21:56:22Z",
+  "credentials_exposure": false,
+  "data_access": true,
+  "deprecated": false,
+  "document": {
+    "Statement": [
+      {
+        "Action": [
+          "ssm:GetParameter"
+        ],
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:ssm:*:*:parameter/amazon/datazone/profiles/*"
+        ],
+        "Sid": "SSMGetParameterStatement"
+      },
+      {
+        "Action": [
+          "kms:Decrypt"
+        ],
+        "Condition": {
+          "Null": {
+            "aws:ResourceTag/EnableKeyForAmazonDataZone": "false"
+          },
+          "StringEquals": {
+            "aws:ResourceTag/EnableKeyForAmazonDataZone": "true"
+          },
+          "StringLike": {
+            "kms:EncryptionContext:PARAMETER_ARN": "arn:aws:ssm:*:*:parameter/amazon/datazone/profiles*",
+            "kms:ViaService": "ssm.*.amazonaws.com"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "UseKMSKeyPermissionsStatement"
+      }
+    ],
+    "Version": "2012-10-17"
+  },
+  "effective_actions": [
+    {
+      "access_level": "Read",
+      "action": "ssm:GetParameter",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": true,
+      "effective_action": "ssm:GetParameter",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "kms:Decrypt",
+      "condition": {
+        "Null": {
+          "aws:ResourceTag/EnableKeyForAmazonDataZone": "false"
+        },
+        "StringEquals": {
+          "aws:ResourceTag/EnableKeyForAmazonDataZone": "true"
+        },
+        "StringLike": {
+          "kms:EncryptionContext:PARAMETER_ARN": "arn:aws:ssm:*:*:parameter/amazon/datazone/profiles*",
+          "kms:ViaService": "ssm.*.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "kms:Decrypt",
+      "privesc": false,
+      "resource_exposure": false
+    }
+  ],
+  "grantless": false,
+  "malformed": false,
+  "name": "SageMakerStudioDomainServiceRolePolicy",
+  "privesc": false,
+  "resource_exposure": false,
+  "undocumented_actions": false,
+  "unknown_actions": [],
+  "updatedate": "2024-11-20T21:56:22+00:00",
+  "version": "v1"
+}
