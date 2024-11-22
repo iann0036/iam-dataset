@@ -7,7 +7,7 @@
     "Permissions management"
   ],
   "arn": "arn:aws:iam::aws:policy/service-role/SageMakerStudioProjectProvisioningRolePolicy",
-  "createdate": "2024-11-20T21:58:39Z",
+  "createdate": "2024-11-22T04:51:06Z",
   "credentials_exposure": true,
   "data_access": true,
   "deprecated": false,
@@ -235,7 +235,8 @@
           "arn:aws:iam::*:role/AmazonBedrockExecution*",
           "arn:aws:iam::*:role/BedrockStudio*",
           "arn:aws:iam::*:role/AmazonBedrockConsumptionRole*",
-          "arn:aws:iam::*:role/AmazonBedrockEvaluation*"
+          "arn:aws:iam::*:role/AmazonBedrockEvaluation*",
+          "arn:aws:iam::*:role/SageMakerStudioQueryExecutionRole"
         ],
         "Sid": "IAMRoleAndPolicyManagement"
       },
@@ -275,7 +276,10 @@
               "DomainBucketName",
               "KmsKeyId",
               "LogGroupName",
-              "RoleName"
+              "RoleName",
+              "vpcArn",
+              "CreatedForUseWithSageMakerStudio",
+              "SageMakerStudioQueryExecutionRole"
             ]
           },
           "Null": {
@@ -295,7 +299,8 @@
           "arn:aws:iam::*:role/AmazonBedrockExecution*",
           "arn:aws:iam::*:role/BedrockStudio*",
           "arn:aws:iam::*:role/AmazonBedrockConsumptionRole*",
-          "arn:aws:iam::*:role/AmazonBedrockEvaluation*"
+          "arn:aws:iam::*:role/AmazonBedrockEvaluation*",
+          "arn:aws:iam::*:role/SageMakerStudioQueryExecutionRole"
         ],
         "Sid": "IAMRoleTagging"
       },
@@ -430,7 +435,11 @@
           }
         },
         "Effect": "Allow",
-        "Resource": "arn:aws:iam::*:policy/datazone*",
+        "Resource": [
+          "arn:aws:iam::*:policy/datazone*",
+          "arn:aws:iam::*:policy/connector-manage-access-policy*",
+          "arn:aws:iam::*:policy/SageMakerStudioQueryExecutionRolePolicy"
+        ],
         "Sid": "IAMPolicyManagementFromService"
       },
       {
@@ -491,7 +500,8 @@
         },
         "Effect": "Allow",
         "Resource": [
-          "arn:aws:iam::*:role/datazone_usr_role_*"
+          "arn:aws:iam::*:role/datazone_usr_role_*",
+          "arn:aws:iam::*:role/SageMakerStudioQueryExecutionRole"
         ],
         "Sid": "IamPassRole"
       },
@@ -1108,7 +1118,8 @@
           "redshift-serverless:CreateNamespace",
           "redshift-serverless:CreateWorkgroup",
           "redshift-serverless:DeleteNamespace",
-          "redshift-serverless:DeleteWorkgroup"
+          "redshift-serverless:DeleteWorkgroup",
+          "redshift-serverless:ListTagsForResource"
         ],
         "Condition": {
           "StringEquals": {
@@ -1475,7 +1486,8 @@
         "Action": [
           "secretsmanager:CreateSecret",
           "secretsmanager:DeleteSecret",
-          "secretsmanager:UpdateSecret"
+          "secretsmanager:UpdateSecret",
+          "secretsmanager:DescribeSecret"
         ],
         "Condition": {
           "Null": {
@@ -1486,6 +1498,19 @@
         "Effect": "Allow",
         "Resource": "*",
         "Sid": "AllowSecretManagement"
+      },
+      {
+        "Action": [
+          "secretsmanager:DescribeSecret"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceTag/for-use-with-all-datazone-projects": "true"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "AllowDescribeSecretTaggedForAllProjects"
       },
       {
         "Action": [
@@ -1760,6 +1785,9 @@
           "sagemaker:DeleteApp"
         ],
         "Condition": {
+          "Null": {
+            "aws:ResourceTag/AmazonDataZoneProject": "false"
+          },
           "StringEquals": {
             "aws:ResourceAccount": "${aws:PrincipalAccount}"
           }
@@ -1776,6 +1804,9 @@
           "sagemaker:DeleteSpace"
         ],
         "Condition": {
+          "Null": {
+            "aws:ResourceTag/AmazonDataZoneProject": "false"
+          },
           "StringEquals": {
             "aws:ResourceAccount": "${aws:PrincipalAccount}"
           }
@@ -1789,6 +1820,9 @@
           "sagemaker:DeleteUserProfile"
         ],
         "Condition": {
+          "Null": {
+            "aws:ResourceTag/AmazonDataZoneProject": "false"
+          },
           "StringEquals": {
             "aws:ResourceAccount": "${aws:PrincipalAccount}"
           }
@@ -2294,6 +2328,19 @@
         "Effect": "Allow",
         "Resource": "*",
         "Sid": "AirflowKmsDescribeKey"
+      },
+      {
+        "Action": [
+          "iam:GetRole"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:iam::*:role/SageMakerStudioQueryExecutionRole",
+        "Sid": "GetRolePermissionsForSageMakerStudioQueryExecutionRole"
       }
     ],
     "Version": "2012-10-17"
@@ -2814,7 +2861,10 @@
             "DomainBucketName",
             "KmsKeyId",
             "LogGroupName",
-            "RoleName"
+            "RoleName",
+            "vpcArn",
+            "CreatedForUseWithSageMakerStudio",
+            "SageMakerStudioQueryExecutionRole"
           ]
         },
         "Null": {
@@ -4189,6 +4239,20 @@
       "resource_exposure": false
     },
     {
+      "access_level": "List",
+      "action": "redshift-serverless:ListTagsForResource",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "redshift-serverless:ListTagsForResource",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
       "access_level": "Write",
       "action": "redshift:AssociateDataShareConsumer",
       "condition": {
@@ -4977,6 +5041,35 @@
       "resource_exposure": false
     },
     {
+      "access_level": "Read",
+      "action": "secretsmanager:DescribeSecret",
+      "condition": {
+        "Null": {
+          "aws:ResourceTag/AmazonDataZoneProject": "false",
+          "aws:ResourceTag/CreatedBy": "false"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "secretsmanager:DescribeSecret",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "secretsmanager:DescribeSecret",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/for-use-with-all-datazone-projects": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "secretsmanager:DescribeSecret",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
       "access_level": "Tagging",
       "action": "secretsmanager:TagResource",
       "condition": {
@@ -5598,6 +5691,9 @@
       "access_level": "Write",
       "action": "sagemaker:DeleteApp",
       "condition": {
+        "Null": {
+          "aws:ResourceTag/AmazonDataZoneProject": "false"
+        },
         "StringEquals": {
           "aws:ResourceAccount": "${aws:PrincipalAccount}"
         }
@@ -5612,6 +5708,9 @@
       "access_level": "Write",
       "action": "sagemaker:DeleteSpace",
       "condition": {
+        "Null": {
+          "aws:ResourceTag/AmazonDataZoneProject": "false"
+        },
         "StringEquals": {
           "aws:ResourceAccount": "${aws:PrincipalAccount}"
         }
@@ -5626,6 +5725,9 @@
       "access_level": "Write",
       "action": "sagemaker:DeleteUserProfile",
       "condition": {
+        "Null": {
+          "aws:ResourceTag/AmazonDataZoneProject": "false"
+        },
         "StringEquals": {
           "aws:ResourceAccount": "${aws:PrincipalAccount}"
         }
@@ -7613,6 +7715,20 @@
       "effective_action": "kms:DescribeKey",
       "privesc": false,
       "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "iam:GetRole",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "iam:GetRole",
+      "privesc": false,
+      "resource_exposure": false
     }
   ],
   "grantless": false,
@@ -7622,6 +7738,6 @@
   "resource_exposure": true,
   "undocumented_actions": false,
   "unknown_actions": [],
-  "updatedate": "2024-11-20T21:58:39+00:00",
-  "version": "v1"
+  "updatedate": "2024-11-22T04:51:06+00:00",
+  "version": "v3"
 }

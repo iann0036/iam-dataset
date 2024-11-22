@@ -7,7 +7,7 @@
     "Permissions management"
   ],
   "arn": "arn:aws:iam::aws:policy/SageMakerStudioProjectUserRolePolicy",
-  "createdate": "2024-11-20T21:59:23Z",
+  "createdate": "2024-11-22T04:51:06Z",
   "credentials_exposure": true,
   "data_access": true,
   "deprecated": false,
@@ -1153,7 +1153,13 @@
           "redshift-serverless:ListTagsForResource",
           "redshift-serverless:GetCredentials",
           "redshift:DescribeTags",
-          "redshift:GetClusterCredentialsWithIAM"
+          "redshift:GetClusterCredentialsWithIAM",
+          "redshift-data:BatchExecuteStatement",
+          "redshift-data:ExecuteStatement",
+          "redshift-data:DescribeTable",
+          "redshift-data:ListDatabases",
+          "redshift-data:ListSchemas",
+          "redshift-data:ListTables"
         ],
         "Condition": {
           "StringEquals": {
@@ -1235,13 +1241,14 @@
       {
         "Action": [
           "redshift-data:BatchExecuteStatement",
-          "redshift-data:ExecuteStatement"
+          "redshift-data:ExecuteStatement",
+          "redshift-data:DescribeStatement",
+          "redshift-data:GetStatementResult",
+          "redshift-data:CancelStatement"
         ],
         "Condition": {
-          "ForAnyValue:StringLike": {
-            "aws:CalledVia": [
-              "glue.amazonaws.com"
-            ]
+          "StringLike": {
+            "redshift-data:glue-catalog-arn": "arn:aws:glue:*:*:catalog/*"
           }
         },
         "Effect": "Allow",
@@ -1255,6 +1262,9 @@
         "Condition": {
           "Bool": {
             "aws:ViaAWSService": "true"
+          },
+          "ForAnyValue:StringEquals": {
+            "aws:CalledVia": "redshift-data.amazonaws.com"
           }
         },
         "Effect": "Allow",
@@ -7110,6 +7120,90 @@
       "resource_exposure": false
     },
     {
+      "access_level": "Write",
+      "action": "redshift-data:BatchExecuteStatement",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/for-use-with-all-datazone-projects": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "redshift-data:BatchExecuteStatement",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "redshift-data:ExecuteStatement",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/for-use-with-all-datazone-projects": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "redshift-data:ExecuteStatement",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "redshift-data:DescribeTable",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/for-use-with-all-datazone-projects": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "redshift-data:DescribeTable",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "redshift-data:ListDatabases",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/for-use-with-all-datazone-projects": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "redshift-data:ListDatabases",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "redshift-data:ListSchemas",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/for-use-with-all-datazone-projects": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "redshift-data:ListSchemas",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "redshift-data:ListTables",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/for-use-with-all-datazone-projects": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "redshift-data:ListTables",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
       "access_level": "List",
       "action": "redshift-serverless:ListNamespaces",
       "condition": null,
@@ -7265,10 +7359,8 @@
       "access_level": "Write",
       "action": "redshift-data:BatchExecuteStatement",
       "condition": {
-        "ForAnyValue:StringLike": {
-          "aws:CalledVia": [
-            "glue.amazonaws.com"
-          ]
+        "StringLike": {
+          "redshift-data:glue-catalog-arn": "arn:aws:glue:*:*:catalog/*"
         }
       },
       "credentials_exposure": false,
@@ -7281,10 +7373,8 @@
       "access_level": "Write",
       "action": "redshift-data:ExecuteStatement",
       "condition": {
-        "ForAnyValue:StringLike": {
-          "aws:CalledVia": [
-            "glue.amazonaws.com"
-          ]
+        "StringLike": {
+          "redshift-data:glue-catalog-arn": "arn:aws:glue:*:*:catalog/*"
         }
       },
       "credentials_exposure": false,
@@ -7294,11 +7384,56 @@
       "resource_exposure": false
     },
     {
+      "access_level": "Read",
+      "action": "redshift-data:DescribeStatement",
+      "condition": {
+        "StringLike": {
+          "redshift-data:glue-catalog-arn": "arn:aws:glue:*:*:catalog/*"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "redshift-data:DescribeStatement",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "redshift-data:GetStatementResult",
+      "condition": {
+        "StringLike": {
+          "redshift-data:glue-catalog-arn": "arn:aws:glue:*:*:catalog/*"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "redshift-data:GetStatementResult",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "redshift-data:CancelStatement",
+      "condition": {
+        "StringLike": {
+          "redshift-data:glue-catalog-arn": "arn:aws:glue:*:*:catalog/*"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "redshift-data:CancelStatement",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
       "access_level": "Write",
       "action": "redshift-serverless:GetCredentials",
       "condition": {
         "Bool": {
           "aws:ViaAWSService": "true"
+        },
+        "ForAnyValue:StringEquals": {
+          "aws:CalledVia": "redshift-data.amazonaws.com"
         }
       },
       "credentials_exposure": false,
@@ -8539,6 +8674,20 @@
       "resource_exposure": false
     },
     {
+      "access_level": "Read",
+      "action": "bedrock:InvokeInlineAgent",
+      "condition": {
+        "StringEquals": {
+          "aws:PrincipalTag/EnableAmazonBedrockIDEPermissions": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "bedrock:InvokeInlineAgent",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
       "access_level": "Write",
       "action": "bedrock:RetrieveAndGenerate",
       "condition": {
@@ -8773,16 +8922,7 @@
   "privesc": true,
   "resource_exposure": true,
   "undocumented_actions": false,
-  "unknown_actions": [
-    {
-      "action": "bedrock:InvokeInlineAgent",
-      "condition": {
-        "StringEquals": {
-          "aws:PrincipalTag/EnableAmazonBedrockIDEPermissions": "true"
-        }
-      }
-    }
-  ],
-  "updatedate": "2024-11-20T21:59:23+00:00",
-  "version": "v1"
+  "unknown_actions": [],
+  "updatedate": "2024-11-22T04:51:06+00:00",
+  "version": "v2"
 }
