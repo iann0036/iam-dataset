@@ -7,7 +7,7 @@
     "Permissions management"
   ],
   "arn": "arn:aws:iam::aws:policy/SageMakerStudioProjectRoleMachineLearningPolicy",
-  "createdate": "2024-11-20T21:55:27Z",
+  "createdate": "2024-11-24T19:51:06Z",
   "credentials_exposure": true,
   "data_access": true,
   "deprecated": false,
@@ -23,12 +23,15 @@
           "ec2:CreateVpcEndpoint"
         ],
         "Condition": {
-          "StringEqualsIfExists": {
-            "aws:CalledViaLast": "sagemaker.amazonaws.com",
-            "aws:ResourceAccount": "${aws:PrincipalAccount}"
-          },
-          "StringLike": {
+          "ArnLike": {
             "ec2:Vpc": "arn:aws:ec2:*:*:vpc/${aws:PrincipalTag/VpcId}"
+          },
+          "StringEquals": {
+            "aws:CalledViaLast": [
+              "sagemaker.amazonaws.com",
+              "airflow.amazonaws.com"
+            ],
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
           }
         },
         "Effect": "Allow",
@@ -39,6 +42,28 @@
           "arn:aws:ec2:*:*:security-group/*"
         ],
         "Sid": "AllowManageSageMakerEniOnVpc"
+      },
+      {
+        "Action": [
+          "ec2:CreateNetworkInterfacePermission",
+          "ec2:DeleteNetworkInterfacePermission"
+        ],
+        "Condition": {
+          "ArnLike": {
+            "ec2:Vpc": "arn:aws:ec2:*:*:vpc/${aws:PrincipalTag/VpcId}"
+          },
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:ec2:*:*:network-interface/*",
+          "arn:aws:ec2:*:*:subnet/*",
+          "arn:aws:ec2:*:*:route-table/*",
+          "arn:aws:ec2:*:*:security-group/*"
+        ],
+        "Sid": "AllowManageSageMakerTrainingEniOnVpc"
       },
       {
         "Action": [
@@ -530,11 +555,6 @@
         "Action": [
           "sagemaker:DescribeApp"
         ],
-        "Condition": {
-          "StringEquals": {
-            "aws:ResourceTag/AmazonDataZoneProject": "${aws:PrincipalTag/AmazonDataZoneProject}"
-          }
-        },
         "Effect": "Allow",
         "Resource": [
           "arn:aws:sagemaker:*:*:app/*/*/jupyterlab/*",
@@ -677,7 +697,8 @@
       },
       {
         "Action": [
-          "cloudwatch:PutMetricAlarm"
+          "cloudwatch:PutMetricAlarm",
+          "cloudwatch:DeleteAlarms"
         ],
         "Condition": {
           "StringEquals": {
@@ -686,7 +707,7 @@
         },
         "Effect": "Allow",
         "Resource": "arn:aws:cloudwatch:*:*:alarm:TargetTracking*",
-        "Sid": "CreateSageMakerEndpointsAutoscalingAlarms"
+        "Sid": "MutateSageMakerEndpointsAutoscalingAlarms"
       },
       {
         "Action": [
@@ -797,12 +818,15 @@
       "access_level": "Write",
       "action": "ec2:CreateNetworkInterface",
       "condition": {
-        "StringEqualsIfExists": {
-          "aws:CalledViaLast": "sagemaker.amazonaws.com",
-          "aws:ResourceAccount": "${aws:PrincipalAccount}"
-        },
-        "StringLike": {
+        "ArnLike": {
           "ec2:Vpc": "arn:aws:ec2:*:*:vpc/${aws:PrincipalTag/VpcId}"
+        },
+        "StringEquals": {
+          "aws:CalledViaLast": [
+            "sagemaker.amazonaws.com",
+            "airflow.amazonaws.com"
+          ],
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
         }
       },
       "credentials_exposure": false,
@@ -815,12 +839,15 @@
       "access_level": "Write",
       "action": "ec2:DeleteNetworkInterface",
       "condition": {
-        "StringEqualsIfExists": {
-          "aws:CalledViaLast": "sagemaker.amazonaws.com",
-          "aws:ResourceAccount": "${aws:PrincipalAccount}"
-        },
-        "StringLike": {
+        "ArnLike": {
           "ec2:Vpc": "arn:aws:ec2:*:*:vpc/${aws:PrincipalTag/VpcId}"
+        },
+        "StringEquals": {
+          "aws:CalledViaLast": [
+            "sagemaker.amazonaws.com",
+            "airflow.amazonaws.com"
+          ],
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
         }
       },
       "credentials_exposure": false,
@@ -833,12 +860,15 @@
       "access_level": "Write",
       "action": "ec2:AttachNetworkInterface",
       "condition": {
-        "StringEqualsIfExists": {
-          "aws:CalledViaLast": "sagemaker.amazonaws.com",
-          "aws:ResourceAccount": "${aws:PrincipalAccount}"
-        },
-        "StringLike": {
+        "ArnLike": {
           "ec2:Vpc": "arn:aws:ec2:*:*:vpc/${aws:PrincipalTag/VpcId}"
+        },
+        "StringEquals": {
+          "aws:CalledViaLast": [
+            "sagemaker.amazonaws.com",
+            "airflow.amazonaws.com"
+          ],
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
         }
       },
       "credentials_exposure": false,
@@ -851,12 +881,15 @@
       "access_level": "Permissions management",
       "action": "ec2:CreateNetworkInterfacePermission",
       "condition": {
-        "StringEqualsIfExists": {
-          "aws:CalledViaLast": "sagemaker.amazonaws.com",
-          "aws:ResourceAccount": "${aws:PrincipalAccount}"
-        },
-        "StringLike": {
+        "ArnLike": {
           "ec2:Vpc": "arn:aws:ec2:*:*:vpc/${aws:PrincipalTag/VpcId}"
+        },
+        "StringEquals": {
+          "aws:CalledViaLast": [
+            "sagemaker.amazonaws.com",
+            "airflow.amazonaws.com"
+          ],
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
         }
       },
       "credentials_exposure": false,
@@ -869,12 +902,15 @@
       "access_level": "Permissions management",
       "action": "ec2:DeleteNetworkInterfacePermission",
       "condition": {
-        "StringEqualsIfExists": {
-          "aws:CalledViaLast": "sagemaker.amazonaws.com",
-          "aws:ResourceAccount": "${aws:PrincipalAccount}"
-        },
-        "StringLike": {
+        "ArnLike": {
           "ec2:Vpc": "arn:aws:ec2:*:*:vpc/${aws:PrincipalTag/VpcId}"
+        },
+        "StringEquals": {
+          "aws:CalledViaLast": [
+            "sagemaker.amazonaws.com",
+            "airflow.amazonaws.com"
+          ],
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
         }
       },
       "credentials_exposure": false,
@@ -887,12 +923,15 @@
       "access_level": "Write",
       "action": "ec2:CreateVpcEndpoint",
       "condition": {
-        "StringEqualsIfExists": {
-          "aws:CalledViaLast": "sagemaker.amazonaws.com",
-          "aws:ResourceAccount": "${aws:PrincipalAccount}"
-        },
-        "StringLike": {
+        "ArnLike": {
           "ec2:Vpc": "arn:aws:ec2:*:*:vpc/${aws:PrincipalTag/VpcId}"
+        },
+        "StringEquals": {
+          "aws:CalledViaLast": [
+            "sagemaker.amazonaws.com",
+            "airflow.amazonaws.com"
+          ],
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
         }
       },
       "credentials_exposure": false,
@@ -900,6 +939,40 @@
       "effective_action": "ec2:CreateVpcEndpoint",
       "privesc": false,
       "resource_exposure": false
+    },
+    {
+      "access_level": "Permissions management",
+      "action": "ec2:CreateNetworkInterfacePermission",
+      "condition": {
+        "ArnLike": {
+          "ec2:Vpc": "arn:aws:ec2:*:*:vpc/${aws:PrincipalTag/VpcId}"
+        },
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:CreateNetworkInterfacePermission",
+      "privesc": false,
+      "resource_exposure": true
+    },
+    {
+      "access_level": "Permissions management",
+      "action": "ec2:DeleteNetworkInterfacePermission",
+      "condition": {
+        "ArnLike": {
+          "ec2:Vpc": "arn:aws:ec2:*:*:vpc/${aws:PrincipalTag/VpcId}"
+        },
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:DeleteNetworkInterfacePermission",
+      "privesc": false,
+      "resource_exposure": true
     },
     {
       "access_level": "Write",
@@ -3482,11 +3555,7 @@
     {
       "access_level": "Read",
       "action": "sagemaker:DescribeApp",
-      "condition": {
-        "StringEquals": {
-          "aws:ResourceTag/AmazonDataZoneProject": "${aws:PrincipalTag/AmazonDataZoneProject}"
-        }
-      },
+      "condition": null,
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "sagemaker:DescribeApp",
@@ -3744,6 +3813,20 @@
       "resource_exposure": false
     },
     {
+      "access_level": "Write",
+      "action": "cloudwatch:DeleteAlarms",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudwatch:DeleteAlarms",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
       "access_level": "Read",
       "action": "ssm:GetParameter",
       "condition": null,
@@ -3981,6 +4064,6 @@
   "resource_exposure": true,
   "undocumented_actions": false,
   "unknown_actions": [],
-  "updatedate": "2024-11-20T21:55:27+00:00",
-  "version": "v1"
+  "updatedate": "2024-11-24T19:51:06+00:00",
+  "version": "v2"
 }

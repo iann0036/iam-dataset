@@ -7,7 +7,7 @@
     "Permissions management"
   ],
   "arn": "arn:aws:iam::aws:policy/SageMakerStudioProjectUserRolePermissionsBoundary",
-  "createdate": "2024-11-22T04:51:06Z",
+  "createdate": "2024-11-24T20:21:06Z",
   "credentials_exposure": true,
   "data_access": true,
   "deprecated": false,
@@ -28,7 +28,9 @@
         "Effect": "Deny",
         "NotResource": [
           "arn:*:sagemaker:*:*:model-package-group/*",
-          "arn:*:sagemaker:*:*:model-package/*"
+          "arn:*:sagemaker:*:*:model-package/*",
+          "arn:*:glue:*:*:catalog/*",
+          "arn:*:glue:*:*:database/*"
         ],
         "Sid": "DenyAllNonMatchingProjectTag"
       },
@@ -247,6 +249,26 @@
         "Effect": "Allow",
         "Resource": "arn:aws:s3:::${aws:PrincipalTag/DomainBucketName}/${aws:PrincipalTag/AmazonDataZoneDomain}/${aws:PrincipalTag/AmazonDataZoneProject}/*",
         "Sid": "AccessDomainS3BucketPermissions"
+      },
+      {
+        "Action": [
+          "s3:GetObject"
+        ],
+        "Condition": {
+          "Null": {
+            "aws:PrincipalTag/AmazonDataZoneProject": "false"
+          },
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          },
+          "StringNotEquals": {
+            "aws:PrincipalTag/AmazonDataZoneDomain": "",
+            "aws:PrincipalTag/DomainBucketName": ""
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:s3:::${aws:PrincipalTag/DomainBucketName}/${aws:PrincipalTag/AmazonDataZoneDomain}/certificate_location/*",
+        "Sid": "AccessCertificateS3LocationPermissions"
       },
       {
         "Action": [
@@ -1447,6 +1469,14 @@
       },
       {
         "Action": [
+          "s3:GetEncryptionConfiguration"
+        ],
+        "Effect": "Allow",
+        "Resource": "arn:aws:s3:::${aws:PrincipalTag/DomainBucketName}",
+        "Sid": "AirflowS3BucketActions"
+      },
+      {
+        "Action": [
           "sqs:ChangeMessageVisibility",
           "sqs:DeleteMessage",
           "sqs:GetQueueAttributes",
@@ -1974,6 +2004,7 @@
           "s3:DeleteObjectVersion",
           "s3:GetAccountPublicAccessBlock",
           "s3:GetBucketLocation",
+          "s3:GetEncryptionConfiguration",
           "s3:GetObject*",
           "s3:ListBucket",
           "s3:ListBucketVersions",
@@ -3454,6 +3485,27 @@
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "s3:AbortMultipartUpload",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "s3:GetObject",
+      "condition": {
+        "Null": {
+          "aws:PrincipalTag/AmazonDataZoneProject": "false"
+        },
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        },
+        "StringNotEquals": {
+          "aws:PrincipalTag/AmazonDataZoneDomain": "",
+          "aws:PrincipalTag/DomainBucketName": ""
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": true,
+      "effective_action": "s3:GetObject",
       "privesc": false,
       "resource_exposure": false
     },
@@ -10920,6 +10972,16 @@
       "resource_exposure": false
     },
     {
+      "access_level": "Read",
+      "action": "s3:GetEncryptionConfiguration",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3:GetEncryptionConfiguration",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
       "access_level": "Write",
       "action": "sqs:ChangeMessageVisibility",
       "condition": null,
@@ -11156,6 +11218,6 @@
       "condition": null
     }
   ],
-  "updatedate": "2024-11-22T04:51:06+00:00",
-  "version": "v2"
+  "updatedate": "2024-11-24T20:21:06+00:00",
+  "version": "v3"
 }
