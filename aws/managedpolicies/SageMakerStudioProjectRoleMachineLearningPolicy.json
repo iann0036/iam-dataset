@@ -7,7 +7,7 @@
     "Permissions management"
   ],
   "arn": "arn:aws:iam::aws:policy/SageMakerStudioProjectRoleMachineLearningPolicy",
-  "createdate": "2024-11-24T19:51:06Z",
+  "createdate": "2024-11-26T05:21:05Z",
   "credentials_exposure": true,
   "data_access": true,
   "deprecated": false,
@@ -285,6 +285,7 @@
           "sagemaker:DeleteEndpoint",
           "sagemaker:UpdateEndpoint",
           "sagemaker:UpdateEndpointWeightsAndCapacities",
+          "sagemaker:UpdateInferenceComponentRuntimeConfig",
           "sagemaker:BatchDescribeModelPackage",
           "sagemaker:UpdateModelPackage",
           "sagemaker:DeleteModel",
@@ -298,8 +299,7 @@
           "sagemaker:DescribeEndpointConfig",
           "sagemaker:DescribeModel",
           "sagemaker:DescribeOptimizationJob",
-          "sagemaker:DescribeEndpoint",
-          "sagemaker:UpdateInferenceComponentRuntimeConfig"
+          "sagemaker:DescribeEndpoint"
         ],
         "Condition": {
           "StringEquals": {
@@ -310,6 +310,20 @@
         "Effect": "Allow",
         "Resource": "*",
         "Sid": "SageMakerInferencePermissions"
+      },
+      {
+        "Action": [
+          "sagemaker:UpdateInferenceComponentRuntimeConfig"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:CalledViaLast": "application-autoscaling.amazonaws.com",
+            "aws:PrincipalTag/EnableSageMakerMLWorkloadsPermissions": "true"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "SageMakerUpdateInferenceComponentRuntimeConfigAutoscalingPermissions"
       },
       {
         "Action": [
@@ -702,6 +716,7 @@
         ],
         "Condition": {
           "StringEquals": {
+            "aws:CalledViaLast": "application-autoscaling.amazonaws.com",
             "aws:ResourceAccount": "${aws:PrincipalAccount}"
           }
         },
@@ -2284,6 +2299,21 @@
       "resource_exposure": false
     },
     {
+      "access_level": "Write",
+      "action": "sagemaker:UpdateInferenceComponentRuntimeConfig",
+      "condition": {
+        "StringEquals": {
+          "aws:PrincipalTag/EnableSageMakerMLWorkloadsPermissions": "true",
+          "aws:ResourceTag/AmazonDataZoneProject": "${aws:PrincipalTag/AmazonDataZoneProject}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sagemaker:UpdateInferenceComponentRuntimeConfig",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
       "access_level": "Read",
       "action": "sagemaker:BatchDescribeModelPackage",
       "condition": {
@@ -2498,8 +2528,8 @@
       "action": "sagemaker:UpdateInferenceComponentRuntimeConfig",
       "condition": {
         "StringEquals": {
-          "aws:PrincipalTag/EnableSageMakerMLWorkloadsPermissions": "true",
-          "aws:ResourceTag/AmazonDataZoneProject": "${aws:PrincipalTag/AmazonDataZoneProject}"
+          "aws:CalledViaLast": "application-autoscaling.amazonaws.com",
+          "aws:PrincipalTag/EnableSageMakerMLWorkloadsPermissions": "true"
         }
       },
       "credentials_exposure": false,
@@ -3803,6 +3833,7 @@
       "action": "cloudwatch:PutMetricAlarm",
       "condition": {
         "StringEquals": {
+          "aws:CalledViaLast": "application-autoscaling.amazonaws.com",
           "aws:ResourceAccount": "${aws:PrincipalAccount}"
         }
       },
@@ -3817,6 +3848,7 @@
       "action": "cloudwatch:DeleteAlarms",
       "condition": {
         "StringEquals": {
+          "aws:CalledViaLast": "application-autoscaling.amazonaws.com",
           "aws:ResourceAccount": "${aws:PrincipalAccount}"
         }
       },
@@ -4064,6 +4096,6 @@
   "resource_exposure": true,
   "undocumented_actions": false,
   "unknown_actions": [],
-  "updatedate": "2024-11-24T19:51:06+00:00",
-  "version": "v2"
+  "updatedate": "2024-11-26T05:21:05+00:00",
+  "version": "v3"
 }
