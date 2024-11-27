@@ -7,7 +7,7 @@
     "Permissions management"
   ],
   "arn": "arn:aws:iam::aws:policy/SageMakerStudioProjectUserRolePermissionsBoundary",
-  "createdate": "2024-11-24T20:21:06Z",
+  "createdate": "2024-11-27T06:36:06Z",
   "credentials_exposure": true,
   "data_access": true,
   "deprecated": false,
@@ -201,6 +201,43 @@
       },
       {
         "Action": [
+          "kms:CreateGrant",
+          "kms:Decrypt",
+          "kms:GenerateDataKey"
+        ],
+        "Condition": {
+          "Null": {
+            "kms:EncryptionContextKeys": "false"
+          },
+          "StringLike": {
+            "kms:ViaService": [
+              "datazone.*.amazonaws.com"
+            ]
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "*"
+        ],
+        "Sid": "DataZoneKMSPermissions"
+      },
+      {
+        "Action": [
+          "kms:DescribeKey"
+        ],
+        "Condition": {
+          "StringLike": {
+            "kms:ViaService": [
+              "datazone.*.amazonaws.com"
+            ]
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "DataZoneDescribeKMSPermissions"
+      },
+      {
+        "Action": [
           "s3:ListBucket",
           "s3:ListBucketVersions"
         ],
@@ -223,6 +260,40 @@
         "Effect": "Allow",
         "Resource": "arn:aws:s3:::${aws:PrincipalTag/DomainBucketName}",
         "Sid": "ListDomainS3BucketPermissions"
+      },
+      {
+        "Action": [
+          "s3:ListBucket"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          },
+          "StringNotEquals": {
+            "aws:PrincipalTag/DomainBucketName": ""
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:s3:::${aws:PrincipalTag/DomainBucketName}",
+        "Sid": "AirflowListDomainS3BucketPermissions"
+      },
+      {
+        "Action": [
+          "s3:ListBucket"
+        ],
+        "Condition": {
+          "ArnEquals": {
+            "lambda:SourceFunctionArn": "arn:aws:lambda:*:*:function:athenafederatedcatalog_*"
+          },
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:s3:::${aws:PrincipalTag/DomainBucketName}"
+        ],
+        "Sid": "ListDomainBucketFromAthenaFederatedCatalog"
       },
       {
         "Action": [
@@ -527,7 +598,8 @@
           "glue:ListSessions",
           "glue:StartCompletion",
           "glue:GetCompletion",
-          "glue:GetGeneratedCode"
+          "glue:GetGeneratedCode",
+          "glue:GetTags"
         ],
         "Effect": "Allow",
         "Resource": "*",
@@ -737,7 +809,9 @@
           "redshift-data:ExecuteStatement",
           "redshift-data:DescribeStatement",
           "redshift-data:GetStatementResult",
-          "redshift-data:CancelStatement"
+          "redshift-data:CancelStatement",
+          "redshift-data:GetStagingBucketLocation",
+          "redshift-serverless:GetManagedWorkgroup"
         ],
         "Condition": {
           "StringLike": {
@@ -915,6 +989,7 @@
           "sagemaker:CreateTransformJob",
           "sagemaker:CreateProcessingJob",
           "sagemaker:CreateAutoMLJob",
+          "sagemaker:CreateAutoMLJobV2",
           "sagemaker:CreateHyperParameterTuningJob",
           "sagemaker:CreateEndpointConfig",
           "sagemaker:CreateEndpoint",
@@ -1402,6 +1477,24 @@
       },
       {
         "Action": [
+          "kms:GenerateDataKey",
+          "kms:Decrypt"
+        ],
+        "Condition": {
+          "Null": {
+            "kms:EncryptionContext:aws:bedrock:arn": "false",
+            "kms:ViaService": "true"
+          },
+          "StringEquals": {
+            "aws:PrincipalTag/AmazonBedrockManaged": "true"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:kms:*:*:key/${aws:PrincipalTag/KmsKeyId}",
+        "Sid": "BedrockKnowledgeBaseDataIngestionKmsPermissions"
+      },
+      {
+        "Action": [
           "secretsmanager:DescribeSecret",
           "secretsmanager:GetSecretValue",
           "secretsmanager:PutSecretValue"
@@ -1505,22 +1598,6 @@
       },
       {
         "Action": [
-          "glue:GetConnection",
-          "glue:GetConnections",
-          "glue:GetTags"
-        ],
-        "Condition": {
-          "StringEquals": {
-            "aws:ResourceAccount": "${aws:PrincipalAccount}",
-            "aws:ResourceTag/AmazonDataZoneProject": "${aws:PrincipalTag/AmazonDataZoneProject}"
-          }
-        },
-        "Effect": "Allow",
-        "Resource": "*",
-        "Sid": "AccessForFederatedDataConnection"
-      },
-      {
-        "Action": [
           "glue:ListConnectionTypes",
           "glue:DescribeConnectionType"
         ],
@@ -1565,13 +1642,95 @@
         ],
         "Condition": {
           "StringEquals": {
-            "aws:ResourceTag/AmazonDataZoneProject": "${aws:PrincipalTag/AmazonDataZoneProject}",
+            "aws:PrincipalTag/SageMakerStudioQueryExecutionRole": "true",
             "aws:ResourceTag/federated_athena_datacatalog": "true"
           }
         },
         "Effect": "Allow",
         "Resource": "arn:aws:lambda:*:*:function:*",
         "Sid": "InvokeFunctionPermissionsForAthenaCatalogLambda"
+      },
+      {
+        "Action": [
+          "s3:ListBucket"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:PrincipalTag/SageMakerStudioQueryExecutionRole": "true",
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:s3:::*",
+        "Sid": "ListDomainS3BucketForQueryExecutionRolePermissions"
+      },
+      {
+        "Action": [
+          "s3:ListBucket",
+          "s3:PutObject",
+          "s3:GetObject",
+          "s3:DeleteObject"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:s3:::redshift-staging-bucket-*/*",
+          "arn:aws:s3:::redshift-staging-bucket-*"
+        ],
+        "Sid": "S3PermissionsForAthenaCatalog"
+      },
+      {
+        "Action": [
+          "s3:GetObject"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:PrincipalTag/SageMakerStudioQueryExecutionRole": "true",
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:s3:::*/dzd_*/*/dev/sys/athena/*",
+        "Sid": "GetS3ObjectForQueryExecutionRolePermissions"
+      },
+      {
+        "Action": [
+          "glue:GetUserDefinedFunction",
+          "glue:GetUserDefinedFunctions"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}",
+            "glue:LakeFormationPermissions": "Enabled"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:glue:*:*:catalog",
+          "arn:aws:glue:*:*:catalog/*",
+          "arn:aws:glue:*:*:database/*"
+        ],
+        "Sid": "GetGlueUserDefinedFuncLakeFormationPermissions"
+      },
+      {
+        "Action": [
+          "glue:GetUserDefinedFunction",
+          "glue:GetUserDefinedFunctions"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:glue:*:*:userDefinedFunction/*"
+        ],
+        "Sid": "GetGlueUserDefinedFuncPermissions"
       },
       {
         "Effect": "Deny",
@@ -1761,7 +1920,41 @@
           "datazone:ListEnvironments",
           "datazone:ListProjects",
           "datazone:UpdateConnection",
+          "dynamodb:BatchGetItem",
+          "dynamodb:BatchWriteItem",
+          "dynamodb:Scan",
+          "dynamodb:Query",
+          "dynamodb:DescribeBackup",
+          "dynamodb:DescribeContributorInsights",
+          "dynamodb:DescribeContinuousBackups",
+          "dynamodb:DescribeEndpoints",
+          "dynamodb:DescribeExport",
+          "dynamodb:DescribeGlobalTable",
+          "dynamodb:DescribeGlobalTableSettings",
+          "dynamodb:DescribeImport",
+          "dynamodb:DescribeKinesisStreamingDestination",
+          "dynamodb:DescribeLimits",
+          "dynamodb:DescribeReservedCapacity",
+          "dynamodb:DescribeReservedCapacityOfferings",
+          "dynamodb:DescribeStream",
+          "dynamodb:DescribeTable",
+          "dynamodb:DescribeTableReplicaAutoScaling",
+          "dynamodb:DescribeTimeToLive",
+          "dynamodb:GetItem",
+          "dynamodb:GetRecords",
+          "dynamodb:ListExports",
+          "dynamodb:ListGlobalTables",
+          "dynamodb:ListImports",
           "dynamodb:ListTables",
+          "dynamodb:ListTagsOfResource",
+          "dynamodb:PutItem",
+          "dynamodb:PartiQLSelect",
+          "dynamodb:PartiQLInsert",
+          "dynamodb:PartiQLUpdate",
+          "dynamodb:PartiQLDelete",
+          "dynamodb:UpdateItem",
+          "dynamodb:UpdateGlobalTable",
+          "dynamodb:UpdateTable",
           "ec2:AttachNetworkInterface",
           "ec2:AuthorizeSecurityGroupEgress",
           "ec2:AuthorizeSecurityGroupIngress",
@@ -1903,6 +2096,8 @@
           "glue:GetTableVersion",
           "glue:GetTableVersions",
           "glue:GetTags",
+          "glue:GetUserDefinedFunction",
+          "glue:GetUserDefinedFunctions",
           "glue:ListConnectionTypes",
           "glue:ListCrawls",
           "glue:ListDataQualityResults",
@@ -1980,12 +2175,14 @@
           "redshift-data:DescribeStatement",
           "redshift-data:DescribeTable",
           "redshift-data:ExecuteStatement",
+          "redshift-data:GetStagingBucketLocation",
           "redshift-data:GetStatementResult",
           "redshift-data:ListDatabases",
           "redshift-data:ListSchemas",
           "redshift-data:ListStatements",
           "redshift-data:ListTables",
           "redshift-serverless:GetCredentials",
+          "redshift-serverless:GetManagedWorkgroup",
           "redshift-serverless:GetNamespace",
           "redshift-serverless:GetWorkgroup",
           "redshift-serverless:ListNamespaces",
@@ -2068,6 +2265,7 @@
           "sagemaker:CreateApp",
           "sagemaker:CreateArtifact",
           "sagemaker:CreateAutoMLJob",
+          "sagemaker:CreateAutoMLJobV2",
           "sagemaker:CreateContext",
           "sagemaker:CreateEndpoint",
           "sagemaker:CreateEndpointConfig",
@@ -3040,6 +3238,79 @@
       "resource_exposure": false
     },
     {
+      "access_level": "Permissions management",
+      "action": "kms:CreateGrant",
+      "condition": {
+        "Null": {
+          "kms:EncryptionContextKeys": "false"
+        },
+        "StringLike": {
+          "kms:ViaService": [
+            "datazone.*.amazonaws.com"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": true,
+      "effective_action": "kms:CreateGrant",
+      "privesc": true,
+      "resource_exposure": true
+    },
+    {
+      "access_level": "Write",
+      "action": "kms:Decrypt",
+      "condition": {
+        "Null": {
+          "kms:EncryptionContextKeys": "false"
+        },
+        "StringLike": {
+          "kms:ViaService": [
+            "datazone.*.amazonaws.com"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "kms:Decrypt",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "kms:GenerateDataKey",
+      "condition": {
+        "Null": {
+          "kms:EncryptionContextKeys": "false"
+        },
+        "StringLike": {
+          "kms:ViaService": [
+            "datazone.*.amazonaws.com"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "kms:GenerateDataKey",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "kms:DescribeKey",
+      "condition": {
+        "StringLike": {
+          "kms:ViaService": [
+            "datazone.*.amazonaws.com"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "kms:DescribeKey",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
       "access_level": "List",
       "action": "s3:ListBucket",
       "condition": {
@@ -3086,6 +3357,40 @@
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "s3:ListBucketVersions",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "s3:ListBucket",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        },
+        "StringNotEquals": {
+          "aws:PrincipalTag/DomainBucketName": ""
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3:ListBucket",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "s3:ListBucket",
+      "condition": {
+        "ArnEquals": {
+          "lambda:SourceFunctionArn": "arn:aws:lambda:*:*:function:athenafederatedcatalog_*"
+        },
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3:ListBucket",
       "privesc": false,
       "resource_exposure": false
     },
@@ -5052,6 +5357,16 @@
       "resource_exposure": false
     },
     {
+      "access_level": "Read",
+      "action": "glue:GetTags",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "glue:GetTags",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
       "access_level": "Write",
       "action": "glue:PassConnection",
       "condition": {
@@ -6345,6 +6660,34 @@
       "resource_exposure": false
     },
     {
+      "access_level": "Read",
+      "action": "redshift-data:GetStagingBucketLocation",
+      "condition": {
+        "StringLike": {
+          "redshift-data:glue-catalog-arn": "arn:aws:glue:*:*:catalog/*"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "redshift-data:GetStagingBucketLocation",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "redshift-serverless:GetManagedWorkgroup",
+      "condition": {
+        "StringLike": {
+          "redshift-data:glue-catalog-arn": "arn:aws:glue:*:*:catalog/*"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "redshift-serverless:GetManagedWorkgroup",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
       "access_level": "Write",
       "action": "redshift-serverless:GetCredentials",
       "condition": {
@@ -7352,6 +7695,16 @@
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "sagemaker:CreateAutoMLJob",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "sagemaker:CreateAutoMLJobV2",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sagemaker:CreateAutoMLJobV2",
       "privesc": false,
       "resource_exposure": false
     },
@@ -10824,6 +11177,42 @@
       "resource_exposure": false
     },
     {
+      "access_level": "Write",
+      "action": "kms:GenerateDataKey",
+      "condition": {
+        "Null": {
+          "kms:EncryptionContext:aws:bedrock:arn": "false",
+          "kms:ViaService": "true"
+        },
+        "StringEquals": {
+          "aws:PrincipalTag/AmazonBedrockManaged": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "kms:GenerateDataKey",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "kms:Decrypt",
+      "condition": {
+        "Null": {
+          "kms:EncryptionContext:aws:bedrock:arn": "false",
+          "kms:ViaService": "true"
+        },
+        "StringEquals": {
+          "aws:PrincipalTag/AmazonBedrockManaged": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "kms:Decrypt",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
       "access_level": "Read",
       "action": "secretsmanager:DescribeSecret",
       "condition": {
@@ -11072,51 +11461,6 @@
       "resource_exposure": false
     },
     {
-      "access_level": "Read",
-      "action": "glue:GetConnection",
-      "condition": {
-        "StringEquals": {
-          "aws:ResourceAccount": "${aws:PrincipalAccount}",
-          "aws:ResourceTag/AmazonDataZoneProject": "${aws:PrincipalTag/AmazonDataZoneProject}"
-        }
-      },
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "glue:GetConnection",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Read",
-      "action": "glue:GetConnections",
-      "condition": {
-        "StringEquals": {
-          "aws:ResourceAccount": "${aws:PrincipalAccount}",
-          "aws:ResourceTag/AmazonDataZoneProject": "${aws:PrincipalTag/AmazonDataZoneProject}"
-        }
-      },
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "glue:GetConnections",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Read",
-      "action": "glue:GetTags",
-      "condition": {
-        "StringEquals": {
-          "aws:ResourceAccount": "${aws:PrincipalAccount}",
-          "aws:ResourceTag/AmazonDataZoneProject": "${aws:PrincipalTag/AmazonDataZoneProject}"
-        }
-      },
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "glue:GetTags",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
       "access_level": "Permissions management",
       "action": "glue:ListConnectionTypes",
       "condition": null,
@@ -11195,13 +11539,157 @@
       "action": "lambda:InvokeFunction",
       "condition": {
         "StringEquals": {
-          "aws:ResourceTag/AmazonDataZoneProject": "${aws:PrincipalTag/AmazonDataZoneProject}",
+          "aws:PrincipalTag/SageMakerStudioQueryExecutionRole": "true",
           "aws:ResourceTag/federated_athena_datacatalog": "true"
         }
       },
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "lambda:InvokeFunction",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "s3:ListBucket",
+      "condition": {
+        "StringEquals": {
+          "aws:PrincipalTag/SageMakerStudioQueryExecutionRole": "true",
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3:ListBucket",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "s3:ListBucket",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3:ListBucket",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "s3:PutObject",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3:PutObject",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "s3:GetObject",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": true,
+      "effective_action": "s3:GetObject",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "s3:DeleteObject",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3:DeleteObject",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "s3:GetObject",
+      "condition": {
+        "StringEquals": {
+          "aws:PrincipalTag/SageMakerStudioQueryExecutionRole": "true",
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": true,
+      "effective_action": "s3:GetObject",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "glue:GetUserDefinedFunction",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}",
+          "glue:LakeFormationPermissions": "Enabled"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "glue:GetUserDefinedFunction",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "glue:GetUserDefinedFunctions",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}",
+          "glue:LakeFormationPermissions": "Enabled"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "glue:GetUserDefinedFunctions",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "glue:GetUserDefinedFunction",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "glue:GetUserDefinedFunction",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "glue:GetUserDefinedFunctions",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "glue:GetUserDefinedFunctions",
       "privesc": false,
       "resource_exposure": false
     }
@@ -11218,6 +11706,6 @@
       "condition": null
     }
   ],
-  "updatedate": "2024-11-24T20:21:06+00:00",
-  "version": "v3"
+  "updatedate": "2024-11-27T06:36:06+00:00",
+  "version": "v5"
 }

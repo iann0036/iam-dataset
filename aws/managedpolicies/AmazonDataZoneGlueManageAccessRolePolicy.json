@@ -7,7 +7,7 @@
     "Permissions management"
   ],
   "arn": "arn:aws:iam::aws:policy/service-role/AmazonDataZoneGlueManageAccessRolePolicy",
-  "createdate": "2024-06-28T16:41:41Z",
+  "createdate": "2024-11-26T15:51:06Z",
   "credentials_exposure": false,
   "data_access": false,
   "deprecated": false,
@@ -16,8 +16,7 @@
       {
         "Action": [
           "glue:TagResource",
-          "glue:UntagResource",
-          "glue:GetTags"
+          "glue:UntagResource"
         ],
         "Condition": {
           "ForAnyValue:StringLikeIfExists": {
@@ -47,10 +46,24 @@
       },
       {
         "Action": [
+          "glue:ListCrawls"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:glue:*:*:crawler/*",
+        "Sid": "GlueCrawlerPermissions"
+      },
+      {
+        "Action": [
           "glue:CreateTable",
           "glue:DeleteTable",
           "glue:GetDatabases",
-          "glue:GetTables"
+          "glue:GetTables",
+          "glue:SearchTables"
         ],
         "Condition": {
           "StringEquals": {
@@ -60,10 +73,29 @@
         "Effect": "Allow",
         "Resource": [
           "arn:aws:glue:*:*:catalog",
+          "arn:aws:glue:*:*:catalog/*",
           "arn:aws:glue:*:*:database/*",
           "arn:aws:glue:*:*:table/*"
         ],
         "Sid": "GlueTableDatabasePermissions"
+      },
+      {
+        "Action": [
+          "glue:GetTags",
+          "glue:GetCatalog"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:glue:*:*:catalog",
+          "arn:aws:glue:*:*:catalog/*",
+          "arn:aws:glue:*:*:database/*"
+        ],
+        "Sid": "GlueGetTagsPermissions"
       },
       {
         "Action": [
@@ -94,6 +126,25 @@
       },
       {
         "Action": [
+          "lakeformation:GetDataAccess"
+        ],
+        "Condition": {
+          "ForAnyValue:StringEquals": {
+            "aws:CalledVia": [
+              "glue.amazonaws.com",
+              "lakeformation.amazonaws.com"
+            ]
+          },
+          "Null": {
+            "lakeformation:GlueARN": "true"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "LakeformationResourceFederatedSharingPermissions"
+      },
+      {
+        "Action": [
           "glue:DeleteResourcePolicy",
           "glue:PutResourcePolicy"
         ],
@@ -107,6 +158,7 @@
         "Effect": "Allow",
         "Resource": [
           "arn:aws:glue:*:*:catalog",
+          "arn:aws:glue:*:*:catalog/*",
           "arn:aws:glue:*:*:database/*",
           "arn:aws:glue:*:*:table/*"
         ],
@@ -172,13 +224,13 @@
           "ram:AssociateResourceSharePermission"
         ],
         "Condition": {
+          "ArnLike": {
+            "ram:PermissionArn": "arn:aws:ram::aws:permission/AWSRAMLFEnabled*"
+          },
           "ForAnyValue:StringEquals": {
             "aws:CalledVia": [
               "lakeformation.amazonaws.com"
             ]
-          },
-          "StringLike": {
-            "ram:PermissionArn": "arn:aws:ram::aws:permission/AWSRAMLFEnabled*"
           }
         },
         "Effect": "Allow",
@@ -266,23 +318,6 @@
       "resource_exposure": false
     },
     {
-      "access_level": "Read",
-      "action": "glue:GetTags",
-      "condition": {
-        "ForAnyValue:StringLikeIfExists": {
-          "aws:TagKeys": "DataZoneDiscoverable_*"
-        },
-        "StringEquals": {
-          "aws:ResourceAccount": "${aws:PrincipalAccount}"
-        }
-      },
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "glue:GetTags",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
       "access_level": "List",
       "action": "glue:ListDataQualityResults",
       "condition": {
@@ -307,6 +342,20 @@
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "glue:GetDataQualityResult",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "glue:ListCrawls",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "glue:ListCrawls",
       "privesc": false,
       "resource_exposure": false
     },
@@ -363,6 +412,48 @@
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "glue:GetTables",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "glue:SearchTables",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "glue:SearchTables",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "glue:GetTags",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "glue:GetTags",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "glue:GetCatalog",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "glue:GetCatalog",
       "privesc": false,
       "resource_exposure": false
     },
@@ -567,6 +658,26 @@
       "resource_exposure": false
     },
     {
+      "access_level": "Write",
+      "action": "lakeformation:GetDataAccess",
+      "condition": {
+        "ForAnyValue:StringEquals": {
+          "aws:CalledVia": [
+            "glue.amazonaws.com",
+            "lakeformation.amazonaws.com"
+          ]
+        },
+        "Null": {
+          "lakeformation:GlueARN": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "lakeformation:GetDataAccess",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
       "access_level": "Permissions management",
       "action": "glue:DeleteResourcePolicy",
       "condition": {
@@ -761,13 +872,13 @@
       "access_level": "Write",
       "action": "ram:AssociateResourceSharePermission",
       "condition": {
+        "ArnLike": {
+          "ram:PermissionArn": "arn:aws:ram::aws:permission/AWSRAMLFEnabled*"
+        },
         "ForAnyValue:StringEquals": {
           "aws:CalledVia": [
             "lakeformation.amazonaws.com"
           ]
-        },
-        "StringLike": {
-          "ram:PermissionArn": "arn:aws:ram::aws:permission/AWSRAMLFEnabled*"
         }
       },
       "credentials_exposure": false,
@@ -824,6 +935,6 @@
   "resource_exposure": true,
   "undocumented_actions": false,
   "unknown_actions": [],
-  "updatedate": "2024-06-28T16:41:41+00:00",
-  "version": "v6"
+  "updatedate": "2024-11-26T15:51:06+00:00",
+  "version": "v7"
 }

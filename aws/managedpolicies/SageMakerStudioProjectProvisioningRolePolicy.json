@@ -7,7 +7,7 @@
     "Permissions management"
   ],
   "arn": "arn:aws:iam::aws:policy/service-role/SageMakerStudioProjectProvisioningRolePolicy",
-  "createdate": "2024-11-24T19:51:07Z",
+  "createdate": "2024-11-27T06:21:08Z",
   "credentials_exposure": true,
   "data_access": true,
   "deprecated": false,
@@ -404,8 +404,7 @@
       },
       {
         "Action": [
-          "iam:AttachRolePolicy",
-          "iam:DetachRolePolicy"
+          "iam:AttachRolePolicy"
         ],
         "Condition": {
           "StringEquals": {
@@ -418,6 +417,21 @@
           "arn:aws:iam::*:role/datazone*"
         ],
         "Sid": "IamAttachPolicyFromService"
+      },
+      {
+        "Action": [
+          "iam:DetachRolePolicy"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:iam::*:role/datazone*"
+        ],
+        "Sid": "IamDetachPolicyFromService"
       },
       {
         "Action": [
@@ -1490,8 +1504,7 @@
         "Action": [
           "secretsmanager:CreateSecret",
           "secretsmanager:DeleteSecret",
-          "secretsmanager:UpdateSecret",
-          "secretsmanager:DescribeSecret"
+          "secretsmanager:UpdateSecret"
         ],
         "Condition": {
           "Null": {
@@ -1502,6 +1515,19 @@
         "Effect": "Allow",
         "Resource": "*",
         "Sid": "AllowSecretManagement"
+      },
+      {
+        "Action": [
+          "secretsmanager:DescribeSecret"
+        ],
+        "Condition": {
+          "Null": {
+            "aws:ResourceTag/AmazonDataZoneProject": "false"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "AllowDescribeSecretPerProject"
       },
       {
         "Action": [
@@ -3087,8 +3113,7 @@
       "action": "iam:DetachRolePolicy",
       "condition": {
         "StringEquals": {
-          "aws:ResourceAccount": "${aws:PrincipalAccount}",
-          "iam:PermissionsBoundary": "arn:aws:iam::aws:policy/SageMakerStudioProjectUserRolePermissionsBoundary"
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
         }
       },
       "credentials_exposure": false,
@@ -5075,8 +5100,7 @@
       "action": "secretsmanager:DescribeSecret",
       "condition": {
         "Null": {
-          "aws:ResourceTag/AmazonDataZoneProject": "false",
-          "aws:ResourceTag/CreatedBy": "false"
+          "aws:ResourceTag/AmazonDataZoneProject": "false"
         }
       },
       "credentials_exposure": false,
@@ -7849,6 +7873,6 @@
   "resource_exposure": true,
   "undocumented_actions": false,
   "unknown_actions": [],
-  "updatedate": "2024-11-24T19:51:07+00:00",
-  "version": "v4"
+  "updatedate": "2024-11-27T06:21:08+00:00",
+  "version": "v5"
 }
