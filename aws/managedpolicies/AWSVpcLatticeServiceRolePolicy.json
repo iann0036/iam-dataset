@@ -1,9 +1,12 @@
 {
   "access_levels": [
-    "Write"
+    "List",
+    "Tagging",
+    "Write",
+    "Permissions management"
   ],
   "arn": "arn:aws:iam::aws:policy/aws-service-role/AWSVpcLatticeServiceRolePolicy",
-  "createdate": "2022-11-30T20:47:10Z",
+  "createdate": "2024-12-01T14:06:06Z",
   "credentials_exposure": false,
   "data_access": false,
   "deprecated": false,
@@ -20,6 +23,101 @@
         },
         "Effect": "Allow",
         "Resource": "*"
+      },
+      {
+        "Action": [
+          "ec2:DescribeSubnets",
+          "ec2:DescribeSecurityGroups",
+          "ec2:DescribeNetworkInterfaces",
+          "ec2:DescribeVpcs"
+        ],
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "VpcLatticeDescribeActions"
+      },
+      {
+        "Action": [
+          "ec2:CreateNetworkInterface"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:RequestTag/VpcLatticeManaged": "true"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:ec2:*:*:network-interface/*",
+        "Sid": "VpcLatticeCreateNetworkInterfaceWithTag"
+      },
+      {
+        "Action": [
+          "ec2:CreateNetworkInterface"
+        ],
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:ec2:*:*:subnet/*",
+          "arn:aws:ec2:*:*:security-group/*"
+        ],
+        "Sid": "VpcLatticeCreateNetworkInterfaceWithSubnetAndSecurityGroup"
+      },
+      {
+        "Action": [
+          "ec2:CreateTags"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "ec2:CreateAction": "CreateNetworkInterface"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:ec2:*:*:network-interface/*",
+        "Sid": "VpcLatticeTagNetworkInterfaceActions"
+      },
+      {
+        "Action": [
+          "ec2:ModifyNetworkInterfaceAttribute",
+          "ec2:CreateNetworkInterfacePermission",
+          "ec2:DeleteNetworkInterface"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceTag/VpcLatticeManaged": "true"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:ec2:*:*:network-interface/*",
+        "Sid": "VpcLatticeMutateNetworkInterfaceActions"
+      },
+      {
+        "Action": [
+          "ec2:ModifyNetworkInterfaceAttribute"
+        ],
+        "Effect": "Allow",
+        "Resource": "arn:aws:ec2:*:*:security-group/*",
+        "Sid": "VpcLatticeModifyNetworkInterfaceSecurityGroup"
+      },
+      {
+        "Action": [
+          "ec2:AssignIpv6Addresses",
+          "ec2:UnassignIpv6Addresses",
+          "ec2:AssignPrivateIpAddresses",
+          "ec2:UnassignPrivateIpAddresses"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceTag/VpcLatticeManaged": "true"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:ec2:*:*:network-interface/*",
+        "Sid": "VpcLatticeModifyNetworkInterfaceActionsIpAddressActions"
+      },
+      {
+        "Action": [
+          "route53:AssociateVPCWithHostedZone"
+        ],
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "VpcLatticeAssociateHostedZoneToVpc"
       }
     ],
     "Version": "2012-10-17"
@@ -38,15 +136,211 @@
       "effective_action": "cloudwatch:PutMetricData",
       "privesc": false,
       "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "ec2:DescribeSubnets",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:DescribeSubnets",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "ec2:DescribeSecurityGroups",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:DescribeSecurityGroups",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "ec2:DescribeNetworkInterfaces",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:DescribeNetworkInterfaces",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "ec2:DescribeVpcs",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:DescribeVpcs",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:CreateNetworkInterface",
+      "condition": {
+        "StringEquals": {
+          "aws:RequestTag/VpcLatticeManaged": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:CreateNetworkInterface",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:CreateNetworkInterface",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:CreateNetworkInterface",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Tagging",
+      "action": "ec2:CreateTags",
+      "condition": {
+        "StringEquals": {
+          "ec2:CreateAction": "CreateNetworkInterface"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:CreateTags",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:ModifyNetworkInterfaceAttribute",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/VpcLatticeManaged": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:ModifyNetworkInterfaceAttribute",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Permissions management",
+      "action": "ec2:CreateNetworkInterfacePermission",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/VpcLatticeManaged": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:CreateNetworkInterfacePermission",
+      "privesc": false,
+      "resource_exposure": true
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:DeleteNetworkInterface",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/VpcLatticeManaged": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:DeleteNetworkInterface",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:ModifyNetworkInterfaceAttribute",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:ModifyNetworkInterfaceAttribute",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:AssignIpv6Addresses",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/VpcLatticeManaged": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:AssignIpv6Addresses",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:UnassignIpv6Addresses",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/VpcLatticeManaged": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:UnassignIpv6Addresses",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:AssignPrivateIpAddresses",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/VpcLatticeManaged": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:AssignPrivateIpAddresses",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:UnassignPrivateIpAddresses",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/VpcLatticeManaged": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:UnassignPrivateIpAddresses",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "route53:AssociateVPCWithHostedZone",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "route53:AssociateVPCWithHostedZone",
+      "privesc": false,
+      "resource_exposure": false
     }
   ],
   "grantless": false,
   "malformed": false,
   "name": "AWSVpcLatticeServiceRolePolicy",
   "privesc": false,
-  "resource_exposure": false,
+  "resource_exposure": true,
   "undocumented_actions": false,
   "unknown_actions": [],
-  "updatedate": "2022-11-30T20:47:10+00:00",
-  "version": "v1"
+  "updatedate": "2024-12-01T14:06:06+00:00",
+  "version": "v2"
 }
