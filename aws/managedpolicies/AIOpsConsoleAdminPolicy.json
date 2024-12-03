@@ -1,0 +1,772 @@
+{
+  "access_levels": [
+    "List",
+    "Read",
+    "Tagging",
+    "Write",
+    "Permissions management"
+  ],
+  "arn": "arn:aws:iam::aws:policy/AIOpsConsoleAdminPolicy",
+  "createdate": "2024-12-02T23:51:06Z",
+  "credentials_exposure": false,
+  "data_access": true,
+  "deprecated": false,
+  "document": {
+    "Statement": [
+      {
+        "Action": [
+          "aiops:*"
+        ],
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "AIOpsAdmin"
+      },
+      {
+        "Action": [
+          "organizations:ListAWSServiceAccessForOrganization",
+          "organizations:DescribeOrganization"
+        ],
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "OrganizationsAccess"
+      },
+      {
+        "Action": [
+          "sso:PutApplicationAccessScope",
+          "sso:PutApplicationAssignmentConfiguration",
+          "sso:PutApplicationGrant",
+          "sso:PutApplicationAuthenticationMethod",
+          "sso:DeleteApplication"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:CalledViaLast": "aiops.amazonaws.com",
+            "aws:ResourceTag/ManagedByAmazonAIOperations": "true"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "SSOApplicationManagement"
+      },
+      {
+        "Action": [
+          "sso:CreateApplication",
+          "sso:TagResource"
+        ],
+        "Condition": {
+          "ForAllValues:StringEquals": {
+            "aws:TagKeys": [
+              "ManagedByAmazonAIOperations"
+            ]
+          },
+          "StringEquals": {
+            "aws:CalledViaLast": "aiops.amazonaws.com",
+            "aws:RequestTag/ManagedByAmazonAIOperations": "true"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:sso:::instance/*",
+          "arn:aws:sso::aws:applicationProvider/aiops"
+        ],
+        "Sid": "SSOApplicationTagManagement"
+      },
+      {
+        "Action": [
+          "sso:TagResource"
+        ],
+        "Condition": {
+          "ForAllValues:StringEquals": {
+            "aws:TagKeys": [
+              "ManagedByAmazonAIOperations"
+            ]
+          },
+          "StringEquals": {
+            "aws:CalledViaLast": "aiops.amazonaws.com",
+            "aws:ResourceTag/ManagedByAmazonAIOperations": "true"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:sso::*:application/*",
+        "Sid": "SSOTagManagement"
+      },
+      {
+        "Action": [
+          "identitystore:DescribeUser",
+          "sso:ListApplications",
+          "sso:ListInstances",
+          "sso:DescribeRegisteredRegions",
+          "sso:GetSharedSsoConfiguration",
+          "sso:DescribeInstance",
+          "sso:GetSSOStatus",
+          "sso-directory:DescribeUsers"
+        ],
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "SSOManagementAccess"
+      },
+      {
+        "Action": [
+          "sts:SetContext"
+        ],
+        "Effect": "Allow",
+        "Resource": "arn:aws:sts::*:self",
+        "Sid": "AllowSTSContextSetting"
+      },
+      {
+        "Action": [
+          "signin:ListTrustedIdentityPropagationApplicationsForConsole"
+        ],
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "IdentityPropagationAccess"
+      },
+      {
+        "Action": [
+          "cloudtrail:ListTrails",
+          "cloudtrail:DescribeTrails",
+          "cloudtrail:ListEventDataStores"
+        ],
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "CloudtrailAccess"
+      },
+      {
+        "Action": [
+          "kms:ListAliases"
+        ],
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "KMSAccess"
+      },
+      {
+        "Action": [
+          "secretsmanager:CreateSecret",
+          "secretsmanager:PutResourcePolicy",
+          "secretsmanager:UpdateSecret",
+          "secretsmanager:DeleteSecret"
+        ],
+        "Effect": "Allow",
+        "Resource": "arn:aws:secretsmanager:*:*:secret:aws/ssm/3p/*",
+        "Sid": "SSMIntegrationSecretsManagerAccess"
+      },
+      {
+        "Action": [
+          "ssm:GetServiceSetting",
+          "ssm:UpdateServiceSetting"
+        ],
+        "Effect": "Allow",
+        "Resource": "arn:aws:ssm:*:*:servicesetting/integrations/*",
+        "Sid": "SSMIntegrationAccess"
+      },
+      {
+        "Action": [
+          "iam:CreatePolicy"
+        ],
+        "Effect": "Allow",
+        "Resource": "arn:aws:iam::*:policy/service-role/AWSServiceRoleSSMIntegrationsPolicy*",
+        "Sid": "SSMIntegrationCreatePolicy"
+      },
+      {
+        "Action": [
+          "chatbot:DescribeChimeWebhookConfigurations",
+          "chatbot:DescribeSlackWorkspaces",
+          "chatbot:DescribeSlackChannelConfigurations",
+          "chatbot:ListMicrosoftTeamsChannelConfigurations",
+          "chatbot:ListMicrosoftTeamsConfiguredTeams"
+        ],
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "ChatbotConfigurations"
+      },
+      {
+        "Action": [
+          "iam:PassRole"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "iam:PassedToService": "aiops.amazonaws.com"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "IAMPassRoleToAIOps"
+      },
+      {
+        "Action": [
+          "iam:ListRoles"
+        ],
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "IAMListRoles"
+      },
+      {
+        "Action": [
+          "tag:GetTagKeys"
+        ],
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "TagBoundaryPermission"
+      },
+      {
+        "Action": [
+          "iam:PassRole"
+        ],
+        "Condition": {
+          "ArnEquals": {
+            "iam:AssociatedResourceArn": "arn:aws:aiops:*:*:investigation-group/*"
+          },
+          "StringEquals": {
+            "iam:PassedToService": "ssm.integrations.amazonaws.com"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "IAMPassRoleToSSMIntegration"
+      },
+      {
+        "Action": [
+          "ssm:CreateOpsItem",
+          "ssm:AddTagsToResource"
+        ],
+        "Condition": {
+          "ForAllValues:StringEquals": {
+            "aws:TagKeys": [
+              "Integration"
+            ]
+          },
+          "StringEquals": {
+            "aws:RequestTag/Integration": "CloudWatch",
+            "aws:ResourceTag/Integration": "CloudWatch"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:*:ssm:*:*:opsitem/*",
+        "Sid": "SSMOpsItemAccess"
+      }
+    ],
+    "Version": "2012-10-17"
+  },
+  "effective_actions": [
+    {
+      "access_level": "List",
+      "action": "organizations:ListAWSServiceAccessForOrganization",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "organizations:ListAWSServiceAccessForOrganization",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "organizations:DescribeOrganization",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "organizations:DescribeOrganization",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "sso:PutApplicationAccessScope",
+      "condition": {
+        "StringEquals": {
+          "aws:CalledViaLast": "aiops.amazonaws.com",
+          "aws:ResourceTag/ManagedByAmazonAIOperations": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sso:PutApplicationAccessScope",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "sso:PutApplicationAssignmentConfiguration",
+      "condition": {
+        "StringEquals": {
+          "aws:CalledViaLast": "aiops.amazonaws.com",
+          "aws:ResourceTag/ManagedByAmazonAIOperations": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sso:PutApplicationAssignmentConfiguration",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "sso:PutApplicationGrant",
+      "condition": {
+        "StringEquals": {
+          "aws:CalledViaLast": "aiops.amazonaws.com",
+          "aws:ResourceTag/ManagedByAmazonAIOperations": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sso:PutApplicationGrant",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "sso:PutApplicationAuthenticationMethod",
+      "condition": {
+        "StringEquals": {
+          "aws:CalledViaLast": "aiops.amazonaws.com",
+          "aws:ResourceTag/ManagedByAmazonAIOperations": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sso:PutApplicationAuthenticationMethod",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "sso:DeleteApplication",
+      "condition": {
+        "StringEquals": {
+          "aws:CalledViaLast": "aiops.amazonaws.com",
+          "aws:ResourceTag/ManagedByAmazonAIOperations": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sso:DeleteApplication",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "sso:CreateApplication",
+      "condition": {
+        "ForAllValues:StringEquals": {
+          "aws:TagKeys": [
+            "ManagedByAmazonAIOperations"
+          ]
+        },
+        "StringEquals": {
+          "aws:CalledViaLast": "aiops.amazonaws.com",
+          "aws:RequestTag/ManagedByAmazonAIOperations": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sso:CreateApplication",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Tagging",
+      "action": "sso:TagResource",
+      "condition": {
+        "ForAllValues:StringEquals": {
+          "aws:TagKeys": [
+            "ManagedByAmazonAIOperations"
+          ]
+        },
+        "StringEquals": {
+          "aws:CalledViaLast": "aiops.amazonaws.com",
+          "aws:RequestTag/ManagedByAmazonAIOperations": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sso:TagResource",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Tagging",
+      "action": "sso:TagResource",
+      "condition": {
+        "ForAllValues:StringEquals": {
+          "aws:TagKeys": [
+            "ManagedByAmazonAIOperations"
+          ]
+        },
+        "StringEquals": {
+          "aws:CalledViaLast": "aiops.amazonaws.com",
+          "aws:ResourceTag/ManagedByAmazonAIOperations": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sso:TagResource",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "identitystore:DescribeUser",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "identitystore:DescribeUser",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "sso:ListApplications",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sso:ListApplications",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "sso:ListInstances",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sso:ListInstances",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "sso:DescribeRegisteredRegions",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sso:DescribeRegisteredRegions",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "sso:GetSharedSsoConfiguration",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sso:GetSharedSsoConfiguration",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "sso:DescribeInstance",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sso:DescribeInstance",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "sso:GetSSOStatus",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sso:GetSSOStatus",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "sso-directory:DescribeUsers",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sso-directory:DescribeUsers",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "sts:SetContext",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sts:SetContext",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "signin:ListTrustedIdentityPropagationApplicationsForConsole",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "signin:ListTrustedIdentityPropagationApplicationsForConsole",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "cloudtrail:ListTrails",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudtrail:ListTrails",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "cloudtrail:DescribeTrails",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudtrail:DescribeTrails",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "cloudtrail:ListEventDataStores",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudtrail:ListEventDataStores",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "kms:ListAliases",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "kms:ListAliases",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "secretsmanager:CreateSecret",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "secretsmanager:CreateSecret",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Permissions management",
+      "action": "secretsmanager:PutResourcePolicy",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "secretsmanager:PutResourcePolicy",
+      "privesc": false,
+      "resource_exposure": true
+    },
+    {
+      "access_level": "Write",
+      "action": "secretsmanager:UpdateSecret",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "secretsmanager:UpdateSecret",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "secretsmanager:DeleteSecret",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "secretsmanager:DeleteSecret",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "ssm:GetServiceSetting",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ssm:GetServiceSetting",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ssm:UpdateServiceSetting",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ssm:UpdateServiceSetting",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Permissions management",
+      "action": "iam:CreatePolicy",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "iam:CreatePolicy",
+      "privesc": false,
+      "resource_exposure": true
+    },
+    {
+      "access_level": "Read",
+      "action": "chatbot:DescribeChimeWebhookConfigurations",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "chatbot:DescribeChimeWebhookConfigurations",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "chatbot:DescribeSlackWorkspaces",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "chatbot:DescribeSlackWorkspaces",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "chatbot:DescribeSlackChannelConfigurations",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "chatbot:DescribeSlackChannelConfigurations",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "chatbot:ListMicrosoftTeamsChannelConfigurations",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "chatbot:ListMicrosoftTeamsChannelConfigurations",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "chatbot:ListMicrosoftTeamsConfiguredTeams",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": true,
+      "effective_action": "chatbot:ListMicrosoftTeamsConfiguredTeams",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "iam:PassRole",
+      "condition": {
+        "StringEquals": {
+          "iam:PassedToService": "aiops.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "iam:PassRole",
+      "privesc": true,
+      "resource_exposure": true
+    },
+    {
+      "access_level": "List",
+      "action": "iam:ListRoles",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "iam:ListRoles",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "tag:GetTagKeys",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "tag:GetTagKeys",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "iam:PassRole",
+      "condition": {
+        "ArnEquals": {
+          "iam:AssociatedResourceArn": "arn:aws:aiops:*:*:investigation-group/*"
+        },
+        "StringEquals": {
+          "iam:PassedToService": "ssm.integrations.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "iam:PassRole",
+      "privesc": true,
+      "resource_exposure": true
+    },
+    {
+      "access_level": "Write",
+      "action": "ssm:CreateOpsItem",
+      "condition": {
+        "ForAllValues:StringEquals": {
+          "aws:TagKeys": [
+            "Integration"
+          ]
+        },
+        "StringEquals": {
+          "aws:RequestTag/Integration": "CloudWatch",
+          "aws:ResourceTag/Integration": "CloudWatch"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ssm:CreateOpsItem",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Tagging",
+      "action": "ssm:AddTagsToResource",
+      "condition": {
+        "ForAllValues:StringEquals": {
+          "aws:TagKeys": [
+            "Integration"
+          ]
+        },
+        "StringEquals": {
+          "aws:RequestTag/Integration": "CloudWatch",
+          "aws:ResourceTag/Integration": "CloudWatch"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ssm:AddTagsToResource",
+      "privesc": false,
+      "resource_exposure": false
+    }
+  ],
+  "grantless": false,
+  "malformed": false,
+  "name": "AIOpsConsoleAdminPolicy",
+  "privesc": true,
+  "resource_exposure": true,
+  "undocumented_actions": false,
+  "unknown_actions": [
+    {
+      "action": "aiops:*",
+      "condition": null
+    }
+  ],
+  "updatedate": "2024-12-02T23:51:06+00:00",
+  "version": "v1"
+}
