@@ -4,7 +4,7 @@
     "Read"
   ],
   "arn": "arn:aws:iam::aws:policy/AmazonBedrockReadOnly",
-  "createdate": "2024-10-18T18:16:43Z",
+  "createdate": "2024-12-04T19:36:07Z",
   "credentials_exposure": false,
   "data_access": false,
   "deprecated": false,
@@ -12,33 +12,53 @@
     "Statement": [
       {
         "Action": [
-          "bedrock:GetFoundationModel",
-          "bedrock:ListFoundationModels",
-          "bedrock:GetModelInvocationLoggingConfiguration",
-          "bedrock:GetProvisionedModelThroughput",
-          "bedrock:ListProvisionedModelThroughputs",
-          "bedrock:GetModelCustomizationJob",
-          "bedrock:ListModelCustomizationJobs",
-          "bedrock:ListCustomModels",
-          "bedrock:GetCustomModel",
-          "bedrock:ListTagsForResource",
-          "bedrock:GetFoundationModelAvailability",
-          "bedrock:GetGuardrail",
-          "bedrock:ListGuardrails",
-          "bedrock:GetEvaluationJob",
-          "bedrock:ListEvaluationJobs",
-          "bedrock:GetModelInvocationJob",
-          "bedrock:ListModelInvocationJobs",
-          "bedrock:GetInferenceProfile",
-          "bedrock:ListInferenceProfiles",
-          "bedrock:ListImportedModels",
-          "bedrock:GetImportedModel",
-          "bedrock:ListModelImportJobs",
-          "bedrock:GetModelImportJob"
+          "bedrock:Get*",
+          "bedrock:List*"
         ],
         "Effect": "Allow",
         "Resource": "*",
         "Sid": "AmazonBedrockReadOnly"
+      },
+      {
+        "Action": [
+          "sagemaker:DescribeEndpoint",
+          "sagemaker:DescribeEndpointConfig",
+          "sagemaker:DescribeModel",
+          "sagemaker:DescribeInferenceComponent",
+          "sagemaker:ListEndpoints",
+          "sagemaker:ListTags"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:CalledViaLast": "bedrock.amazonaws.com"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:sagemaker:*:*:endpoint/*",
+          "arn:aws:sagemaker:*:*:endpoint-config/*",
+          "arn:aws:sagemaker:*:*:model/*"
+        ],
+        "Sid": "MarketplaceModelEndpointNonMutatingAPIs"
+      },
+      {
+        "Action": [
+          "sagemaker:DescribeHubContent"
+        ],
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:sagemaker:*:aws:hub-content/SageMakerPublicHub/Model/*",
+          "arn:aws:sagemaker:*:aws:hub/SageMakerPublicHub"
+        ],
+        "Sid": "DiscoveringMarketplaceModel"
+      },
+      {
+        "Action": [
+          "sagemaker:ListHubContents"
+        ],
+        "Effect": "Allow",
+        "Resource": "arn:aws:sagemaker:*:aws:hub/SageMakerPublicHub",
+        "Sid": "AllowMarketplaceModelsListing"
       }
     ],
     "Version": "2012-10-17"
@@ -46,87 +66,67 @@
   "effective_actions": [
     {
       "access_level": "Read",
-      "action": "bedrock:GetFoundationModel",
+      "action": "bedrock:Get*",
       "condition": null,
       "credentials_exposure": false,
       "data_access": false,
-      "effective_action": "bedrock:GetFoundationModel",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "bedrock:ListFoundationModels",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "bedrock:ListFoundationModels",
+      "effective_action": "bedrock:GetAgent",
       "privesc": false,
       "resource_exposure": false
     },
     {
       "access_level": "Read",
-      "action": "bedrock:GetModelInvocationLoggingConfiguration",
+      "action": "bedrock:Get*",
       "condition": null,
       "credentials_exposure": false,
       "data_access": false,
-      "effective_action": "bedrock:GetModelInvocationLoggingConfiguration",
+      "effective_action": "bedrock:GetAgentActionGroup",
       "privesc": false,
       "resource_exposure": false
     },
     {
       "access_level": "Read",
-      "action": "bedrock:GetProvisionedModelThroughput",
+      "action": "bedrock:Get*",
       "condition": null,
       "credentials_exposure": false,
       "data_access": false,
-      "effective_action": "bedrock:GetProvisionedModelThroughput",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "bedrock:ListProvisionedModelThroughputs",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "bedrock:ListProvisionedModelThroughputs",
+      "effective_action": "bedrock:GetAgentAlias",
       "privesc": false,
       "resource_exposure": false
     },
     {
       "access_level": "Read",
-      "action": "bedrock:GetModelCustomizationJob",
+      "action": "bedrock:Get*",
       "condition": null,
       "credentials_exposure": false,
       "data_access": false,
-      "effective_action": "bedrock:GetModelCustomizationJob",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "bedrock:ListModelCustomizationJobs",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "bedrock:ListModelCustomizationJobs",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "bedrock:ListCustomModels",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "bedrock:ListCustomModels",
+      "effective_action": "bedrock:GetAgentKnowledgeBase",
       "privesc": false,
       "resource_exposure": false
     },
     {
       "access_level": "Read",
-      "action": "bedrock:GetCustomModel",
+      "action": "bedrock:Get*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "bedrock:GetAgentMemory",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "bedrock:Get*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "bedrock:GetAgentVersion",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "bedrock:Get*",
       "condition": null,
       "credentials_exposure": false,
       "data_access": false,
@@ -136,17 +136,67 @@
     },
     {
       "access_level": "Read",
-      "action": "bedrock:ListTagsForResource",
+      "action": "bedrock:Get*",
       "condition": null,
       "credentials_exposure": false,
       "data_access": false,
-      "effective_action": "bedrock:ListTagsForResource",
+      "effective_action": "bedrock:GetDataSource",
       "privesc": false,
       "resource_exposure": false
     },
     {
       "access_level": "Read",
-      "action": "bedrock:GetFoundationModelAvailability",
+      "action": "bedrock:Get*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "bedrock:GetEvaluationJob",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "bedrock:Get*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "bedrock:GetFlow",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "bedrock:Get*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "bedrock:GetFlowAlias",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "bedrock:Get*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "bedrock:GetFlowVersion",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "bedrock:Get*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "bedrock:GetFoundationModel",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "bedrock:Get*",
       "condition": null,
       "credentials_exposure": false,
       "data_access": false,
@@ -156,7 +206,7 @@
     },
     {
       "access_level": "Read",
-      "action": "bedrock:GetGuardrail",
+      "action": "bedrock:Get*",
       "condition": null,
       "credentials_exposure": false,
       "data_access": false,
@@ -165,58 +215,18 @@
       "resource_exposure": false
     },
     {
-      "access_level": "List",
-      "action": "bedrock:ListGuardrails",
+      "access_level": "Read",
+      "action": "bedrock:Get*",
       "condition": null,
       "credentials_exposure": false,
       "data_access": false,
-      "effective_action": "bedrock:ListGuardrails",
+      "effective_action": "bedrock:GetImportedModel",
       "privesc": false,
       "resource_exposure": false
     },
     {
       "access_level": "Read",
-      "action": "bedrock:GetEvaluationJob",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "bedrock:GetEvaluationJob",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "bedrock:ListEvaluationJobs",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "bedrock:ListEvaluationJobs",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Read",
-      "action": "bedrock:GetModelInvocationJob",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "bedrock:GetModelInvocationJob",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "bedrock:ListModelInvocationJobs",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "bedrock:ListModelInvocationJobs",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Read",
-      "action": "bedrock:GetInferenceProfile",
+      "action": "bedrock:Get*",
       "condition": null,
       "credentials_exposure": false,
       "data_access": false,
@@ -225,8 +235,278 @@
       "resource_exposure": false
     },
     {
+      "access_level": "Read",
+      "action": "bedrock:Get*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "bedrock:GetIngestionJob",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "bedrock:Get*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "bedrock:GetKnowledgeBase",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "bedrock:Get*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "bedrock:GetModelCopyJob",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "bedrock:Get*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "bedrock:GetModelCustomizationJob",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "bedrock:Get*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "bedrock:GetModelEvaluationJob",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "bedrock:Get*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "bedrock:GetModelImportJob",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "bedrock:Get*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "bedrock:GetModelInvocationJob",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "bedrock:Get*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "bedrock:GetModelInvocationLoggingConfiguration",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "bedrock:Get*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "bedrock:GetPrompt",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "bedrock:Get*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "bedrock:GetProvisionedModelThroughput",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "bedrock:Get*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "bedrock:GetResourcePolicy",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "bedrock:Get*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "bedrock:GetUseCaseForModelAccess",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
       "access_level": "List",
-      "action": "bedrock:ListInferenceProfiles",
+      "action": "bedrock:List*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "bedrock:ListAgentActionGroups",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "bedrock:List*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "bedrock:ListAgentAliases",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "bedrock:List*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "bedrock:ListAgentKnowledgeBases",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "bedrock:List*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "bedrock:ListAgentVersions",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "bedrock:List*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "bedrock:ListAgents",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "bedrock:List*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "bedrock:ListCustomModels",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "bedrock:List*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "bedrock:ListDataSources",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "bedrock:List*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "bedrock:ListEvaluationJobs",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "bedrock:List*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "bedrock:ListFlowAliases",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "bedrock:List*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "bedrock:ListFlowVersions",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "bedrock:List*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "bedrock:ListFlows",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "bedrock:List*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "bedrock:ListFoundationModelAgreementOffers",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "bedrock:List*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "bedrock:ListFoundationModels",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "bedrock:List*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "bedrock:ListGuardrails",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "bedrock:List*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "bedrock:ListImportedModels",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "bedrock:List*",
       "condition": null,
       "credentials_exposure": false,
       "data_access": false,
@@ -236,27 +516,57 @@
     },
     {
       "access_level": "List",
-      "action": "bedrock:ListImportedModels",
+      "action": "bedrock:List*",
       "condition": null,
       "credentials_exposure": false,
       "data_access": false,
-      "effective_action": "bedrock:ListImportedModels",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Read",
-      "action": "bedrock:GetImportedModel",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "bedrock:GetImportedModel",
+      "effective_action": "bedrock:ListIngestionJobs",
       "privesc": false,
       "resource_exposure": false
     },
     {
       "access_level": "List",
-      "action": "bedrock:ListModelImportJobs",
+      "action": "bedrock:List*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "bedrock:ListKnowledgeBases",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "bedrock:List*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "bedrock:ListModelCopyJobs",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "bedrock:List*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "bedrock:ListModelCustomizationJobs",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "bedrock:List*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "bedrock:ListModelEvaluationJobs",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "bedrock:List*",
       "condition": null,
       "credentials_exposure": false,
       "data_access": false,
@@ -265,12 +575,146 @@
       "resource_exposure": false
     },
     {
-      "access_level": "Read",
-      "action": "bedrock:GetModelImportJob",
+      "access_level": "List",
+      "action": "bedrock:List*",
       "condition": null,
       "credentials_exposure": false,
       "data_access": false,
-      "effective_action": "bedrock:GetModelImportJob",
+      "effective_action": "bedrock:ListModelInvocationJobs",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "bedrock:List*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "bedrock:ListPrompts",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "bedrock:List*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "bedrock:ListProvisionedModelThroughputs",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "bedrock:List*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "bedrock:ListTagsForResource",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "sagemaker:DescribeEndpoint",
+      "condition": {
+        "StringEquals": {
+          "aws:CalledViaLast": "bedrock.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sagemaker:DescribeEndpoint",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "sagemaker:DescribeEndpointConfig",
+      "condition": {
+        "StringEquals": {
+          "aws:CalledViaLast": "bedrock.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sagemaker:DescribeEndpointConfig",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "sagemaker:DescribeModel",
+      "condition": {
+        "StringEquals": {
+          "aws:CalledViaLast": "bedrock.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sagemaker:DescribeModel",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "sagemaker:DescribeInferenceComponent",
+      "condition": {
+        "StringEquals": {
+          "aws:CalledViaLast": "bedrock.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sagemaker:DescribeInferenceComponent",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "sagemaker:ListEndpoints",
+      "condition": {
+        "StringEquals": {
+          "aws:CalledViaLast": "bedrock.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sagemaker:ListEndpoints",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "sagemaker:ListTags",
+      "condition": {
+        "StringEquals": {
+          "aws:CalledViaLast": "bedrock.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sagemaker:ListTags",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "sagemaker:DescribeHubContent",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sagemaker:DescribeHubContent",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "sagemaker:ListHubContents",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sagemaker:ListHubContents",
       "privesc": false,
       "resource_exposure": false
     }
@@ -282,6 +726,6 @@
   "resource_exposure": false,
   "undocumented_actions": false,
   "unknown_actions": [],
-  "updatedate": "2024-10-18T18:16:43+00:00",
-  "version": "v4"
+  "updatedate": "2024-12-04T19:36:07+00:00",
+  "version": "v5"
 }
