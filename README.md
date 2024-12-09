@@ -12,6 +12,7 @@ It is currently being used to support:
 * [claws](https://clawsapp.com)
 * [LocalStack](https://discuss.localstack.cloud/t/localstack-release-v2-2-0/424#live-policy-streams-9)
 * [Access Undenied](https://github.com/ermetic/access-undenied-aws)
+* [Otterize](https://otterize.com/)
 
 Tooling which assists in the generation of some datasources is located in the `util/` directory.
 
