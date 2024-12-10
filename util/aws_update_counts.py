@@ -24,11 +24,23 @@ historic_counts['iam'].append({
 
 api_count = 0
 servicecounts = {}
-for filename in os.listdir('util/aws_js/node_modules/aws-sdk/apis/'):
-    if filename.endswith('.min.json'):
-        with open('util/aws_js/node_modules/aws-sdk/apis/' + filename, "r") as f:
-            api_def = json.loads(f.read())
-            servicecounts[api_def['metadata']['serviceId']] = len(api_def['operations'].keys())
+for servname in os.listdir('util/aws-sdk-ruby/apis/'):
+    lastvername = ''
+    for vername in os.listdir('util/aws-sdk-ruby/apis/' + servname):
+        if vername > lastvername:
+            lastvername = vername
+    for filename in os.listdir('util/aws-sdk-ruby/apis/' + servname + '/' + lastvername):
+        if filename == 'api-2.json':
+            with open('util/aws-sdk-ruby/apis/' + servname + '/' + lastvername + '/api-2.json', "r") as f:
+                api_def = json.loads(f.read())
+                
+                serviceId = ''
+                if 'serviceId' not in api_def['metadata']:
+                    serviceId = api_def['metadata']['endpointPrefix']
+                else:
+                    serviceId = api_def['metadata']['serviceId']
+
+                servicecounts[serviceId] = len(api_def['operations'].keys())
 for v in servicecounts.values():
     api_count += v
 historic_counts['api'].append({
