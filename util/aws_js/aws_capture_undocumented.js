@@ -8,7 +8,6 @@ AWS.config.credentials = credentials;
 AWS.config.region = 'us-east-1';
 
 var long_undocumented_test_list = `
-APIGateway.TagResource {3} - apigateway
 CloudTrail.ListInsightsMetricData {3} - cloudtrail
 Lambda.InvokeWithResponseStream {3} - lambda
 S3.CreateSession {3} - s3
@@ -23,8 +22,6 @@ Glue.ListDataQualityStatistics {3} - glue
 QuickSight.DescribeAnalysisDefinition {3} - quicksight
 QuickSight.DescribeDashboardDefinition {3} - quicksight
 QuickSight.DescribeTemplateDefinition {3} - quicksight
-MediaConnect.DescribeFlowSourceThumbnail {3} - mediaconnect
-Personalize.UpdateSolution {3} - personalize
 LakeFormation.AssumeDecoratedRoleWithSAML {3} - lakeformation
 LakeFormation.GetTemporaryGluePartitionCredentials {3} - lakeformation
 LakeFormation.GetTemporaryGlueTableCredentials {3} - lakeformation
@@ -262,44 +259,6 @@ OpenSearchServerless.UpdateLifecyclePolicy {3} - opensearchserverless
 OpenSearchServerless.UpdateSecurityConfig {3} - opensearchserverless
 OpenSearchServerless.UpdateSecurityPolicy {3} - opensearchserverless
 OpenSearchServerless.UpdateVpcEndpoint {3} - opensearchserverless
-CodeCatalyst.CreateAccessToken {3} - codecatalyst
-CodeCatalyst.CreateDevEnvironment {3} - codecatalyst
-CodeCatalyst.CreateProject {3} - codecatalyst
-CodeCatalyst.CreateSourceRepository {3} - codecatalyst
-CodeCatalyst.CreateSourceRepositoryBranch {3} - codecatalyst
-CodeCatalyst.DeleteAccessToken {3} - codecatalyst
-CodeCatalyst.DeleteDevEnvironment {3} - codecatalyst
-CodeCatalyst.DeleteProject {3} - codecatalyst
-CodeCatalyst.DeleteSourceRepository {3} - codecatalyst
-CodeCatalyst.DeleteSpace {3} - codecatalyst
-CodeCatalyst.GetDevEnvironment {3} - codecatalyst
-CodeCatalyst.GetProject {3} - codecatalyst
-CodeCatalyst.GetSourceRepository {3} - codecatalyst
-CodeCatalyst.GetSourceRepositoryCloneUrls {3} - codecatalyst
-CodeCatalyst.GetSpace {3} - codecatalyst
-CodeCatalyst.GetSubscription {3} - codecatalyst
-CodeCatalyst.GetUserDetails {3} - codecatalyst
-CodeCatalyst.GetWorkflow {3} - codecatalyst
-CodeCatalyst.GetWorkflowRun {3} - codecatalyst
-CodeCatalyst.ListAccessTokens {3} - codecatalyst
-CodeCatalyst.ListDevEnvironmentSessions {3} - codecatalyst
-CodeCatalyst.ListDevEnvironments {3} - codecatalyst
-CodeCatalyst.ListEventLogs {3} - codecatalyst
-CodeCatalyst.ListProjects {3} - codecatalyst
-CodeCatalyst.ListSourceRepositories {3} - codecatalyst
-CodeCatalyst.ListSourceRepositoryBranches {3} - codecatalyst
-CodeCatalyst.ListSpaces {3} - codecatalyst
-CodeCatalyst.ListWorkflowRuns {3} - codecatalyst
-CodeCatalyst.ListWorkflows {3} - codecatalyst
-CodeCatalyst.StartDevEnvironment {3} - codecatalyst
-CodeCatalyst.StartDevEnvironmentSession {3} - codecatalyst
-CodeCatalyst.StartWorkflowRun {3} - codecatalyst
-CodeCatalyst.StopDevEnvironment {3} - codecatalyst
-CodeCatalyst.StopDevEnvironmentSession {3} - codecatalyst
-CodeCatalyst.UpdateDevEnvironment {3} - codecatalyst
-CodeCatalyst.UpdateProject {3} - codecatalyst
-CodeCatalyst.UpdateSpace {3} - codecatalyst
-CodeCatalyst.VerifySession {3} - codecatalyst
 SageMakerMetrics.BatchPutMetrics {3} - sagemakermetrics
 KinesisVideoWebRTCStorage.JoinStorageSession {3} - kinesisvideowebrtcstorage
 KinesisVideoWebRTCStorage.JoinStorageSessionAsViewer {3} - kinesisvideowebrtcstorage
@@ -346,7 +305,6 @@ PaymentCryptographyData.VerifyAuthRequestCryptogram {3} - paymentcryptographydat
 PaymentCryptographyData.VerifyCardValidationData {3} - paymentcryptographydata
 PaymentCryptographyData.VerifyMac {3} - paymentcryptographydata
 PaymentCryptographyData.VerifyPinData {3} - paymentcryptographydata
-VerifiedPermissions.BatchIsAuthorizedWithToken {3} - verifiedpermissions
 Neptunedata.CancelGremlinQuery {3} - neptunedata
 Neptunedata.CancelLoaderJob {3} - neptunedata
 Neptunedata.CancelMLDataProcessingJob {3} - neptunedata
@@ -390,8 +348,6 @@ Neptunedata.StartLoaderJob {3} - neptunedata
 Neptunedata.StartMLDataProcessingJob {3} - neptunedata
 Neptunedata.StartMLModelTrainingJob {3} - neptunedata
 Neptunedata.StartMLModelTransformJob {3} - neptunedata
-BedrockRuntime.Converse {3} - bedrock
-BedrockRuntime.ConverseStream {3} - bedrock
 QConnect.CreateAssistant {3} - qconnect
 QConnect.CreateAssistantAssociation {3} - qconnect
 QConnect.CreateContent {3} - qconnect
@@ -496,7 +452,6 @@ TaxSettings.GetTaxRegistration {3} - taxsettings
 TaxSettings.GetTaxRegistrationDocument {3} - taxsettings
 TaxSettings.ListTaxRegistrations {3} - taxsettings
 TaxSettings.PutTaxRegistration {3} - taxsettings
-QApps.UpdateLibraryItemMetadata {3} - qapps
 `;
 
 var found_permissions = [];
@@ -520,7 +475,7 @@ async function go() {
 
         for (var iamdefitem of iamdef) {
             for (var priv of iamdefitem.privileges) {
-                known_permissions[iamdefitem.prefix+":"+priv.privilege] = (priv.access_level == "Unknown");
+                known_permissions[iamdefitem.prefix.toLowerCase()+":"+priv.privilege.toLowerCase()] = (priv.access_level == "Unknown");
             }
         }
         
@@ -605,7 +560,7 @@ async function go() {
 
         let res = {};
         for (let item of found_permissions) {
-            if (!Object.keys(known_permissions).includes(item['permission'])) {
+            if (!Object.keys(known_permissions).includes(item['permission'].toLowerCase())) {
                 res[item['service'] + "." + item['method']] = [{
                     "action": item['permission'],
                     "undocumented": true
@@ -616,18 +571,17 @@ async function go() {
                     };
                 }
             } else {
-                if (!known_permissions[item['permission']]) {
+                if (!known_permissions[item['permission'].toLowerCase()]) {
                     console.log("Invalid hit: " + item['permission']);
-                } else {
-                    res[item['service'] + "." + item['method']] = [{
-                        "action": item['permission'],
-                        "undocumented": true
-                    }];
-                    if (item['resource']) {
-                        res[item['service'] + "." + item['method']][0]['arn_override'] = {
-                            "template": transformArn(item['resource'])
-                        };
-                    }
+                }
+                res[item['service'] + "." + item['method']] = [{
+                    "action": item['permission'],
+                    "undocumented": true
+                }];
+                if (item['resource']) {
+                    res[item['service'] + "." + item['method']][0]['arn_override'] = {
+                        "template": transformArn(item['resource'])
+                    };
                 }
             }
         }
