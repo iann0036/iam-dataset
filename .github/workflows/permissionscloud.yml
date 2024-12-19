@@ -1,0 +1,26 @@
+name: Publish dataset for aws.permissions.cloud
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    name: Publish
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+
+    - name: Configure AWS creds
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.PERMISSIONS_CLOUD_AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.PERMISSIONS_CLOUD_AWS_SECRET_ACCESS_KEY }}
+        aws-region: us-east-1
+
+    - name: Copy files to origin S3 bucket
+      run: |
+        aws s3 cp --cache-control max-age=300 --recursive . s3://aws.permissions.cloud/iam-dataset/ --exclude "*" --include "*.json"
