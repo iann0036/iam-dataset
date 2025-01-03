@@ -7,7 +7,7 @@
     "Permissions management"
   ],
   "arn": "arn:aws:iam::aws:policy/SageMakerStudioProjectUserRolePolicy",
-  "createdate": "2024-11-28T04:51:07Z",
+  "createdate": "2025-01-03T00:37:07Z",
   "credentials_exposure": true,
   "data_access": true,
   "deprecated": false,
@@ -85,6 +85,32 @@
         "Effect": "Allow",
         "Resource": "*",
         "Sid": "CommonUserCodeCommitPermissions"
+      },
+      {
+        "Action": [
+          "kms:ReEncryptFrom",
+          "kms:ReEncryptTo",
+          "kms:Decrypt",
+          "kms:Encrypt",
+          "kms:GenerateDataKey",
+          "kms:GenerateDataKeyWithoutPlaintext"
+        ],
+        "Condition": {
+          "Null": {
+            "kms:EncryptionContext:aws:codecommit:id": "false"
+          },
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          },
+          "StringLike": {
+            "kms:ViaService": [
+              "codecommit.*.amazonaws.com"
+            ]
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:kms:*:*:key/${aws:PrincipalTag/KmsKeyId}",
+        "Sid": "CodeCommitKmsPermissions"
       },
       {
         "Action": [
@@ -386,6 +412,27 @@
           "arn:aws:ec2:*:*:network-interface/*"
         ],
         "Sid": "EC2TagsPermissionsForGlue"
+      },
+      {
+        "Action": [
+          "kms:Decrypt",
+          "kms:Encrypt",
+          "kms:GenerateDataKey"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}",
+            "kms:EncryptionContext:glue_catalog_id": "${aws:PrincipalAccount}"
+          },
+          "StringLike": {
+            "kms:ViaService": [
+              "glue.*.amazonaws.com"
+            ]
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:kms:*:*:key/${aws:PrincipalTag/KmsKeyId}",
+        "Sid": "GlueKmsPermissions"
       },
       {
         "Action": [
@@ -1476,7 +1523,8 @@
               "sagemaker.*.amazonaws.com",
               "emr-serverless.*.amazonaws.com",
               "s3.*.amazonaws.com",
-              "redshift.*.amazonaws.com"
+              "redshift.*.amazonaws.com",
+              "codecommit.*.amazonaws.com"
             ]
           }
         },
@@ -2699,6 +2747,138 @@
       "resource_exposure": false
     },
     {
+      "access_level": "Write",
+      "action": "kms:ReEncryptFrom",
+      "condition": {
+        "Null": {
+          "kms:EncryptionContext:aws:codecommit:id": "false"
+        },
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        },
+        "StringLike": {
+          "kms:ViaService": [
+            "codecommit.*.amazonaws.com"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "kms:ReEncryptFrom",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "kms:ReEncryptTo",
+      "condition": {
+        "Null": {
+          "kms:EncryptionContext:aws:codecommit:id": "false"
+        },
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        },
+        "StringLike": {
+          "kms:ViaService": [
+            "codecommit.*.amazonaws.com"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "kms:ReEncryptTo",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "kms:Decrypt",
+      "condition": {
+        "Null": {
+          "kms:EncryptionContext:aws:codecommit:id": "false"
+        },
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        },
+        "StringLike": {
+          "kms:ViaService": [
+            "codecommit.*.amazonaws.com"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "kms:Decrypt",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "kms:Encrypt",
+      "condition": {
+        "Null": {
+          "kms:EncryptionContext:aws:codecommit:id": "false"
+        },
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        },
+        "StringLike": {
+          "kms:ViaService": [
+            "codecommit.*.amazonaws.com"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "kms:Encrypt",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "kms:GenerateDataKey",
+      "condition": {
+        "Null": {
+          "kms:EncryptionContext:aws:codecommit:id": "false"
+        },
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        },
+        "StringLike": {
+          "kms:ViaService": [
+            "codecommit.*.amazonaws.com"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "kms:GenerateDataKey",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "kms:GenerateDataKeyWithoutPlaintext",
+      "condition": {
+        "Null": {
+          "kms:EncryptionContext:aws:codecommit:id": "false"
+        },
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        },
+        "StringLike": {
+          "kms:ViaService": [
+            "codecommit.*.amazonaws.com"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "kms:GenerateDataKeyWithoutPlaintext",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
       "access_level": "Read",
       "action": "codewhisperer:GenerateRecommendations",
       "condition": null,
@@ -3853,6 +4033,66 @@
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "ec2:CreateTags",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "kms:Decrypt",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}",
+          "kms:EncryptionContext:glue_catalog_id": "${aws:PrincipalAccount}"
+        },
+        "StringLike": {
+          "kms:ViaService": [
+            "glue.*.amazonaws.com"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "kms:Decrypt",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "kms:Encrypt",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}",
+          "kms:EncryptionContext:glue_catalog_id": "${aws:PrincipalAccount}"
+        },
+        "StringLike": {
+          "kms:ViaService": [
+            "glue.*.amazonaws.com"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "kms:Encrypt",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "kms:GenerateDataKey",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}",
+          "kms:EncryptionContext:glue_catalog_id": "${aws:PrincipalAccount}"
+        },
+        "StringLike": {
+          "kms:ViaService": [
+            "glue.*.amazonaws.com"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "kms:GenerateDataKey",
       "privesc": false,
       "resource_exposure": false
     },
@@ -8151,7 +8391,8 @@
             "sagemaker.*.amazonaws.com",
             "emr-serverless.*.amazonaws.com",
             "s3.*.amazonaws.com",
-            "redshift.*.amazonaws.com"
+            "redshift.*.amazonaws.com",
+            "codecommit.*.amazonaws.com"
           ]
         }
       },
@@ -8174,7 +8415,8 @@
             "sagemaker.*.amazonaws.com",
             "emr-serverless.*.amazonaws.com",
             "s3.*.amazonaws.com",
-            "redshift.*.amazonaws.com"
+            "redshift.*.amazonaws.com",
+            "codecommit.*.amazonaws.com"
           ]
         }
       },
@@ -8197,7 +8439,8 @@
             "sagemaker.*.amazonaws.com",
             "emr-serverless.*.amazonaws.com",
             "s3.*.amazonaws.com",
-            "redshift.*.amazonaws.com"
+            "redshift.*.amazonaws.com",
+            "codecommit.*.amazonaws.com"
           ]
         }
       },
@@ -9144,5 +9387,5 @@
   "undocumented_actions": false,
   "unknown_actions": [],
   "updatedate": "2024-11-28T04:51:07+00:00",
-  "version": "v5"
+  "version": "v6"
 }

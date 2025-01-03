@@ -7,7 +7,7 @@
     "Permissions management"
   ],
   "arn": "arn:aws:iam::aws:policy/SageMakerStudioProjectUserRolePermissionsBoundary",
-  "createdate": "2024-11-28T04:51:07Z",
+  "createdate": "2025-01-03T00:37:06Z",
   "credentials_exposure": true,
   "data_access": true,
   "deprecated": false,
@@ -80,14 +80,31 @@
               "emr-serverless.*.amazonaws.com",
               "s3.*.amazonaws.com",
               "redshift.*.amazonaws.com",
+              "redshift-serverless.*.amazonaws.com",
               "bedrock.*.amazonaws.com",
-              "secretsmanager.*.amazonaws.com"
+              "secretsmanager.*.amazonaws.com",
+              "ec2.*.amazonaws.com",
+              "codecommit.*.amazonaws.com",
+              "glue.*.amazonaws.com"
             ]
           }
         },
         "Effect": "Allow",
         "Resource": "arn:aws:kms:*:*:key/${aws:PrincipalTag/KmsKeyId}",
         "Sid": "SameAccountKMSPermissions"
+      },
+      {
+        "Action": [
+          "kms:GenerateDataKey"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:kms:*:*:key/${aws:PrincipalTag/KmsKeyId}",
+        "Sid": "AllowGenerateDataKeyForEmrEbsEncryption"
       },
       {
         "Action": [
@@ -107,7 +124,8 @@
               "s3.*.amazonaws.com",
               "redshift.*.amazonaws.com",
               "bedrock.*.amazonaws.com",
-              "secretsmanager.*.amazonaws.com"
+              "secretsmanager.*.amazonaws.com",
+              "codecommit.*.amazonaws.com"
             ]
           }
         },
@@ -961,6 +979,7 @@
           "sagemaker:DescribePipelineDefinitionForExecution",
           "sagemaker:DescribeHyperParameterTuningJob",
           "sagemaker:DescribeAutoMLJob",
+          "sagemaker:DescribeAutoMLJobV2",
           "sagemaker:DescribeProcessingJob",
           "sagemaker:DescribeTrainingJob",
           "sagemaker:DescribeAction",
@@ -2314,6 +2333,7 @@
           "sagemaker:DescribeApp",
           "sagemaker:DescribeArtifact",
           "sagemaker:DescribeAutoMLJob",
+          "sagemaker:DescribeAutoMLJobV2",
           "sagemaker:DescribeContext",
           "sagemaker:DescribeDomain",
           "sagemaker:DescribeEndpoint",
@@ -2489,8 +2509,12 @@
             "emr-serverless.*.amazonaws.com",
             "s3.*.amazonaws.com",
             "redshift.*.amazonaws.com",
+            "redshift-serverless.*.amazonaws.com",
             "bedrock.*.amazonaws.com",
-            "secretsmanager.*.amazonaws.com"
+            "secretsmanager.*.amazonaws.com",
+            "ec2.*.amazonaws.com",
+            "codecommit.*.amazonaws.com",
+            "glue.*.amazonaws.com"
           ]
         }
       },
@@ -2517,8 +2541,12 @@
             "emr-serverless.*.amazonaws.com",
             "s3.*.amazonaws.com",
             "redshift.*.amazonaws.com",
+            "redshift-serverless.*.amazonaws.com",
             "bedrock.*.amazonaws.com",
-            "secretsmanager.*.amazonaws.com"
+            "secretsmanager.*.amazonaws.com",
+            "ec2.*.amazonaws.com",
+            "codecommit.*.amazonaws.com",
+            "glue.*.amazonaws.com"
           ]
         }
       },
@@ -2545,8 +2573,12 @@
             "emr-serverless.*.amazonaws.com",
             "s3.*.amazonaws.com",
             "redshift.*.amazonaws.com",
+            "redshift-serverless.*.amazonaws.com",
             "bedrock.*.amazonaws.com",
-            "secretsmanager.*.amazonaws.com"
+            "secretsmanager.*.amazonaws.com",
+            "ec2.*.amazonaws.com",
+            "codecommit.*.amazonaws.com",
+            "glue.*.amazonaws.com"
           ]
         }
       },
@@ -2573,8 +2605,12 @@
             "emr-serverless.*.amazonaws.com",
             "s3.*.amazonaws.com",
             "redshift.*.amazonaws.com",
+            "redshift-serverless.*.amazonaws.com",
             "bedrock.*.amazonaws.com",
-            "secretsmanager.*.amazonaws.com"
+            "secretsmanager.*.amazonaws.com",
+            "ec2.*.amazonaws.com",
+            "codecommit.*.amazonaws.com",
+            "glue.*.amazonaws.com"
           ]
         }
       },
@@ -2601,8 +2637,12 @@
             "emr-serverless.*.amazonaws.com",
             "s3.*.amazonaws.com",
             "redshift.*.amazonaws.com",
+            "redshift-serverless.*.amazonaws.com",
             "bedrock.*.amazonaws.com",
-            "secretsmanager.*.amazonaws.com"
+            "secretsmanager.*.amazonaws.com",
+            "ec2.*.amazonaws.com",
+            "codecommit.*.amazonaws.com",
+            "glue.*.amazonaws.com"
           ]
         }
       },
@@ -2629,8 +2669,12 @@
             "emr-serverless.*.amazonaws.com",
             "s3.*.amazonaws.com",
             "redshift.*.amazonaws.com",
+            "redshift-serverless.*.amazonaws.com",
             "bedrock.*.amazonaws.com",
-            "secretsmanager.*.amazonaws.com"
+            "secretsmanager.*.amazonaws.com",
+            "ec2.*.amazonaws.com",
+            "codecommit.*.amazonaws.com",
+            "glue.*.amazonaws.com"
           ]
         }
       },
@@ -2657,14 +2701,32 @@
             "emr-serverless.*.amazonaws.com",
             "s3.*.amazonaws.com",
             "redshift.*.amazonaws.com",
+            "redshift-serverless.*.amazonaws.com",
             "bedrock.*.amazonaws.com",
-            "secretsmanager.*.amazonaws.com"
+            "secretsmanager.*.amazonaws.com",
+            "ec2.*.amazonaws.com",
+            "codecommit.*.amazonaws.com",
+            "glue.*.amazonaws.com"
           ]
         }
       },
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "kms:GenerateDataKeyWithoutPlaintext",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "kms:GenerateDataKey",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "kms:GenerateDataKey",
       "privesc": false,
       "resource_exposure": false
     },
@@ -2683,7 +2745,8 @@
             "s3.*.amazonaws.com",
             "redshift.*.amazonaws.com",
             "bedrock.*.amazonaws.com",
-            "secretsmanager.*.amazonaws.com"
+            "secretsmanager.*.amazonaws.com",
+            "codecommit.*.amazonaws.com"
           ]
         }
       },
@@ -2708,7 +2771,8 @@
             "s3.*.amazonaws.com",
             "redshift.*.amazonaws.com",
             "bedrock.*.amazonaws.com",
-            "secretsmanager.*.amazonaws.com"
+            "secretsmanager.*.amazonaws.com",
+            "codecommit.*.amazonaws.com"
           ]
         }
       },
@@ -2733,7 +2797,8 @@
             "s3.*.amazonaws.com",
             "redshift.*.amazonaws.com",
             "bedrock.*.amazonaws.com",
-            "secretsmanager.*.amazonaws.com"
+            "secretsmanager.*.amazonaws.com",
+            "codecommit.*.amazonaws.com"
           ]
         }
       },
@@ -7431,6 +7496,16 @@
     },
     {
       "access_level": "Read",
+      "action": "sagemaker:DescribeAutoMLJobV2",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sagemaker:DescribeAutoMLJobV2",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
       "action": "sagemaker:DescribeProcessingJob",
       "condition": null,
       "credentials_exposure": false,
@@ -11733,5 +11808,5 @@
   "undocumented_actions": false,
   "unknown_actions": [],
   "updatedate": "2024-11-28T04:51:07+00:00",
-  "version": "v6"
+  "version": "v7"
 }
