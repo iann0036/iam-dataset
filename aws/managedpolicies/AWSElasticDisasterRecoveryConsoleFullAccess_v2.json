@@ -3,10 +3,11 @@
     "List",
     "Read",
     "Tagging",
-    "Write"
+    "Write",
+    "Permissions management"
   ],
   "arn": "arn:aws:iam::aws:policy/AWSElasticDisasterRecoveryConsoleFullAccess_v2",
-  "createdate": "2024-07-29T19:38:08Z",
+  "createdate": "2025-01-05T15:22:06Z",
   "credentials_exposure": false,
   "data_access": true,
   "deprecated": false,
@@ -396,7 +397,8 @@
               "CreateSecurityGroup",
               "CreateVolume",
               "CreateSnapshot",
-              "RunInstances"
+              "RunInstances",
+              "CreateNetworkInterface"
             ]
           }
         },
@@ -405,7 +407,8 @@
           "arn:aws:ec2:*:*:security-group/*",
           "arn:aws:ec2:*:*:volume/*",
           "arn:aws:ec2:*:*:snapshot/*",
-          "arn:aws:ec2:*:*:instance/*"
+          "arn:aws:ec2:*:*:instance/*",
+          "arn:aws:ec2:*:*:network-interface/*"
         ],
         "Sid": "ConsoleFullAccess26"
       },
@@ -629,6 +632,65 @@
           "arn:aws:ec2:*:*:instance/*"
         ],
         "Sid": "ConsoleFullAccess40"
+      },
+      {
+        "Action": [
+          "ec2:CreateVolume"
+        ],
+        "Condition": {
+          "Bool": {
+            "aws:ViaAWSService": "true"
+          },
+          "Null": {
+            "aws:ResourceTag/AWSElasticDisasterRecoveryManaged": "false"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:ec2:*:*:snapshot/*",
+        "Sid": "ConsoleFullAccess41"
+      },
+      {
+        "Action": [
+          "ec2:CreateNetworkInterface"
+        ],
+        "Condition": {
+          "Bool": {
+            "aws:ViaAWSService": "true"
+          },
+          "Null": {
+            "aws:RequestTag/AWSElasticDisasterRecoveryManaged": "false"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:ec2:*:*:network-interface/*",
+        "Sid": "ConsoleFullAccess42"
+      },
+      {
+        "Action": [
+          "ec2:CreateNetworkInterface"
+        ],
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:ec2:*:*:subnet/*",
+          "arn:aws:ec2:*:*:security-group/*"
+        ],
+        "Sid": "ConsoleFullAccess43"
+      },
+      {
+        "Action": [
+          "ec2:CreateNetworkInterfacePermission"
+        ],
+        "Condition": {
+          "Bool": {
+            "aws:ViaAWSService": "true"
+          },
+          "Null": {
+            "aws:ResourceTag/AWSElasticDisasterRecoveryManaged": "false"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:ec2:*:*:network-interface/*",
+        "Sid": "ConsoleFullAccess44"
       }
     ],
     "Version": "2012-10-17"
@@ -2370,7 +2432,8 @@
             "CreateSecurityGroup",
             "CreateVolume",
             "CreateSnapshot",
-            "RunInstances"
+            "RunInstances",
+            "CreateNetworkInterface"
           ]
         }
       },
@@ -2668,6 +2731,67 @@
       "effective_action": "ec2:CreateTags",
       "privesc": false,
       "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:CreateVolume",
+      "condition": {
+        "Bool": {
+          "aws:ViaAWSService": "true"
+        },
+        "Null": {
+          "aws:ResourceTag/AWSElasticDisasterRecoveryManaged": "false"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:CreateVolume",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:CreateNetworkInterface",
+      "condition": {
+        "Bool": {
+          "aws:ViaAWSService": "true"
+        },
+        "Null": {
+          "aws:RequestTag/AWSElasticDisasterRecoveryManaged": "false"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:CreateNetworkInterface",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:CreateNetworkInterface",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:CreateNetworkInterface",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Permissions management",
+      "action": "ec2:CreateNetworkInterfacePermission",
+      "condition": {
+        "Bool": {
+          "aws:ViaAWSService": "true"
+        },
+        "Null": {
+          "aws:ResourceTag/AWSElasticDisasterRecoveryManaged": "false"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:CreateNetworkInterfacePermission",
+      "privesc": false,
+      "resource_exposure": true
     }
   ],
   "grantless": false,
@@ -2678,5 +2802,5 @@
   "undocumented_actions": false,
   "unknown_actions": [],
   "updatedate": "2024-07-29T19:38:08+00:00",
-  "version": "v3"
+  "version": "v4"
 }

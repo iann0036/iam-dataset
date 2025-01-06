@@ -3,10 +3,11 @@
     "List",
     "Read",
     "Tagging",
-    "Write"
+    "Write",
+    "Permissions management"
   ],
   "arn": "arn:aws:iam::aws:policy/aws-service-role/AWSElasticDisasterRecoveryServiceRolePolicy",
-  "createdate": "2024-01-17T13:49:07Z",
+  "createdate": "2025-01-05T14:07:06Z",
   "credentials_exposure": false,
   "data_access": false,
   "deprecated": false,
@@ -79,7 +80,8 @@
           "ec2:DescribeDhcpOptions",
           "ec2:DescribeManagedPrefixLists",
           "ec2:GetManagedPrefixListEntries",
-          "ec2:GetManagedPrefixListAssociations"
+          "ec2:GetManagedPrefixListAssociations",
+          "ec2:DescribeNetworkInterfaces"
         ],
         "Effect": "Allow",
         "Resource": "*",
@@ -346,7 +348,8 @@
               "CreateSecurityGroup",
               "CreateVolume",
               "CreateSnapshot",
-              "RunInstances"
+              "RunInstances",
+              "CreateNetworkInterface"
             ]
           }
         },
@@ -356,7 +359,8 @@
           "arn:aws:ec2:*:*:security-group/*",
           "arn:aws:ec2:*:*:volume/*",
           "arn:aws:ec2:*:*:snapshot/*",
-          "arn:aws:ec2:*:*:instance/*"
+          "arn:aws:ec2:*:*:instance/*",
+          "arn:aws:ec2:*:*:network-interface/*"
         ],
         "Sid": "DRSServiceRolePolicy26"
       },
@@ -382,6 +386,68 @@
         "Effect": "Allow",
         "Resource": "*",
         "Sid": "DRSServiceRolePolicy28"
+      },
+      {
+        "Action": [
+          "ec2:CreateVolume"
+        ],
+        "Condition": {
+          "Null": {
+            "aws:ResourceTag/AWSElasticDisasterRecoveryManaged": "false"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:ec2:*:*:snapshot/*",
+        "Sid": "DRSServiceRolePolicy29"
+      },
+      {
+        "Action": [
+          "ec2:CreateNetworkInterface"
+        ],
+        "Condition": {
+          "Null": {
+            "aws:RequestTag/AWSElasticDisasterRecoveryManaged": "false"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:ec2:*:*:network-interface/*",
+        "Sid": "DRSServiceRolePolicy30"
+      },
+      {
+        "Action": [
+          "ec2:CreateNetworkInterface"
+        ],
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:ec2:*:*:subnet/*",
+          "arn:aws:ec2:*:*:security-group/*"
+        ],
+        "Sid": "DRSServiceRolePolicy31"
+      },
+      {
+        "Action": [
+          "ec2:CreateNetworkInterfacePermission",
+          "ec2:DeleteNetworkInterface",
+          "ec2:ModifyNetworkInterfaceAttribute"
+        ],
+        "Condition": {
+          "Null": {
+            "aws:ResourceTag/AWSElasticDisasterRecoveryManaged": "false"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:ec2:*:*:network-interface/*",
+        "Sid": "DRSServiceRolePolicy32"
+      },
+      {
+        "Action": [
+          "ec2:ModifyNetworkInterfaceAttribute"
+        ],
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:ec2:*:*:instance/*"
+        ],
+        "Sid": "DRSServiceRolePolicy33"
       }
     ],
     "Version": "2012-10-17"
@@ -694,6 +760,16 @@
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "ec2:GetManagedPrefixListAssociations",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "ec2:DescribeNetworkInterfaces",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:DescribeNetworkInterfaces",
       "privesc": false,
       "resource_exposure": false
     },
@@ -1125,7 +1201,8 @@
             "CreateSecurityGroup",
             "CreateVolume",
             "CreateSnapshot",
-            "RunInstances"
+            "RunInstances",
+            "CreateNetworkInterface"
           ]
         }
       },
@@ -1158,6 +1235,96 @@
       "effective_action": "cloudwatch:GetMetricData",
       "privesc": false,
       "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:CreateVolume",
+      "condition": {
+        "Null": {
+          "aws:ResourceTag/AWSElasticDisasterRecoveryManaged": "false"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:CreateVolume",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:CreateNetworkInterface",
+      "condition": {
+        "Null": {
+          "aws:RequestTag/AWSElasticDisasterRecoveryManaged": "false"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:CreateNetworkInterface",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:CreateNetworkInterface",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:CreateNetworkInterface",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Permissions management",
+      "action": "ec2:CreateNetworkInterfacePermission",
+      "condition": {
+        "Null": {
+          "aws:ResourceTag/AWSElasticDisasterRecoveryManaged": "false"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:CreateNetworkInterfacePermission",
+      "privesc": false,
+      "resource_exposure": true
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:DeleteNetworkInterface",
+      "condition": {
+        "Null": {
+          "aws:ResourceTag/AWSElasticDisasterRecoveryManaged": "false"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:DeleteNetworkInterface",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:ModifyNetworkInterfaceAttribute",
+      "condition": {
+        "Null": {
+          "aws:ResourceTag/AWSElasticDisasterRecoveryManaged": "false"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:ModifyNetworkInterfaceAttribute",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:ModifyNetworkInterfaceAttribute",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:ModifyNetworkInterfaceAttribute",
+      "privesc": false,
+      "resource_exposure": false
     }
   ],
   "grantless": false,
@@ -1168,5 +1335,5 @@
   "undocumented_actions": false,
   "unknown_actions": [],
   "updatedate": "2024-01-17T13:49:07+00:00",
-  "version": "v7"
+  "version": "v8"
 }
