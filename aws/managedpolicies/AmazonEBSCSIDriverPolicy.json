@@ -5,7 +5,7 @@
     "Write"
   ],
   "arn": "arn:aws:iam::aws:policy/service-role/AmazonEBSCSIDriverPolicy",
-  "createdate": "2022-11-18T14:42:46Z",
+  "createdate": "2025-01-13T17:07:06Z",
   "credentials_exposure": false,
   "data_access": false,
   "deprecated": false,
@@ -13,10 +13,6 @@
     "Statement": [
       {
         "Action": [
-          "ec2:CreateSnapshot",
-          "ec2:AttachVolume",
-          "ec2:DetachVolume",
-          "ec2:ModifyVolume",
           "ec2:DescribeAvailabilityZones",
           "ec2:DescribeInstances",
           "ec2:DescribeSnapshots",
@@ -26,6 +22,33 @@
         ],
         "Effect": "Allow",
         "Resource": "*"
+      },
+      {
+        "Action": [
+          "ec2:CreateSnapshot",
+          "ec2:ModifyVolume"
+        ],
+        "Effect": "Allow",
+        "Resource": "arn:aws:ec2:*:*:volume/*"
+      },
+      {
+        "Action": [
+          "ec2:AttachVolume",
+          "ec2:DetachVolume"
+        ],
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:ec2:*:*:volume/*",
+          "arn:aws:ec2:*:*:instance/*"
+        ]
+      },
+      {
+        "Action": [
+          "ec2:CreateVolume",
+          "ec2:EnableFastSnapshotRestores"
+        ],
+        "Effect": "Allow",
+        "Resource": "arn:aws:ec2:*:*:snapshot/*"
       },
       {
         "Action": [
@@ -65,7 +88,7 @@
           }
         },
         "Effect": "Allow",
-        "Resource": "*"
+        "Resource": "arn:aws:ec2:*:*:volume/*"
       },
       {
         "Action": [
@@ -77,7 +100,7 @@
           }
         },
         "Effect": "Allow",
-        "Resource": "*"
+        "Resource": "arn:aws:ec2:*:*:volume/*"
       },
       {
         "Action": [
@@ -89,7 +112,7 @@
           }
         },
         "Effect": "Allow",
-        "Resource": "*"
+        "Resource": "arn:aws:ec2:*:*:volume/*"
       },
       {
         "Action": [
@@ -101,7 +124,7 @@
           }
         },
         "Effect": "Allow",
-        "Resource": "*"
+        "Resource": "arn:aws:ec2:*:*:volume/*"
       },
       {
         "Action": [
@@ -113,7 +136,31 @@
           }
         },
         "Effect": "Allow",
-        "Resource": "*"
+        "Resource": "arn:aws:ec2:*:*:volume/*"
+      },
+      {
+        "Action": [
+          "ec2:CreateSnapshot"
+        ],
+        "Condition": {
+          "StringLike": {
+            "aws:RequestTag/CSIVolumeSnapshotName": "*"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:ec2:*:*:snapshot/*"
+      },
+      {
+        "Action": [
+          "ec2:CreateSnapshot"
+        ],
+        "Condition": {
+          "StringLike": {
+            "aws:RequestTag/ebs.csi.aws.com/cluster": "true"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:ec2:*:*:snapshot/*"
       },
       {
         "Action": [
@@ -125,7 +172,7 @@
           }
         },
         "Effect": "Allow",
-        "Resource": "*"
+        "Resource": "arn:aws:ec2:*:*:snapshot/*"
       },
       {
         "Action": [
@@ -137,52 +184,12 @@
           }
         },
         "Effect": "Allow",
-        "Resource": "*"
+        "Resource": "arn:aws:ec2:*:*:snapshot/*"
       }
     ],
     "Version": "2012-10-17"
   },
   "effective_actions": [
-    {
-      "access_level": "Write",
-      "action": "ec2:CreateSnapshot",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:CreateSnapshot",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Write",
-      "action": "ec2:AttachVolume",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:AttachVolume",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Write",
-      "action": "ec2:DetachVolume",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:DetachVolume",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Write",
-      "action": "ec2:ModifyVolume",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:ModifyVolume",
-      "privesc": false,
-      "resource_exposure": false
-    },
     {
       "access_level": "List",
       "action": "ec2:DescribeAvailabilityZones",
@@ -240,6 +247,66 @@
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "ec2:DescribeVolumesModifications",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:CreateSnapshot",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:CreateSnapshot",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:ModifyVolume",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:ModifyVolume",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:AttachVolume",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:AttachVolume",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:DetachVolume",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:DetachVolume",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:CreateVolume",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:CreateVolume",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:EnableFastSnapshotRestores",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:EnableFastSnapshotRestores",
       "privesc": false,
       "resource_exposure": false
     },
@@ -342,6 +409,34 @@
     },
     {
       "access_level": "Write",
+      "action": "ec2:CreateSnapshot",
+      "condition": {
+        "StringLike": {
+          "aws:RequestTag/CSIVolumeSnapshotName": "*"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:CreateSnapshot",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:CreateSnapshot",
+      "condition": {
+        "StringLike": {
+          "aws:RequestTag/ebs.csi.aws.com/cluster": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:CreateSnapshot",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
       "action": "ec2:DeleteSnapshot",
       "condition": {
         "StringLike": {
@@ -377,5 +472,5 @@
   "undocumented_actions": false,
   "unknown_actions": [],
   "updatedate": "2022-11-18T14:42:46+00:00",
-  "version": "v2"
+  "version": "v3"
 }
