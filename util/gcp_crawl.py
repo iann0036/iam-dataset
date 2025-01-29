@@ -171,7 +171,7 @@ for root_service in methods.keys():
                 if not perminst['name'] in permdict.keys():
                     permdict[perminst['name']] = perminst
                 else:
-                    permdict[perminst['name']]['discoveryMethodologies'] = list(set(perminst['discoveryMethodologies']) | set(permdict[perminst['name']]['discoveryMethodologies']))
+                    permdict[perminst['name']]['discoveryMethodologies'] = sorted(list(set(perminst['discoveryMethodologies']) | set(permdict[perminst['name']]['discoveryMethodologies'])))
                     if 'parameterType' in perminst.keys():
                         permdict[perminst['name']]['parameterType'] = perminst['parameterType']
                     if 'resourceIndicator' in perminst.keys():
