@@ -1,0 +1,192 @@
+{
+  "access_levels": [
+    "List",
+    "Read",
+    "Write"
+  ],
+  "arn": null,
+  "createdate": "2025-01-31T19:52:07Z",
+  "credentials_exposure": false,
+  "data_access": true,
+  "deprecated": false,
+  "document": {
+    "Statement": [
+      {
+        "Action": [
+          "glue:GetConnection"
+        ],
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:glue:*:*:catalog"
+        ],
+        "Sid": "GlueGetConnectionOnCatalog"
+      },
+      {
+        "Action": [
+          "glue:GetConnection",
+          "glue:GetConnections",
+          "glue:GetTags"
+        ],
+        "Condition": {
+          "Null": {
+            "aws:ResourceTag/AmazonDataZoneProject": "false"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:glue:*:*:connection/*",
+        "Sid": "GlueGetConnectionsForProject"
+      },
+      {
+        "Action": [
+          "s3:GetObject"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:PrincipalTag/SageMakerStudioQueryExecutionRole": "true"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:s3:::*/dzd_*/*/dev/sys/athena/*"
+        ],
+        "Sid": "S3GetObjectForAthenaSpillBucket"
+      },
+      {
+        "Action": [
+          "s3:ListBucket"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:PrincipalTag/SageMakerStudioQueryExecutionRole": "true"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:s3:::amazon-sagemaker-*"
+        ],
+        "Sid": "S3ListBucketOwnershipCheckForAthenaSpillBucket"
+      },
+      {
+        "Action": [
+          "lambda:InvokeFunction"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:PrincipalTag/SageMakerStudioQueryExecutionRole": "true",
+            "aws:ResourceTag/federated_athena_datacatalog": "true"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:lambda:*:*:function:*",
+        "Sid": "InvokeFunctionPermissionsForAthenaCatalogLambda"
+      }
+    ],
+    "Version": "2012-10-17"
+  },
+  "effective_actions": [
+    {
+      "access_level": "Read",
+      "action": "glue:GetConnection",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "glue:GetConnection",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "glue:GetConnection",
+      "condition": {
+        "Null": {
+          "aws:ResourceTag/AmazonDataZoneProject": "false"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "glue:GetConnection",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "glue:GetConnections",
+      "condition": {
+        "Null": {
+          "aws:ResourceTag/AmazonDataZoneProject": "false"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "glue:GetConnections",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "glue:GetTags",
+      "condition": {
+        "Null": {
+          "aws:ResourceTag/AmazonDataZoneProject": "false"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "glue:GetTags",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "s3:GetObject",
+      "condition": {
+        "StringEquals": {
+          "aws:PrincipalTag/SageMakerStudioQueryExecutionRole": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": true,
+      "effective_action": "s3:GetObject",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "s3:ListBucket",
+      "condition": {
+        "StringEquals": {
+          "aws:PrincipalTag/SageMakerStudioQueryExecutionRole": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3:ListBucket",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "lambda:InvokeFunction",
+      "condition": {
+        "StringEquals": {
+          "aws:PrincipalTag/SageMakerStudioQueryExecutionRole": "true",
+          "aws:ResourceTag/federated_athena_datacatalog": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "lambda:InvokeFunction",
+      "privesc": false,
+      "resource_exposure": false
+    }
+  ],
+  "grantless": false,
+  "malformed": false,
+  "name": "SageMakerStudioQueryExecutionRolePolicy",
+  "privesc": false,
+  "resource_exposure": false,
+  "undocumented_actions": false,
+  "unknown_actions": [],
+  "updatedate": null,
+  "version": "v1"
+}
