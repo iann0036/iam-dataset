@@ -101,10 +101,6 @@ while i < len(iam_def):
                 if not found:
                     iam_def[i]['resources'].append(merge_resource)
 
-            # Remove plus(+) from arn
-            for k in range(len(iam_def[i]['resources'])):
-                iam_def[i]['resources'][k]['arn'] = iam_def[i]['resources'][k]['arn'].replace("+", "")
-
             print("Merged " + iam_def[j]['service_name'] + " (" + iam_def[j]['prefix'] + ")")
             iam_def.pop(j)
             j -= 1
