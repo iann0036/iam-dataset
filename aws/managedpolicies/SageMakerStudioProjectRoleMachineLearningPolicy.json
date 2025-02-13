@@ -7,7 +7,7 @@
     "Permissions management"
   ],
   "arn": "arn:aws:iam::aws:policy/SageMakerStudioProjectRoleMachineLearningPolicy",
-  "createdate": "2024-11-27T06:21:07Z",
+  "createdate": "2025-02-12T18:07:07Z",
   "credentials_exposure": true,
   "data_access": true,
   "deprecated": false,
@@ -133,15 +133,6 @@
       },
       {
         "Action": [
-          "logs:DescribeLogStreams",
-          "logs:GetLogEvents"
-        ],
-        "Effect": "Allow",
-        "Resource": "arn:aws:logs:*:*:log-group:/aws/sagemaker/*",
-        "Sid": "AllowSageMakerLogAccess"
-      },
-      {
-        "Action": [
           "sagemaker:UpdateMlflowTrackingServer",
           "sagemaker:StartMlflowTrackingServer",
           "sagemaker:StopMlflowTrackingServer",
@@ -238,8 +229,6 @@
         "Action": [
           "logs:CreateLogGroup",
           "logs:CreateLogStream",
-          "logs:DescribeLogStreams",
-          "logs:GetLogEvents",
           "logs:PutLogEvents"
         ],
         "Effect": "Allow",
@@ -346,6 +335,7 @@
           "sagemaker:SendPipelineExecutionStepFailure",
           "sagemaker:DescribeHyperParameterTuningJob",
           "sagemaker:DescribeAutoMLJob",
+          "sagemaker:DescribeAutoMLJobV2",
           "sagemaker:DescribeProcessingJob",
           "sagemaker:DescribeTrainingJob"
         ],
@@ -400,9 +390,7 @@
           "sagemaker:ListTransformJobs",
           "sagemaker:ListProcessingJobs",
           "sagemaker:ListAutoMLJobs",
-          "sagemaker:ListCandidatesForAutoMLJob",
           "sagemaker:ListHyperParameterTuningJobs",
-          "sagemaker:ListTrainingJobsForHyperParameterTuningJob",
           "sagemaker:ListInferenceComponents",
           "sagemaker:ListEndpoints",
           "sagemaker:ListEndpointConfigs",
@@ -412,12 +400,7 @@
           "sagemaker:ListModelMetadata",
           "sagemaker:ListMlflowTrackingServers",
           "sagemaker:ListArtifacts",
-          "sagemaker:ListAssociations",
-          "sagemaker:ListHubContents",
           "sagemaker:ListHubs",
-          "sagemaker:ListPipelineExecutionSteps",
-          "sagemaker:ListPipelineExecutions",
-          "sagemaker:ListPipelineParametersForExecution",
           "sagemaker:ListPipelines",
           "sagemaker:ListContexts"
         ],
@@ -429,6 +412,26 @@
         "Effect": "Allow",
         "Resource": "*",
         "Sid": "SageMakerListPermissions"
+      },
+      {
+        "Action": [
+          "sagemaker:ListCandidatesForAutoMLJob",
+          "sagemaker:ListTrainingJobsForHyperParameterTuningJob",
+          "sagemaker:ListAssociations",
+          "sagemaker:ListHubContents",
+          "sagemaker:ListPipelineExecutionSteps",
+          "sagemaker:ListPipelineExecutions",
+          "sagemaker:ListPipelineParametersForExecution"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:PrincipalTag/EnableSageMakerMLWorkloadsPermissions": "true",
+            "aws:ResourceTag/AmazonDataZoneProject": "${aws:PrincipalTag/AmazonDataZoneProject}"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "SageMakerListPermissionsTagRestricted"
       },
       {
         "Action": [
@@ -754,7 +757,9 @@
         "Action": [
           "sagemaker:DescribeModelPackage",
           "sagemaker:DescribeModelPackageGroup",
-          "sagemaker:BatchDescribeModelPackage"
+          "sagemaker:BatchDescribeModelPackage",
+          "sagemaker:ListModelPackages",
+          "sagemaker:CreateModel"
         ],
         "Condition": {
           "StringNotEquals": {
@@ -763,14 +768,14 @@
         },
         "Effect": "Allow",
         "Resource": "*",
-        "Sid": "SageMakerCrossAccountReadPermissions"
+        "Sid": "SageMakerCrossAccountPermissions"
       },
       {
         "Action": [
           "sagemaker:ListTags"
         ],
         "Condition": {
-          "StringEqualsIfExists": {
+          "StringEquals": {
             "aws:ResourceTag/AmazonDataZoneProject": "${aws:PrincipalTag/AmazonDataZoneProject}"
           }
         },
@@ -825,6 +830,24 @@
         "Effect": "Allow",
         "Resource": "arn:aws:iam::*:role/aws-service-role/sagemaker.application-autoscaling.amazonaws.com/AWSServiceRoleForApplicationAutoScaling_SageMakerEndpoint",
         "Sid": "SageMakerSLRForAutoScalingPermissions"
+      },
+      {
+        "Action": [
+          "kms:CreateGrant"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          },
+          "StringLike": {
+            "kms:ViaService": [
+              "sagemaker.*.amazonaws.com"
+            ]
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:kms:*:*:key/${aws:PrincipalTag/KmsKeyId}",
+        "Sid": "SageMakerKmsPermissions"
       }
     ],
     "Version": "2012-10-17"
@@ -1130,26 +1153,6 @@
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "ec2:DescribeDhcpOptions",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "logs:DescribeLogStreams",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "logs:DescribeLogStreams",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Read",
-      "action": "logs:GetLogEvents",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": true,
-      "effective_action": "logs:GetLogEvents",
       "privesc": false,
       "resource_exposure": false
     },
@@ -1906,26 +1909,6 @@
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "logs:CreateLogStream",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "logs:DescribeLogStreams",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "logs:DescribeLogStreams",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Read",
-      "action": "logs:GetLogEvents",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": true,
-      "effective_action": "logs:GetLogEvents",
       "privesc": false,
       "resource_exposure": false
     },
@@ -2826,6 +2809,21 @@
     },
     {
       "access_level": "Read",
+      "action": "sagemaker:DescribeAutoMLJobV2",
+      "condition": {
+        "StringEquals": {
+          "aws:PrincipalTag/EnableSageMakerMLWorkloadsPermissions": "true",
+          "aws:ResourceTag/AmazonDataZoneProject": "${aws:PrincipalTag/AmazonDataZoneProject}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sagemaker:DescribeAutoMLJobV2",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
       "action": "sagemaker:DescribeProcessingJob",
       "condition": {
         "StringEquals": {
@@ -3110,20 +3108,6 @@
     },
     {
       "access_level": "List",
-      "action": "sagemaker:ListCandidatesForAutoMLJob",
-      "condition": {
-        "StringEquals": {
-          "aws:PrincipalTag/EnableSageMakerMLWorkloadsPermissions": "true"
-        }
-      },
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "sagemaker:ListCandidatesForAutoMLJob",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
       "action": "sagemaker:ListHyperParameterTuningJobs",
       "condition": {
         "StringEquals": {
@@ -3133,20 +3117,6 @@
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "sagemaker:ListHyperParameterTuningJobs",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "sagemaker:ListTrainingJobsForHyperParameterTuningJob",
-      "condition": {
-        "StringEquals": {
-          "aws:PrincipalTag/EnableSageMakerMLWorkloadsPermissions": "true"
-        }
-      },
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "sagemaker:ListTrainingJobsForHyperParameterTuningJob",
       "privesc": false,
       "resource_exposure": false
     },
@@ -3278,34 +3248,6 @@
     },
     {
       "access_level": "List",
-      "action": "sagemaker:ListAssociations",
-      "condition": {
-        "StringEquals": {
-          "aws:PrincipalTag/EnableSageMakerMLWorkloadsPermissions": "true"
-        }
-      },
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "sagemaker:ListAssociations",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "sagemaker:ListHubContents",
-      "condition": {
-        "StringEquals": {
-          "aws:PrincipalTag/EnableSageMakerMLWorkloadsPermissions": "true"
-        }
-      },
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "sagemaker:ListHubContents",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
       "action": "sagemaker:ListHubs",
       "condition": {
         "StringEquals": {
@@ -3315,48 +3257,6 @@
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "sagemaker:ListHubs",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "sagemaker:ListPipelineExecutionSteps",
-      "condition": {
-        "StringEquals": {
-          "aws:PrincipalTag/EnableSageMakerMLWorkloadsPermissions": "true"
-        }
-      },
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "sagemaker:ListPipelineExecutionSteps",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "sagemaker:ListPipelineExecutions",
-      "condition": {
-        "StringEquals": {
-          "aws:PrincipalTag/EnableSageMakerMLWorkloadsPermissions": "true"
-        }
-      },
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "sagemaker:ListPipelineExecutions",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "sagemaker:ListPipelineParametersForExecution",
-      "condition": {
-        "StringEquals": {
-          "aws:PrincipalTag/EnableSageMakerMLWorkloadsPermissions": "true"
-        }
-      },
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "sagemaker:ListPipelineParametersForExecution",
       "privesc": false,
       "resource_exposure": false
     },
@@ -3385,6 +3285,111 @@
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "sagemaker:ListContexts",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "sagemaker:ListCandidatesForAutoMLJob",
+      "condition": {
+        "StringEquals": {
+          "aws:PrincipalTag/EnableSageMakerMLWorkloadsPermissions": "true",
+          "aws:ResourceTag/AmazonDataZoneProject": "${aws:PrincipalTag/AmazonDataZoneProject}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sagemaker:ListCandidatesForAutoMLJob",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "sagemaker:ListTrainingJobsForHyperParameterTuningJob",
+      "condition": {
+        "StringEquals": {
+          "aws:PrincipalTag/EnableSageMakerMLWorkloadsPermissions": "true",
+          "aws:ResourceTag/AmazonDataZoneProject": "${aws:PrincipalTag/AmazonDataZoneProject}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sagemaker:ListTrainingJobsForHyperParameterTuningJob",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "sagemaker:ListAssociations",
+      "condition": {
+        "StringEquals": {
+          "aws:PrincipalTag/EnableSageMakerMLWorkloadsPermissions": "true",
+          "aws:ResourceTag/AmazonDataZoneProject": "${aws:PrincipalTag/AmazonDataZoneProject}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sagemaker:ListAssociations",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "sagemaker:ListHubContents",
+      "condition": {
+        "StringEquals": {
+          "aws:PrincipalTag/EnableSageMakerMLWorkloadsPermissions": "true",
+          "aws:ResourceTag/AmazonDataZoneProject": "${aws:PrincipalTag/AmazonDataZoneProject}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sagemaker:ListHubContents",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "sagemaker:ListPipelineExecutionSteps",
+      "condition": {
+        "StringEquals": {
+          "aws:PrincipalTag/EnableSageMakerMLWorkloadsPermissions": "true",
+          "aws:ResourceTag/AmazonDataZoneProject": "${aws:PrincipalTag/AmazonDataZoneProject}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sagemaker:ListPipelineExecutionSteps",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "sagemaker:ListPipelineExecutions",
+      "condition": {
+        "StringEquals": {
+          "aws:PrincipalTag/EnableSageMakerMLWorkloadsPermissions": "true",
+          "aws:ResourceTag/AmazonDataZoneProject": "${aws:PrincipalTag/AmazonDataZoneProject}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sagemaker:ListPipelineExecutions",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "sagemaker:ListPipelineParametersForExecution",
+      "condition": {
+        "StringEquals": {
+          "aws:PrincipalTag/EnableSageMakerMLWorkloadsPermissions": "true",
+          "aws:ResourceTag/AmazonDataZoneProject": "${aws:PrincipalTag/AmazonDataZoneProject}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sagemaker:ListPipelineParametersForExecution",
       "privesc": false,
       "resource_exposure": false
     },
@@ -3962,9 +3967,37 @@
     },
     {
       "access_level": "List",
+      "action": "sagemaker:ListModelPackages",
+      "condition": {
+        "StringNotEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sagemaker:ListModelPackages",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "sagemaker:CreateModel",
+      "condition": {
+        "StringNotEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sagemaker:CreateModel",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
       "action": "sagemaker:ListTags",
       "condition": {
-        "StringEqualsIfExists": {
+        "StringEquals": {
           "aws:ResourceTag/AmazonDataZoneProject": "${aws:PrincipalTag/AmazonDataZoneProject}"
         }
       },
@@ -4103,6 +4136,25 @@
       "effective_action": "iam:CreateServiceLinkedRole",
       "privesc": true,
       "resource_exposure": true
+    },
+    {
+      "access_level": "Permissions management",
+      "action": "kms:CreateGrant",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        },
+        "StringLike": {
+          "kms:ViaService": [
+            "sagemaker.*.amazonaws.com"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": true,
+      "effective_action": "kms:CreateGrant",
+      "privesc": true,
+      "resource_exposure": true
     }
   ],
   "grantless": false,
@@ -4113,5 +4165,5 @@
   "undocumented_actions": false,
   "unknown_actions": [],
   "updatedate": "2024-11-27T06:21:07+00:00",
-  "version": "v4"
+  "version": "v5"
 }
