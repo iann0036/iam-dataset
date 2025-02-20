@@ -6,7 +6,7 @@
     "Write"
   ],
   "arn": "arn:aws:iam::aws:policy/aws-service-role/AmazonRedshiftServiceLinkedRolePolicy",
-  "createdate": "2024-11-20T18:06:07Z",
+  "createdate": "2025-02-19T17:22:07Z",
   "credentials_exposure": false,
   "data_access": true,
   "deprecated": false,
@@ -247,6 +247,9 @@
         "Condition": {
           "Bool": {
             "glue:EnabledForRedshiftAutoDiscovery": "true"
+          },
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
           }
         },
         "Effect": "Allow",
@@ -255,6 +258,27 @@
           "arn:aws:glue:*:*:catalog/*"
         ],
         "Sid": "DiscoverRedshiftCatalogs"
+      },
+      {
+        "Action": [
+          "lakeformation:GetDataAccess"
+        ],
+        "Condition": {
+          "Bool": {
+            "lakeformation:EnabledOnlyForMetaDataAccess": "true"
+          },
+          "ForAnyValue:StringEquals": {
+            "aws:CalledVia": "glue.amazonaws.com"
+          },
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "*"
+        ],
+        "Sid": "LakeFormationGetMetadataAccessForFederatedCatalogs"
       }
     ],
     "Version": "2012-10-17"
@@ -830,6 +854,9 @@
       "condition": {
         "Bool": {
           "glue:EnabledForRedshiftAutoDiscovery": "true"
+        },
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
         }
       },
       "credentials_exposure": false,
@@ -844,11 +871,34 @@
       "condition": {
         "Bool": {
           "glue:EnabledForRedshiftAutoDiscovery": "true"
+        },
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
         }
       },
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "glue:GetCatalogs",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "lakeformation:GetDataAccess",
+      "condition": {
+        "Bool": {
+          "lakeformation:EnabledOnlyForMetaDataAccess": "true"
+        },
+        "ForAnyValue:StringEquals": {
+          "aws:CalledVia": "glue.amazonaws.com"
+        },
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "lakeformation:GetDataAccess",
       "privesc": false,
       "resource_exposure": false
     }
@@ -861,5 +911,5 @@
   "undocumented_actions": false,
   "unknown_actions": [],
   "updatedate": "2024-11-20T18:06:07+00:00",
-  "version": "v14"
+  "version": "v15"
 }
