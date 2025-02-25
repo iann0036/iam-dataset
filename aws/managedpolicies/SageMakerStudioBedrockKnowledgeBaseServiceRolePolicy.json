@@ -1,0 +1,366 @@
+{
+  "access_levels": [
+    "List",
+    "Read",
+    "Write"
+  ],
+  "arn": null,
+  "createdate": "2025-02-25T02:52:07Z",
+  "credentials_exposure": false,
+  "data_access": true,
+  "deprecated": false,
+  "document": {
+    "Statement": [
+      {
+        "Action": [
+          "bedrock:GetInferenceProfile",
+          "bedrock:InvokeModel",
+          "bedrock:InvokeModelWithResponseStream"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceTag/AmazonDataZoneProject": "${aws:PrincipalTag/AmazonDataZoneProject}"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:bedrock:*:*:application-inference-profile/*",
+        "Sid": "BedrockAppInferenceProfileInvocationPermissions"
+      },
+      {
+        "Action": [
+          "bedrock:InvokeModel",
+          "bedrock:InvokeModelWithResponseStream"
+        ],
+        "Condition": {
+          "Null": {
+            "bedrock:InferenceProfileArn": "false"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:bedrock:*::foundation-model/*",
+          "arn:aws:bedrock:*:*:custom-model/*",
+          "arn:aws:bedrock:*:*:provisioned-model/*"
+        ],
+        "Sid": "BedrockModelInvocationPermission"
+      },
+      {
+        "Action": [
+          "aoss:APIAccessAll"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          },
+          "StringLike": {
+            "aoss:collection": "bedrock*"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:aoss:*:*:collection/*",
+        "Sid": "OpenSearchServerlessPermissions"
+      },
+      {
+        "Action": [
+          "s3:ListBucket"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          },
+          "StringLike": {
+            "s3:prefix": [
+              "${aws:PrincipalTag/AmazonDataZoneDomain}/${aws:PrincipalTag/AmazonDataZoneProject}",
+              "${aws:PrincipalTag/AmazonDataZoneDomain}/${aws:PrincipalTag/AmazonDataZoneProject}/*"
+            ]
+          },
+          "StringNotEquals": {
+            "aws:PrincipalTag/AmazonDataZoneDomain": "",
+            "aws:PrincipalTag/AmazonDataZoneProject": "",
+            "aws:PrincipalTag/DomainBucketName": ""
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:s3:::${aws:PrincipalTag/DomainBucketName}",
+        "Sid": "ListDomainS3BucketPermissions"
+      },
+      {
+        "Action": [
+          "s3:GetObject",
+          "s3:GetObjectVersion"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          },
+          "StringNotEquals": {
+            "aws:PrincipalTag/AmazonDataZoneDomain": "",
+            "aws:PrincipalTag/AmazonDataZoneProject": "",
+            "aws:PrincipalTag/DomainBucketName": ""
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:s3:::${aws:PrincipalTag/DomainBucketName}/${aws:PrincipalTag/AmazonDataZoneDomain}/${aws:PrincipalTag/AmazonDataZoneProject}/*",
+        "Sid": "AccessDomainS3BucketPermissions"
+      },
+      {
+        "Action": [
+          "kms:Decrypt",
+          "kms:GenerateDataKey"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          },
+          "StringLike": {
+            "kms:EncryptionContext:aws:bedrock:arn": "arn:aws:bedrock:*:${aws:PrincipalAccount}:knowledge-base/*"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:kms:*:*:key/${aws:PrincipalTag/KmsKeyId}",
+        "Sid": "BedrockKnowledgeBaseKmsPermissions"
+      },
+      {
+        "Action": [
+          "kms:Decrypt"
+        ],
+        "Condition": {
+          "ArnLike": {
+            "kms:EncryptionContext:aws:s3:arn": [
+              "arn:aws:s3:::${aws:PrincipalTag/DomainBucketName}",
+              "arn:aws:s3:::${aws:PrincipalTag/DomainBucketName}/*"
+            ]
+          },
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          },
+          "StringLike": {
+            "kms:ViaService": "s3.*.amazonaws.com"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:kms:*:*:key/${aws:PrincipalTag/KmsKeyId}",
+        "Sid": "S3KmsPermissions"
+      }
+    ],
+    "Version": "2012-10-17"
+  },
+  "effective_actions": [
+    {
+      "access_level": "Read",
+      "action": "bedrock:GetInferenceProfile",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/AmazonDataZoneProject": "${aws:PrincipalTag/AmazonDataZoneProject}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "bedrock:GetInferenceProfile",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "bedrock:InvokeModel",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/AmazonDataZoneProject": "${aws:PrincipalTag/AmazonDataZoneProject}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "bedrock:InvokeModel",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "bedrock:InvokeModelWithResponseStream",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/AmazonDataZoneProject": "${aws:PrincipalTag/AmazonDataZoneProject}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "bedrock:InvokeModelWithResponseStream",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "bedrock:InvokeModel",
+      "condition": {
+        "Null": {
+          "bedrock:InferenceProfileArn": "false"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "bedrock:InvokeModel",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "bedrock:InvokeModelWithResponseStream",
+      "condition": {
+        "Null": {
+          "bedrock:InferenceProfileArn": "false"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "bedrock:InvokeModelWithResponseStream",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "aoss:APIAccessAll",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        },
+        "StringLike": {
+          "aoss:collection": "bedrock*"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": true,
+      "effective_action": "aoss:APIAccessAll",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "s3:ListBucket",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        },
+        "StringLike": {
+          "s3:prefix": [
+            "${aws:PrincipalTag/AmazonDataZoneDomain}/${aws:PrincipalTag/AmazonDataZoneProject}",
+            "${aws:PrincipalTag/AmazonDataZoneDomain}/${aws:PrincipalTag/AmazonDataZoneProject}/*"
+          ]
+        },
+        "StringNotEquals": {
+          "aws:PrincipalTag/AmazonDataZoneDomain": "",
+          "aws:PrincipalTag/AmazonDataZoneProject": "",
+          "aws:PrincipalTag/DomainBucketName": ""
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3:ListBucket",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "s3:GetObject",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        },
+        "StringNotEquals": {
+          "aws:PrincipalTag/AmazonDataZoneDomain": "",
+          "aws:PrincipalTag/AmazonDataZoneProject": "",
+          "aws:PrincipalTag/DomainBucketName": ""
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": true,
+      "effective_action": "s3:GetObject",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "s3:GetObjectVersion",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        },
+        "StringNotEquals": {
+          "aws:PrincipalTag/AmazonDataZoneDomain": "",
+          "aws:PrincipalTag/AmazonDataZoneProject": "",
+          "aws:PrincipalTag/DomainBucketName": ""
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": true,
+      "effective_action": "s3:GetObjectVersion",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "kms:Decrypt",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        },
+        "StringLike": {
+          "kms:EncryptionContext:aws:bedrock:arn": "arn:aws:bedrock:*:${aws:PrincipalAccount}:knowledge-base/*"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "kms:Decrypt",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "kms:GenerateDataKey",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        },
+        "StringLike": {
+          "kms:EncryptionContext:aws:bedrock:arn": "arn:aws:bedrock:*:${aws:PrincipalAccount}:knowledge-base/*"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "kms:GenerateDataKey",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "kms:Decrypt",
+      "condition": {
+        "ArnLike": {
+          "kms:EncryptionContext:aws:s3:arn": [
+            "arn:aws:s3:::${aws:PrincipalTag/DomainBucketName}",
+            "arn:aws:s3:::${aws:PrincipalTag/DomainBucketName}/*"
+          ]
+        },
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        },
+        "StringLike": {
+          "kms:ViaService": "s3.*.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "kms:Decrypt",
+      "privesc": false,
+      "resource_exposure": false
+    }
+  ],
+  "grantless": false,
+  "malformed": false,
+  "name": "SageMakerStudioBedrockKnowledgeBaseServiceRolePolicy",
+  "privesc": false,
+  "resource_exposure": false,
+  "undocumented_actions": false,
+  "unknown_actions": [],
+  "updatedate": null,
+  "version": "v1"
+}
