@@ -7,7 +7,7 @@
     "Permissions management"
   ],
   "arn": "arn:aws:iam::aws:policy/service-role/SageMakerStudioProjectProvisioningRolePolicy",
-  "createdate": "2025-02-22T00:07:07Z",
+  "createdate": "2025-02-27T00:22:05Z",
   "credentials_exposure": true,
   "data_access": true,
   "deprecated": false,
@@ -375,6 +375,7 @@
               "AmazonDataZone*",
               "AmazonBedrockManaged",
               "RedshiftDb*",
+              "EnableAmazonBedrockPermissions",
               "EnableAmazonBedrockIDEPermissions",
               "EnableGlueWorkloadsPermissions",
               "EnableSageMakerMLWorkloadsPermissions",
@@ -495,6 +496,26 @@
           "arn:aws:iam::*:role/datazone_emr_ec2_instance_role_*"
         ],
         "Sid": "IAMRoleTaggingForEmr"
+      },
+      {
+        "Action": [
+          "iam:UntagRole"
+        ],
+        "Condition": {
+          "ForAllValues:StringLike": {
+            "aws:TagKeys": "EnableAmazonBedrockIDEPermissions"
+          },
+          "Null": {
+            "aws:ResourceTag/AmazonDataZoneProject": "false"
+          },
+          "StringEquals": {
+            "aws:CalledViaFirst": "cloudformation.amazonaws.com",
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:iam::*:role/datazone_usr_role_*",
+        "Sid": "IAMRoleUntagging"
       },
       {
         "Action": [
@@ -3528,6 +3549,7 @@
             "AmazonDataZone*",
             "AmazonBedrockManaged",
             "RedshiftDb*",
+            "EnableAmazonBedrockPermissions",
             "EnableAmazonBedrockIDEPermissions",
             "EnableGlueWorkloadsPermissions",
             "EnableSageMakerMLWorkloadsPermissions",
@@ -3639,6 +3661,27 @@
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "iam:TagRole",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Tagging",
+      "action": "iam:UntagRole",
+      "condition": {
+        "ForAllValues:StringLike": {
+          "aws:TagKeys": "EnableAmazonBedrockIDEPermissions"
+        },
+        "Null": {
+          "aws:ResourceTag/AmazonDataZoneProject": "false"
+        },
+        "StringEquals": {
+          "aws:CalledViaFirst": "cloudformation.amazonaws.com",
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "iam:UntagRole",
       "privesc": false,
       "resource_exposure": false
     },
@@ -8965,5 +9008,5 @@
   "undocumented_actions": false,
   "unknown_actions": [],
   "updatedate": "2024-11-27T06:21:08+00:00",
-  "version": "v8"
+  "version": "v9"
 }

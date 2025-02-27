@@ -7,7 +7,7 @@
     "Permissions management"
   ],
   "arn": "arn:aws:iam::aws:policy/SageMakerStudioProjectRoleMachineLearningPolicy",
-  "createdate": "2025-02-13T23:07:06Z",
+  "createdate": "2025-02-27T00:22:05Z",
   "credentials_exposure": true,
   "data_access": true,
   "deprecated": false,
@@ -15,11 +15,6 @@
     "Statement": [
       {
         "Action": [
-          "ec2:CreateNetworkInterface",
-          "ec2:DeleteNetworkInterface",
-          "ec2:AttachNetworkInterface",
-          "ec2:CreateNetworkInterfacePermission",
-          "ec2:DeleteNetworkInterfacePermission",
           "ec2:CreateVpcEndpoint"
         ],
         "Condition": {
@@ -30,8 +25,7 @@
             "aws:CalledViaLast": [
               "sagemaker.amazonaws.com",
               "airflow.amazonaws.com"
-            ],
-            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+            ]
           }
         },
         "Effect": "Allow",
@@ -45,15 +39,15 @@
       },
       {
         "Action": [
+          "ec2:CreateNetworkInterface",
+          "ec2:DeleteNetworkInterface",
+          "ec2:AttachNetworkInterface",
           "ec2:CreateNetworkInterfacePermission",
           "ec2:DeleteNetworkInterfacePermission"
         ],
         "Condition": {
           "ArnLike": {
             "ec2:Vpc": "arn:aws:ec2:*:*:vpc/${aws:PrincipalTag/VpcId}"
-          },
-          "StringEquals": {
-            "aws:ResourceAccount": "${aws:PrincipalAccount}"
           }
         },
         "Effect": "Allow",
@@ -393,7 +387,6 @@
       },
       {
         "Action": [
-          "sagemaker:Search",
           "sagemaker:GetSearchSuggestions",
           "sagemaker:ListTrainingJobs",
           "sagemaker:ListTransformJobs",
@@ -421,6 +414,20 @@
         "Effect": "Allow",
         "Resource": "*",
         "Sid": "SageMakerListPermissions"
+      },
+      {
+        "Action": [
+          "sagemaker:Search"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:PrincipalTag/EnableSageMakerMLWorkloadsPermissions": "true",
+            "sagemaker:SearchVisibilityCondition/Tags.AmazonDataZoneProject/EqualsIfExists": "${aws:PrincipalTag/AmazonDataZoneProject}"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "SageMakerSearchPermissions"
       },
       {
         "Action": [
@@ -864,7 +871,7 @@
   "effective_actions": [
     {
       "access_level": "Write",
-      "action": "ec2:CreateNetworkInterface",
+      "action": "ec2:CreateVpcEndpoint",
       "condition": {
         "ArnLike": {
           "ec2:Vpc": "arn:aws:ec2:*:*:vpc/${aws:PrincipalTag/VpcId}"
@@ -873,8 +880,21 @@
           "aws:CalledViaLast": [
             "sagemaker.amazonaws.com",
             "airflow.amazonaws.com"
-          ],
-          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:CreateVpcEndpoint",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:CreateNetworkInterface",
+      "condition": {
+        "ArnLike": {
+          "ec2:Vpc": "arn:aws:ec2:*:*:vpc/${aws:PrincipalTag/VpcId}"
         }
       },
       "credentials_exposure": false,
@@ -889,13 +909,6 @@
       "condition": {
         "ArnLike": {
           "ec2:Vpc": "arn:aws:ec2:*:*:vpc/${aws:PrincipalTag/VpcId}"
-        },
-        "StringEquals": {
-          "aws:CalledViaLast": [
-            "sagemaker.amazonaws.com",
-            "airflow.amazonaws.com"
-          ],
-          "aws:ResourceAccount": "${aws:PrincipalAccount}"
         }
       },
       "credentials_exposure": false,
@@ -910,13 +923,6 @@
       "condition": {
         "ArnLike": {
           "ec2:Vpc": "arn:aws:ec2:*:*:vpc/${aws:PrincipalTag/VpcId}"
-        },
-        "StringEquals": {
-          "aws:CalledViaLast": [
-            "sagemaker.amazonaws.com",
-            "airflow.amazonaws.com"
-          ],
-          "aws:ResourceAccount": "${aws:PrincipalAccount}"
         }
       },
       "credentials_exposure": false,
@@ -931,13 +937,6 @@
       "condition": {
         "ArnLike": {
           "ec2:Vpc": "arn:aws:ec2:*:*:vpc/${aws:PrincipalTag/VpcId}"
-        },
-        "StringEquals": {
-          "aws:CalledViaLast": [
-            "sagemaker.amazonaws.com",
-            "airflow.amazonaws.com"
-          ],
-          "aws:ResourceAccount": "${aws:PrincipalAccount}"
         }
       },
       "credentials_exposure": false,
@@ -952,68 +951,6 @@
       "condition": {
         "ArnLike": {
           "ec2:Vpc": "arn:aws:ec2:*:*:vpc/${aws:PrincipalTag/VpcId}"
-        },
-        "StringEquals": {
-          "aws:CalledViaLast": [
-            "sagemaker.amazonaws.com",
-            "airflow.amazonaws.com"
-          ],
-          "aws:ResourceAccount": "${aws:PrincipalAccount}"
-        }
-      },
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:DeleteNetworkInterfacePermission",
-      "privesc": false,
-      "resource_exposure": true
-    },
-    {
-      "access_level": "Write",
-      "action": "ec2:CreateVpcEndpoint",
-      "condition": {
-        "ArnLike": {
-          "ec2:Vpc": "arn:aws:ec2:*:*:vpc/${aws:PrincipalTag/VpcId}"
-        },
-        "StringEquals": {
-          "aws:CalledViaLast": [
-            "sagemaker.amazonaws.com",
-            "airflow.amazonaws.com"
-          ],
-          "aws:ResourceAccount": "${aws:PrincipalAccount}"
-        }
-      },
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:CreateVpcEndpoint",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Permissions management",
-      "action": "ec2:CreateNetworkInterfacePermission",
-      "condition": {
-        "ArnLike": {
-          "ec2:Vpc": "arn:aws:ec2:*:*:vpc/${aws:PrincipalTag/VpcId}"
-        },
-        "StringEquals": {
-          "aws:ResourceAccount": "${aws:PrincipalAccount}"
-        }
-      },
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:CreateNetworkInterfacePermission",
-      "privesc": false,
-      "resource_exposure": true
-    },
-    {
-      "access_level": "Permissions management",
-      "action": "ec2:DeleteNetworkInterfacePermission",
-      "condition": {
-        "ArnLike": {
-          "ec2:Vpc": "arn:aws:ec2:*:*:vpc/${aws:PrincipalTag/VpcId}"
-        },
-        "StringEquals": {
-          "aws:ResourceAccount": "${aws:PrincipalAccount}"
         }
       },
       "credentials_exposure": false,
@@ -3053,20 +2990,6 @@
     },
     {
       "access_level": "Read",
-      "action": "sagemaker:Search",
-      "condition": {
-        "StringEquals": {
-          "aws:PrincipalTag/EnableSageMakerMLWorkloadsPermissions": "true"
-        }
-      },
-      "credentials_exposure": false,
-      "data_access": true,
-      "effective_action": "sagemaker:Search",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Read",
       "action": "sagemaker:GetSearchSuggestions",
       "condition": {
         "StringEquals": {
@@ -3314,6 +3237,21 @@
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "sagemaker:ListContexts",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "sagemaker:Search",
+      "condition": {
+        "StringEquals": {
+          "aws:PrincipalTag/EnableSageMakerMLWorkloadsPermissions": "true",
+          "sagemaker:SearchVisibilityCondition/Tags.AmazonDataZoneProject/EqualsIfExists": "${aws:PrincipalTag/AmazonDataZoneProject}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": true,
+      "effective_action": "sagemaker:Search",
       "privesc": false,
       "resource_exposure": false
     },
@@ -4194,5 +4132,5 @@
   "undocumented_actions": false,
   "unknown_actions": [],
   "updatedate": "2024-11-27T06:21:07+00:00",
-  "version": "v6"
+  "version": "v7"
 }

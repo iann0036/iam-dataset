@@ -6,7 +6,7 @@
     "Permissions management"
   ],
   "arn": null,
-  "createdate": "2025-01-31T19:52:07Z",
+  "createdate": "2025-02-27T00:22:06Z",
   "credentials_exposure": false,
   "data_access": true,
   "deprecated": false,
@@ -34,6 +34,23 @@
         "Effect": "Allow",
         "Resource": "arn:aws:iam::*:role/datazone_emr_ec2_instance_role_${aws:PrincipalTag/AmazonDataZoneProject}_${aws:PrincipalTag/AmazonDataZoneEnvironment}",
         "Sid": "PassRoleToEMREC2InstanceRole"
+      },
+      {
+        "Action": [
+          "ec2:CreateNetworkInterface",
+          "ec2:RunInstances",
+          "ec2:CreateFleet"
+        ],
+        "Condition": {
+          "ArnLike": {
+            "ec2:Vpc": "arn:aws:ec2:*:*:vpc/${aws:PrincipalTag/VpcId}"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "*"
+        ],
+        "Sid": "CreateInNetworkForSharedSubnet"
       },
       {
         "Action": [
@@ -134,6 +151,48 @@
       "effective_action": "iam:PassRole",
       "privesc": true,
       "resource_exposure": true
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:CreateNetworkInterface",
+      "condition": {
+        "ArnLike": {
+          "ec2:Vpc": "arn:aws:ec2:*:*:vpc/${aws:PrincipalTag/VpcId}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:CreateNetworkInterface",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:RunInstances",
+      "condition": {
+        "ArnLike": {
+          "ec2:Vpc": "arn:aws:ec2:*:*:vpc/${aws:PrincipalTag/VpcId}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:RunInstances",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:CreateFleet",
+      "condition": {
+        "ArnLike": {
+          "ec2:Vpc": "arn:aws:ec2:*:*:vpc/${aws:PrincipalTag/VpcId}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:CreateFleet",
+      "privesc": false,
+      "resource_exposure": false
     },
     {
       "access_level": "Permissions management",
@@ -361,5 +420,5 @@
   "undocumented_actions": false,
   "unknown_actions": [],
   "updatedate": null,
-  "version": "v1"
+  "version": "v2"
 }
