@@ -6,7 +6,7 @@
     "Write"
   ],
   "arn": "arn:aws:iam::aws:policy/service-role/AmazonEMRServicePolicy_v2",
-  "createdate": "2024-05-02T18:43:30Z",
+  "createdate": "2025-03-03T20:37:06Z",
   "credentials_exposure": false,
   "data_access": false,
   "deprecated": false,
@@ -339,6 +339,56 @@
         "Effect": "Allow",
         "Resource": "arn:aws:iam::*:role/EMR_EC2_DefaultRole",
         "Sid": "PassRoleForEC2"
+      },
+      {
+        "Action": [
+          "ec2:ModifyVpcEndpoint",
+          "ec2:CreateVpcEndpoint"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceTag/for-use-with-amazon-emr-managed-policies": "true"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:ec2:*:*:vpc-endpoint/*",
+          "arn:aws:ec2:*:*:subnet/*",
+          "arn:aws:ec2:*:*:security-group/*",
+          "arn:aws:ec2:*:*:vpc/*"
+        ],
+        "Sid": "CreateAndModifyEmrServiceVPCEndpoint"
+      },
+      {
+        "Action": [
+          "ec2:CreateVpcEndpoint"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:RequestTag/Name": "emr-service-vpce",
+            "aws:RequestTag/for-use-with-amazon-emr-managed-policies": "true"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:ec2:*:*:vpc-endpoint/*"
+        ],
+        "Sid": "CreateEmrServiceVPCEndpoint"
+      },
+      {
+        "Action": [
+          "ec2:CreateTags"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:RequestTag/Name": "emr-service-vpce",
+            "aws:RequestTag/for-use-with-amazon-emr-managed-policies": "true",
+            "ec2:CreateAction": "CreateVpcEndpoint"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:ec2:*:*:vpc-endpoint/*",
+        "Sid": "TagEmrServiceVPCEndpoint"
       }
     ],
     "Version": "2012-10-17"
@@ -1115,6 +1165,65 @@
       "effective_action": "iam:PassRole",
       "privesc": true,
       "resource_exposure": true
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:ModifyVpcEndpoint",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/for-use-with-amazon-emr-managed-policies": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:ModifyVpcEndpoint",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:CreateVpcEndpoint",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/for-use-with-amazon-emr-managed-policies": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:CreateVpcEndpoint",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:CreateVpcEndpoint",
+      "condition": {
+        "StringEquals": {
+          "aws:RequestTag/Name": "emr-service-vpce",
+          "aws:RequestTag/for-use-with-amazon-emr-managed-policies": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:CreateVpcEndpoint",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Tagging",
+      "action": "ec2:CreateTags",
+      "condition": {
+        "StringEquals": {
+          "aws:RequestTag/Name": "emr-service-vpce",
+          "aws:RequestTag/for-use-with-amazon-emr-managed-policies": "true",
+          "ec2:CreateAction": "CreateVpcEndpoint"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:CreateTags",
+      "privesc": false,
+      "resource_exposure": false
     }
   ],
   "grantless": false,
@@ -1125,5 +1234,5 @@
   "undocumented_actions": false,
   "unknown_actions": [],
   "updatedate": "2024-05-02T18:43:30+00:00",
-  "version": "v3"
+  "version": "v4"
 }

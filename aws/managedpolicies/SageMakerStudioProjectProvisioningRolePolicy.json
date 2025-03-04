@@ -7,7 +7,7 @@
     "Permissions management"
   ],
   "arn": "arn:aws:iam::aws:policy/service-role/SageMakerStudioProjectProvisioningRolePolicy",
-  "createdate": "2025-02-27T00:22:05Z",
+  "createdate": "2025-03-03T19:37:06Z",
   "credentials_exposure": true,
   "data_access": true,
   "deprecated": false,
@@ -2129,7 +2129,6 @@
       },
       {
         "Action": [
-          "emr-serverless:GetApplication",
           "emr-serverless:UpdateApplication",
           "emr-serverless:DeleteApplication"
         ],
@@ -2147,6 +2146,24 @@
           "arn:aws:emr-serverless:*:*:/applications/*"
         ],
         "Sid": "EMRServerlessApplicationManagement"
+      },
+      {
+        "Action": [
+          "emr-serverless:GetApplication"
+        ],
+        "Condition": {
+          "Null": {
+            "aws:ResourceTag/AmazonDataZoneProject": "false"
+          },
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:emr-serverless:*:*:/applications/*"
+        ],
+        "Sid": "EMRServerlessGetApplication"
       },
       {
         "Action": [
@@ -6717,24 +6734,6 @@
       "resource_exposure": false
     },
     {
-      "access_level": "Read",
-      "action": "emr-serverless:GetApplication",
-      "condition": {
-        "Null": {
-          "aws:ResourceTag/AmazonDataZoneProject": "false"
-        },
-        "StringEquals": {
-          "aws:CalledViaFirst": "cloudformation.amazonaws.com",
-          "aws:ResourceAccount": "${aws:PrincipalAccount}"
-        }
-      },
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "emr-serverless:GetApplication",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
       "access_level": "Write",
       "action": "emr-serverless:UpdateApplication",
       "condition": {
@@ -6767,6 +6766,23 @@
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "emr-serverless:DeleteApplication",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "emr-serverless:GetApplication",
+      "condition": {
+        "Null": {
+          "aws:ResourceTag/AmazonDataZoneProject": "false"
+        },
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "emr-serverless:GetApplication",
       "privesc": false,
       "resource_exposure": false
     },
@@ -9008,5 +9024,5 @@
   "undocumented_actions": false,
   "unknown_actions": [],
   "updatedate": "2024-11-27T06:21:08+00:00",
-  "version": "v9"
+  "version": "v10"
 }
