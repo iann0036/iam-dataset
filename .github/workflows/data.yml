@@ -36,6 +36,10 @@ jobs:
           rm -rf google-api-go-client/.git
           cd ..
           gcloud iam roles list --show-deleted --format json > gcp/predefined_roles.json
+          basic_roles=$(for role in roles/reader roles/writer roles/admin; do
+              gcloud iam roles describe "$role" --format json | jq 'del(.includedPermissions)'
+          done | jq -s -c 'flatten')
+          jq --argjson basic_roles "$basic_roles" '. + $basic_roles' gcp/predefined_roles.json > gcp/predefined_roles.json.tmp && mv gcp/predefined_roles.json.tmp gcp/predefined_roles.json
           gcloud iam roles list --show-deleted --format json | jq -r '.[]|[.name,(.name | split("/")[-1])] | @tsv' |
           while IFS=$'\t' read -r name shortname; do
               echo "Writing $shortname.json"
