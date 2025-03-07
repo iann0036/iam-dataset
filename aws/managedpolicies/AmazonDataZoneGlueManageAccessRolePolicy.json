@@ -7,7 +7,7 @@
     "Permissions management"
   ],
   "arn": "arn:aws:iam::aws:policy/service-role/AmazonDataZoneGlueManageAccessRolePolicy",
-  "createdate": "2024-11-26T15:51:06Z",
+  "createdate": "2025-03-07T00:22:06Z",
   "credentials_exposure": false,
   "data_access": false,
   "deprecated": false,
@@ -28,7 +28,7 @@
         },
         "Effect": "Allow",
         "Resource": "*",
-        "Sid": "GlueTagDatabasePermissions"
+        "Sid": "GlueTagDatabase"
       },
       {
         "Action": [
@@ -42,7 +42,7 @@
         },
         "Effect": "Allow",
         "Resource": "arn:aws:glue:*:*:dataQualityRuleset/*",
-        "Sid": "GlueDataQualityPermissions"
+        "Sid": "GlueDataQuality"
       },
       {
         "Action": [
@@ -55,7 +55,7 @@
         },
         "Effect": "Allow",
         "Resource": "arn:aws:glue:*:*:crawler/*",
-        "Sid": "GlueCrawlerPermissions"
+        "Sid": "GlueCrawler"
       },
       {
         "Action": [
@@ -63,7 +63,11 @@
           "glue:DeleteTable",
           "glue:GetDatabases",
           "glue:GetTables",
-          "glue:SearchTables"
+          "glue:SearchTables",
+          "glue:CreateCatalog",
+          "glue:CreateDatabase",
+          "glue:DeleteCatalog",
+          "glue:DeleteDatabase"
         ],
         "Condition": {
           "StringEquals": {
@@ -75,9 +79,10 @@
           "arn:aws:glue:*:*:catalog",
           "arn:aws:glue:*:*:catalog/*",
           "arn:aws:glue:*:*:database/*",
-          "arn:aws:glue:*:*:table/*"
+          "arn:aws:glue:*:*:table/*",
+          "arn:aws:glue:*:*:userDefinedFunction/*"
         ],
-        "Sid": "GlueTableDatabasePermissions"
+        "Sid": "GlueTableDatabaseCatalog"
       },
       {
         "Action": [
@@ -95,7 +100,7 @@
           "arn:aws:glue:*:*:catalog/*",
           "arn:aws:glue:*:*:database/*"
         ],
-        "Sid": "GlueGetTagsPermissions"
+        "Sid": "GlueGetTags"
       },
       {
         "Action": [
@@ -122,7 +127,7 @@
         ],
         "Effect": "Allow",
         "Resource": "*",
-        "Sid": "LakeformationResourceSharingPermissions"
+        "Sid": "LakeformationResourceSharing"
       },
       {
         "Action": [
@@ -141,7 +146,7 @@
         },
         "Effect": "Allow",
         "Resource": "*",
-        "Sid": "LakeformationResourceFederatedSharingPermissions"
+        "Sid": "LakeformationResourceFederatedSharing"
       },
       {
         "Action": [
@@ -162,7 +167,7 @@
           "arn:aws:glue:*:*:database/*",
           "arn:aws:glue:*:*:table/*"
         ],
-        "Sid": "CrossAccountRAMResourceSharingPermissions"
+        "Sid": "CrossAccountRAMResourceSharing"
       },
       {
         "Action": [
@@ -184,7 +189,7 @@
         },
         "Effect": "Allow",
         "Resource": "*",
-        "Sid": "CrossAccountLakeFormationResourceSharingPermissions"
+        "Sid": "CrossAccountLakeFormationResourceSharing"
       },
       {
         "Action": [
@@ -192,14 +197,13 @@
         ],
         "Effect": "Allow",
         "Resource": "arn:aws:ram:*:*:resource-share-invitation/*",
-        "Sid": "CrossAccountRAMResourceShareInvitationPermission"
+        "Sid": "CrossAccountRAMResourceShareInvitation"
       },
       {
         "Action": [
           "ram:AssociateResourceShare",
           "ram:DeleteResourceShare",
           "ram:DisassociateResourceShare",
-          "ram:GetResourceShares",
           "ram:ListResourceSharePermissions",
           "ram:UpdateResourceShare"
         ],
@@ -217,7 +221,22 @@
         },
         "Effect": "Allow",
         "Resource": "*",
-        "Sid": "CrossAccountRAMResourceSharingViaLakeFormationPermissions"
+        "Sid": "CrossAccountRAMResourceSharingViaLakeFormation"
+      },
+      {
+        "Action": [
+          "ram:GetResourceShares"
+        ],
+        "Condition": {
+          "ForAnyValue:StringEquals": {
+            "aws:CalledVia": [
+              "lakeformation.amazonaws.com"
+            ]
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "GetResourceSharesViaLakeFormation"
       },
       {
         "Action": [
@@ -248,7 +267,7 @@
         },
         "Effect": "Allow",
         "Resource": "*",
-        "Sid": "KMSDecryptPermission"
+        "Sid": "KMSDecrypt"
       },
       {
         "Action": [
@@ -257,7 +276,9 @@
         "Effect": "Allow",
         "Resource": [
           "arn:aws:iam::*:role/AmazonDataZone*",
-          "arn:aws:iam::*:role/service-role/AmazonDataZone*"
+          "arn:aws:iam::*:role/service-role/AmazonDataZone*",
+          "arn:aws:iam::*:role/AmazonSageMakerManageAccess*",
+          "arn:aws:iam::*:role/service-role/AmazonSageMakerManageAccess*"
         ],
         "Sid": "GetRoleForDataZone"
       },
@@ -268,16 +289,49 @@
         "Condition": {
           "StringEquals": {
             "iam:PassedToService": [
-              "lakeformation.amazonaws.com"
+              "lakeformation.amazonaws.com",
+              "glue.amazonaws.com"
             ]
           }
         },
         "Effect": "Allow",
         "Resource": [
           "arn:aws:iam::*:role/AmazonDataZone*",
-          "arn:aws:iam::*:role/service-role/AmazonDataZone*"
+          "arn:aws:iam::*:role/service-role/AmazonDataZone*",
+          "arn:aws:iam::*:role/AmazonSageMakerManageAccess*",
+          "arn:aws:iam::*:role/service-role/AmazonSageMakerManageAccess*"
         ],
         "Sid": "PassRoleForDataLocationRegistration"
+      },
+      {
+        "Action": [
+          "ec2:DescribeAccountAttributes",
+          "ec2:DescribeSubnets",
+          "ec2:DescribeSecurityGroups",
+          "ec2:DescribeAvailabilityZones"
+        ],
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "CreateCatalogEC2"
+      },
+      {
+        "Action": [
+          "s3:CreateBucket",
+          "s3:DeleteBucket",
+          "s3:PutBucketPolicy",
+          "s3:PutEncryptionConfiguration",
+          "s3:PutLifecycleConfiguration",
+          "s3:PutBucketVersioning",
+          "s3:PutBucketTagging"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:s3:::redshift-staging-bucket*",
+        "Sid": "CreateCatalogS3"
       }
     ],
     "Version": "2012-10-17"
@@ -426,6 +480,62 @@
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "glue:SearchTables",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "glue:CreateCatalog",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "glue:CreateCatalog",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "glue:CreateDatabase",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "glue:CreateDatabase",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "glue:DeleteCatalog",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "glue:DeleteCatalog",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "glue:DeleteDatabase",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "glue:DeleteDatabase",
       "privesc": false,
       "resource_exposure": false
     },
@@ -806,27 +916,6 @@
       "resource_exposure": true
     },
     {
-      "access_level": "Read",
-      "action": "ram:GetResourceShares",
-      "condition": {
-        "ForAnyValue:StringEquals": {
-          "aws:CalledVia": [
-            "lakeformation.amazonaws.com"
-          ]
-        },
-        "StringLike": {
-          "ram:ResourceShareName": [
-            "LakeFormation*"
-          ]
-        }
-      },
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ram:GetResourceShares",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
       "access_level": "List",
       "action": "ram:ListResourceSharePermissions",
       "condition": {
@@ -867,6 +956,22 @@
       "effective_action": "ram:UpdateResourceShare",
       "privesc": false,
       "resource_exposure": true
+    },
+    {
+      "access_level": "Read",
+      "action": "ram:GetResourceShares",
+      "condition": {
+        "ForAnyValue:StringEquals": {
+          "aws:CalledVia": [
+            "lakeformation.amazonaws.com"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ram:GetResourceShares",
+      "privesc": false,
+      "resource_exposure": false
     },
     {
       "access_level": "Write",
@@ -917,7 +1022,8 @@
       "condition": {
         "StringEquals": {
           "iam:PassedToService": [
-            "lakeformation.amazonaws.com"
+            "lakeformation.amazonaws.com",
+            "glue.amazonaws.com"
           ]
         }
       },
@@ -926,6 +1032,144 @@
       "effective_action": "iam:PassRole",
       "privesc": true,
       "resource_exposure": true
+    },
+    {
+      "access_level": "List",
+      "action": "ec2:DescribeAccountAttributes",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:DescribeAccountAttributes",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "ec2:DescribeSubnets",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:DescribeSubnets",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "ec2:DescribeSecurityGroups",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:DescribeSecurityGroups",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "ec2:DescribeAvailabilityZones",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:DescribeAvailabilityZones",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "s3:CreateBucket",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3:CreateBucket",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "s3:DeleteBucket",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3:DeleteBucket",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Permissions management",
+      "action": "s3:PutBucketPolicy",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3:PutBucketPolicy",
+      "privesc": false,
+      "resource_exposure": true
+    },
+    {
+      "access_level": "Write",
+      "action": "s3:PutEncryptionConfiguration",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3:PutEncryptionConfiguration",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "s3:PutLifecycleConfiguration",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3:PutLifecycleConfiguration",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "s3:PutBucketVersioning",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3:PutBucketVersioning",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Tagging",
+      "action": "s3:PutBucketTagging",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3:PutBucketTagging",
+      "privesc": false,
+      "resource_exposure": false
     }
   ],
   "grantless": false,
@@ -936,5 +1180,5 @@
   "undocumented_actions": false,
   "unknown_actions": [],
   "updatedate": "2024-11-26T15:51:06+00:00",
-  "version": "v7"
+  "version": "v8"
 }

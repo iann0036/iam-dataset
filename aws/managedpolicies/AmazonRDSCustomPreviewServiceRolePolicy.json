@@ -6,7 +6,7 @@
     "Write"
   ],
   "arn": "arn:aws:iam::aws:policy/aws-service-role/AmazonRDSCustomPreviewServiceRolePolicy",
-  "createdate": "2023-09-20T17:48:39Z",
+  "createdate": "2025-03-06T23:37:06Z",
   "credentials_exposure": false,
   "data_access": false,
   "deprecated": false,
@@ -676,7 +676,10 @@
           }
         },
         "Effect": "Allow",
-        "Resource": "arn:aws:secretsmanager:*:*:secret:do-not-delete-rds-custom-*",
+        "Resource": [
+          "arn:aws:secretsmanager:*:*:secret:do-not-delete-rds-custom-*",
+          "arn:aws:secretsmanager:*:*:secret:preview-rds-custom!*"
+        ],
         "Sid": "secretmanager1"
       },
       {
@@ -684,7 +687,8 @@
           "secretsmanager:TagResource",
           "secretsmanager:DescribeSecret",
           "secretsmanager:DeleteSecret",
-          "secretsmanager:PutSecretValue"
+          "secretsmanager:PutSecretValue",
+          "secretsmanager:RestoreSecret"
         ],
         "Condition": {
           "StringLike": {
@@ -696,8 +700,26 @@
           }
         },
         "Effect": "Allow",
-        "Resource": "arn:aws:secretsmanager:*:*:secret:do-not-delete-rds-custom-*",
+        "Resource": [
+          "arn:aws:secretsmanager:*:*:secret:do-not-delete-rds-custom-*",
+          "arn:aws:secretsmanager:*:*:secret:preview-rds-custom!*"
+        ],
         "Sid": "secretmanager2"
+      },
+      {
+        "Action": [
+          "secretsmanager:ListSecrets"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "*"
+        ],
+        "Sid": "secretmanager3"
       },
       {
         "Action": [
@@ -2228,6 +2250,38 @@
       "resource_exposure": false
     },
     {
+      "access_level": "Write",
+      "action": "secretsmanager:RestoreSecret",
+      "condition": {
+        "StringLike": {
+          "aws:ResourceTag/AWSRDSCustom": [
+            "custom-oracle",
+            "custom-sqlserver",
+            "custom-oracle-rac"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "secretsmanager:RestoreSecret",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "secretsmanager:ListSecrets",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "secretsmanager:ListSecrets",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
       "access_level": "Read",
       "action": "servicequotas:GetServiceQuota",
       "condition": null,
@@ -2246,5 +2300,5 @@
   "undocumented_actions": false,
   "unknown_actions": [],
   "updatedate": "2023-09-20T17:48:39+00:00",
-  "version": "v6"
+  "version": "v7"
 }

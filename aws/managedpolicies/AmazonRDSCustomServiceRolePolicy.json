@@ -6,7 +6,7 @@
     "Write"
   ],
   "arn": "arn:aws:iam::aws:policy/aws-service-role/AmazonRDSCustomServiceRolePolicy",
-  "createdate": "2024-07-18T17:33:36Z",
+  "createdate": "2025-03-06T23:52:07Z",
   "credentials_exposure": false,
   "data_access": true,
   "deprecated": false,
@@ -737,7 +737,10 @@
           }
         },
         "Effect": "Allow",
-        "Resource": "arn:aws:secretsmanager:*:*:secret:do-not-delete-rds-custom-*",
+        "Resource": [
+          "arn:aws:secretsmanager:*:*:secret:do-not-delete-rds-custom-*",
+          "arn:aws:secretsmanager:*:*:secret:rds-custom!*"
+        ],
         "Sid": "secretmanager1"
       },
       {
@@ -745,7 +748,8 @@
           "secretsmanager:TagResource",
           "secretsmanager:DescribeSecret",
           "secretsmanager:DeleteSecret",
-          "secretsmanager:PutSecretValue"
+          "secretsmanager:PutSecretValue",
+          "secretsmanager:RestoreSecret"
         ],
         "Condition": {
           "StringLike": {
@@ -757,8 +761,26 @@
           }
         },
         "Effect": "Allow",
-        "Resource": "arn:aws:secretsmanager:*:*:secret:do-not-delete-rds-custom-*",
+        "Resource": [
+          "arn:aws:secretsmanager:*:*:secret:do-not-delete-rds-custom-*",
+          "arn:aws:secretsmanager:*:*:secret:rds-custom!*"
+        ],
         "Sid": "secretmanager2"
+      },
+      {
+        "Action": [
+          "secretsmanager:ListSecrets"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "*"
+        ],
+        "Sid": "secretmanager3"
       },
       {
         "Action": [
@@ -2408,6 +2430,38 @@
     },
     {
       "access_level": "Write",
+      "action": "secretsmanager:RestoreSecret",
+      "condition": {
+        "StringLike": {
+          "aws:ResourceTag/AWSRDSCustom": [
+            "custom-oracle",
+            "custom-sqlserver",
+            "custom-oracle-rac"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "secretsmanager:RestoreSecret",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "secretsmanager:ListSecrets",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "secretsmanager:ListSecrets",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
       "action": "sqs:CreateQueue",
       "condition": {
         "StringLike": {
@@ -2537,5 +2591,5 @@
   "undocumented_actions": false,
   "unknown_actions": [],
   "updatedate": "2024-07-18T17:33:36+00:00",
-  "version": "v10"
+  "version": "v11"
 }
