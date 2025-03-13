@@ -4,7 +4,7 @@
     "Write"
   ],
   "arn": null,
-  "createdate": "2025-02-14T00:07:06Z",
+  "createdate": "2025-03-12T18:37:06Z",
   "credentials_exposure": false,
   "data_access": false,
   "deprecated": false,
@@ -122,6 +122,25 @@
         "Effect": "Allow",
         "Resource": "arn:aws:kms:*:*:key/${aws:PrincipalTag/KmsKeyId}",
         "Sid": "BedrockPromptKmsPermissions"
+      },
+      {
+        "Action": [
+          "kms:Decrypt"
+        ],
+        "Condition": {
+          "Null": {
+            "kms:EncryptionContext:aws:bedrock:guardrail-id": "false"
+          },
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          },
+          "StringLike": {
+            "kms:ViaService": "bedrock.*.amazonaws.com"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:kms:*:*:key/${aws:PrincipalTag/KmsKeyId}",
+        "Sid": "BedrockGuardrailKmsPermissions"
       }
     ],
     "Version": "2012-10-17"
@@ -274,6 +293,26 @@
       "effective_action": "kms:GenerateDataKey",
       "privesc": false,
       "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "kms:Decrypt",
+      "condition": {
+        "Null": {
+          "kms:EncryptionContext:aws:bedrock:guardrail-id": "false"
+        },
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        },
+        "StringLike": {
+          "kms:ViaService": "bedrock.*.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "kms:Decrypt",
+      "privesc": false,
+      "resource_exposure": false
     }
   ],
   "grantless": false,
@@ -284,5 +323,5 @@
   "undocumented_actions": false,
   "unknown_actions": [],
   "updatedate": null,
-  "version": "v1"
+  "version": "v2"
 }
