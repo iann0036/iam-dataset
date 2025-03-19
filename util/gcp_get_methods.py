@@ -6,6 +6,7 @@ import re
 
 result = {}
 result_ext = {}
+proto = {}
 
 def resources_recurse(resources, resource_type_path):
     for resource_type in resources.keys():
@@ -16,7 +17,7 @@ def resources_recurse(resources, resource_type_path):
                 if method_id not in result[api['name']]['methods']:
                     flatpath = resources[resource_type]['methods'][method_name]['flatPath'] if 'flatPath' in resources[resource_type]['methods'][method_name] else resources[resource_type]['methods'][method_name]['path']
                     if flatpath.startswith(apidetail['version'] + "/"):
-                        flatpath = "\{_version\}" + flatpath[len(apidetail['version']):]
+                        flatpath = "{" + "_version}" + flatpath[len(apidetail['version']):]
 
                     result[api['name']]['methods'][method_id] = {
                         'description': resources[resource_type]['methods'][method_name]['description'] if 'description' in resources[resource_type]['methods'][method_name] else '',
