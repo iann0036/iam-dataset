@@ -33,19 +33,39 @@ def dig_nested(obj, path):
             if 'options' in v:
                 if "(google.api.http).get" in v['options']:
                     newpattern, newpath = strip_var(v['options']["(google.api.http).get"], path + k)
-                    proto['get'][newpattern] = newpath
+                    if newpattern not in proto['get']:
+                        proto['get'][newpattern] = [newpath]
+                    else:
+                        proto['get'][newpattern].append(newpath)
+                        proto['get'][newpattern] = list(set(proto['get'][newpattern]))
                 if "(google.api.http).post" in v['options']:
                     newpattern, newpath = strip_var(v['options']["(google.api.http).post"], path + k)
-                    proto['post'][newpattern] = newpath
+                    if newpattern not in proto['post']:
+                        proto['post'][newpattern] = [newpath]
+                    else:
+                        proto['post'][newpattern].append(newpath)
+                        proto['post'][newpattern] = list(set(proto['post'][newpattern]))
                 if "(google.api.http).put" in v['options']:
                     newpattern, newpath = strip_var(v['options']["(google.api.http).put"], path + k)
-                    proto['put'][newpattern] = newpath
+                    if newpattern not in proto['put']:
+                        proto['put'][newpattern] = [newpath]
+                    else:
+                        proto['put'][newpattern].append(newpath)
+                        proto['put'][newpattern] = list(set(proto['put'][newpattern]))
                 if "(google.api.http).delete" in v['options']:
                     newpattern, newpath = strip_var(v['options']["(google.api.http).delete"], path + k)
-                    proto['delete'][newpattern] = newpath
+                    if newpattern not in proto['delete']:
+                        proto['delete'][newpattern] = [newpath]
+                    else:
+                        proto['delete'][newpattern].append(newpath)
+                        proto['delete'][newpattern] = list(set(proto['delete'][newpattern]))
                 if "(google.api.http).patch" in v['options']:
                     newpattern, newpath = strip_var(v['options']["(google.api.http).patch"], path + k)
-                    proto['patch'][newpattern] = newpath
+                    if newpattern not in proto['patch']:
+                        proto['patch'][newpattern] = [newpath]
+                    else:
+                        proto['patch'][newpattern].append(newpath)
+                        proto['patch'][newpattern] = list(set(proto['patch'][newpattern]))
 
 def resources_recurse(resources, resource_type_path):
     for resource_type in resources.keys():
@@ -59,7 +79,7 @@ def resources_recurse(resources, resource_type_path):
                         flatpath = "{" + "_version}" + flatpath[len(apidetail['version']):]
 
                     normalized_flatpath = re.sub(r'{(.+?)}', r'*', flatpath)
-                    api_path = None
+                    api_path = []
                     if normalized_flatpath in proto[resources[resource_type]['methods'][method_name]['httpMethod'].lower()]:
                         api_path = proto[resources[resource_type]['methods'][method_name]['httpMethod'].lower()][normalized_flatpath]
                         del proto[resources[resource_type]['methods'][method_name]['httpMethod'].lower()][normalized_flatpath]
@@ -77,7 +97,7 @@ def resources_recurse(resources, resource_type_path):
                         'resourceTypePath': resource_type_path,
                         'flatPath': flatpath,
                         'versions': [],
-                        'apiPath': api_path,
+                        'apiPaths': api_path,
                     }
                     result_ext[api['name']]['methods'][method_id] = {
                         'description': resources[resource_type]['methods'][method_name]['description'] if 'description' in resources[resource_type]['methods'][method_name] else '',
@@ -87,7 +107,7 @@ def resources_recurse(resources, resource_type_path):
                         'resourceTypePath': resource_type_path,
                         'flatPath': flatpath,
                         'versions': [],
-                        'apiPath': api_path,
+                        'apiPaths': api_path,
                         'parameters': resources[resource_type]['methods'][method_name]['parameters'] if 'parameters' in resources[resource_type]['methods'][method_name] else {}
                     }
                 result[api['name']]['methods'][method_id]['versions'].append(apidetail['version'])
