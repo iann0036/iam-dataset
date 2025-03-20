@@ -48,6 +48,8 @@
     "cloudbuild.builds.get",
     "cloudbuild.builds.list",
     "cloudbuild.builds.update",
+    "cloudbuild.locations.get",
+    "cloudbuild.locations.list",
     "cloudbuild.operations.get",
     "cloudbuild.operations.list",
     "cloudbuild.workerpools.use",
