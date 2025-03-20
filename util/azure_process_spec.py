@@ -56,6 +56,8 @@ for rootitem in os.listdir('azure-rest-api-specs/specification/'):
                                                         result[mappedservicename][httpmethodname][pathname]['versions'].append(apiversion)
                                                         result[mappedservicename][httpmethodname][pathname]['versions'].sort()
                                                         result[mappedservicename][httpmethodname][pathname]['operationId'] = httpmethoddetail['operationId']
+                                                        if 'info' in spec and 'title' in spec['info']:
+                                                            result[mappedservicename][httpmethodname][pathname]['clientHint'] = spec['info']['title']
                                                         if 'description' in httpmethoddetail:
                                                             result[mappedservicename][httpmethodname][pathname]['description'] = httpmethoddetail['description']
                                                         elif 'summary' in httpmethoddetail:
