@@ -7,7 +7,7 @@
     "Permissions management"
   ],
   "arn": "arn:aws:iam::aws:policy/SageMakerStudioProjectUserRolePolicy",
-  "createdate": "2025-02-27T22:37:06Z",
+  "createdate": "2025-03-21T20:07:06Z",
   "credentials_exposure": true,
   "data_access": true,
   "deprecated": false,
@@ -949,6 +949,19 @@
         "Action": [
           "glue:GetDatabases"
         ],
+        "Condition": {
+          "StringEquals": {
+            "glue:LakeFormationPermissions": "Enabled"
+          }
+        },
+        "Effect": "Allow",
+        "NotResource": "arn:aws:glue:*:*:database/default",
+        "Sid": "AllowGlueGetDatabasesExceptDefault"
+      },
+      {
+        "Action": [
+          "glue:GetDatabases"
+        ],
         "Effect": "Allow",
         "Resource": "arn:aws:glue:*:*:catalog",
         "Sid": "GlueListDatabasesOnNoDatabases"
@@ -1006,7 +1019,6 @@
           "glue:GetColumnStatisticsTaskRun",
           "glue:GetColumnStatisticsTaskRuns",
           "glue:GetDatabase",
-          "glue:GetDatabases",
           "glue:GetPartition",
           "glue:GetPartitionIndexes",
           "glue:GetPartitions",
@@ -1931,7 +1943,10 @@
           }
         },
         "Effect": "Allow",
-        "Resource": "arn:aws:iam::*:role/AmazonBedrockEvaluationRole-${aws:PrincipalTag/AmazonDataZoneProject}-*",
+        "Resource": [
+          "arn:aws:iam::*:role/AmazonBedrockEvaluationRole-${aws:PrincipalTag/AmazonDataZoneProject}-*",
+          "arn:aws:iam::*:role/AmazonBedrockServiceRole-${aws:PrincipalTag/AmazonDataZoneProject}-*"
+        ],
         "Sid": "PassRoleToBedrockEvaluation"
       },
       {
@@ -1945,7 +1960,10 @@
           }
         },
         "Effect": "Allow",
-        "Resource": "arn:aws:iam::*:role/AmazonBedrockEvaluationRole-${aws:PrincipalTag/AmazonDataZoneProject}-*",
+        "Resource": [
+          "arn:aws:iam::*:role/AmazonBedrockEvaluationRole-${aws:PrincipalTag/AmazonDataZoneProject}-*",
+          "arn:aws:iam::*:role/AmazonBedrockServiceRole-${aws:PrincipalTag/AmazonDataZoneProject}-*"
+        ],
         "Sid": "IamPassRoleToBedrockPermissions"
       },
       {
@@ -6887,6 +6905,20 @@
     {
       "access_level": "Read",
       "action": "glue:GetDatabases",
+      "condition": {
+        "StringEquals": {
+          "glue:LakeFormationPermissions": "Enabled"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "glue:GetDatabases",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "glue:GetDatabases",
       "condition": null,
       "credentials_exposure": false,
       "data_access": false,
@@ -7221,20 +7253,6 @@
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "glue:GetDatabase",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Read",
-      "action": "glue:GetDatabases",
-      "condition": {
-        "StringEquals": {
-          "glue:LakeFormationPermissions": "Enabled"
-        }
-      },
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "glue:GetDatabases",
       "privesc": false,
       "resource_exposure": false
     },
@@ -11541,5 +11559,5 @@
   "undocumented_actions": false,
   "unknown_actions": [],
   "updatedate": "2024-11-28T04:51:07+00:00",
-  "version": "v7"
+  "version": "v8"
 }
