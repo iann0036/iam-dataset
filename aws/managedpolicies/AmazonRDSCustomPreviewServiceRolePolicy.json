@@ -6,9 +6,9 @@
     "Write"
   ],
   "arn": "arn:aws:iam::aws:policy/aws-service-role/AmazonRDSCustomPreviewServiceRolePolicy",
-  "createdate": "2025-03-06T23:37:06Z",
+  "createdate": "2025-03-25T22:22:06Z",
   "credentials_exposure": false,
-  "data_access": false,
+  "data_access": true,
   "deprecated": false,
   "document": {
     "Statement": [
@@ -209,7 +209,8 @@
         },
         "Effect": "Allow",
         "Resource": [
-          "arn:aws:ec2:*:*:key-pair/do-not-delete-rds-custom-*"
+          "arn:aws:ec2:*:*:key-pair/do-not-delete-rds-custom-*",
+          "arn:aws:ec2:*:*:key-pair/preview-rds-custom!*"
         ],
         "Sid": "eccRunInstances3keyPair1"
       },
@@ -228,7 +229,8 @@
         },
         "Effect": "Allow",
         "Resource": [
-          "arn:aws:ec2:*:*:key-pair/do-not-delete-rds-custom-*"
+          "arn:aws:ec2:*:*:key-pair/do-not-delete-rds-custom-*",
+          "arn:aws:ec2:*:*:key-pair/preview-rds-custom!*"
         ],
         "Sid": "eccKeyPair2"
       },
@@ -728,6 +730,41 @@
         "Effect": "Allow",
         "Resource": "*",
         "Sid": "servicequota1"
+      },
+      {
+        "Action": [
+          "sqs:CreateQueue",
+          "sqs:TagQueue"
+        ],
+        "Condition": {
+          "StringLike": {
+            "aws:RequestTag/AWSRDSCustom": [
+              "custom-oracle"
+            ]
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:sqs:*:*:do-not-delete-rds-custom-*",
+        "Sid": "sqs1"
+      },
+      {
+        "Action": [
+          "sqs:GetQueueAttributes",
+          "sqs:SendMessage",
+          "sqs:ReceiveMessage",
+          "sqs:DeleteMessage",
+          "sqs:DeleteQueue"
+        ],
+        "Condition": {
+          "StringLike": {
+            "aws:ResourceTag/AWSRDSCustom": [
+              "custom-oracle"
+            ]
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:sqs:*:*:do-not-delete-rds-custom-*",
+        "Sid": "sqs2"
       }
     ],
     "Version": "2012-10-17"
@@ -2290,6 +2327,118 @@
       "effective_action": "servicequotas:GetServiceQuota",
       "privesc": false,
       "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "sqs:CreateQueue",
+      "condition": {
+        "StringLike": {
+          "aws:RequestTag/AWSRDSCustom": [
+            "custom-oracle"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sqs:CreateQueue",
+      "privesc": false,
+      "resource_exposure": true
+    },
+    {
+      "access_level": "Tagging",
+      "action": "sqs:TagQueue",
+      "condition": {
+        "StringLike": {
+          "aws:RequestTag/AWSRDSCustom": [
+            "custom-oracle"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sqs:TagQueue",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "sqs:GetQueueAttributes",
+      "condition": {
+        "StringLike": {
+          "aws:ResourceTag/AWSRDSCustom": [
+            "custom-oracle"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sqs:GetQueueAttributes",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "sqs:SendMessage",
+      "condition": {
+        "StringLike": {
+          "aws:ResourceTag/AWSRDSCustom": [
+            "custom-oracle"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sqs:SendMessage",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "sqs:ReceiveMessage",
+      "condition": {
+        "StringLike": {
+          "aws:ResourceTag/AWSRDSCustom": [
+            "custom-oracle"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": true,
+      "effective_action": "sqs:ReceiveMessage",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "sqs:DeleteMessage",
+      "condition": {
+        "StringLike": {
+          "aws:ResourceTag/AWSRDSCustom": [
+            "custom-oracle"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sqs:DeleteMessage",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "sqs:DeleteQueue",
+      "condition": {
+        "StringLike": {
+          "aws:ResourceTag/AWSRDSCustom": [
+            "custom-oracle"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sqs:DeleteQueue",
+      "privesc": false,
+      "resource_exposure": false
     }
   ],
   "grantless": false,
@@ -2300,5 +2449,5 @@
   "undocumented_actions": false,
   "unknown_actions": [],
   "updatedate": "2023-09-20T17:48:39+00:00",
-  "version": "v7"
+  "version": "v8"
 }
