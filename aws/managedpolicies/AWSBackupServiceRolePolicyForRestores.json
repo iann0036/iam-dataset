@@ -7,7 +7,7 @@
     "Permissions management"
   ],
   "arn": "arn:aws:iam::aws:policy/service-role/AWSBackupServiceRolePolicyForRestores",
-  "createdate": "2025-01-07T18:22:06Z",
+  "createdate": "2025-03-27T21:52:06Z",
   "credentials_exposure": false,
   "data_access": true,
   "deprecated": false,
@@ -153,7 +153,8 @@
               "ec2.*.amazonaws.com",
               "elasticfilesystem.*.amazonaws.com",
               "rds.*.amazonaws.com",
-              "redshift.*.amazonaws.com"
+              "redshift.*.amazonaws.com",
+              "redshift-serverless.*.amazonaws.com"
             ]
           }
         },
@@ -246,7 +247,7 @@
           "ec2:CreateTags"
         ],
         "Condition": {
-          "ForAnyValue:StringLike": {
+          "StringLike": {
             "ec2:CreateAction": [
               "RunInstances",
               "CreateVolume"
@@ -397,7 +398,8 @@
         "Effect": "Allow",
         "Resource": [
           "arn:aws:redshift:*:*:snapshot:*/*",
-          "arn:aws:redshift:*:*:cluster:*"
+          "arn:aws:redshift:*:*:cluster:*",
+          "arn:aws:redshift-serverless:*:*:snapshot/*"
         ],
         "Sid": "RedshiftClusterSnapshotPermissions"
       },
@@ -418,6 +420,38 @@
         "Effect": "Allow",
         "Resource": "*",
         "Sid": "RedshiftTablePermissions"
+      },
+      {
+        "Action": [
+          "redshift-serverless:RestoreTableFromSnapshot"
+        ],
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:redshift-serverless:*:*:namespace/*",
+          "arn:aws:redshift-serverless:*:*:workgroup/*",
+          "arn:aws:redshift-serverless:*:*:snapshot/*"
+        ],
+        "Sid": "RedshiftServerlessSnapshotPermissions"
+      },
+      {
+        "Action": [
+          "redshift-serverless:GetNamespace"
+        ],
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:redshift-serverless:*:*:namespace/*"
+        ],
+        "Sid": "RedshiftServerlessNamespacePermissions"
+      },
+      {
+        "Action": [
+          "redshift-serverless:GetTableRestoreStatus"
+        ],
+        "Effect": "Allow",
+        "Resource": [
+          "*"
+        ],
+        "Sid": "RedshiftServerlessTablePermissions"
       },
       {
         "Action": [
@@ -969,7 +1003,8 @@
             "ec2.*.amazonaws.com",
             "elasticfilesystem.*.amazonaws.com",
             "rds.*.amazonaws.com",
-            "redshift.*.amazonaws.com"
+            "redshift.*.amazonaws.com",
+            "redshift-serverless.*.amazonaws.com"
           ]
         }
       },
@@ -989,7 +1024,8 @@
             "ec2.*.amazonaws.com",
             "elasticfilesystem.*.amazonaws.com",
             "rds.*.amazonaws.com",
-            "redshift.*.amazonaws.com"
+            "redshift.*.amazonaws.com",
+            "redshift-serverless.*.amazonaws.com"
           ]
         }
       },
@@ -1009,7 +1045,8 @@
             "ec2.*.amazonaws.com",
             "elasticfilesystem.*.amazonaws.com",
             "rds.*.amazonaws.com",
-            "redshift.*.amazonaws.com"
+            "redshift.*.amazonaws.com",
+            "redshift-serverless.*.amazonaws.com"
           ]
         }
       },
@@ -1029,7 +1066,8 @@
             "ec2.*.amazonaws.com",
             "elasticfilesystem.*.amazonaws.com",
             "rds.*.amazonaws.com",
-            "redshift.*.amazonaws.com"
+            "redshift.*.amazonaws.com",
+            "redshift-serverless.*.amazonaws.com"
           ]
         }
       },
@@ -1049,7 +1087,8 @@
             "ec2.*.amazonaws.com",
             "elasticfilesystem.*.amazonaws.com",
             "rds.*.amazonaws.com",
-            "redshift.*.amazonaws.com"
+            "redshift.*.amazonaws.com",
+            "redshift-serverless.*.amazonaws.com"
           ]
         }
       },
@@ -1069,7 +1108,8 @@
             "ec2.*.amazonaws.com",
             "elasticfilesystem.*.amazonaws.com",
             "rds.*.amazonaws.com",
-            "redshift.*.amazonaws.com"
+            "redshift.*.amazonaws.com",
+            "redshift-serverless.*.amazonaws.com"
           ]
         }
       },
@@ -1215,7 +1255,7 @@
       "access_level": "Tagging",
       "action": "ec2:CreateTags",
       "condition": {
-        "ForAnyValue:StringLike": {
+        "StringLike": {
           "ec2:CreateAction": [
             "RunInstances",
             "CreateVolume"
@@ -1488,6 +1528,36 @@
     },
     {
       "access_level": "Write",
+      "action": "redshift-serverless:RestoreTableFromSnapshot",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "redshift-serverless:RestoreTableFromSnapshot",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "redshift-serverless:GetNamespace",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "redshift-serverless:GetNamespace",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "redshift-serverless:GetTableRestoreStatus",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "redshift-serverless:GetTableRestoreStatus",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
       "action": "timestream:StartAwsRestoreJob",
       "condition": null,
       "credentials_exposure": false,
@@ -1575,5 +1645,5 @@
   "undocumented_actions": false,
   "unknown_actions": [],
   "updatedate": "2023-12-15T22:05:32+00:00",
-  "version": "v21"
+  "version": "v22"
 }

@@ -7,7 +7,7 @@
     "Permissions management"
   ],
   "arn": "arn:aws:iam::aws:policy/AWSBackupFullAccess",
-  "createdate": "2024-09-26T19:18:54Z",
+  "createdate": "2025-03-27T21:52:06Z",
   "credentials_exposure": false,
   "data_access": true,
   "deprecated": false,
@@ -426,6 +426,52 @@
         "Effect": "Allow",
         "Resource": "*",
         "Sid": "RedshiftPermissions"
+      },
+      {
+        "Action": [
+          "redshift-serverless:ListNamespaces",
+          "redshift-serverless:ListSnapshots",
+          "redshift-serverless:ListWorkgroups"
+        ],
+        "Effect": "Allow",
+        "Resource": [
+          "*"
+        ],
+        "Sid": "RedshiftServerlessListPermissions"
+      },
+      {
+        "Action": [
+          "redshift-serverless:GetNamespace",
+          "redshift-serverless:GetSnapshot",
+          "redshift-serverless:GetWorkgroup"
+        ],
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:redshift-serverless:*:*:namespace/*",
+          "arn:aws:redshift-serverless:*:*:workgroup/*",
+          "arn:aws:redshift-serverless:*:*:snapshot/*"
+        ],
+        "Sid": "RedshiftServerlessGetPermissions"
+      },
+      {
+        "Action": [
+          "redshift-serverless:DeleteSnapshot"
+        ],
+        "Condition": {
+          "ForAnyValue:StringEquals": {
+            "aws:CalledVia": [
+              "backup.amazonaws.com"
+            ]
+          },
+          "Null": {
+            "aws:ResourceTag/aws:backup:source-resource": "false"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:redshift-serverless:*:*:snapshot/*"
+        ],
+        "Sid": "RedshiftServerlessDeletetPermissions"
       },
       {
         "Action": [
@@ -2672,6 +2718,85 @@
     },
     {
       "access_level": "List",
+      "action": "redshift-serverless:ListNamespaces",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "redshift-serverless:ListNamespaces",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "redshift-serverless:ListSnapshots",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "redshift-serverless:ListSnapshots",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "redshift-serverless:ListWorkgroups",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "redshift-serverless:ListWorkgroups",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "redshift-serverless:GetNamespace",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "redshift-serverless:GetNamespace",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "redshift-serverless:GetSnapshot",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "redshift-serverless:GetSnapshot",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "redshift-serverless:GetWorkgroup",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "redshift-serverless:GetWorkgroup",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "redshift-serverless:DeleteSnapshot",
+      "condition": {
+        "ForAnyValue:StringEquals": {
+          "aws:CalledVia": [
+            "backup.amazonaws.com"
+          ]
+        },
+        "Null": {
+          "aws:ResourceTag/aws:backup:source-resource": "false"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "redshift-serverless:DeleteSnapshot",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
       "action": "cloudformation:ListStacks",
       "condition": null,
       "credentials_exposure": false,
@@ -2739,5 +2864,5 @@
   "undocumented_actions": false,
   "unknown_actions": [],
   "updatedate": "2024-09-26T19:18:54+00:00",
-  "version": "v18"
+  "version": "v19"
 }
