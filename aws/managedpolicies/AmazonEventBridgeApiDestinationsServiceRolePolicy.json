@@ -4,7 +4,7 @@
     "Write"
   ],
   "arn": "arn:aws:iam::aws:policy/aws-service-role/AmazonEventBridgeApiDestinationsServiceRolePolicy",
-  "createdate": "2021-02-11T20:52:05Z",
+  "createdate": "2025-03-28T20:07:07Z",
   "credentials_exposure": false,
   "data_access": false,
   "deprecated": false,
@@ -21,6 +21,26 @@
         ],
         "Effect": "Allow",
         "Resource": "arn:aws:secretsmanager:*:*:secret:events!connection/*"
+      },
+      {
+        "Action": [
+          "kms:Decrypt",
+          "kms:Encrypt",
+          "kms:GenerateDataKey"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceTag/EventBridgeApiDestinations": "true"
+          },
+          "StringLike": {
+            "kms:EncryptionContext:SecretARN": [
+              "arn:aws:secretsmanager:*:*:secret:events!connection/*"
+            ],
+            "kms:ViaService": "secretsmanager.*.amazonaws.com"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:kms:*:*:key/*"
       }
     ],
     "Version": "2012-10-17"
@@ -85,6 +105,66 @@
       "effective_action": "secretsmanager:PutSecretValue",
       "privesc": false,
       "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "kms:Decrypt",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/EventBridgeApiDestinations": "true"
+        },
+        "StringLike": {
+          "kms:EncryptionContext:SecretARN": [
+            "arn:aws:secretsmanager:*:*:secret:events!connection/*"
+          ],
+          "kms:ViaService": "secretsmanager.*.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "kms:Decrypt",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "kms:Encrypt",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/EventBridgeApiDestinations": "true"
+        },
+        "StringLike": {
+          "kms:EncryptionContext:SecretARN": [
+            "arn:aws:secretsmanager:*:*:secret:events!connection/*"
+          ],
+          "kms:ViaService": "secretsmanager.*.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "kms:Encrypt",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "kms:GenerateDataKey",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/EventBridgeApiDestinations": "true"
+        },
+        "StringLike": {
+          "kms:EncryptionContext:SecretARN": [
+            "arn:aws:secretsmanager:*:*:secret:events!connection/*"
+          ],
+          "kms:ViaService": "secretsmanager.*.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "kms:GenerateDataKey",
+      "privesc": false,
+      "resource_exposure": false
     }
   ],
   "grantless": false,
@@ -95,5 +175,5 @@
   "undocumented_actions": false,
   "unknown_actions": [],
   "updatedate": "2021-02-11T20:52:05+00:00",
-  "version": "v1"
+  "version": "v2"
 }
