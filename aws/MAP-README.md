@@ -69,7 +69,7 @@ The AWS map.json file is a JSON file that contains mappings of SDK calls to IAM 
 
 ## Template Syntax
 
-The following syntax items may be used within the `template` and `arn_override` properties of the map.json file. Any other text will be treated as a literal string.
+The following syntax items may be used within the `template` and similar properties of the map.json file. Any other text will be treated as a literal string.
 
 `${PropertyName}` - Variable substitution for the `PropertyName` property.
 
