@@ -31,7 +31,8 @@ The AWS map.json file is a JSON file that contains mappings of SDK calls to IAM 
                 "action": "acm:UpdateCertificateOptions",
                 "resource_mappings": {},
                 "resourcearn_mappings": {
-                    "certificate": "${CertificateArn}" // a mapping of the resource type to a template used to fulfil the entire ARN
+                    "certificate": "${CertificateArn}", // a mapping of the resource type to a template used to fulfil the entire ARN
+                    ...
                 }
             },
             { // variant 4, used to explicitely override the provided ARN template with the specified template
