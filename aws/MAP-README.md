@@ -7,6 +7,7 @@ The AWS map.json file is a JSON file that contains mappings of SDK calls to IAM 
 ```jsonc
 {
     "info": "string", // basic information about the origin of the file
+    "version": "1.0.1", // the semantic version of the file
     "sdk_permissionless_actions": [ // list of SDK calls that do not require permissions
        "DynamoDB.DescribeEndpoints",
         ...
