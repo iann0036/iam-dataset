@@ -70,20 +70,18 @@ The AWS map.json file is a JSON file that contains mappings of SDK calls to IAM 
 
 The following syntax items may be used within the `template` and `arn_override` properties of the map.json file. Any other text will be treated as a literal string.
 
-`${PropertyName}` - Variable substitution for the `PropertyName` property
+`${PropertyName}` - Variable substitution for the `PropertyName` property.
 
-`.` - A property within an object/map, used within variable substitution
+`.` - A property within an object/map, used within variable substitution.
 
-`[]` - For each value within the array, used within variable substitution
+`[]` - For each value within the array, used within variable substitution.
 
-`%%urlencode%${PropertyName}%%` - Performs a URL-encoding on the `PropertyName` property
+`%%urlencode%${PropertyName}%%` - Performs a URL-encoding on the `PropertyName` property.
 
 `%%many%${PropertyName}%${PropertyName2}%${PropertyName3}%%` - For each of the `PropertyName`, `PropertyName2` & `PropertyName3` properties (any length)
-
-`%%iftemplatematch%${ArnProperty}%%` - Only valid if the template matches the resource type's template. If invalid, required resource types should use a wildcard (`*`) in the ARN template.
 
 `%%iftemplatematch%${ArnProperty}%${PropertyName}%%` - Only valid if the template matches the resource type's template. If invalid, required resource types should use a wildcard (`*`) in the ARN template and non-required resource types should omit the indicated IAM permission entirely.
 
 `%%iftruthy%${PropertyName}%ValueIfTrue%ValueIfFalse%%` - Truthy test.
 
-`%%regex%${PropertyName}%/(.+)/g%%` - Returns first capture group of Regex
+`%%regex%${PropertyName}%/(.+)/g%%` - Returns first capture group of Regex.
