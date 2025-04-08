@@ -21,7 +21,7 @@ The AWS map.json file is a JSON file that contains mappings of SDK calls to IAM 
                     },
                     ...
                 },
-                "undocumented": true, // (optional for all variants) if present and true, marks that the action is not documented within the AWS IAM documentation
+                "undocumented": true, // (optional for all variants) if present and true, marks that the action is not documented within the AWS IAM documentation (SAR) - typically these are discovered through error messages
             },
             { // variant 2, used when the IAM permission has a resource type associated with it but the resource type has no variables
                 "action": "sts:GetSessionToken",
