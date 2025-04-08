@@ -80,8 +80,10 @@ The following syntax items may be used within the `template` and `arn_override` 
 
 `%%many%${PropertyName}%${PropertyName2}%${PropertyName3}%%` - For each of the `PropertyName`, `PropertyName2` & `PropertyName3` properties (any length)
 
-`%%iftemplatematch%${ArnProperty}%%` - Only valid if the template matches the resource type's template
+`%%iftemplatematch%${ArnProperty}%%` - Only valid if the template matches the resource type's template. If invalid, required resource types should use a wildcard (`*`) in the ARN template.
 
-`%%iftruthy%${PropertyName}%ValueIfTrue%ValueIfFalse%%` - Truthy test
+`%%iftemplatematch%${ArnProperty}%${PropertyName}%%` - Only valid if the template matches the resource type's template. If invalid, required resource types should use a wildcard (`*`) in the ARN template and non-required resource types should omit the indicated IAM permission entirely.
+
+`%%iftruthy%${PropertyName}%ValueIfTrue%ValueIfFalse%%` - Truthy test.
 
 `%%regex%${PropertyName}%/(.+)/g%%` - Returns first capture group of Regex
