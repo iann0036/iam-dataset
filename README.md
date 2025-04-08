@@ -20,29 +20,11 @@ Tooling which assists in the generation of some datasources is located in the `u
 
 For Amazon Web Services IAM, the primary datasources are map.json and iam_definition.json.
 
-In order to assist with the creation of the map.json file, a custom mapping tool may be used to accelerate the process. The mapping tool is currently hosted at: [https://iann0036.github.io/iam-dataset/util/index.html#](https://iann0036.github.io/iam-dataset/util/index.html#)
-
 ### map.json
 
 A comprehensive mapping from SDK calls to IAM actions, typically created with the assistance of the mapping tool.
 
-#### map.json Template Syntax
-
-`${PropertyName}` - Variable substitution for the `PropertyName` property
-
-`.` - A property within an object/map
-
-`[]` - For each value within the array
-
-`%%urlencode%${PropertyName}%%` - Performs a URL-encoding on the `PropertyName` property
-
-`%%many%${PropertyName}%${PropertyName2}%${PropertyName3}%%` - For each of the `PropertyName`, `PropertyName2` & `PropertyName3` properties (any length)
-
-`%%iftemplatematch%${ArnProperty}%%` - Only valid if the template matches the resource type's template
-
-`%%iftruthy%${PropertyName}%ValueIfTrue%ValueIfFalse%%` - Truthy test
-
-`%%regex%${PropertyName}%/(.+)/g%%` - Returns first capture group of Regex
+For more information on this file, see [aws/MAP-README.md](aws/MAP-README.md).
 
 ### iam_definition.json
 
