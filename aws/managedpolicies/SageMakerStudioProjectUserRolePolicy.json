@@ -7,7 +7,7 @@
     "Permissions management"
   ],
   "arn": "arn:aws:iam::aws:policy/SageMakerStudioProjectUserRolePolicy",
-  "createdate": "2025-03-21T20:07:06Z",
+  "createdate": "2025-04-08T17:52:05Z",
   "credentials_exposure": true,
   "data_access": true,
   "deprecated": false,
@@ -1242,7 +1242,8 @@
               "sagemaker.amazonaws.com",
               "glue.amazonaws.com",
               "airflow.amazonaws.com",
-              "emr-serverless.amazonaws.com"
+              "emr-serverless.amazonaws.com",
+              "scheduler.amazonaws.com"
             ]
           }
         },
@@ -1324,6 +1325,9 @@
           "redshift-data:ListTables"
         ],
         "Condition": {
+          "Null": {
+            "aws:ResourceTag/AmazonDataZoneEnvironment": "true"
+          },
           "StringEquals": {
             "aws:ResourceTag/for-use-with-all-datazone-projects": "true"
           }
@@ -1568,7 +1572,8 @@
               "sqs.*.amazonaws.com",
               "sagemaker.*.amazonaws.com",
               "bedrock.*.amazonaws.com",
-              "s3.*.amazonaws.com"
+              "s3.*.amazonaws.com",
+              "scheduler.*.amazonaws.com"
             ]
           }
         },
@@ -1620,7 +1625,8 @@
               "emr-serverless.*.amazonaws.com",
               "s3.*.amazonaws.com",
               "redshift.*.amazonaws.com",
-              "codecommit.*.amazonaws.com"
+              "codecommit.*.amazonaws.com",
+              "scheduler.*.amazonaws.com"
             ]
           }
         },
@@ -2497,6 +2503,39 @@
         "Effect": "Allow",
         "Resource": "*",
         "Sid": "CrossAccountRAMResourceSharingViaLakeFormationHybrid"
+      },
+      {
+        "Action": [
+          "scheduler:CreateSchedule",
+          "scheduler:GetSchedule",
+          "scheduler:UpdateSchedule",
+          "scheduler:DeleteSchedule"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceTag/AmazonDataZoneProject": "${aws:PrincipalTag/AmazonDataZoneProject}"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:scheduler:*:*:schedule/*"
+        ],
+        "Sid": "EventBridgeScheduleActions"
+      },
+      {
+        "Action": [
+          "scheduler:GetScheduleGroup"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceTag/AmazonDataZoneProject": "${aws:PrincipalTag/AmazonDataZoneProject}"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:scheduler:*:*:schedule-group/*"
+        ],
+        "Sid": "EventBridgeScheduleGroupActions"
       }
     ],
     "Version": "2012-10-17"
@@ -7867,7 +7906,8 @@
             "sagemaker.amazonaws.com",
             "glue.amazonaws.com",
             "airflow.amazonaws.com",
-            "emr-serverless.amazonaws.com"
+            "emr-serverless.amazonaws.com",
+            "scheduler.amazonaws.com"
           ]
         }
       },
@@ -8191,6 +8231,9 @@
       "access_level": "Read",
       "action": "redshift-serverless:GetWorkgroup",
       "condition": {
+        "Null": {
+          "aws:ResourceTag/AmazonDataZoneEnvironment": "true"
+        },
         "StringEquals": {
           "aws:ResourceTag/for-use-with-all-datazone-projects": "true"
         }
@@ -8205,6 +8248,9 @@
       "access_level": "Read",
       "action": "redshift-serverless:GetNamespace",
       "condition": {
+        "Null": {
+          "aws:ResourceTag/AmazonDataZoneEnvironment": "true"
+        },
         "StringEquals": {
           "aws:ResourceTag/for-use-with-all-datazone-projects": "true"
         }
@@ -8219,6 +8265,9 @@
       "access_level": "List",
       "action": "redshift-serverless:ListTagsForResource",
       "condition": {
+        "Null": {
+          "aws:ResourceTag/AmazonDataZoneEnvironment": "true"
+        },
         "StringEquals": {
           "aws:ResourceTag/for-use-with-all-datazone-projects": "true"
         }
@@ -8233,6 +8282,9 @@
       "access_level": "Write",
       "action": "redshift-serverless:GetCredentials",
       "condition": {
+        "Null": {
+          "aws:ResourceTag/AmazonDataZoneEnvironment": "true"
+        },
         "StringEquals": {
           "aws:ResourceTag/for-use-with-all-datazone-projects": "true"
         }
@@ -8247,6 +8299,9 @@
       "access_level": "Read",
       "action": "redshift:DescribeTags",
       "condition": {
+        "Null": {
+          "aws:ResourceTag/AmazonDataZoneEnvironment": "true"
+        },
         "StringEquals": {
           "aws:ResourceTag/for-use-with-all-datazone-projects": "true"
         }
@@ -8261,6 +8316,9 @@
       "access_level": "Write",
       "action": "redshift:GetClusterCredentialsWithIAM",
       "condition": {
+        "Null": {
+          "aws:ResourceTag/AmazonDataZoneEnvironment": "true"
+        },
         "StringEquals": {
           "aws:ResourceTag/for-use-with-all-datazone-projects": "true"
         }
@@ -8275,6 +8333,9 @@
       "access_level": "Write",
       "action": "redshift-data:BatchExecuteStatement",
       "condition": {
+        "Null": {
+          "aws:ResourceTag/AmazonDataZoneEnvironment": "true"
+        },
         "StringEquals": {
           "aws:ResourceTag/for-use-with-all-datazone-projects": "true"
         }
@@ -8289,6 +8350,9 @@
       "access_level": "Write",
       "action": "redshift-data:ExecuteStatement",
       "condition": {
+        "Null": {
+          "aws:ResourceTag/AmazonDataZoneEnvironment": "true"
+        },
         "StringEquals": {
           "aws:ResourceTag/for-use-with-all-datazone-projects": "true"
         }
@@ -8303,6 +8367,9 @@
       "access_level": "Read",
       "action": "redshift-data:DescribeTable",
       "condition": {
+        "Null": {
+          "aws:ResourceTag/AmazonDataZoneEnvironment": "true"
+        },
         "StringEquals": {
           "aws:ResourceTag/for-use-with-all-datazone-projects": "true"
         }
@@ -8317,6 +8384,9 @@
       "access_level": "Read",
       "action": "redshift-data:ListDatabases",
       "condition": {
+        "Null": {
+          "aws:ResourceTag/AmazonDataZoneEnvironment": "true"
+        },
         "StringEquals": {
           "aws:ResourceTag/for-use-with-all-datazone-projects": "true"
         }
@@ -8331,6 +8401,9 @@
       "access_level": "Read",
       "action": "redshift-data:ListSchemas",
       "condition": {
+        "Null": {
+          "aws:ResourceTag/AmazonDataZoneEnvironment": "true"
+        },
         "StringEquals": {
           "aws:ResourceTag/for-use-with-all-datazone-projects": "true"
         }
@@ -8345,6 +8418,9 @@
       "access_level": "List",
       "action": "redshift-data:ListTables",
       "condition": {
+        "Null": {
+          "aws:ResourceTag/AmazonDataZoneEnvironment": "true"
+        },
         "StringEquals": {
           "aws:ResourceTag/for-use-with-all-datazone-projects": "true"
         }
@@ -8909,7 +8985,8 @@
             "sqs.*.amazonaws.com",
             "sagemaker.*.amazonaws.com",
             "bedrock.*.amazonaws.com",
-            "s3.*.amazonaws.com"
+            "s3.*.amazonaws.com",
+            "scheduler.*.amazonaws.com"
           ]
         }
       },
@@ -8934,7 +9011,8 @@
             "sqs.*.amazonaws.com",
             "sagemaker.*.amazonaws.com",
             "bedrock.*.amazonaws.com",
-            "s3.*.amazonaws.com"
+            "s3.*.amazonaws.com",
+            "scheduler.*.amazonaws.com"
           ]
         }
       },
@@ -8959,7 +9037,8 @@
             "sqs.*.amazonaws.com",
             "sagemaker.*.amazonaws.com",
             "bedrock.*.amazonaws.com",
-            "s3.*.amazonaws.com"
+            "s3.*.amazonaws.com",
+            "scheduler.*.amazonaws.com"
           ]
         }
       },
@@ -8984,7 +9063,8 @@
             "sqs.*.amazonaws.com",
             "sagemaker.*.amazonaws.com",
             "bedrock.*.amazonaws.com",
-            "s3.*.amazonaws.com"
+            "s3.*.amazonaws.com",
+            "scheduler.*.amazonaws.com"
           ]
         }
       },
@@ -9009,7 +9089,8 @@
             "sqs.*.amazonaws.com",
             "sagemaker.*.amazonaws.com",
             "bedrock.*.amazonaws.com",
-            "s3.*.amazonaws.com"
+            "s3.*.amazonaws.com",
+            "scheduler.*.amazonaws.com"
           ]
         }
       },
@@ -9034,7 +9115,8 @@
             "sqs.*.amazonaws.com",
             "sagemaker.*.amazonaws.com",
             "bedrock.*.amazonaws.com",
-            "s3.*.amazonaws.com"
+            "s3.*.amazonaws.com",
+            "scheduler.*.amazonaws.com"
           ]
         }
       },
@@ -9059,7 +9141,8 @@
             "sqs.*.amazonaws.com",
             "sagemaker.*.amazonaws.com",
             "bedrock.*.amazonaws.com",
-            "s3.*.amazonaws.com"
+            "s3.*.amazonaws.com",
+            "scheduler.*.amazonaws.com"
           ]
         }
       },
@@ -9221,7 +9304,8 @@
             "emr-serverless.*.amazonaws.com",
             "s3.*.amazonaws.com",
             "redshift.*.amazonaws.com",
-            "codecommit.*.amazonaws.com"
+            "codecommit.*.amazonaws.com",
+            "scheduler.*.amazonaws.com"
           ]
         }
       },
@@ -9245,7 +9329,8 @@
             "emr-serverless.*.amazonaws.com",
             "s3.*.amazonaws.com",
             "redshift.*.amazonaws.com",
-            "codecommit.*.amazonaws.com"
+            "codecommit.*.amazonaws.com",
+            "scheduler.*.amazonaws.com"
           ]
         }
       },
@@ -9269,7 +9354,8 @@
             "emr-serverless.*.amazonaws.com",
             "s3.*.amazonaws.com",
             "redshift.*.amazonaws.com",
-            "codecommit.*.amazonaws.com"
+            "codecommit.*.amazonaws.com",
+            "scheduler.*.amazonaws.com"
           ]
         }
       },
@@ -11549,6 +11635,76 @@
       "effective_action": "ram:AssociateResourceSharePermission",
       "privesc": false,
       "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "scheduler:CreateSchedule",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/AmazonDataZoneProject": "${aws:PrincipalTag/AmazonDataZoneProject}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "scheduler:CreateSchedule",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "scheduler:GetSchedule",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/AmazonDataZoneProject": "${aws:PrincipalTag/AmazonDataZoneProject}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "scheduler:GetSchedule",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "scheduler:UpdateSchedule",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/AmazonDataZoneProject": "${aws:PrincipalTag/AmazonDataZoneProject}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "scheduler:UpdateSchedule",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "scheduler:DeleteSchedule",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/AmazonDataZoneProject": "${aws:PrincipalTag/AmazonDataZoneProject}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "scheduler:DeleteSchedule",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "scheduler:GetScheduleGroup",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/AmazonDataZoneProject": "${aws:PrincipalTag/AmazonDataZoneProject}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "scheduler:GetScheduleGroup",
+      "privesc": false,
+      "resource_exposure": false
     }
   ],
   "grantless": false,
@@ -11559,5 +11715,5 @@
   "undocumented_actions": false,
   "unknown_actions": [],
   "updatedate": "2024-11-28T04:51:07+00:00",
-  "version": "v8"
+  "version": "v9"
 }
