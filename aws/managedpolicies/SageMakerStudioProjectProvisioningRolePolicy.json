@@ -7,7 +7,7 @@
     "Permissions management"
   ],
   "arn": "arn:aws:iam::aws:policy/service-role/SageMakerStudioProjectProvisioningRolePolicy",
-  "createdate": "2025-03-21T20:07:07Z",
+  "createdate": "2025-04-09T21:22:07Z",
   "credentials_exposure": true,
   "data_access": true,
   "deprecated": false,
@@ -106,7 +106,8 @@
           "lakeformation:DeregisterResource",
           "lakeformation:GrantPermissions",
           "lakeformation:BatchGrantPermissions",
-          "lakeformation:ListResources"
+          "lakeformation:ListResources",
+          "lakeformation:DescribeResource"
         ],
         "Effect": "Allow",
         "Resource": "*",
@@ -318,7 +319,8 @@
               "arn:aws:iam::aws:policy/service-role/SageMakerStudioEMRServiceRolePolicy",
               "arn:aws:iam::aws:policy/service-role/SageMakerStudioEMRInstanceRolePolicy",
               "arn:aws:iam::aws:policy/service-role/AmazonEMRServicePolicy_v2",
-              "arn:aws:iam::aws:policy/AmazonSageMakerPartnerAppsFullAccess"
+              "arn:aws:iam::aws:policy/AmazonSageMakerPartnerAppsFullAccess",
+              "arn:aws:iam::aws:policy/service-role/SageMakerStudioBedrockKnowledgeBaseServiceRolePolicy"
             ]
           },
           "Null": {
@@ -691,7 +693,8 @@
             "aws:ResourceAccount": "${aws:PrincipalAccount}",
             "iam:PassedToService": [
               "sagemaker.amazonaws.com",
-              "redshift-serverless.amazonaws.com"
+              "redshift-serverless.amazonaws.com",
+              "bedrock.amazonaws.com"
             ]
           }
         },
@@ -2069,6 +2072,8 @@
         },
         "Effect": "Allow",
         "Resource": [
+          "arn:aws:sagemaker:*:*:app/*/*/codeeditor/*",
+          "arn:aws:sagemaker:*:*:app/*/*/CodeEditor/*",
           "arn:aws:sagemaker:*:*:app/*/*/jupyterlab/*",
           "arn:aws:sagemaker:*:*:app/*/*/JupyterLab/*"
         ],
@@ -2343,7 +2348,6 @@
         ],
         "Condition": {
           "StringEquals": {
-            "aws:CalledViaFirst": "cloudformation.amazonaws.com",
             "aws:ResourceAccount": "${aws:PrincipalAccount}"
           }
         },
@@ -2380,6 +2384,10 @@
           "bedrock:CreateDataSource",
           "bedrock:UpdateDataSource",
           "bedrock:DeleteDataSource",
+          "bedrock:ListIngestionJobs",
+          "bedrock:GetIngestionJob",
+          "bedrock:StartIngestionJob",
+          "bedrock:StopIngestionJob",
           "bedrock:CreateGuardrail",
           "bedrock:UpdateGuardrail",
           "bedrock:DeleteGuardrail",
@@ -2408,7 +2416,6 @@
             "aws:ResourceTag/AmazonDataZoneProject": "false"
           },
           "StringEquals": {
-            "aws:CalledViaFirst": "cloudformation.amazonaws.com",
             "aws:ResourceAccount": "${aws:PrincipalAccount}"
           }
         },
@@ -2425,7 +2432,6 @@
             "aws:RequestTag/AmazonDataZoneProject": "false"
           },
           "StringEquals": {
-            "aws:CalledViaFirst": "cloudformation.amazonaws.com",
             "aws:ResourceAccount": "${aws:PrincipalAccount}"
           }
         },
@@ -2763,6 +2769,80 @@
         "Effect": "Allow",
         "Resource": "arn:aws:iam::*:instance-profile/datazone_emr_ec2_instance_profile_*",
         "Sid": "IAMInstanceProfileCleanUpForEMR"
+      },
+      {
+        "Action": [
+          "scheduler:ListTagsForResource",
+          "scheduler:GetScheduleGroup"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:CalledViaFirst": "cloudformation.amazonaws.com",
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:scheduler:*:*:schedule-group/*",
+        "Sid": "EventBridgeViewScheduleGroupActions"
+      },
+      {
+        "Action": [
+          "scheduler:DeleteScheduleGroup"
+        ],
+        "Condition": {
+          "Null": {
+            "aws:ResourceTag/AmazonDataZoneProject": "false"
+          },
+          "StringEquals": {
+            "aws:CalledViaFirst": "cloudformation.amazonaws.com",
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:scheduler:*:*:schedule-group/*",
+        "Sid": "EventBridgeDeleteScheduleGroupActions"
+      },
+      {
+        "Action": [
+          "scheduler:CreateScheduleGroup"
+        ],
+        "Condition": {
+          "ForAllValues:StringLike": {
+            "aws:TagKeys": "AmazonDataZone*"
+          },
+          "Null": {
+            "aws:RequestTag/AmazonDataZoneProject": "false",
+            "aws:TagKeys": "false"
+          },
+          "StringEquals": {
+            "aws:CalledViaFirst": "cloudformation.amazonaws.com",
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:scheduler:*:*:schedule-group/*",
+        "Sid": "EventBridgeCreateScheduleGroupActions"
+      },
+      {
+        "Action": [
+          "scheduler:TagResource"
+        ],
+        "Condition": {
+          "ForAllValues:StringLike": {
+            "aws:TagKeys": "AmazonDataZone*"
+          },
+          "Null": {
+            "aws:ResourceTag/AmazonDataZoneProject": "false",
+            "aws:TagKeys": "false"
+          },
+          "StringEquals": {
+            "aws:CalledViaFirst": "cloudformation.amazonaws.com",
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:scheduler:*:*:schedule-group/*",
+        "Sid": "EventBridgeTagScheduleGroupActions"
       }
     ],
     "Version": "2012-10-17"
@@ -2990,6 +3070,16 @@
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "lakeformation:ListResources",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "lakeformation:DescribeResource",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "lakeformation:DescribeResource",
       "privesc": false,
       "resource_exposure": false
     },
@@ -3441,7 +3531,8 @@
             "arn:aws:iam::aws:policy/service-role/SageMakerStudioEMRServiceRolePolicy",
             "arn:aws:iam::aws:policy/service-role/SageMakerStudioEMRInstanceRolePolicy",
             "arn:aws:iam::aws:policy/service-role/AmazonEMRServicePolicy_v2",
-            "arn:aws:iam::aws:policy/AmazonSageMakerPartnerAppsFullAccess"
+            "arn:aws:iam::aws:policy/AmazonSageMakerPartnerAppsFullAccess",
+            "arn:aws:iam::aws:policy/service-role/SageMakerStudioBedrockKnowledgeBaseServiceRolePolicy"
           ]
         },
         "Null": {
@@ -3469,7 +3560,8 @@
             "arn:aws:iam::aws:policy/service-role/SageMakerStudioEMRServiceRolePolicy",
             "arn:aws:iam::aws:policy/service-role/SageMakerStudioEMRInstanceRolePolicy",
             "arn:aws:iam::aws:policy/service-role/AmazonEMRServicePolicy_v2",
-            "arn:aws:iam::aws:policy/AmazonSageMakerPartnerAppsFullAccess"
+            "arn:aws:iam::aws:policy/AmazonSageMakerPartnerAppsFullAccess",
+            "arn:aws:iam::aws:policy/service-role/SageMakerStudioBedrockKnowledgeBaseServiceRolePolicy"
           ]
         },
         "Null": {
@@ -4079,7 +4171,8 @@
           "aws:ResourceAccount": "${aws:PrincipalAccount}",
           "iam:PassedToService": [
             "sagemaker.amazonaws.com",
-            "redshift-serverless.amazonaws.com"
+            "redshift-serverless.amazonaws.com",
+            "bedrock.amazonaws.com"
           ]
         }
       },
@@ -7143,7 +7236,6 @@
       "action": "bedrock:GetAgent",
       "condition": {
         "StringEquals": {
-          "aws:CalledViaFirst": "cloudformation.amazonaws.com",
           "aws:ResourceAccount": "${aws:PrincipalAccount}"
         }
       },
@@ -7158,7 +7250,6 @@
       "action": "bedrock:GetKnowledgeBase",
       "condition": {
         "StringEquals": {
-          "aws:CalledViaFirst": "cloudformation.amazonaws.com",
           "aws:ResourceAccount": "${aws:PrincipalAccount}"
         }
       },
@@ -7173,7 +7264,6 @@
       "action": "bedrock:GetGuardrail",
       "condition": {
         "StringEquals": {
-          "aws:CalledViaFirst": "cloudformation.amazonaws.com",
           "aws:ResourceAccount": "${aws:PrincipalAccount}"
         }
       },
@@ -7188,7 +7278,6 @@
       "action": "bedrock:GetPrompt",
       "condition": {
         "StringEquals": {
-          "aws:CalledViaFirst": "cloudformation.amazonaws.com",
           "aws:ResourceAccount": "${aws:PrincipalAccount}"
         }
       },
@@ -7203,7 +7292,6 @@
       "action": "bedrock:GetFlow",
       "condition": {
         "StringEquals": {
-          "aws:CalledViaFirst": "cloudformation.amazonaws.com",
           "aws:ResourceAccount": "${aws:PrincipalAccount}"
         }
       },
@@ -7218,7 +7306,6 @@
       "action": "bedrock:GetFlowAlias",
       "condition": {
         "StringEquals": {
-          "aws:CalledViaFirst": "cloudformation.amazonaws.com",
           "aws:ResourceAccount": "${aws:PrincipalAccount}"
         }
       },
@@ -7233,7 +7320,6 @@
       "action": "bedrock:ListTagsForResource",
       "condition": {
         "StringEquals": {
-          "aws:CalledViaFirst": "cloudformation.amazonaws.com",
           "aws:ResourceAccount": "${aws:PrincipalAccount}"
         }
       },
@@ -7251,7 +7337,6 @@
           "aws:ResourceTag/AmazonDataZoneProject": "false"
         },
         "StringEquals": {
-          "aws:CalledViaFirst": "cloudformation.amazonaws.com",
           "aws:ResourceAccount": "${aws:PrincipalAccount}"
         }
       },
@@ -7269,7 +7354,6 @@
           "aws:ResourceTag/AmazonDataZoneProject": "false"
         },
         "StringEquals": {
-          "aws:CalledViaFirst": "cloudformation.amazonaws.com",
           "aws:ResourceAccount": "${aws:PrincipalAccount}"
         }
       },
@@ -7287,7 +7371,6 @@
           "aws:ResourceTag/AmazonDataZoneProject": "false"
         },
         "StringEquals": {
-          "aws:CalledViaFirst": "cloudformation.amazonaws.com",
           "aws:ResourceAccount": "${aws:PrincipalAccount}"
         }
       },
@@ -7305,7 +7388,6 @@
           "aws:ResourceTag/AmazonDataZoneProject": "false"
         },
         "StringEquals": {
-          "aws:CalledViaFirst": "cloudformation.amazonaws.com",
           "aws:ResourceAccount": "${aws:PrincipalAccount}"
         }
       },
@@ -7323,7 +7405,6 @@
           "aws:ResourceTag/AmazonDataZoneProject": "false"
         },
         "StringEquals": {
-          "aws:CalledViaFirst": "cloudformation.amazonaws.com",
           "aws:ResourceAccount": "${aws:PrincipalAccount}"
         }
       },
@@ -7341,7 +7422,6 @@
           "aws:ResourceTag/AmazonDataZoneProject": "false"
         },
         "StringEquals": {
-          "aws:CalledViaFirst": "cloudformation.amazonaws.com",
           "aws:ResourceAccount": "${aws:PrincipalAccount}"
         }
       },
@@ -7359,7 +7439,6 @@
           "aws:ResourceTag/AmazonDataZoneProject": "false"
         },
         "StringEquals": {
-          "aws:CalledViaFirst": "cloudformation.amazonaws.com",
           "aws:ResourceAccount": "${aws:PrincipalAccount}"
         }
       },
@@ -7377,7 +7456,6 @@
           "aws:ResourceTag/AmazonDataZoneProject": "false"
         },
         "StringEquals": {
-          "aws:CalledViaFirst": "cloudformation.amazonaws.com",
           "aws:ResourceAccount": "${aws:PrincipalAccount}"
         }
       },
@@ -7395,7 +7473,6 @@
           "aws:ResourceTag/AmazonDataZoneProject": "false"
         },
         "StringEquals": {
-          "aws:CalledViaFirst": "cloudformation.amazonaws.com",
           "aws:ResourceAccount": "${aws:PrincipalAccount}"
         }
       },
@@ -7413,7 +7490,6 @@
           "aws:ResourceTag/AmazonDataZoneProject": "false"
         },
         "StringEquals": {
-          "aws:CalledViaFirst": "cloudformation.amazonaws.com",
           "aws:ResourceAccount": "${aws:PrincipalAccount}"
         }
       },
@@ -7431,7 +7507,6 @@
           "aws:ResourceTag/AmazonDataZoneProject": "false"
         },
         "StringEquals": {
-          "aws:CalledViaFirst": "cloudformation.amazonaws.com",
           "aws:ResourceAccount": "${aws:PrincipalAccount}"
         }
       },
@@ -7449,7 +7524,6 @@
           "aws:ResourceTag/AmazonDataZoneProject": "false"
         },
         "StringEquals": {
-          "aws:CalledViaFirst": "cloudformation.amazonaws.com",
           "aws:ResourceAccount": "${aws:PrincipalAccount}"
         }
       },
@@ -7467,7 +7541,6 @@
           "aws:ResourceTag/AmazonDataZoneProject": "false"
         },
         "StringEquals": {
-          "aws:CalledViaFirst": "cloudformation.amazonaws.com",
           "aws:ResourceAccount": "${aws:PrincipalAccount}"
         }
       },
@@ -7485,7 +7558,6 @@
           "aws:ResourceTag/AmazonDataZoneProject": "false"
         },
         "StringEquals": {
-          "aws:CalledViaFirst": "cloudformation.amazonaws.com",
           "aws:ResourceAccount": "${aws:PrincipalAccount}"
         }
       },
@@ -7503,7 +7575,6 @@
           "aws:ResourceTag/AmazonDataZoneProject": "false"
         },
         "StringEquals": {
-          "aws:CalledViaFirst": "cloudformation.amazonaws.com",
           "aws:ResourceAccount": "${aws:PrincipalAccount}"
         }
       },
@@ -7521,7 +7592,6 @@
           "aws:ResourceTag/AmazonDataZoneProject": "false"
         },
         "StringEquals": {
-          "aws:CalledViaFirst": "cloudformation.amazonaws.com",
           "aws:ResourceAccount": "${aws:PrincipalAccount}"
         }
       },
@@ -7539,7 +7609,6 @@
           "aws:ResourceTag/AmazonDataZoneProject": "false"
         },
         "StringEquals": {
-          "aws:CalledViaFirst": "cloudformation.amazonaws.com",
           "aws:ResourceAccount": "${aws:PrincipalAccount}"
         }
       },
@@ -7557,7 +7626,6 @@
           "aws:ResourceTag/AmazonDataZoneProject": "false"
         },
         "StringEquals": {
-          "aws:CalledViaFirst": "cloudformation.amazonaws.com",
           "aws:ResourceAccount": "${aws:PrincipalAccount}"
         }
       },
@@ -7575,7 +7643,6 @@
           "aws:ResourceTag/AmazonDataZoneProject": "false"
         },
         "StringEquals": {
-          "aws:CalledViaFirst": "cloudformation.amazonaws.com",
           "aws:ResourceAccount": "${aws:PrincipalAccount}"
         }
       },
@@ -7593,7 +7660,6 @@
           "aws:ResourceTag/AmazonDataZoneProject": "false"
         },
         "StringEquals": {
-          "aws:CalledViaFirst": "cloudformation.amazonaws.com",
           "aws:ResourceAccount": "${aws:PrincipalAccount}"
         }
       },
@@ -7611,7 +7677,6 @@
           "aws:ResourceTag/AmazonDataZoneProject": "false"
         },
         "StringEquals": {
-          "aws:CalledViaFirst": "cloudformation.amazonaws.com",
           "aws:ResourceAccount": "${aws:PrincipalAccount}"
         }
       },
@@ -7629,7 +7694,6 @@
           "aws:ResourceTag/AmazonDataZoneProject": "false"
         },
         "StringEquals": {
-          "aws:CalledViaFirst": "cloudformation.amazonaws.com",
           "aws:ResourceAccount": "${aws:PrincipalAccount}"
         }
       },
@@ -7647,7 +7711,6 @@
           "aws:ResourceTag/AmazonDataZoneProject": "false"
         },
         "StringEquals": {
-          "aws:CalledViaFirst": "cloudformation.amazonaws.com",
           "aws:ResourceAccount": "${aws:PrincipalAccount}"
         }
       },
@@ -7665,7 +7728,6 @@
           "aws:ResourceTag/AmazonDataZoneProject": "false"
         },
         "StringEquals": {
-          "aws:CalledViaFirst": "cloudformation.amazonaws.com",
           "aws:ResourceAccount": "${aws:PrincipalAccount}"
         }
       },
@@ -7683,7 +7745,6 @@
           "aws:ResourceTag/AmazonDataZoneProject": "false"
         },
         "StringEquals": {
-          "aws:CalledViaFirst": "cloudformation.amazonaws.com",
           "aws:ResourceAccount": "${aws:PrincipalAccount}"
         }
       },
@@ -7701,7 +7762,6 @@
           "aws:ResourceTag/AmazonDataZoneProject": "false"
         },
         "StringEquals": {
-          "aws:CalledViaFirst": "cloudformation.amazonaws.com",
           "aws:ResourceAccount": "${aws:PrincipalAccount}"
         }
       },
@@ -7719,13 +7779,80 @@
           "aws:ResourceTag/AmazonDataZoneProject": "false"
         },
         "StringEquals": {
-          "aws:CalledViaFirst": "cloudformation.amazonaws.com",
           "aws:ResourceAccount": "${aws:PrincipalAccount}"
         }
       },
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "bedrock:DeleteDataSource",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "bedrock:ListIngestionJobs",
+      "condition": {
+        "Null": {
+          "aws:ResourceTag/AmazonDataZoneProject": "false"
+        },
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "bedrock:ListIngestionJobs",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "bedrock:GetIngestionJob",
+      "condition": {
+        "Null": {
+          "aws:ResourceTag/AmazonDataZoneProject": "false"
+        },
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "bedrock:GetIngestionJob",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "bedrock:StartIngestionJob",
+      "condition": {
+        "Null": {
+          "aws:ResourceTag/AmazonDataZoneProject": "false"
+        },
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "bedrock:StartIngestionJob",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "bedrock:StopIngestionJob",
+      "condition": {
+        "Null": {
+          "aws:ResourceTag/AmazonDataZoneProject": "false"
+        },
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "bedrock:StopIngestionJob",
       "privesc": false,
       "resource_exposure": false
     },
@@ -7737,7 +7864,6 @@
           "aws:ResourceTag/AmazonDataZoneProject": "false"
         },
         "StringEquals": {
-          "aws:CalledViaFirst": "cloudformation.amazonaws.com",
           "aws:ResourceAccount": "${aws:PrincipalAccount}"
         }
       },
@@ -7755,7 +7881,6 @@
           "aws:ResourceTag/AmazonDataZoneProject": "false"
         },
         "StringEquals": {
-          "aws:CalledViaFirst": "cloudformation.amazonaws.com",
           "aws:ResourceAccount": "${aws:PrincipalAccount}"
         }
       },
@@ -7773,7 +7898,6 @@
           "aws:ResourceTag/AmazonDataZoneProject": "false"
         },
         "StringEquals": {
-          "aws:CalledViaFirst": "cloudformation.amazonaws.com",
           "aws:ResourceAccount": "${aws:PrincipalAccount}"
         }
       },
@@ -7791,7 +7915,6 @@
           "aws:ResourceTag/AmazonDataZoneProject": "false"
         },
         "StringEquals": {
-          "aws:CalledViaFirst": "cloudformation.amazonaws.com",
           "aws:ResourceAccount": "${aws:PrincipalAccount}"
         }
       },
@@ -7809,7 +7932,6 @@
           "aws:ResourceTag/AmazonDataZoneProject": "false"
         },
         "StringEquals": {
-          "aws:CalledViaFirst": "cloudformation.amazonaws.com",
           "aws:ResourceAccount": "${aws:PrincipalAccount}"
         }
       },
@@ -7827,7 +7949,6 @@
           "aws:ResourceTag/AmazonDataZoneProject": "false"
         },
         "StringEquals": {
-          "aws:CalledViaFirst": "cloudformation.amazonaws.com",
           "aws:ResourceAccount": "${aws:PrincipalAccount}"
         }
       },
@@ -7845,7 +7966,6 @@
           "aws:ResourceTag/AmazonDataZoneProject": "false"
         },
         "StringEquals": {
-          "aws:CalledViaFirst": "cloudformation.amazonaws.com",
           "aws:ResourceAccount": "${aws:PrincipalAccount}"
         }
       },
@@ -7863,7 +7983,6 @@
           "aws:ResourceTag/AmazonDataZoneProject": "false"
         },
         "StringEquals": {
-          "aws:CalledViaFirst": "cloudformation.amazonaws.com",
           "aws:ResourceAccount": "${aws:PrincipalAccount}"
         }
       },
@@ -7881,7 +8000,6 @@
           "aws:ResourceTag/AmazonDataZoneProject": "false"
         },
         "StringEquals": {
-          "aws:CalledViaFirst": "cloudformation.amazonaws.com",
           "aws:ResourceAccount": "${aws:PrincipalAccount}"
         }
       },
@@ -7899,7 +8017,6 @@
           "aws:ResourceTag/AmazonDataZoneProject": "false"
         },
         "StringEquals": {
-          "aws:CalledViaFirst": "cloudformation.amazonaws.com",
           "aws:ResourceAccount": "${aws:PrincipalAccount}"
         }
       },
@@ -7917,7 +8034,6 @@
           "aws:ResourceTag/AmazonDataZoneProject": "false"
         },
         "StringEquals": {
-          "aws:CalledViaFirst": "cloudformation.amazonaws.com",
           "aws:ResourceAccount": "${aws:PrincipalAccount}"
         }
       },
@@ -7935,7 +8051,6 @@
           "aws:ResourceTag/AmazonDataZoneProject": "false"
         },
         "StringEquals": {
-          "aws:CalledViaFirst": "cloudformation.amazonaws.com",
           "aws:ResourceAccount": "${aws:PrincipalAccount}"
         }
       },
@@ -7953,7 +8068,6 @@
           "aws:ResourceTag/AmazonDataZoneProject": "false"
         },
         "StringEquals": {
-          "aws:CalledViaFirst": "cloudformation.amazonaws.com",
           "aws:ResourceAccount": "${aws:PrincipalAccount}"
         }
       },
@@ -7971,7 +8085,6 @@
           "aws:ResourceTag/AmazonDataZoneProject": "false"
         },
         "StringEquals": {
-          "aws:CalledViaFirst": "cloudformation.amazonaws.com",
           "aws:ResourceAccount": "${aws:PrincipalAccount}"
         }
       },
@@ -7989,7 +8102,6 @@
           "aws:ResourceTag/AmazonDataZoneProject": "false"
         },
         "StringEquals": {
-          "aws:CalledViaFirst": "cloudformation.amazonaws.com",
           "aws:ResourceAccount": "${aws:PrincipalAccount}"
         }
       },
@@ -8007,7 +8119,6 @@
           "aws:ResourceTag/AmazonDataZoneProject": "false"
         },
         "StringEquals": {
-          "aws:CalledViaFirst": "cloudformation.amazonaws.com",
           "aws:ResourceAccount": "${aws:PrincipalAccount}"
         }
       },
@@ -8025,7 +8136,6 @@
           "aws:ResourceTag/AmazonDataZoneProject": "false"
         },
         "StringEquals": {
-          "aws:CalledViaFirst": "cloudformation.amazonaws.com",
           "aws:ResourceAccount": "${aws:PrincipalAccount}"
         }
       },
@@ -8043,7 +8153,6 @@
           "aws:ResourceTag/AmazonDataZoneProject": "false"
         },
         "StringEquals": {
-          "aws:CalledViaFirst": "cloudformation.amazonaws.com",
           "aws:ResourceAccount": "${aws:PrincipalAccount}"
         }
       },
@@ -8061,7 +8170,6 @@
           "aws:ResourceTag/AmazonDataZoneProject": "false"
         },
         "StringEquals": {
-          "aws:CalledViaFirst": "cloudformation.amazonaws.com",
           "aws:ResourceAccount": "${aws:PrincipalAccount}"
         }
       },
@@ -8079,7 +8187,6 @@
           "aws:ResourceTag/AmazonDataZoneProject": "false"
         },
         "StringEquals": {
-          "aws:CalledViaFirst": "cloudformation.amazonaws.com",
           "aws:ResourceAccount": "${aws:PrincipalAccount}"
         }
       },
@@ -8097,7 +8204,6 @@
           "aws:ResourceTag/AmazonDataZoneProject": "false"
         },
         "StringEquals": {
-          "aws:CalledViaFirst": "cloudformation.amazonaws.com",
           "aws:ResourceAccount": "${aws:PrincipalAccount}"
         }
       },
@@ -8115,7 +8221,6 @@
           "aws:ResourceTag/AmazonDataZoneProject": "false"
         },
         "StringEquals": {
-          "aws:CalledViaFirst": "cloudformation.amazonaws.com",
           "aws:ResourceAccount": "${aws:PrincipalAccount}"
         }
       },
@@ -8133,7 +8238,6 @@
           "aws:RequestTag/AmazonDataZoneProject": "false"
         },
         "StringEquals": {
-          "aws:CalledViaFirst": "cloudformation.amazonaws.com",
           "aws:ResourceAccount": "${aws:PrincipalAccount}"
         }
       },
@@ -9002,6 +9106,98 @@
       "effective_action": "iam:DeleteInstanceProfile",
       "privesc": false,
       "resource_exposure": true
+    },
+    {
+      "access_level": "Read",
+      "action": "scheduler:ListTagsForResource",
+      "condition": {
+        "StringEquals": {
+          "aws:CalledViaFirst": "cloudformation.amazonaws.com",
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "scheduler:ListTagsForResource",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "scheduler:GetScheduleGroup",
+      "condition": {
+        "StringEquals": {
+          "aws:CalledViaFirst": "cloudformation.amazonaws.com",
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "scheduler:GetScheduleGroup",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "scheduler:DeleteScheduleGroup",
+      "condition": {
+        "Null": {
+          "aws:ResourceTag/AmazonDataZoneProject": "false"
+        },
+        "StringEquals": {
+          "aws:CalledViaFirst": "cloudformation.amazonaws.com",
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "scheduler:DeleteScheduleGroup",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "scheduler:CreateScheduleGroup",
+      "condition": {
+        "ForAllValues:StringLike": {
+          "aws:TagKeys": "AmazonDataZone*"
+        },
+        "Null": {
+          "aws:RequestTag/AmazonDataZoneProject": "false",
+          "aws:TagKeys": "false"
+        },
+        "StringEquals": {
+          "aws:CalledViaFirst": "cloudformation.amazonaws.com",
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "scheduler:CreateScheduleGroup",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Tagging",
+      "action": "scheduler:TagResource",
+      "condition": {
+        "ForAllValues:StringLike": {
+          "aws:TagKeys": "AmazonDataZone*"
+        },
+        "Null": {
+          "aws:ResourceTag/AmazonDataZoneProject": "false",
+          "aws:TagKeys": "false"
+        },
+        "StringEquals": {
+          "aws:CalledViaFirst": "cloudformation.amazonaws.com",
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "scheduler:TagResource",
+      "privesc": false,
+      "resource_exposure": false
     }
   ],
   "grantless": false,
@@ -9012,5 +9208,5 @@
   "undocumented_actions": false,
   "unknown_actions": [],
   "updatedate": "2024-11-27T06:21:08+00:00",
-  "version": "v12"
+  "version": "v13"
 }
