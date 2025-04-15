@@ -1,0 +1,272 @@
+{
+  "access_levels": [
+    "List",
+    "Tagging",
+    "Write"
+  ],
+  "arn": null,
+  "createdate": "2025-04-14T22:07:06Z",
+  "credentials_exposure": false,
+  "data_access": false,
+  "deprecated": false,
+  "document": {
+    "Statement": [
+      {
+        "Action": [
+          "cloudwatch:PutMetricData"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "cloudwatch:namespace": "AWS/MediaLive"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "PutMediaLiveMetricData"
+      },
+      {
+        "Action": [
+          "ecs:RegisterTaskDefinition"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:RequestTag/created_by": "MediaLiveAnywhere"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:ecs:*:*:task-definition/MediaLiveAnywhereAgent*"
+        ],
+        "Sid": "RegisterAnywhereAgentTaskDefinition"
+      },
+      {
+        "Action": [
+          "ecs:TagResource"
+        ],
+        "Condition": {
+          "ForAllValues:StringEquals": {
+            "aws:TagKeys": "created_by"
+          },
+          "StringEquals": {
+            "aws:RequestTag/created_by": "MediaLiveAnywhere",
+            "ecs:CreateAction": "RegisterTaskDefinition"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:ecs:*:*:task-definition/*"
+        ],
+        "Sid": "ECSTagResource"
+      },
+      {
+        "Action": [
+          "ecs:UpdateService"
+        ],
+        "Condition": {
+          "ArnLike": {
+            "ecs:Cluster": "arn:aws:ecs:*:*:cluster/MediaLiveAnywhere*",
+            "ecs:Task-Definition": "arn:aws:ecs:*:*:task-definition/MediaLiveAnywhereAgent*"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:ecs:*:*:*"
+        ],
+        "Sid": "UpdateAnywhereAgentService"
+      },
+      {
+        "Action": [
+          "ecs:ListTaskDefinitions"
+        ],
+        "Effect": "Allow",
+        "Resource": [
+          "*"
+        ],
+        "Sid": "ECSListTaskDefinitions"
+      },
+      {
+        "Action": [
+          "ecs:DeregisterTaskDefinition"
+        ],
+        "Effect": "Allow",
+        "Resource": [
+          "*"
+        ],
+        "Sid": "DeregisterAnywhereAgentTaskDefinitionOnCleanup"
+      },
+      {
+        "Action": [
+          "ecs:DeleteTaskDefinitions"
+        ],
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:ecs:*:*:task-definition/MediaLiveAnywhereAgent*"
+        ],
+        "Sid": "DeleteAnywhereAgentTaskDefinitionsOnCleanup"
+      },
+      {
+        "Action": [
+          "ecs:DeleteService"
+        ],
+        "Condition": {
+          "ArnLike": {
+            "ecs:Cluster": "arn:aws:ecs:*:*:cluster/MediaLiveAnywhere*"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:ecs:*:*:service/MediaLiveAnywhere*/MediaLiveAnywhereAgent*"
+        ],
+        "Sid": "DeleteAnywhereAgentServiceOnCleanup"
+      },
+      {
+        "Action": [
+          "ecs:ListContainerInstances",
+          "ecs:DeregisterContainerInstance"
+        ],
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:ecs:*:*:cluster/MediaLiveAnywhere*"
+        ],
+        "Sid": "DeregisterContainerInstanceOnCleanup"
+      }
+    ],
+    "Version": "2012-10-17"
+  },
+  "effective_actions": [
+    {
+      "access_level": "Write",
+      "action": "cloudwatch:PutMetricData",
+      "condition": {
+        "StringEquals": {
+          "cloudwatch:namespace": "AWS/MediaLive"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudwatch:PutMetricData",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ecs:RegisterTaskDefinition",
+      "condition": {
+        "StringEquals": {
+          "aws:RequestTag/created_by": "MediaLiveAnywhere"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ecs:RegisterTaskDefinition",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Tagging",
+      "action": "ecs:TagResource",
+      "condition": {
+        "ForAllValues:StringEquals": {
+          "aws:TagKeys": "created_by"
+        },
+        "StringEquals": {
+          "aws:RequestTag/created_by": "MediaLiveAnywhere",
+          "ecs:CreateAction": "RegisterTaskDefinition"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ecs:TagResource",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ecs:UpdateService",
+      "condition": {
+        "ArnLike": {
+          "ecs:Cluster": "arn:aws:ecs:*:*:cluster/MediaLiveAnywhere*",
+          "ecs:Task-Definition": "arn:aws:ecs:*:*:task-definition/MediaLiveAnywhereAgent*"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ecs:UpdateService",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "ecs:ListTaskDefinitions",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ecs:ListTaskDefinitions",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ecs:DeregisterTaskDefinition",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ecs:DeregisterTaskDefinition",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ecs:DeleteTaskDefinitions",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ecs:DeleteTaskDefinitions",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ecs:DeleteService",
+      "condition": {
+        "ArnLike": {
+          "ecs:Cluster": "arn:aws:ecs:*:*:cluster/MediaLiveAnywhere*"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ecs:DeleteService",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "ecs:ListContainerInstances",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ecs:ListContainerInstances",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ecs:DeregisterContainerInstance",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ecs:DeregisterContainerInstance",
+      "privesc": false,
+      "resource_exposure": false
+    }
+  ],
+  "grantless": false,
+  "malformed": false,
+  "name": "AWSMediaLiveAnywhereServiceRolePolicy",
+  "privesc": false,
+  "resource_exposure": false,
+  "undocumented_actions": false,
+  "unknown_actions": [],
+  "updatedate": null,
+  "version": "v1"
+}

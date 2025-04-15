@@ -7,7 +7,7 @@
     "Permissions management"
   ],
   "arn": "arn:aws:iam::aws:policy/SageMakerStudioProjectRoleMachineLearningPolicy",
-  "createdate": "2025-02-27T00:22:05Z",
+  "createdate": "2025-04-14T21:52:06Z",
   "credentials_exposure": true,
   "data_access": true,
   "deprecated": false,
@@ -563,6 +563,21 @@
       },
       {
         "Action": [
+          "sagemaker:CreatePresignedDomainUrl"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:PrincipalTag/EnableSageMakerMLWorkloadsPermissions": "true",
+            "aws:ResourceTag/AmazonDataZoneProject": "${aws:PrincipalTag/AmazonDataZoneProject}",
+            "aws:ResourceTag/AmazonDataZoneUser": "${aws:PrincipalTag/datazone:userId}"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:sagemaker:*:*:user-profile/*",
+        "Sid": "SageMakerStudioCreatePresignedDomainUrlForTaggedUserProfile"
+      },
+      {
+        "Action": [
           "sagemaker:ListApps",
           "sagemaker:ListDomains",
           "sagemaker:ListUserProfiles",
@@ -591,6 +606,8 @@
         ],
         "Effect": "Allow",
         "Resource": [
+          "arn:aws:sagemaker:*:*:app/*/*/codeeditor/*",
+          "arn:aws:sagemaker:*:*:app/*/*/CodeEditor/*",
           "arn:aws:sagemaker:*:*:app/*/*/jupyterlab/*",
           "arn:aws:sagemaker:*:*:app/*/*/JupyterLab/*"
         ],
@@ -608,6 +625,20 @@
         "Effect": "Allow",
         "Resource": "arn:aws:sagemaker:*:*:user-profile/*/${aws:PrincipalTag/datazone:userId}",
         "Sid": "SageMakerStudioAppDescribeUserProfileActionPermissions"
+      },
+      {
+        "Action": [
+          "sagemaker:DescribeUserProfile"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceTag/AmazonDataZoneProject": "${aws:PrincipalTag/AmazonDataZoneProject}",
+            "aws:ResourceTag/AmazonDataZoneUser": "${aws:PrincipalTag/datazone:userId}"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:sagemaker:*:*:user-profile/*",
+        "Sid": "SageMakerStudioAppDescribeTaggedUserProfilePermissions"
       },
       {
         "Action": [
@@ -661,6 +692,21 @@
       },
       {
         "Action": [
+          "sagemaker:CreateUserProfile",
+          "sagemaker:DeleteUserProfile"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceTag/AmazonDataZoneProject": "${aws:PrincipalTag/AmazonDataZoneProject}",
+            "aws:ResourceTag/AmazonDataZoneUser": "${aws:PrincipalTag/datazone:userId}"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:sagemaker:*:*:user-profile/*",
+        "Sid": "SageMakerStudioAllowCreatingDeletingTaggedOwnerUserProfile"
+      },
+      {
+        "Action": [
           "sagemaker:CreateSpace",
           "sagemaker:UpdateSpace",
           "sagemaker:DeleteSpace"
@@ -682,6 +728,25 @@
       },
       {
         "Action": [
+          "sagemaker:CreateSpace",
+          "sagemaker:UpdateSpace",
+          "sagemaker:DeleteSpace"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceTag/AmazonDataZoneProject": "${aws:PrincipalTag/AmazonDataZoneProject}",
+            "aws:ResourceTag/AmazonDataZoneUser": "${aws:PrincipalTag/datazone:userId}",
+            "sagemaker:SpaceSharingType": [
+              "Private"
+            ]
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:sagemaker:*:*:space/*",
+        "Sid": "SageMakerStudioRestrictPrivateSpaceToOwnerUser"
+      },
+      {
+        "Action": [
           "sagemaker:CreateApp",
           "sagemaker:DeleteApp"
         ],
@@ -698,10 +763,35 @@
         },
         "Effect": "Allow",
         "Resource": [
+          "arn:aws:sagemaker:*:*:app/*/*/codeeditor/*",
+          "arn:aws:sagemaker:*:*:app/*/*/CodeEditor/*",
           "arn:aws:sagemaker:*:*:app/*/*/jupyterlab/*",
           "arn:aws:sagemaker:*:*:app/*/*/JupyterLab/*"
         ],
         "Sid": "SageMakerStudioRestrictPrivateSpaceAppsToOwnerUserProfile"
+      },
+      {
+        "Action": [
+          "sagemaker:CreateApp",
+          "sagemaker:DeleteApp"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceTag/AmazonDataZoneProject": "${aws:PrincipalTag/AmazonDataZoneProject}",
+            "aws:ResourceTag/AmazonDataZoneUser": "${aws:PrincipalTag/datazone:userId}",
+            "sagemaker:SpaceSharingType": [
+              "Private"
+            ]
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:sagemaker:*:*:app/*/*/CodeEditor/*",
+          "arn:aws:sagemaker:*:*:app/*/*/codeeditor/*",
+          "arn:aws:sagemaker:*:*:app/*/*/jupyterlab/*",
+          "arn:aws:sagemaker:*:*:app/*/*/JupyterLab/*"
+        ],
+        "Sid": "SageMakerStudioRestrictPrivateSpaceAppsToOwnerUser"
       },
       {
         "Action": [
@@ -3517,6 +3607,22 @@
       "resource_exposure": false
     },
     {
+      "access_level": "Write",
+      "action": "sagemaker:CreatePresignedDomainUrl",
+      "condition": {
+        "StringEquals": {
+          "aws:PrincipalTag/EnableSageMakerMLWorkloadsPermissions": "true",
+          "aws:ResourceTag/AmazonDataZoneProject": "${aws:PrincipalTag/AmazonDataZoneProject}",
+          "aws:ResourceTag/AmazonDataZoneUser": "${aws:PrincipalTag/datazone:userId}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sagemaker:CreatePresignedDomainUrl",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
       "access_level": "List",
       "action": "sagemaker:ListApps",
       "condition": null,
@@ -3586,6 +3692,21 @@
       "condition": {
         "StringEquals": {
           "aws:ResourceTag/AmazonDataZoneProject": "${aws:PrincipalTag/AmazonDataZoneProject}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sagemaker:DescribeUserProfile",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "sagemaker:DescribeUserProfile",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/AmazonDataZoneProject": "${aws:PrincipalTag/AmazonDataZoneProject}",
+          "aws:ResourceTag/AmazonDataZoneUser": "${aws:PrincipalTag/datazone:userId}"
         }
       },
       "credentials_exposure": false,
@@ -3690,6 +3811,36 @@
     },
     {
       "access_level": "Write",
+      "action": "sagemaker:CreateUserProfile",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/AmazonDataZoneProject": "${aws:PrincipalTag/AmazonDataZoneProject}",
+          "aws:ResourceTag/AmazonDataZoneUser": "${aws:PrincipalTag/datazone:userId}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sagemaker:CreateUserProfile",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "sagemaker:DeleteUserProfile",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/AmazonDataZoneProject": "${aws:PrincipalTag/AmazonDataZoneProject}",
+          "aws:ResourceTag/AmazonDataZoneUser": "${aws:PrincipalTag/datazone:userId}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sagemaker:DeleteUserProfile",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
       "action": "sagemaker:CreateSpace",
       "condition": {
         "ArnLike": {
@@ -3750,6 +3901,60 @@
     },
     {
       "access_level": "Write",
+      "action": "sagemaker:CreateSpace",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/AmazonDataZoneProject": "${aws:PrincipalTag/AmazonDataZoneProject}",
+          "aws:ResourceTag/AmazonDataZoneUser": "${aws:PrincipalTag/datazone:userId}",
+          "sagemaker:SpaceSharingType": [
+            "Private"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sagemaker:CreateSpace",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "sagemaker:UpdateSpace",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/AmazonDataZoneProject": "${aws:PrincipalTag/AmazonDataZoneProject}",
+          "aws:ResourceTag/AmazonDataZoneUser": "${aws:PrincipalTag/datazone:userId}",
+          "sagemaker:SpaceSharingType": [
+            "Private"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sagemaker:UpdateSpace",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "sagemaker:DeleteSpace",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/AmazonDataZoneProject": "${aws:PrincipalTag/AmazonDataZoneProject}",
+          "aws:ResourceTag/AmazonDataZoneUser": "${aws:PrincipalTag/datazone:userId}",
+          "sagemaker:SpaceSharingType": [
+            "Private"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sagemaker:DeleteSpace",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
       "action": "sagemaker:CreateApp",
       "condition": {
         "ArnLike": {
@@ -3777,6 +3982,42 @@
         },
         "StringEquals": {
           "aws:ResourceTag/AmazonDataZoneProject": "${aws:PrincipalTag/AmazonDataZoneProject}",
+          "sagemaker:SpaceSharingType": [
+            "Private"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sagemaker:DeleteApp",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "sagemaker:CreateApp",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/AmazonDataZoneProject": "${aws:PrincipalTag/AmazonDataZoneProject}",
+          "aws:ResourceTag/AmazonDataZoneUser": "${aws:PrincipalTag/datazone:userId}",
+          "sagemaker:SpaceSharingType": [
+            "Private"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sagemaker:CreateApp",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "sagemaker:DeleteApp",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/AmazonDataZoneProject": "${aws:PrincipalTag/AmazonDataZoneProject}",
+          "aws:ResourceTag/AmazonDataZoneUser": "${aws:PrincipalTag/datazone:userId}",
           "sagemaker:SpaceSharingType": [
             "Private"
           ]
@@ -4132,5 +4373,5 @@
   "undocumented_actions": false,
   "unknown_actions": [],
   "updatedate": "2024-11-27T06:21:07+00:00",
-  "version": "v7"
+  "version": "v8"
 }
