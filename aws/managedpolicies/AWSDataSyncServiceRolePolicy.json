@@ -1,9 +1,10 @@
 {
   "access_levels": [
+    "Read",
     "Write"
   ],
   "arn": "arn:aws:iam::aws:policy/aws-service-role/AWSDataSyncServiceRolePolicy",
-  "createdate": "2024-10-09T17:45:40Z",
+  "createdate": "2025-04-15T16:37:06Z",
   "credentials_exposure": false,
   "data_access": false,
   "deprecated": false,
@@ -29,6 +30,23 @@
           "arn:*:logs:*:*:log-group:/aws/datasync*:log-stream:*"
         ],
         "Sid": "DataSyncCloudWatchLogStreamUpdateAccess"
+      },
+      {
+        "Action": [
+          "secretsmanager:DescribeSecret",
+          "secretsmanager:GetSecretValue"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}",
+            "secretsmanager:ResourceTag/aws:secretsmanager:owningService": "aws-datasync"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:*:secretsmanager:*:*:secret:aws-datasync!*"
+        ],
+        "Sid": "DataSyncSecretsManagerReadAccess"
       }
     ],
     "Version": "2012-10-17"
@@ -63,6 +81,36 @@
       "effective_action": "logs:PutLogEvents",
       "privesc": false,
       "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "secretsmanager:DescribeSecret",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}",
+          "secretsmanager:ResourceTag/aws:secretsmanager:owningService": "aws-datasync"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "secretsmanager:DescribeSecret",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "secretsmanager:GetSecretValue",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}",
+          "secretsmanager:ResourceTag/aws:secretsmanager:owningService": "aws-datasync"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "secretsmanager:GetSecretValue",
+      "privesc": false,
+      "resource_exposure": false
     }
   ],
   "grantless": false,
@@ -73,5 +121,5 @@
   "undocumented_actions": false,
   "unknown_actions": [],
   "updatedate": "2024-10-09T17:45:40+00:00",
-  "version": "v1"
+  "version": "v2"
 }
