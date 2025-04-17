@@ -6,7 +6,7 @@
     "Write"
   ],
   "arn": "arn:aws:iam::aws:policy/AmazonEKSClusterPolicy",
-  "createdate": "2024-11-01T17:39:00Z",
+  "createdate": "2025-04-17T02:52:06Z",
   "credentials_exposure": false,
   "data_access": false,
   "deprecated": false,
@@ -77,7 +77,8 @@
           "kms:DescribeKey"
         ],
         "Effect": "Allow",
-        "Resource": "*"
+        "Resource": "*",
+        "Sid": "AmazonEKSClusterPolicy"
       },
       {
         "Action": [
@@ -89,7 +90,21 @@
           }
         },
         "Effect": "Allow",
-        "Resource": "*"
+        "Resource": "*",
+        "Sid": "AmazonEKSClusterPolicySLRCreate"
+      },
+      {
+        "Action": [
+          "ec2:DeleteNetworkInterface"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "ec2:ResourceTag/eks:eni:owner": "amazon-vpc-cni"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "AmazonEKSClusterPolicyENIDelete"
       }
     ],
     "Version": "2012-10-17"
@@ -718,6 +733,20 @@
       "effective_action": "iam:CreateServiceLinkedRole",
       "privesc": true,
       "resource_exposure": true
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:DeleteNetworkInterface",
+      "condition": {
+        "StringEquals": {
+          "ec2:ResourceTag/eks:eni:owner": "amazon-vpc-cni"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:DeleteNetworkInterface",
+      "privesc": false,
+      "resource_exposure": false
     }
   ],
   "grantless": false,
@@ -728,5 +757,5 @@
   "undocumented_actions": false,
   "unknown_actions": [],
   "updatedate": "2024-11-01T17:39:00+00:00",
-  "version": "v7"
+  "version": "v8"
 }
