@@ -4,7 +4,7 @@
     "Write"
   ],
   "arn": "arn:aws:iam::aws:policy/aws-service-role/AWSOutpostsServiceRolePolicy",
-  "createdate": "2020-11-09T22:55:56Z",
+  "createdate": "2025-04-17T17:37:07Z",
   "credentials_exposure": false,
   "data_access": false,
   "deprecated": false,
@@ -14,11 +14,68 @@
         "Action": [
           "ec2:DescribeNetworkInterfaces",
           "ec2:DescribeSecurityGroups",
-          "ec2:CreateNetworkInterface",
+          "ec2:DescribeSubnets",
+          "ec2:DescribeVpcEndpoints"
+        ],
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "PrivateConnectivityServiceRolePolicy"
+      },
+      {
+        "Action": [
+          "ec2:CreateNetworkInterface"
+        ],
+        "Effect": "Allow",
+        "Resource": [
+          "arn:*:ec2:*:*:vpc/*",
+          "arn:*:ec2:*:*:subnet/*",
+          "arn:*:ec2:*:*:security-group/*"
+        ],
+        "Sid": "PrivateConnectivityCreateNetworkInterfacePolicy"
+      },
+      {
+        "Action": [
+          "ec2:CreateNetworkInterface"
+        ],
+        "Condition": {
+          "ForAnyValue:StringEquals": {
+            "aws:TagKeys": [
+              "outposts:private-connectivity-resourceId"
+            ]
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:*:ec2:*:*:network-interface/*"
+        ],
+        "Sid": "PrivateConnectivityCreateNetworkInterfaceTaggingPolicy"
+      },
+      {
+        "Action": [
           "ec2:CreateSecurityGroup"
         ],
         "Effect": "Allow",
-        "Resource": "*"
+        "Resource": [
+          "arn:*:ec2:*:*:vpc/*"
+        ],
+        "Sid": "PrivateConnectivityCreateSecurityGroupPolicy"
+      },
+      {
+        "Action": [
+          "ec2:CreateSecurityGroup"
+        ],
+        "Condition": {
+          "ForAnyValue:StringEquals": {
+            "aws:TagKeys": [
+              "outposts:private-connectivity-resourceId"
+            ]
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:*:ec2:*:*:security-group/*"
+        ],
+        "Sid": "PrivateConnectivityCreateSecurityGroupTaggingPolicy"
       }
     ],
     "Version": "2012-10-17"
@@ -45,9 +102,45 @@
       "resource_exposure": false
     },
     {
+      "access_level": "List",
+      "action": "ec2:DescribeSubnets",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:DescribeSubnets",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "ec2:DescribeVpcEndpoints",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:DescribeVpcEndpoints",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
       "access_level": "Write",
       "action": "ec2:CreateNetworkInterface",
       "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:CreateNetworkInterface",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:CreateNetworkInterface",
+      "condition": {
+        "ForAnyValue:StringEquals": {
+          "aws:TagKeys": [
+            "outposts:private-connectivity-resourceId"
+          ]
+        }
+      },
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "ec2:CreateNetworkInterface",
@@ -63,6 +156,22 @@
       "effective_action": "ec2:CreateSecurityGroup",
       "privesc": false,
       "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:CreateSecurityGroup",
+      "condition": {
+        "ForAnyValue:StringEquals": {
+          "aws:TagKeys": [
+            "outposts:private-connectivity-resourceId"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:CreateSecurityGroup",
+      "privesc": false,
+      "resource_exposure": false
     }
   ],
   "grantless": false,
@@ -73,5 +182,5 @@
   "undocumented_actions": false,
   "unknown_actions": [],
   "updatedate": "2020-11-09T22:55:56+00:00",
-  "version": "v1"
+  "version": "v2"
 }

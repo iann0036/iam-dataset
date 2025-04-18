@@ -1,0 +1,304 @@
+{
+  "access_levels": [
+    "Read",
+    "Write",
+    "Permissions management"
+  ],
+  "arn": null,
+  "createdate": "2025-04-17T21:07:06Z",
+  "credentials_exposure": false,
+  "data_access": true,
+  "deprecated": false,
+  "document": {
+    "Statement": [
+      {
+        "Action": [
+          "ssm:StartSession"
+        ],
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:ec2:*:*:instance/*",
+          "arn:aws:ssm:*:*:managed-instance/*",
+          "arn:aws:ssm:*:*:document/SSM-SessionManagerRunShell"
+        ],
+        "Sid": "SsmStartSession"
+      },
+      {
+        "Action": [
+          "ssm:TerminateSession",
+          "ssm:ResumeSession"
+        ],
+        "Effect": "Allow",
+        "Resource": "arn:aws:ssm:*:*:session/*",
+        "Sid": "TerminateAndResumeSession"
+      },
+      {
+        "Action": [
+          "ssm-guiconnect:CancelConnection",
+          "ssm-guiconnect:GetConnection",
+          "ssm-guiconnect:StartConnection"
+        ],
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "GuiConnect"
+      },
+      {
+        "Action": [
+          "kms:GenerateDataKey"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceTag/SystemsManagerJustInTimeNodeAccessManaged": "true"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:kms:*:*:key/*",
+        "Sid": "SessionManagerKmsPermission"
+      },
+      {
+        "Action": [
+          "kms:CreateGrant"
+        ],
+        "Condition": {
+          "Bool": {
+            "aws:ViaAWSService": "true"
+          },
+          "StringEquals": {
+            "aws:ResourceTag/SystemsManagerJustInTimeNodeAccessManaged": "true"
+          },
+          "StringLike": {
+            "kms:ViaService": "ssm-guiconnect.*.amazonaws.com"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:kms:*:*:key/*",
+        "Sid": "RdpKmsPermission"
+      },
+      {
+        "Action": [
+          "ssm:StartSession"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:CalledViaFirst": "ssm-guiconnect.amazonaws.com"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:ec2:*:*:instance/*",
+          "arn:aws:ssm:*:*:managed-instance/*",
+          "arn:aws:ssm:*:*:document/AWS-StartPortForwardingSession"
+        ],
+        "Sid": "RdpStartSession"
+      },
+      {
+        "Action": [
+          "sso:ListDirectoryAssociations*",
+          "identitystore:DescribeUser",
+          "ssm:GetCommandInvocation"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:CalledViaFirst": "ssm-guiconnect.amazonaws.com"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "SsmRdpSsoSetup"
+      },
+      {
+        "Action": [
+          "ssm:SendCommand"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:CalledViaFirst": "ssm-guiconnect.amazonaws.com"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:ec2:*:*:instance/*",
+          "arn:aws:ssm:*:*:managed-instance/*",
+          "arn:aws:ssm:*:*:document/AWSSSO-CreateSSOUser"
+        ],
+        "Sid": "SsmRdpSsoSetupSendCommand"
+      }
+    ],
+    "Version": "2012-10-17"
+  },
+  "effective_actions": [
+    {
+      "access_level": "Write",
+      "action": "ssm:StartSession",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ssm:StartSession",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ssm:TerminateSession",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ssm:TerminateSession",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ssm:ResumeSession",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ssm:ResumeSession",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ssm-guiconnect:CancelConnection",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ssm-guiconnect:CancelConnection",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "ssm-guiconnect:GetConnection",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ssm-guiconnect:GetConnection",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ssm-guiconnect:StartConnection",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ssm-guiconnect:StartConnection",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "kms:GenerateDataKey",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/SystemsManagerJustInTimeNodeAccessManaged": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "kms:GenerateDataKey",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Permissions management",
+      "action": "kms:CreateGrant",
+      "condition": {
+        "Bool": {
+          "aws:ViaAWSService": "true"
+        },
+        "StringEquals": {
+          "aws:ResourceTag/SystemsManagerJustInTimeNodeAccessManaged": "true"
+        },
+        "StringLike": {
+          "kms:ViaService": "ssm-guiconnect.*.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": true,
+      "effective_action": "kms:CreateGrant",
+      "privesc": true,
+      "resource_exposure": true
+    },
+    {
+      "access_level": "Write",
+      "action": "ssm:StartSession",
+      "condition": {
+        "StringEquals": {
+          "aws:CalledViaFirst": "ssm-guiconnect.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ssm:StartSession",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "sso:ListDirectoryAssociations*",
+      "condition": {
+        "StringEquals": {
+          "aws:CalledViaFirst": "ssm-guiconnect.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sso:ListDirectoryAssociations",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "identitystore:DescribeUser",
+      "condition": {
+        "StringEquals": {
+          "aws:CalledViaFirst": "ssm-guiconnect.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "identitystore:DescribeUser",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "ssm:GetCommandInvocation",
+      "condition": {
+        "StringEquals": {
+          "aws:CalledViaFirst": "ssm-guiconnect.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ssm:GetCommandInvocation",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ssm:SendCommand",
+      "condition": {
+        "StringEquals": {
+          "aws:CalledViaFirst": "ssm-guiconnect.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ssm:SendCommand",
+      "privesc": false,
+      "resource_exposure": false
+    }
+  ],
+  "grantless": false,
+  "malformed": false,
+  "name": "AWSSystemsManagerJustInTimeAccessTokenPolicy",
+  "privesc": true,
+  "resource_exposure": true,
+  "undocumented_actions": false,
+  "unknown_actions": [],
+  "updatedate": null,
+  "version": "v1"
+}
