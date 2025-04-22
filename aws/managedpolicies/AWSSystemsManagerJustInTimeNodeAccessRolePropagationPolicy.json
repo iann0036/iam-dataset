@@ -1,0 +1,537 @@
+{
+  "access_levels": [
+    "List",
+    "Read",
+    "Tagging",
+    "Write",
+    "Permissions management"
+  ],
+  "arn": null,
+  "createdate": "2025-04-21T20:52:05Z",
+  "credentials_exposure": false,
+  "data_access": true,
+  "deprecated": false,
+  "document": {
+    "Statement": [
+      {
+        "Action": [
+          "ssm-quicksetup:ListConfigurationManagers",
+          "ssm-quicksetup:GetConfigurationManager",
+          "cloudformation:ListStackSets"
+        ],
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "QuickSetupPermissions"
+      },
+      {
+        "Action": [
+          "organizations:ListDelegatedAdministrators"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "organizations:ServicePrincipal": "ssm-quicksetup.amazonaws.com"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "QuickSetupOrganizationsPermissions"
+      },
+      {
+        "Action": [
+          "iam:GetRole"
+        ],
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:iam::*:role/aws-service-role/ssm-quicksetup.amazonaws.com/AWSServiceRoleForSSMQuickSetup"
+        ],
+        "Sid": "QuickSetupSLRPermissions"
+      },
+      {
+        "Action": [
+          "organizations:DescribeOrganization",
+          "organizations:DescribeOrganizationalUnit"
+        ],
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "OrganizationsPermissions"
+      },
+      {
+        "Action": [
+          "ssm:GetDocument",
+          "ssm:DescribeDocument",
+          "ssm:ListTagsForResource",
+          "ssm:PutResourcePolicy",
+          "ssm:DeleteResourcePolicy",
+          "ssm:GetResourcePolicies"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "ssm:DocumentType": "AutoApprovalPolicy"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:ssm:*:*:document/SSM-JustInTimeAccessDenyAccessOrgPolicy",
+        "Sid": "SSMDocumentPermissions"
+      },
+      {
+        "Action": [
+          "ssm:CreateDocument"
+        ],
+        "Condition": {
+          "ForAllValues:StringEquals": {
+            "aws:TagKeys": [
+              "SystemsManagerJustInTimeNodeAccessManaged"
+            ]
+          },
+          "StringEquals": {
+            "aws:RequestTag/SystemsManagerJustInTimeNodeAccessManaged": "true",
+            "ssm:DocumentType": "AutoApprovalPolicy"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:ssm:*:*:document/SSM-JustInTimeAccessDenyAccessOrgPolicy",
+        "Sid": "SSMDocumentCreateReplicaPermissions"
+      },
+      {
+        "Action": [
+          "ssm:UpdateDocument",
+          "ssm:UpdateDocumentDefaultVersion",
+          "ssm:UpdateDocumentMetadata",
+          "ssm:DeleteDocument",
+          "ssm:AddTagsToResource",
+          "ssm:RemoveTagsFromResource"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceTag/SystemsManagerJustInTimeNodeAccessManaged": "true",
+            "ssm:DocumentType": "AutoApprovalPolicy"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:ssm:*:*:document/SSM-JustInTimeAccessDenyAccessOrgPolicy",
+        "Sid": "SSMDocumentUpdateReplicaPermissions"
+      },
+      {
+        "Action": [
+          "ram:GetResourceShares",
+          "ram:GetResourceShareAssociations"
+        ],
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "RAMReadPermissions"
+      },
+      {
+        "Action": [
+          "ram:CreateResourceShare"
+        ],
+        "Condition": {
+          "ArnLikeIfExists": {
+            "ram:ResourceArn": "arn:aws:ssm:*:*:document/SSM-JustInTimeAccessDenyAccessOrgPolicy"
+          },
+          "ForAllValues:StringEquals": {
+            "aws:TagKeys": [
+              "SystemsManagerJustInTimeNodeAccessManaged"
+            ]
+          },
+          "StringEquals": {
+            "aws:RequestTag/SystemsManagerJustInTimeNodeAccessManaged": "true"
+          },
+          "StringEqualsIfExists": {
+            "ram:RequestedResourceType": "ssm:Document"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:ram:*:*:resource-share/*",
+        "Sid": "RAMCreatePermissions"
+      },
+      {
+        "Action": [
+          "ram:AssociateResourceShare",
+          "ram:DisassociateResourceShare"
+        ],
+        "Condition": {
+          "ArnLikeIfExists": {
+            "ram:ResourceArn": "arn:aws:ssm:*:*:document/SSM-JustInTimeAccessDenyAccessOrgPolicy"
+          },
+          "StringEquals": {
+            "aws:ResourceTag/SystemsManagerJustInTimeNodeAccessManaged": "true",
+            "ram:ResourceShareName": "SSMJustInTimeNodeAccessManagedResourceShare"
+          },
+          "StringEqualsIfExists": {
+            "ram:RequestedResourceType": "ssm:Document"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "RAMModificationPermissions"
+      }
+    ],
+    "Version": "2012-10-17"
+  },
+  "effective_actions": [
+    {
+      "access_level": "List",
+      "action": "ssm-quicksetup:ListConfigurationManagers",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ssm-quicksetup:ListConfigurationManagers",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "ssm-quicksetup:GetConfigurationManager",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ssm-quicksetup:GetConfigurationManager",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "cloudformation:ListStackSets",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudformation:ListStackSets",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "organizations:ListDelegatedAdministrators",
+      "condition": {
+        "StringEquals": {
+          "organizations:ServicePrincipal": "ssm-quicksetup.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "organizations:ListDelegatedAdministrators",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "iam:GetRole",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "iam:GetRole",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "organizations:DescribeOrganization",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "organizations:DescribeOrganization",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "organizations:DescribeOrganizationalUnit",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "organizations:DescribeOrganizationalUnit",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "ssm:GetDocument",
+      "condition": {
+        "StringEquals": {
+          "ssm:DocumentType": "AutoApprovalPolicy"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": true,
+      "effective_action": "ssm:GetDocument",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "ssm:DescribeDocument",
+      "condition": {
+        "StringEquals": {
+          "ssm:DocumentType": "AutoApprovalPolicy"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ssm:DescribeDocument",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "ssm:ListTagsForResource",
+      "condition": {
+        "StringEquals": {
+          "ssm:DocumentType": "AutoApprovalPolicy"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ssm:ListTagsForResource",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Permissions management",
+      "action": "ssm:PutResourcePolicy",
+      "condition": {
+        "StringEquals": {
+          "ssm:DocumentType": "AutoApprovalPolicy"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ssm:PutResourcePolicy",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Permissions management",
+      "action": "ssm:DeleteResourcePolicy",
+      "condition": {
+        "StringEquals": {
+          "ssm:DocumentType": "AutoApprovalPolicy"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ssm:DeleteResourcePolicy",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "ssm:GetResourcePolicies",
+      "condition": {
+        "StringEquals": {
+          "ssm:DocumentType": "AutoApprovalPolicy"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ssm:GetResourcePolicies",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ssm:CreateDocument",
+      "condition": {
+        "ForAllValues:StringEquals": {
+          "aws:TagKeys": [
+            "SystemsManagerJustInTimeNodeAccessManaged"
+          ]
+        },
+        "StringEquals": {
+          "aws:RequestTag/SystemsManagerJustInTimeNodeAccessManaged": "true",
+          "ssm:DocumentType": "AutoApprovalPolicy"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ssm:CreateDocument",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ssm:UpdateDocument",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/SystemsManagerJustInTimeNodeAccessManaged": "true",
+          "ssm:DocumentType": "AutoApprovalPolicy"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ssm:UpdateDocument",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ssm:UpdateDocumentDefaultVersion",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/SystemsManagerJustInTimeNodeAccessManaged": "true",
+          "ssm:DocumentType": "AutoApprovalPolicy"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ssm:UpdateDocumentDefaultVersion",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ssm:UpdateDocumentMetadata",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/SystemsManagerJustInTimeNodeAccessManaged": "true",
+          "ssm:DocumentType": "AutoApprovalPolicy"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ssm:UpdateDocumentMetadata",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ssm:DeleteDocument",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/SystemsManagerJustInTimeNodeAccessManaged": "true",
+          "ssm:DocumentType": "AutoApprovalPolicy"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ssm:DeleteDocument",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Tagging",
+      "action": "ssm:AddTagsToResource",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/SystemsManagerJustInTimeNodeAccessManaged": "true",
+          "ssm:DocumentType": "AutoApprovalPolicy"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ssm:AddTagsToResource",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Tagging",
+      "action": "ssm:RemoveTagsFromResource",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/SystemsManagerJustInTimeNodeAccessManaged": "true",
+          "ssm:DocumentType": "AutoApprovalPolicy"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ssm:RemoveTagsFromResource",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "ram:GetResourceShares",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ram:GetResourceShares",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "ram:GetResourceShareAssociations",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ram:GetResourceShareAssociations",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ram:CreateResourceShare",
+      "condition": {
+        "ArnLikeIfExists": {
+          "ram:ResourceArn": "arn:aws:ssm:*:*:document/SSM-JustInTimeAccessDenyAccessOrgPolicy"
+        },
+        "ForAllValues:StringEquals": {
+          "aws:TagKeys": [
+            "SystemsManagerJustInTimeNodeAccessManaged"
+          ]
+        },
+        "StringEquals": {
+          "aws:RequestTag/SystemsManagerJustInTimeNodeAccessManaged": "true"
+        },
+        "StringEqualsIfExists": {
+          "ram:RequestedResourceType": "ssm:Document"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ram:CreateResourceShare",
+      "privesc": false,
+      "resource_exposure": true
+    },
+    {
+      "access_level": "Write",
+      "action": "ram:AssociateResourceShare",
+      "condition": {
+        "ArnLikeIfExists": {
+          "ram:ResourceArn": "arn:aws:ssm:*:*:document/SSM-JustInTimeAccessDenyAccessOrgPolicy"
+        },
+        "StringEquals": {
+          "aws:ResourceTag/SystemsManagerJustInTimeNodeAccessManaged": "true",
+          "ram:ResourceShareName": "SSMJustInTimeNodeAccessManagedResourceShare"
+        },
+        "StringEqualsIfExists": {
+          "ram:RequestedResourceType": "ssm:Document"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ram:AssociateResourceShare",
+      "privesc": false,
+      "resource_exposure": true
+    },
+    {
+      "access_level": "Write",
+      "action": "ram:DisassociateResourceShare",
+      "condition": {
+        "ArnLikeIfExists": {
+          "ram:ResourceArn": "arn:aws:ssm:*:*:document/SSM-JustInTimeAccessDenyAccessOrgPolicy"
+        },
+        "StringEquals": {
+          "aws:ResourceTag/SystemsManagerJustInTimeNodeAccessManaged": "true",
+          "ram:ResourceShareName": "SSMJustInTimeNodeAccessManagedResourceShare"
+        },
+        "StringEqualsIfExists": {
+          "ram:RequestedResourceType": "ssm:Document"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ram:DisassociateResourceShare",
+      "privesc": false,
+      "resource_exposure": true
+    }
+  ],
+  "grantless": false,
+  "malformed": false,
+  "name": "AWSSystemsManagerJustInTimeNodeAccessRolePropagationPolicy",
+  "privesc": false,
+  "resource_exposure": true,
+  "undocumented_actions": false,
+  "unknown_actions": [],
+  "updatedate": null,
+  "version": "v1"
+}
