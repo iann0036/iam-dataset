@@ -7,7 +7,7 @@
     "Permissions management"
   ],
   "arn": "arn:aws:iam::aws:policy/service-role/SageMakerStudioProjectProvisioningRolePolicy",
-  "createdate": "2025-04-09T21:22:07Z",
+  "createdate": "2025-04-23T20:07:07Z",
   "credentials_exposure": true,
   "data_access": true,
   "deprecated": false,
@@ -720,7 +720,8 @@
         "Effect": "Allow",
         "Resource": [
           "arn:aws:iam::*:role/datazone_usr_role_*",
-          "arn:aws:iam::*:role/SageMakerStudioQueryExecutionRole"
+          "arn:aws:iam::*:role/SageMakerStudioQueryExecutionRole",
+          "arn:aws:iam::*:role/service-role/AmazonSageMakerQueryExecution"
         ],
         "Sid": "IamPassRoleForGlueCatalog"
       },
@@ -1293,7 +1294,10 @@
           "iam:GetRole"
         ],
         "Effect": "Allow",
-        "Resource": "arn:aws:iam::*:role/SageMakerStudioQueryExecutionRole",
+        "Resource": [
+          "arn:aws:iam::*:role/SageMakerStudioQueryExecutionRole",
+          "arn:aws:iam::*:role/service-role/AmazonSageMakerQueryExecution"
+        ],
         "Sid": "IamGetRoleProvisioningRoleForFederatedDataConnection"
       },
       {
@@ -2843,6 +2847,25 @@
         "Effect": "Allow",
         "Resource": "arn:aws:scheduler:*:*:schedule-group/*",
         "Sid": "EventBridgeTagScheduleGroupActions"
+      },
+      {
+        "Action": [
+          "scheduler:DeleteSchedule"
+        ],
+        "Condition": {
+          "Null": {
+            "aws:ResourceTag/AmazonDataZoneProject": "false"
+          },
+          "StringEquals": {
+            "aws:CalledViaFirst": "cloudformation.amazonaws.com",
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:scheduler:*:*:schedule/SageMakerUnifiedStudio-*-*/*"
+        ],
+        "Sid": "EventBridgeScheduleDeleteAction"
       }
     ],
     "Version": "2012-10-17"
@@ -9198,6 +9221,24 @@
       "effective_action": "scheduler:TagResource",
       "privesc": false,
       "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "scheduler:DeleteSchedule",
+      "condition": {
+        "Null": {
+          "aws:ResourceTag/AmazonDataZoneProject": "false"
+        },
+        "StringEquals": {
+          "aws:CalledViaFirst": "cloudformation.amazonaws.com",
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "scheduler:DeleteSchedule",
+      "privesc": false,
+      "resource_exposure": false
     }
   ],
   "grantless": false,
@@ -9208,5 +9249,5 @@
   "undocumented_actions": false,
   "unknown_actions": [],
   "updatedate": "2024-11-27T06:21:08+00:00",
-  "version": "v13"
+  "version": "v14"
 }
