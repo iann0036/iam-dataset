@@ -7,7 +7,7 @@
     "Permissions management"
   ],
   "arn": "arn:aws:iam::aws:policy/SageMakerStudioProjectUserRolePolicy",
-  "createdate": "2025-04-08T17:52:05Z",
+  "createdate": "2025-04-28T18:37:07Z",
   "credentials_exposure": true,
   "data_access": true,
   "deprecated": false,
@@ -1199,6 +1199,23 @@
       },
       {
         "Action": [
+          "sts:SetContext"
+        ],
+        "Condition": {
+          "ForAnyValue:StringEquals": {
+            "aws:CalledVia": [
+              "sqlworkbench.amazonaws.com"
+            ]
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:sts::*:self"
+        ],
+        "Sid": "SetContextForTrustedIdentityPropagation"
+      },
+      {
+        "Action": [
           "glue:GetConnection",
           "glue:GetConnections",
           "glue:GetTags"
@@ -1822,18 +1839,27 @@
           "bedrock:ApplyGuardrail",
           "bedrock:BatchDeleteEvaluationJob",
           "bedrock:CreateAgentAlias",
+          "bedrock:CreateBlueprint",
+          "bedrock:CreateBlueprintVersion",
+          "bedrock:CreateDataAutomationProject",
           "bedrock:CreateEvaluationJob",
           "bedrock:CreatePrompt",
           "bedrock:CreatePromptVersion",
           "bedrock:DeleteAgentAlias",
           "bedrock:DeleteAgentVersion",
+          "bedrock:DeleteBlueprint",
+          "bedrock:DeleteDataAutomationProject",
           "bedrock:DeletePrompt",
           "bedrock:GetAgentAlias",
           "bedrock:GetAgentVersion",
+          "bedrock:GetBlueprint",
+          "bedrock:GetDataAutomationProject",
+          "bedrock:GetDataAutomationStatus",
           "bedrock:GetEvaluationJob",
           "bedrock:GetIngestionJob",
           "bedrock:GetPrompt",
           "bedrock:InvokeAgent",
+          "bedrock:InvokeDataAutomationAsync",
           "bedrock:InvokeFlow",
           "bedrock:ListAgentAliases",
           "bedrock:ListAgentVersions",
@@ -1843,7 +1869,11 @@
           "bedrock:Retrieve",
           "bedrock:StartIngestionJob",
           "bedrock:StopEvaluationJob",
-          "bedrock:UpdateAgentAlias"
+          "bedrock:UpdateAgentAlias",
+          "bedrock:UpdateBlueprint",
+          "bedrock:UpdateDataAutomationProject",
+          "bedrock:ListAgentActionGroups",
+          "bedrock:ListAgentKnowledgeBases"
         ],
         "Condition": {
           "StringEquals": {
@@ -1884,16 +1914,52 @@
       },
       {
         "Action": [
+          "bedrock:InvokeDataAutomationAsync"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:PrincipalTag/EnableAmazonBedrockPermissions": "true"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:bedrock:*:*:data-automation-profile/*"
+        ],
+        "Sid": "InvokeDataAutomationAsyncPermissions"
+      },
+      {
+        "Action": [
           "bedrock:InvokeInlineAgent"
         ],
         "Condition": {
           "StringEquals": {
-            "aws:PrincipalTag/EnableAmazonBedrockIDEPermissions": "true"
+            "aws:PrincipalTag/EnableAmazonBedrockIDEPermissions": "true",
+            "bedrock:InlineAgentName": "${datazone:userId}"
+          },
+          "StringNotEquals": {
+            "bedrock:InlineAgentName": ""
           }
         },
         "Effect": "Allow",
         "Resource": "*",
         "Sid": "InvokeBedrockInlineAgentPermissions"
+      },
+      {
+        "Action": [
+          "bedrock:InvokeInlineAgent"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:PrincipalTag/EnableAmazonBedrockPermissions": "true",
+            "bedrock:InlineAgentName": "${datazone:userId}"
+          },
+          "StringNotEquals": {
+            "bedrock:InlineAgentName": ""
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "BedrockInvokeInlineAgentPermissions"
       },
       {
         "Action": [
@@ -1923,7 +1989,6 @@
       },
       {
         "Action": [
-          "bedrock:InvokeInlineAgent",
           "bedrock:ListEvaluationJobs",
           "bedrock:RetrieveAndGenerate"
         ],
@@ -7805,6 +7870,22 @@
       "resource_exposure": false
     },
     {
+      "access_level": "Write",
+      "action": "sts:SetContext",
+      "condition": {
+        "ForAnyValue:StringEquals": {
+          "aws:CalledVia": [
+            "sqlworkbench.amazonaws.com"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sts:SetContext",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
       "access_level": "Read",
       "action": "glue:GetConnection",
       "condition": {
@@ -10109,6 +10190,51 @@
     },
     {
       "access_level": "Write",
+      "action": "bedrock:CreateBlueprint",
+      "condition": {
+        "StringEquals": {
+          "aws:PrincipalTag/EnableAmazonBedrockPermissions": "true",
+          "aws:ResourceTag/AmazonDataZoneProject": "${aws:PrincipalTag/AmazonDataZoneProject}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "bedrock:CreateBlueprint",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "bedrock:CreateBlueprintVersion",
+      "condition": {
+        "StringEquals": {
+          "aws:PrincipalTag/EnableAmazonBedrockPermissions": "true",
+          "aws:ResourceTag/AmazonDataZoneProject": "${aws:PrincipalTag/AmazonDataZoneProject}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "bedrock:CreateBlueprintVersion",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "bedrock:CreateDataAutomationProject",
+      "condition": {
+        "StringEquals": {
+          "aws:PrincipalTag/EnableAmazonBedrockPermissions": "true",
+          "aws:ResourceTag/AmazonDataZoneProject": "${aws:PrincipalTag/AmazonDataZoneProject}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "bedrock:CreateDataAutomationProject",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
       "action": "bedrock:CreateEvaluationJob",
       "condition": {
         "StringEquals": {
@@ -10184,6 +10310,36 @@
     },
     {
       "access_level": "Write",
+      "action": "bedrock:DeleteBlueprint",
+      "condition": {
+        "StringEquals": {
+          "aws:PrincipalTag/EnableAmazonBedrockPermissions": "true",
+          "aws:ResourceTag/AmazonDataZoneProject": "${aws:PrincipalTag/AmazonDataZoneProject}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "bedrock:DeleteBlueprint",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "bedrock:DeleteDataAutomationProject",
+      "condition": {
+        "StringEquals": {
+          "aws:PrincipalTag/EnableAmazonBedrockPermissions": "true",
+          "aws:ResourceTag/AmazonDataZoneProject": "${aws:PrincipalTag/AmazonDataZoneProject}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "bedrock:DeleteDataAutomationProject",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
       "action": "bedrock:DeletePrompt",
       "condition": {
         "StringEquals": {
@@ -10224,6 +10380,51 @@
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "bedrock:GetAgentVersion",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "bedrock:GetBlueprint",
+      "condition": {
+        "StringEquals": {
+          "aws:PrincipalTag/EnableAmazonBedrockPermissions": "true",
+          "aws:ResourceTag/AmazonDataZoneProject": "${aws:PrincipalTag/AmazonDataZoneProject}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "bedrock:GetBlueprint",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "bedrock:GetDataAutomationProject",
+      "condition": {
+        "StringEquals": {
+          "aws:PrincipalTag/EnableAmazonBedrockPermissions": "true",
+          "aws:ResourceTag/AmazonDataZoneProject": "${aws:PrincipalTag/AmazonDataZoneProject}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "bedrock:GetDataAutomationProject",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "bedrock:GetDataAutomationStatus",
+      "condition": {
+        "StringEquals": {
+          "aws:PrincipalTag/EnableAmazonBedrockPermissions": "true",
+          "aws:ResourceTag/AmazonDataZoneProject": "${aws:PrincipalTag/AmazonDataZoneProject}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "bedrock:GetDataAutomationStatus",
       "privesc": false,
       "resource_exposure": false
     },
@@ -10284,6 +10485,21 @@
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "bedrock:InvokeAgent",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "bedrock:InvokeDataAutomationAsync",
+      "condition": {
+        "StringEquals": {
+          "aws:PrincipalTag/EnableAmazonBedrockPermissions": "true",
+          "aws:ResourceTag/AmazonDataZoneProject": "${aws:PrincipalTag/AmazonDataZoneProject}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "bedrock:InvokeDataAutomationAsync",
       "privesc": false,
       "resource_exposure": false
     },
@@ -10439,6 +10655,66 @@
     },
     {
       "access_level": "Write",
+      "action": "bedrock:UpdateBlueprint",
+      "condition": {
+        "StringEquals": {
+          "aws:PrincipalTag/EnableAmazonBedrockPermissions": "true",
+          "aws:ResourceTag/AmazonDataZoneProject": "${aws:PrincipalTag/AmazonDataZoneProject}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "bedrock:UpdateBlueprint",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "bedrock:UpdateDataAutomationProject",
+      "condition": {
+        "StringEquals": {
+          "aws:PrincipalTag/EnableAmazonBedrockPermissions": "true",
+          "aws:ResourceTag/AmazonDataZoneProject": "${aws:PrincipalTag/AmazonDataZoneProject}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "bedrock:UpdateDataAutomationProject",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "bedrock:ListAgentActionGroups",
+      "condition": {
+        "StringEquals": {
+          "aws:PrincipalTag/EnableAmazonBedrockPermissions": "true",
+          "aws:ResourceTag/AmazonDataZoneProject": "${aws:PrincipalTag/AmazonDataZoneProject}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "bedrock:ListAgentActionGroups",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "bedrock:ListAgentKnowledgeBases",
+      "condition": {
+        "StringEquals": {
+          "aws:PrincipalTag/EnableAmazonBedrockPermissions": "true",
+          "aws:ResourceTag/AmazonDataZoneProject": "${aws:PrincipalTag/AmazonDataZoneProject}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "bedrock:ListAgentKnowledgeBases",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
       "action": "bedrock:CreateEvaluationJob",
       "condition": null,
       "credentials_exposure": false,
@@ -10462,11 +10738,47 @@
       "resource_exposure": false
     },
     {
+      "access_level": "Write",
+      "action": "bedrock:InvokeDataAutomationAsync",
+      "condition": {
+        "StringEquals": {
+          "aws:PrincipalTag/EnableAmazonBedrockPermissions": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "bedrock:InvokeDataAutomationAsync",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
       "access_level": "Read",
       "action": "bedrock:InvokeInlineAgent",
       "condition": {
         "StringEquals": {
-          "aws:PrincipalTag/EnableAmazonBedrockIDEPermissions": "true"
+          "aws:PrincipalTag/EnableAmazonBedrockIDEPermissions": "true",
+          "bedrock:InlineAgentName": "${datazone:userId}"
+        },
+        "StringNotEquals": {
+          "bedrock:InlineAgentName": ""
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "bedrock:InvokeInlineAgent",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "bedrock:InvokeInlineAgent",
+      "condition": {
+        "StringEquals": {
+          "aws:PrincipalTag/EnableAmazonBedrockPermissions": "true",
+          "bedrock:InlineAgentName": "${datazone:userId}"
+        },
+        "StringNotEquals": {
+          "bedrock:InlineAgentName": ""
         }
       },
       "credentials_exposure": false,
@@ -10500,20 +10812,6 @@
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "bedrock:ListEvaluationJobs",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Read",
-      "action": "bedrock:InvokeInlineAgent",
-      "condition": {
-        "StringEquals": {
-          "aws:PrincipalTag/EnableAmazonBedrockPermissions": "true"
-        }
-      },
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "bedrock:InvokeInlineAgent",
       "privesc": false,
       "resource_exposure": false
     },
@@ -11714,6 +12012,6 @@
   "resource_exposure": true,
   "undocumented_actions": false,
   "unknown_actions": [],
-  "updatedate": "2024-11-28T04:51:07+00:00",
-  "version": "v9"
+  "updatedate": "2025-04-28T18:37:07+00:00",
+  "version": "v10"
 }
