@@ -7,7 +7,7 @@
     "Permissions management"
   ],
   "arn": "arn:aws:iam::aws:policy/AWSQuickSetupSSMDeploymentRolePolicy",
-  "createdate": "2024-11-20T12:43:56Z",
+  "createdate": "2025-05-05T10:52:06Z",
   "credentials_exposure": false,
   "data_access": true,
   "deprecated": false,
@@ -49,14 +49,14 @@
           "lambda:TagResource"
         ],
         "Condition": {
+          "ForAllValues:StringLike": {
+            "aws:TagKeys": [
+              "QuickSetup*"
+            ]
+          },
           "ForAnyValue:StringEquals": {
             "aws:CalledVia": [
               "cloudformation.amazonaws.com"
-            ]
-          },
-          "ForAnyValue:StringLike": {
-            "aws:TagKeys": [
-              "QuickSetup*"
             ]
           },
           "StringEquals": {
@@ -167,14 +167,14 @@
           "iam:TagRole"
         ],
         "Condition": {
+          "ForAllValues:StringLike": {
+            "aws:TagKeys": [
+              "QuickSetup*"
+            ]
+          },
           "ForAnyValue:StringEquals": {
             "aws:CalledVia": [
               "cloudformation.amazonaws.com"
-            ]
-          },
-          "ForAnyValue:StringLike": {
-            "aws:TagKeys": [
-              "QuickSetup*"
             ]
           },
           "StringEquals": {
@@ -275,6 +275,15 @@
           "iam:PassRole"
         ],
         "Condition": {
+          "ArnLike": {
+            "iam:AssociatedResourceARN": [
+              "arn:aws:ssm:*::document/AWSQuickSetupType-EnableAREX",
+              "arn:aws:ssm:*::document/AWSQuickSetupType-EnableDHMC",
+              "arn:aws:ssm:*::document/AWSQuickSetupType-ManageInstanceProfile",
+              "arn:aws:ssm:*::document/AWS-EnableExplorer",
+              "arn:aws:ssm:*:*:association/*"
+            ]
+          },
           "StringEquals": {
             "iam:PassedToService": "ssm.amazonaws.com",
             "iam:ResourceTag/QuickSetupDocument": "AWSQuickSetupType-SSM"
@@ -290,6 +299,11 @@
           "iam:PassRole"
         ],
         "Condition": {
+          "ArnLike": {
+            "iam:AssociatedResourceARN": [
+              "arn:aws:lambda:*:*:function:aws-quicksetup-lifecycle-*"
+            ]
+          },
           "StringEquals": {
             "iam:PassedToService": "lambda.amazonaws.com",
             "iam:ResourceTag/QuickSetupDocument": "AWSQuickSetupType-SSM"
@@ -298,6 +312,54 @@
         "Effect": "Allow",
         "Resource": [
           "arn:aws:iam::*:role/AWS-QuickSetup-SSM-LifecycleManagement*"
+        ]
+      },
+      {
+        "Action": [
+          "lambda:TagResource"
+        ],
+        "Condition": {
+          "ForAllValues:StringLike": {
+            "aws:TagKeys": "QuickSetup*"
+          },
+          "ForAnyValue:StringEquals": {
+            "aws:CalledVia": "cloudformation.amazonaws.com"
+          },
+          "StringEquals": {
+            "aws:ResourceTag/QuickSetupDocument": "AWSQuickSetupType-SSM"
+          },
+          "StringLike": {
+            "aws:RequestTag/QuickSetupDocumentVersionName": "*"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:lambda:*:*:function:aws-quicksetup-lifecycle*"
+        ]
+      },
+      {
+        "Action": [
+          "iam:TagRole"
+        ],
+        "Condition": {
+          "ForAllValues:StringLike": {
+            "aws:TagKeys": "QuickSetup*"
+          },
+          "ForAnyValue:StringEquals": {
+            "aws:CalledVia": "cloudformation.amazonaws.com"
+          },
+          "StringEquals": {
+            "aws:ResourceTag/QuickSetupDocument": "AWSQuickSetupType-SSM"
+          },
+          "StringLike": {
+            "aws:RequestTag/QuickSetupDocumentVersionName": "*"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:iam::*:role/AWS-QuickSetup-SSM-*",
+          "arn:aws:iam::*:role/AWS-SSM-Remediation*",
+          "arn:aws:iam::*:role/AWS-SSM-Diagnosis*"
         ]
       }
     ],
@@ -448,14 +510,14 @@
       "access_level": "Write",
       "action": "lambda:CreateFunction",
       "condition": {
+        "ForAllValues:StringLike": {
+          "aws:TagKeys": [
+            "QuickSetup*"
+          ]
+        },
         "ForAnyValue:StringEquals": {
           "aws:CalledVia": [
             "cloudformation.amazonaws.com"
-          ]
-        },
-        "ForAnyValue:StringLike": {
-          "aws:TagKeys": [
-            "QuickSetup*"
           ]
         },
         "StringEquals": {
@@ -480,14 +542,14 @@
       "access_level": "Tagging",
       "action": "lambda:TagResource",
       "condition": {
+        "ForAllValues:StringLike": {
+          "aws:TagKeys": [
+            "QuickSetup*"
+          ]
+        },
         "ForAnyValue:StringEquals": {
           "aws:CalledVia": [
             "cloudformation.amazonaws.com"
-          ]
-        },
-        "ForAnyValue:StringLike": {
-          "aws:TagKeys": [
-            "QuickSetup*"
           ]
         },
         "StringEquals": {
@@ -807,14 +869,14 @@
       "access_level": "Write",
       "action": "iam:CreateRole",
       "condition": {
+        "ForAllValues:StringLike": {
+          "aws:TagKeys": [
+            "QuickSetup*"
+          ]
+        },
         "ForAnyValue:StringEquals": {
           "aws:CalledVia": [
             "cloudformation.amazonaws.com"
-          ]
-        },
-        "ForAnyValue:StringLike": {
-          "aws:TagKeys": [
-            "QuickSetup*"
           ]
         },
         "StringEquals": {
@@ -836,14 +898,14 @@
       "access_level": "Tagging",
       "action": "iam:TagRole",
       "condition": {
+        "ForAllValues:StringLike": {
+          "aws:TagKeys": [
+            "QuickSetup*"
+          ]
+        },
         "ForAnyValue:StringEquals": {
           "aws:CalledVia": [
             "cloudformation.amazonaws.com"
-          ]
-        },
-        "ForAnyValue:StringLike": {
-          "aws:TagKeys": [
-            "QuickSetup*"
           ]
         },
         "StringEquals": {
@@ -1079,6 +1141,15 @@
       "access_level": "Write",
       "action": "iam:PassRole",
       "condition": {
+        "ArnLike": {
+          "iam:AssociatedResourceARN": [
+            "arn:aws:ssm:*::document/AWSQuickSetupType-EnableAREX",
+            "arn:aws:ssm:*::document/AWSQuickSetupType-EnableDHMC",
+            "arn:aws:ssm:*::document/AWSQuickSetupType-ManageInstanceProfile",
+            "arn:aws:ssm:*::document/AWS-EnableExplorer",
+            "arn:aws:ssm:*:*:association/*"
+          ]
+        },
         "StringEquals": {
           "iam:PassedToService": "ssm.amazonaws.com",
           "iam:ResourceTag/QuickSetupDocument": "AWSQuickSetupType-SSM"
@@ -1094,6 +1165,11 @@
       "access_level": "Write",
       "action": "iam:PassRole",
       "condition": {
+        "ArnLike": {
+          "iam:AssociatedResourceARN": [
+            "arn:aws:lambda:*:*:function:aws-quicksetup-lifecycle-*"
+          ]
+        },
         "StringEquals": {
           "iam:PassedToService": "lambda.amazonaws.com",
           "iam:ResourceTag/QuickSetupDocument": "AWSQuickSetupType-SSM"
@@ -1104,6 +1180,52 @@
       "effective_action": "iam:PassRole",
       "privesc": true,
       "resource_exposure": true
+    },
+    {
+      "access_level": "Tagging",
+      "action": "lambda:TagResource",
+      "condition": {
+        "ForAllValues:StringLike": {
+          "aws:TagKeys": "QuickSetup*"
+        },
+        "ForAnyValue:StringEquals": {
+          "aws:CalledVia": "cloudformation.amazonaws.com"
+        },
+        "StringEquals": {
+          "aws:ResourceTag/QuickSetupDocument": "AWSQuickSetupType-SSM"
+        },
+        "StringLike": {
+          "aws:RequestTag/QuickSetupDocumentVersionName": "*"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "lambda:TagResource",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Tagging",
+      "action": "iam:TagRole",
+      "condition": {
+        "ForAllValues:StringLike": {
+          "aws:TagKeys": "QuickSetup*"
+        },
+        "ForAnyValue:StringEquals": {
+          "aws:CalledVia": "cloudformation.amazonaws.com"
+        },
+        "StringEquals": {
+          "aws:ResourceTag/QuickSetupDocument": "AWSQuickSetupType-SSM"
+        },
+        "StringLike": {
+          "aws:RequestTag/QuickSetupDocumentVersionName": "*"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "iam:TagRole",
+      "privesc": false,
+      "resource_exposure": false
     }
   ],
   "grantless": false,
@@ -1113,6 +1235,6 @@
   "resource_exposure": true,
   "undocumented_actions": false,
   "unknown_actions": [],
-  "updatedate": "2024-11-20T12:43:56+00:00",
-  "version": "v2"
+  "updatedate": "2025-05-05T10:52:06+00:00",
+  "version": "v3"
 }
