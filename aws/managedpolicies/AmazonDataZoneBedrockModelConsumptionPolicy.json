@@ -1,9 +1,12 @@
 {
   "access_levels": [
-    "Read"
+    "List",
+    "Read",
+    "Tagging",
+    "Write"
   ],
   "arn": "arn:aws:iam::aws:policy/service-role/AmazonDataZoneBedrockModelConsumptionPolicy",
-  "createdate": "2024-11-12T22:15:08Z",
+  "createdate": "2025-05-13T21:37:06Z",
   "credentials_exposure": false,
   "data_access": false,
   "deprecated": false,
@@ -26,6 +29,76 @@
         "Effect": "Allow",
         "Resource": "arn:aws:bedrock:*:*:application-inference-profile/*",
         "Sid": "InvokeDomainInferenceProfiles"
+      },
+      {
+        "Action": [
+          "bedrock:CreateSession",
+          "bedrock:TagResource"
+        ],
+        "Condition": {
+          "ForAllValues:StringLike": {
+            "aws:TagKeys": "AmazonDataZone*"
+          },
+          "Null": {
+            "aws:RequestTag/AmazonDataZoneProject": "true",
+            "aws:ResourceTag/AmazonDataZoneProject": "true"
+          },
+          "StringEquals": {
+            "aws:RequestTag/AmazonDataZoneDomain": "${datazone:domainId}",
+            "aws:RequestTag/AmazonDataZoneUser": "${datazone:userId}",
+            "aws:ResourceAccount": "${aws:PrincipalAccount}",
+            "aws:ResourceTag/AmazonDataZoneDomain": "${datazone:domainId}",
+            "aws:ResourceTag/AmazonDataZoneUser": "${datazone:userId}"
+          },
+          "StringNotEquals": {
+            "aws:RequestTag/AmazonDataZoneDomain": "",
+            "aws:RequestTag/AmazonDataZoneUser": "",
+            "aws:ResourceTag/AmazonDataZoneDomain": "",
+            "aws:ResourceTag/AmazonDataZoneUser": ""
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:bedrock:*:*:session/*",
+        "Sid": "BedrockCreateSessionWithTagsPermissions"
+      },
+      {
+        "Action": [
+          "bedrock:GetSession",
+          "bedrock:UpdateSession",
+          "bedrock:DeleteSession",
+          "bedrock:EndSession",
+          "bedrock:CreateInvocation",
+          "bedrock:ListInvocations",
+          "bedrock:PutInvocationStep",
+          "bedrock:GetInvocationStep",
+          "bedrock:ListInvocationSteps",
+          "bedrock:ListTagsForResource"
+        ],
+        "Condition": {
+          "Null": {
+            "aws:ResourceTag/AmazonDataZoneProject": "true"
+          },
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}",
+            "aws:ResourceTag/AmazonDataZoneDomain": "${datazone:domainId}",
+            "aws:ResourceTag/AmazonDataZoneUser": "${datazone:userId}"
+          },
+          "StringNotEquals": {
+            "aws:ResourceTag/AmazonDataZoneDomain": "",
+            "aws:ResourceTag/AmazonDataZoneUser": ""
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:bedrock:*:*:session/*",
+        "Sid": "BedrockSessionPermissions"
+      },
+      {
+        "Action": [
+          "bedrock:ListSessions"
+        ],
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "BedrockListSessionsPermissions"
       }
     ],
     "Version": "2012-10-17"
@@ -66,6 +139,308 @@
       "effective_action": "bedrock:InvokeModelWithResponseStream",
       "privesc": false,
       "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "bedrock:CreateSession",
+      "condition": {
+        "ForAllValues:StringLike": {
+          "aws:TagKeys": "AmazonDataZone*"
+        },
+        "Null": {
+          "aws:RequestTag/AmazonDataZoneProject": "true",
+          "aws:ResourceTag/AmazonDataZoneProject": "true"
+        },
+        "StringEquals": {
+          "aws:RequestTag/AmazonDataZoneDomain": "${datazone:domainId}",
+          "aws:RequestTag/AmazonDataZoneUser": "${datazone:userId}",
+          "aws:ResourceAccount": "${aws:PrincipalAccount}",
+          "aws:ResourceTag/AmazonDataZoneDomain": "${datazone:domainId}",
+          "aws:ResourceTag/AmazonDataZoneUser": "${datazone:userId}"
+        },
+        "StringNotEquals": {
+          "aws:RequestTag/AmazonDataZoneDomain": "",
+          "aws:RequestTag/AmazonDataZoneUser": "",
+          "aws:ResourceTag/AmazonDataZoneDomain": "",
+          "aws:ResourceTag/AmazonDataZoneUser": ""
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "bedrock:CreateSession",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Tagging",
+      "action": "bedrock:TagResource",
+      "condition": {
+        "ForAllValues:StringLike": {
+          "aws:TagKeys": "AmazonDataZone*"
+        },
+        "Null": {
+          "aws:RequestTag/AmazonDataZoneProject": "true",
+          "aws:ResourceTag/AmazonDataZoneProject": "true"
+        },
+        "StringEquals": {
+          "aws:RequestTag/AmazonDataZoneDomain": "${datazone:domainId}",
+          "aws:RequestTag/AmazonDataZoneUser": "${datazone:userId}",
+          "aws:ResourceAccount": "${aws:PrincipalAccount}",
+          "aws:ResourceTag/AmazonDataZoneDomain": "${datazone:domainId}",
+          "aws:ResourceTag/AmazonDataZoneUser": "${datazone:userId}"
+        },
+        "StringNotEquals": {
+          "aws:RequestTag/AmazonDataZoneDomain": "",
+          "aws:RequestTag/AmazonDataZoneUser": "",
+          "aws:ResourceTag/AmazonDataZoneDomain": "",
+          "aws:ResourceTag/AmazonDataZoneUser": ""
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "bedrock:TagResource",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "bedrock:GetSession",
+      "condition": {
+        "Null": {
+          "aws:ResourceTag/AmazonDataZoneProject": "true"
+        },
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}",
+          "aws:ResourceTag/AmazonDataZoneDomain": "${datazone:domainId}",
+          "aws:ResourceTag/AmazonDataZoneUser": "${datazone:userId}"
+        },
+        "StringNotEquals": {
+          "aws:ResourceTag/AmazonDataZoneDomain": "",
+          "aws:ResourceTag/AmazonDataZoneUser": ""
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "bedrock:GetSession",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "bedrock:UpdateSession",
+      "condition": {
+        "Null": {
+          "aws:ResourceTag/AmazonDataZoneProject": "true"
+        },
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}",
+          "aws:ResourceTag/AmazonDataZoneDomain": "${datazone:domainId}",
+          "aws:ResourceTag/AmazonDataZoneUser": "${datazone:userId}"
+        },
+        "StringNotEquals": {
+          "aws:ResourceTag/AmazonDataZoneDomain": "",
+          "aws:ResourceTag/AmazonDataZoneUser": ""
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "bedrock:UpdateSession",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "bedrock:DeleteSession",
+      "condition": {
+        "Null": {
+          "aws:ResourceTag/AmazonDataZoneProject": "true"
+        },
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}",
+          "aws:ResourceTag/AmazonDataZoneDomain": "${datazone:domainId}",
+          "aws:ResourceTag/AmazonDataZoneUser": "${datazone:userId}"
+        },
+        "StringNotEquals": {
+          "aws:ResourceTag/AmazonDataZoneDomain": "",
+          "aws:ResourceTag/AmazonDataZoneUser": ""
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "bedrock:DeleteSession",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "bedrock:EndSession",
+      "condition": {
+        "Null": {
+          "aws:ResourceTag/AmazonDataZoneProject": "true"
+        },
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}",
+          "aws:ResourceTag/AmazonDataZoneDomain": "${datazone:domainId}",
+          "aws:ResourceTag/AmazonDataZoneUser": "${datazone:userId}"
+        },
+        "StringNotEquals": {
+          "aws:ResourceTag/AmazonDataZoneDomain": "",
+          "aws:ResourceTag/AmazonDataZoneUser": ""
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "bedrock:EndSession",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "bedrock:CreateInvocation",
+      "condition": {
+        "Null": {
+          "aws:ResourceTag/AmazonDataZoneProject": "true"
+        },
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}",
+          "aws:ResourceTag/AmazonDataZoneDomain": "${datazone:domainId}",
+          "aws:ResourceTag/AmazonDataZoneUser": "${datazone:userId}"
+        },
+        "StringNotEquals": {
+          "aws:ResourceTag/AmazonDataZoneDomain": "",
+          "aws:ResourceTag/AmazonDataZoneUser": ""
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "bedrock:CreateInvocation",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "bedrock:ListInvocations",
+      "condition": {
+        "Null": {
+          "aws:ResourceTag/AmazonDataZoneProject": "true"
+        },
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}",
+          "aws:ResourceTag/AmazonDataZoneDomain": "${datazone:domainId}",
+          "aws:ResourceTag/AmazonDataZoneUser": "${datazone:userId}"
+        },
+        "StringNotEquals": {
+          "aws:ResourceTag/AmazonDataZoneDomain": "",
+          "aws:ResourceTag/AmazonDataZoneUser": ""
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "bedrock:ListInvocations",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "bedrock:PutInvocationStep",
+      "condition": {
+        "Null": {
+          "aws:ResourceTag/AmazonDataZoneProject": "true"
+        },
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}",
+          "aws:ResourceTag/AmazonDataZoneDomain": "${datazone:domainId}",
+          "aws:ResourceTag/AmazonDataZoneUser": "${datazone:userId}"
+        },
+        "StringNotEquals": {
+          "aws:ResourceTag/AmazonDataZoneDomain": "",
+          "aws:ResourceTag/AmazonDataZoneUser": ""
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "bedrock:PutInvocationStep",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "bedrock:GetInvocationStep",
+      "condition": {
+        "Null": {
+          "aws:ResourceTag/AmazonDataZoneProject": "true"
+        },
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}",
+          "aws:ResourceTag/AmazonDataZoneDomain": "${datazone:domainId}",
+          "aws:ResourceTag/AmazonDataZoneUser": "${datazone:userId}"
+        },
+        "StringNotEquals": {
+          "aws:ResourceTag/AmazonDataZoneDomain": "",
+          "aws:ResourceTag/AmazonDataZoneUser": ""
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "bedrock:GetInvocationStep",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "bedrock:ListInvocationSteps",
+      "condition": {
+        "Null": {
+          "aws:ResourceTag/AmazonDataZoneProject": "true"
+        },
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}",
+          "aws:ResourceTag/AmazonDataZoneDomain": "${datazone:domainId}",
+          "aws:ResourceTag/AmazonDataZoneUser": "${datazone:userId}"
+        },
+        "StringNotEquals": {
+          "aws:ResourceTag/AmazonDataZoneDomain": "",
+          "aws:ResourceTag/AmazonDataZoneUser": ""
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "bedrock:ListInvocationSteps",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "bedrock:ListTagsForResource",
+      "condition": {
+        "Null": {
+          "aws:ResourceTag/AmazonDataZoneProject": "true"
+        },
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}",
+          "aws:ResourceTag/AmazonDataZoneDomain": "${datazone:domainId}",
+          "aws:ResourceTag/AmazonDataZoneUser": "${datazone:userId}"
+        },
+        "StringNotEquals": {
+          "aws:ResourceTag/AmazonDataZoneDomain": "",
+          "aws:ResourceTag/AmazonDataZoneUser": ""
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "bedrock:ListTagsForResource",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "bedrock:ListSessions",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "bedrock:ListSessions",
+      "privesc": false,
+      "resource_exposure": false
     }
   ],
   "grantless": false,
@@ -75,6 +450,6 @@
   "resource_exposure": false,
   "undocumented_actions": false,
   "unknown_actions": [],
-  "updatedate": "2024-11-12T22:15:08+00:00",
-  "version": "v1"
+  "updatedate": "2025-05-13T21:37:06+00:00",
+  "version": "v2"
 }
