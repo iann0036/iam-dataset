@@ -1,11 +1,12 @@
 {
   "access_levels": [
     "List",
+    "Read",
     "Tagging",
     "Write"
   ],
   "arn": "arn:aws:iam::aws:policy/EC2FastLaunchFullAccess",
-  "createdate": "2024-05-13T22:45:26Z",
+  "createdate": "2025-05-14T16:37:05Z",
   "credentials_exposure": false,
   "data_access": false,
   "deprecated": false,
@@ -33,11 +34,184 @@
           "ec2:DescribeVpcs",
           "ec2:DescribeInstances",
           "ec2:DescribeLaunchTemplates",
-          "ec2:DescribeTags"
+          "ec2:DescribeTags",
+          "ec2:DescribeAvailabilityZones",
+          "ec2:DescribeAccountAttributes"
         ],
         "Effect": "Allow",
         "Resource": "*",
         "Sid": "EC2ReadOnly"
+      },
+      {
+        "Action": [
+          "ec2:CreateVpc"
+        ],
+        "Condition": {
+          "ForAnyValue:StringLike": {
+            "aws:CalledVia": "ec2fastlaunch.amazonaws.com"
+          },
+          "StringEquals": {
+            "aws:RequestTag/CreatedBy": "EC2 Fast Launch"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:ec2:*:*:vpc/*"
+        ],
+        "Sid": "EC2CreateVPC"
+      },
+      {
+        "Action": [
+          "ec2:DeleteVpc",
+          "ec2:CreateSubnet",
+          "ec2:ModifyVpcAttribute",
+          "ec2:CreateSecurityGroup"
+        ],
+        "Condition": {
+          "ForAnyValue:StringLike": {
+            "aws:CalledVia": "ec2fastlaunch.amazonaws.com"
+          },
+          "StringEquals": {
+            "ec2:ResourceTag/CreatedBy": "EC2 Fast Launch"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:ec2:*:*:vpc/*"
+        ],
+        "Sid": "EC2ModifyDeleteVPC"
+      },
+      {
+        "Action": [
+          "ec2:CreateSubnet"
+        ],
+        "Condition": {
+          "ForAnyValue:StringLike": {
+            "aws:CalledVia": "ec2fastlaunch.amazonaws.com"
+          },
+          "StringEquals": {
+            "aws:RequestTag/CreatedBy": "EC2 Fast Launch"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:ec2:*:*:subnet/*"
+        ],
+        "Sid": "EC2CreateSubnet"
+      },
+      {
+        "Action": [
+          "ec2:DeleteSubnet"
+        ],
+        "Condition": {
+          "ForAnyValue:StringLike": {
+            "aws:CalledVia": "ec2fastlaunch.amazonaws.com"
+          },
+          "StringEquals": {
+            "ec2:ResourceTag/CreatedBy": "EC2 Fast Launch"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:ec2:*:*:subnet/*"
+        ],
+        "Sid": "EC2DeleteSubnet"
+      },
+      {
+        "Action": [
+          "ec2:CreateSecurityGroup"
+        ],
+        "Condition": {
+          "ForAnyValue:StringLike": {
+            "aws:CalledVia": "ec2fastlaunch.amazonaws.com"
+          },
+          "StringEquals": {
+            "aws:RequestTag/CreatedBy": "EC2 Fast Launch"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:ec2:*:*:security-group/*"
+        ],
+        "Sid": "EC2CreateSecurityGroup"
+      },
+      {
+        "Action": [
+          "ec2:AuthorizeSecurityGroupEgress",
+          "ec2:RevokeSecurityGroupEgress"
+        ],
+        "Condition": {
+          "ForAnyValue:StringLike": {
+            "aws:CalledVia": "ec2fastlaunch.amazonaws.com"
+          },
+          "StringEquals": {
+            "ec2:ResourceTag/CreatedBy": "EC2 Fast Launch"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:ec2:*:*:security-group/*"
+        ],
+        "Sid": "EC2ManageSecurityGroupEgress"
+      },
+      {
+        "Action": [
+          "ec2:DeleteSecurityGroup"
+        ],
+        "Condition": {
+          "ForAnyValue:StringLike": {
+            "aws:CalledVia": "ec2fastlaunch.amazonaws.com"
+          },
+          "StringEquals": {
+            "ec2:ResourceTag/CreatedBy": "EC2 Fast Launch"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:ec2:*:*:security-group/*"
+        ],
+        "Sid": "EC2DeleteSecurityGroup"
+      },
+      {
+        "Action": [
+          "cloudformation:DescribeStacks",
+          "cloudformation:CreateStack",
+          "cloudformation:UpdateStack",
+          "cloudformation:RollbackStack",
+          "cloudformation:DeleteStack",
+          "cloudformation:UpdateTerminationProtection",
+          "cloudformation:DescribeStackEvents",
+          "cloudformation:DescribeStackResource",
+          "cloudformation:DescribeStackResources"
+        ],
+        "Condition": {
+          "ForAnyValue:StringLike": {
+            "aws:CalledVia": "ec2fastlaunch.amazonaws.com"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:cloudformation:*:*:stack/EC2FastLaunch*/*"
+        ],
+        "Sid": "CloudFormation"
+      },
+      {
+        "Action": [
+          "ec2:ModifyLaunchTemplate",
+          "ec2:CreateLaunchTemplate",
+          "ec2:CreateLaunchTemplateVersion"
+        ],
+        "Condition": {
+          "ForAnyValue:StringLike": {
+            "aws:CalledVia": "ec2fastlaunch.amazonaws.com"
+          },
+          "StringEquals": {
+            "aws:RequestTag/CreatedBy": "EC2 Fast Launch"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:ec2:*:*:launch-template/*",
+        "Sid": "EC2LaunchTemplateModify"
       },
       {
         "Action": [
@@ -50,7 +224,8 @@
           "arn:aws:ec2:*::image/*",
           "arn:aws:ec2:*:*:key-pair/*",
           "arn:aws:ec2:*:*:security-group/*",
-          "arn:aws:ec2:*:*:launch-template/*"
+          "arn:aws:ec2:*:*:launch-template/*",
+          "arn:aws:license-manager:*:*:license-configuration:*"
         ],
         "Sid": "EC2LaunchInstance"
       },
@@ -83,12 +258,30 @@
         "Resource": [
           "arn:aws:ec2:*:*:volume/*",
           "arn:aws:ec2:*:*:instance/*",
-          "arn:aws:ec2:*:*:snapshot/*",
+          "arn:aws:ec2:*:*:snapshot/*"
+        ],
+        "Sid": "EC2Tags"
+      },
+      {
+        "Action": [
+          "ec2:CreateTags"
+        ],
+        "Condition": {
+          "ForAnyValue:StringLike": {
+            "aws:CalledVia": "ec2fastlaunch.amazonaws.com"
+          },
+          "StringEquals": {
+            "aws:RequestTag/CreatedBy": "EC2 Fast Launch"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:ec2:*:*:security-group/*",
           "arn:aws:ec2:*:*:launch-template/*",
           "arn:aws:ec2:*:*:vpc/*",
           "arn:aws:ec2:*:*:subnet/*"
         ],
-        "Sid": "EC2Tags"
+        "Sid": "EC2ManageTags"
       },
       {
         "Action": [
@@ -267,6 +460,390 @@
       "resource_exposure": false
     },
     {
+      "access_level": "List",
+      "action": "ec2:DescribeAvailabilityZones",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:DescribeAvailabilityZones",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "ec2:DescribeAccountAttributes",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:DescribeAccountAttributes",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:CreateVpc",
+      "condition": {
+        "ForAnyValue:StringLike": {
+          "aws:CalledVia": "ec2fastlaunch.amazonaws.com"
+        },
+        "StringEquals": {
+          "aws:RequestTag/CreatedBy": "EC2 Fast Launch"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:CreateVpc",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:DeleteVpc",
+      "condition": {
+        "ForAnyValue:StringLike": {
+          "aws:CalledVia": "ec2fastlaunch.amazonaws.com"
+        },
+        "StringEquals": {
+          "ec2:ResourceTag/CreatedBy": "EC2 Fast Launch"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:DeleteVpc",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:CreateSubnet",
+      "condition": {
+        "ForAnyValue:StringLike": {
+          "aws:CalledVia": "ec2fastlaunch.amazonaws.com"
+        },
+        "StringEquals": {
+          "ec2:ResourceTag/CreatedBy": "EC2 Fast Launch"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:CreateSubnet",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:ModifyVpcAttribute",
+      "condition": {
+        "ForAnyValue:StringLike": {
+          "aws:CalledVia": "ec2fastlaunch.amazonaws.com"
+        },
+        "StringEquals": {
+          "ec2:ResourceTag/CreatedBy": "EC2 Fast Launch"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:ModifyVpcAttribute",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:CreateSecurityGroup",
+      "condition": {
+        "ForAnyValue:StringLike": {
+          "aws:CalledVia": "ec2fastlaunch.amazonaws.com"
+        },
+        "StringEquals": {
+          "ec2:ResourceTag/CreatedBy": "EC2 Fast Launch"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:CreateSecurityGroup",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:CreateSubnet",
+      "condition": {
+        "ForAnyValue:StringLike": {
+          "aws:CalledVia": "ec2fastlaunch.amazonaws.com"
+        },
+        "StringEquals": {
+          "aws:RequestTag/CreatedBy": "EC2 Fast Launch"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:CreateSubnet",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:DeleteSubnet",
+      "condition": {
+        "ForAnyValue:StringLike": {
+          "aws:CalledVia": "ec2fastlaunch.amazonaws.com"
+        },
+        "StringEquals": {
+          "ec2:ResourceTag/CreatedBy": "EC2 Fast Launch"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:DeleteSubnet",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:CreateSecurityGroup",
+      "condition": {
+        "ForAnyValue:StringLike": {
+          "aws:CalledVia": "ec2fastlaunch.amazonaws.com"
+        },
+        "StringEquals": {
+          "aws:RequestTag/CreatedBy": "EC2 Fast Launch"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:CreateSecurityGroup",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:AuthorizeSecurityGroupEgress",
+      "condition": {
+        "ForAnyValue:StringLike": {
+          "aws:CalledVia": "ec2fastlaunch.amazonaws.com"
+        },
+        "StringEquals": {
+          "ec2:ResourceTag/CreatedBy": "EC2 Fast Launch"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:AuthorizeSecurityGroupEgress",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:RevokeSecurityGroupEgress",
+      "condition": {
+        "ForAnyValue:StringLike": {
+          "aws:CalledVia": "ec2fastlaunch.amazonaws.com"
+        },
+        "StringEquals": {
+          "ec2:ResourceTag/CreatedBy": "EC2 Fast Launch"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:RevokeSecurityGroupEgress",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:DeleteSecurityGroup",
+      "condition": {
+        "ForAnyValue:StringLike": {
+          "aws:CalledVia": "ec2fastlaunch.amazonaws.com"
+        },
+        "StringEquals": {
+          "ec2:ResourceTag/CreatedBy": "EC2 Fast Launch"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:DeleteSecurityGroup",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "cloudformation:DescribeStacks",
+      "condition": {
+        "ForAnyValue:StringLike": {
+          "aws:CalledVia": "ec2fastlaunch.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudformation:DescribeStacks",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "cloudformation:CreateStack",
+      "condition": {
+        "ForAnyValue:StringLike": {
+          "aws:CalledVia": "ec2fastlaunch.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudformation:CreateStack",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "cloudformation:UpdateStack",
+      "condition": {
+        "ForAnyValue:StringLike": {
+          "aws:CalledVia": "ec2fastlaunch.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudformation:UpdateStack",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "cloudformation:RollbackStack",
+      "condition": {
+        "ForAnyValue:StringLike": {
+          "aws:CalledVia": "ec2fastlaunch.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudformation:RollbackStack",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "cloudformation:DeleteStack",
+      "condition": {
+        "ForAnyValue:StringLike": {
+          "aws:CalledVia": "ec2fastlaunch.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudformation:DeleteStack",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "cloudformation:UpdateTerminationProtection",
+      "condition": {
+        "ForAnyValue:StringLike": {
+          "aws:CalledVia": "ec2fastlaunch.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudformation:UpdateTerminationProtection",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "cloudformation:DescribeStackEvents",
+      "condition": {
+        "ForAnyValue:StringLike": {
+          "aws:CalledVia": "ec2fastlaunch.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudformation:DescribeStackEvents",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "cloudformation:DescribeStackResource",
+      "condition": {
+        "ForAnyValue:StringLike": {
+          "aws:CalledVia": "ec2fastlaunch.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudformation:DescribeStackResource",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "cloudformation:DescribeStackResources",
+      "condition": {
+        "ForAnyValue:StringLike": {
+          "aws:CalledVia": "ec2fastlaunch.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudformation:DescribeStackResources",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:ModifyLaunchTemplate",
+      "condition": {
+        "ForAnyValue:StringLike": {
+          "aws:CalledVia": "ec2fastlaunch.amazonaws.com"
+        },
+        "StringEquals": {
+          "aws:RequestTag/CreatedBy": "EC2 Fast Launch"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:ModifyLaunchTemplate",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:CreateLaunchTemplate",
+      "condition": {
+        "ForAnyValue:StringLike": {
+          "aws:CalledVia": "ec2fastlaunch.amazonaws.com"
+        },
+        "StringEquals": {
+          "aws:RequestTag/CreatedBy": "EC2 Fast Launch"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:CreateLaunchTemplate",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:CreateLaunchTemplateVersion",
+      "condition": {
+        "ForAnyValue:StringLike": {
+          "aws:CalledVia": "ec2fastlaunch.amazonaws.com"
+        },
+        "StringEquals": {
+          "aws:RequestTag/CreatedBy": "EC2 Fast Launch"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:CreateLaunchTemplateVersion",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
       "access_level": "Write",
       "action": "ec2:RunInstances",
       "condition": null,
@@ -296,6 +873,23 @@
       "condition": {
         "StringEquals": {
           "ec2:CreateAction": "RunInstances"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:CreateTags",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Tagging",
+      "action": "ec2:CreateTags",
+      "condition": {
+        "ForAnyValue:StringLike": {
+          "aws:CalledVia": "ec2fastlaunch.amazonaws.com"
+        },
+        "StringEquals": {
+          "aws:RequestTag/CreatedBy": "EC2 Fast Launch"
         }
       },
       "credentials_exposure": false,
@@ -343,6 +937,6 @@
   "resource_exposure": true,
   "undocumented_actions": false,
   "unknown_actions": [],
-  "updatedate": "2024-05-13T22:45:26+00:00",
-  "version": "v1"
+  "updatedate": "2025-05-14T16:37:05+00:00",
+  "version": "v2"
 }

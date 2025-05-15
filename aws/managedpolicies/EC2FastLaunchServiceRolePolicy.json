@@ -1,11 +1,12 @@
 {
   "access_levels": [
     "List",
+    "Read",
     "Tagging",
     "Write"
   ],
   "arn": "arn:aws:iam::aws:policy/aws-service-role/EC2FastLaunchServiceRolePolicy",
-  "createdate": "2022-01-10T13:08:21Z",
+  "createdate": "2025-05-14T17:07:07Z",
   "credentials_exposure": false,
   "data_access": false,
   "deprecated": false,
@@ -22,8 +23,10 @@
           "arn:aws:ec2:*::image/*",
           "arn:aws:ec2:*:*:key-pair/*",
           "arn:aws:ec2:*:*:security-group/*",
-          "arn:aws:ec2:*:*:launch-template/*"
-        ]
+          "arn:aws:ec2:*:*:launch-template/*",
+          "arn:aws:license-manager:*:*:license-configuration:*"
+        ],
+        "Sid": "AllowRunInstances"
       },
       {
         "Action": [
@@ -38,7 +41,8 @@
         "Resource": [
           "arn:aws:ec2:*:*:volume/*",
           "arn:aws:ec2:*:*:instance/*"
-        ]
+        ],
+        "Sid": "AllowRunInstancesOnFastLaunchCreatedResources"
       },
       {
         "Action": [
@@ -53,7 +57,8 @@
           }
         },
         "Effect": "Allow",
-        "Resource": "*"
+        "Resource": "*",
+        "Sid": "AllowPassRole"
       },
       {
         "Action": [
@@ -68,7 +73,8 @@
         "Effect": "Allow",
         "Resource": [
           "arn:aws:ec2:*:*:instance/*"
-        ]
+        ],
+        "Sid": "AllowStopAndTerminateInstances"
       },
       {
         "Action": [
@@ -82,7 +88,8 @@
         "Effect": "Allow",
         "Resource": [
           "arn:aws:ec2:*:*:volume/*"
-        ]
+        ],
+        "Sid": "AllowCreateSnapshot"
       },
       {
         "Action": [
@@ -118,7 +125,8 @@
           }
         },
         "Effect": "Allow",
-        "Resource": "arn:aws:ec2:*:*:launch-template/*"
+        "Resource": "arn:aws:ec2:*:*:launch-template/*",
+        "Sid": "AllowCreateLaunchTemplate"
       },
       {
         "Action": [
@@ -139,7 +147,8 @@
           "arn:aws:ec2:*:*:instance/*",
           "arn:aws:ec2:*:*:snapshot/*",
           "arn:aws:ec2:*:*:launch-template/*"
-        ]
+        ],
+        "Sid": "AllowCreateTags"
       },
       {
         "Action": [
@@ -153,7 +162,8 @@
         "Effect": "Allow",
         "Resource": [
           "arn:aws:ec2:*:*:snapshot/*"
-        ]
+        ],
+        "Sid": "AllowDeleteSnapshots"
       },
       {
         "Action": [
@@ -165,10 +175,12 @@
           "ec2:DescribeInstances",
           "ec2:DescribeInstanceTypeOfferings",
           "ec2:DescribeLaunchTemplateVersions",
-          "ec2:DescribeLaunchTemplates"
+          "ec2:DescribeLaunchTemplates",
+          "cloudformation:DescribeStacks"
         ],
         "Effect": "Allow",
-        "Resource": "*"
+        "Resource": "*",
+        "Sid": "AllowDescribeActions"
       },
       {
         "Action": [
@@ -180,7 +192,58 @@
           }
         },
         "Effect": "Allow",
-        "Resource": "*"
+        "Resource": "*",
+        "Sid": "AllowPutMetricData"
+      },
+      {
+        "Action": [
+          "events:DeleteRule",
+          "events:RemoveTargets",
+          "events:PutRule",
+          "events:PutTargets"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "events:ManagedBy": "ec2fastlaunch.amazonaws.com"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:events:*:*:rule/FastLaunch*"
+        ],
+        "Sid": "AllowEventsRuleMutations"
+      },
+      {
+        "Action": [
+          "events:ListTargetsByRule",
+          "events:DescribeRule"
+        ],
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:events:*:*:rule/FastLaunch*"
+        ],
+        "Sid": "AllowEventsRuleNonMutations"
+      },
+      {
+        "Action": [
+          "kms:ListRetirableGrants"
+        ],
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "AllowKMSActions"
+      },
+      {
+        "Action": [
+          "ec2:DeleteLaunchTemplate"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceTag/CreatedBy": "EC2 Fast Launch"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "AllowDeleteFastLaunchLaunchTemplates"
       }
     ],
     "Version": "2012-10-17"
@@ -429,6 +492,16 @@
       "resource_exposure": false
     },
     {
+      "access_level": "List",
+      "action": "cloudformation:DescribeStacks",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudformation:DescribeStacks",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
       "access_level": "Write",
       "action": "cloudwatch:PutMetricData",
       "condition": {
@@ -441,6 +514,106 @@
       "effective_action": "cloudwatch:PutMetricData",
       "privesc": false,
       "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "events:DeleteRule",
+      "condition": {
+        "StringEquals": {
+          "events:ManagedBy": "ec2fastlaunch.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "events:DeleteRule",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "events:RemoveTargets",
+      "condition": {
+        "StringEquals": {
+          "events:ManagedBy": "ec2fastlaunch.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "events:RemoveTargets",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "events:PutRule",
+      "condition": {
+        "StringEquals": {
+          "events:ManagedBy": "ec2fastlaunch.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "events:PutRule",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "events:PutTargets",
+      "condition": {
+        "StringEquals": {
+          "events:ManagedBy": "ec2fastlaunch.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "events:PutTargets",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "events:ListTargetsByRule",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "events:ListTargetsByRule",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "events:DescribeRule",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "events:DescribeRule",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "kms:ListRetirableGrants",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "kms:ListRetirableGrants",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:DeleteLaunchTemplate",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/CreatedBy": "EC2 Fast Launch"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:DeleteLaunchTemplate",
+      "privesc": false,
+      "resource_exposure": false
     }
   ],
   "grantless": false,
@@ -450,6 +623,6 @@
   "resource_exposure": true,
   "undocumented_actions": false,
   "unknown_actions": [],
-  "updatedate": "2022-01-10T13:08:21+00:00",
-  "version": "v1"
+  "updatedate": "2025-05-14T17:07:07+00:00",
+  "version": "v2"
 }
