@@ -1,10 +1,11 @@
 {
   "access_levels": [
     "List",
-    "Read"
+    "Read",
+    "Write"
   ],
   "arn": "arn:aws:iam::aws:policy/aws-service-role/AWSVPCS2SVpnServiceRolePolicy",
-  "createdate": "2019-08-06T14:13:58Z",
+  "createdate": "2025-05-15T16:52:07Z",
   "credentials_exposure": false,
   "data_access": false,
   "deprecated": false,
@@ -20,6 +21,37 @@
         "Effect": "Allow",
         "Resource": "*",
         "Sid": "0"
+      },
+      {
+        "Action": [
+          "secretsmanager:DescribeSecret",
+          "secretsmanager:DeleteSecret",
+          "secretsmanager:PutSecretValue",
+          "secretsmanager:UpdateSecret",
+          "secretsmanager:GetSecretValue"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}",
+            "secretsmanager:ResourceTag/aws:secretsmanager:owningService": "s2svpn"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:secretsmanager:*:*:secret:s2svpn!*",
+        "Sid": "VpnConnectionSecretsManagement"
+      },
+      {
+        "Action": [
+          "secretsmanager:CreateSecret"
+        ],
+        "Condition": {
+          "StringLike": {
+            "secretsmanager:Name": "s2svpn!*"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:secretsmanager:*:*:secret:s2svpn!*",
+        "Sid": "VpnConnectionSecretsCreation"
       }
     ],
     "Version": "2012-10-17"
@@ -64,6 +96,95 @@
       "effective_action": "acm-pca:DescribeCertificateAuthority",
       "privesc": false,
       "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "secretsmanager:DescribeSecret",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}",
+          "secretsmanager:ResourceTag/aws:secretsmanager:owningService": "s2svpn"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "secretsmanager:DescribeSecret",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "secretsmanager:DeleteSecret",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}",
+          "secretsmanager:ResourceTag/aws:secretsmanager:owningService": "s2svpn"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "secretsmanager:DeleteSecret",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "secretsmanager:PutSecretValue",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}",
+          "secretsmanager:ResourceTag/aws:secretsmanager:owningService": "s2svpn"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "secretsmanager:PutSecretValue",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "secretsmanager:UpdateSecret",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}",
+          "secretsmanager:ResourceTag/aws:secretsmanager:owningService": "s2svpn"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "secretsmanager:UpdateSecret",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "secretsmanager:GetSecretValue",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}",
+          "secretsmanager:ResourceTag/aws:secretsmanager:owningService": "s2svpn"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "secretsmanager:GetSecretValue",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "secretsmanager:CreateSecret",
+      "condition": {
+        "StringLike": {
+          "secretsmanager:Name": "s2svpn!*"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "secretsmanager:CreateSecret",
+      "privesc": false,
+      "resource_exposure": false
     }
   ],
   "grantless": false,
@@ -73,6 +194,6 @@
   "resource_exposure": false,
   "undocumented_actions": false,
   "unknown_actions": [],
-  "updatedate": "2019-08-06T14:13:58+00:00",
-  "version": "v1"
+  "updatedate": "2025-05-15T16:52:07+00:00",
+  "version": "v2"
 }
