@@ -7,7 +7,7 @@
     "Permissions management"
   ],
   "arn": "arn:aws:iam::aws:policy/AWSDataSyncFullAccess",
-  "createdate": "2025-05-07T19:37:06Z",
+  "createdate": "2025-05-20T19:07:07Z",
   "credentials_exposure": false,
   "data_access": false,
   "deprecated": false,
@@ -80,10 +80,24 @@
       },
       {
         "Action": [
-          "secretsmanager:CreateSecret",
-          "secretsmanager:PutSecretValue",
+          "secretsmanager:CreateSecret"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:*:secretsmanager:*:*:secret:aws-datasync!*"
+        ],
+        "Sid": "DataSyncSecretsManagerCreateAccess"
+      },
+      {
+        "Action": [
           "secretsmanager:DeleteSecret",
-          "secretsmanager:UpdateSecret"
+          "secretsmanager:UpdateSecret",
+          "secretsmanager:PutSecretValue"
         ],
         "Condition": {
           "StringEquals": {
@@ -95,7 +109,7 @@
         "Resource": [
           "arn:*:secretsmanager:*:*:secret:aws-datasync!*"
         ],
-        "Sid": "DataSyncSecretsManagerWriteAccess"
+        "Sid": "DataSyncSecretsManagerAccess"
       }
     ],
     "Version": "2012-10-17"
@@ -1086,28 +1100,12 @@
       "action": "secretsmanager:CreateSecret",
       "condition": {
         "StringEquals": {
-          "aws:ResourceAccount": "${aws:PrincipalAccount}",
-          "secretsmanager:ResourceTag/aws:secretsmanager:owningService": "aws-datasync"
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
         }
       },
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "secretsmanager:CreateSecret",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Write",
-      "action": "secretsmanager:PutSecretValue",
-      "condition": {
-        "StringEquals": {
-          "aws:ResourceAccount": "${aws:PrincipalAccount}",
-          "secretsmanager:ResourceTag/aws:secretsmanager:owningService": "aws-datasync"
-        }
-      },
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "secretsmanager:PutSecretValue",
       "privesc": false,
       "resource_exposure": false
     },
@@ -1140,6 +1138,21 @@
       "effective_action": "secretsmanager:UpdateSecret",
       "privesc": false,
       "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "secretsmanager:PutSecretValue",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}",
+          "secretsmanager:ResourceTag/aws:secretsmanager:owningService": "aws-datasync"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "secretsmanager:PutSecretValue",
+      "privesc": false,
+      "resource_exposure": false
     }
   ],
   "grantless": false,
@@ -1149,6 +1162,6 @@
   "resource_exposure": true,
   "undocumented_actions": false,
   "unknown_actions": [],
-  "updatedate": "2025-05-07T19:37:06+00:00",
-  "version": "v9"
+  "updatedate": "2025-05-20T19:07:07+00:00",
+  "version": "v10"
 }
