@@ -6,7 +6,7 @@
     "Write"
   ],
   "arn": "arn:aws:iam::aws:policy/AmazonAuroraDSQLFullAccess",
-  "createdate": "2025-05-14T19:37:06Z",
+  "createdate": "2025-05-21T21:22:07Z",
   "credentials_exposure": false,
   "data_access": false,
   "deprecated": false,
@@ -19,8 +19,6 @@
           "dsql:UpdateCluster",
           "dsql:DeleteCluster",
           "dsql:ListClusters",
-          "dsql:CreateMultiRegionClusters",
-          "dsql:DeleteMultiRegionClusters",
           "dsql:TagResource",
           "dsql:UntagResource",
           "dsql:ListTagsForResource",
@@ -30,7 +28,13 @@
           "dsql:PutWitnessRegion",
           "dsql:AddPeerCluster",
           "dsql:RemovePeerCluster",
-          "dsql:GetVpcEndpointServiceName"
+          "dsql:GetVpcEndpointServiceName",
+          "dsql:StartBackupJob",
+          "dsql:GetBackupJob",
+          "dsql:StopBackupJob",
+          "dsql:StartRestoreJob",
+          "dsql:GetRestoreJob",
+          "dsql:StopRestoreJob"
         ],
         "Effect": "Allow",
         "Resource": "*",
@@ -56,6 +60,43 @@
         "Effect": "Allow",
         "Resource": "*",
         "Sid": "CreateDsqlServiceLinkedRole"
+      },
+      {
+        "Action": [
+          "kms:DescribeKey"
+        ],
+        "Condition": {
+          "StringLike": {
+            "kms:ViaService": [
+              "dsql.*.amazonaws.com"
+            ]
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "KMSDescribePermission"
+      },
+      {
+        "Action": [
+          "kms:Decrypt",
+          "kms:Encrypt",
+          "kms:GenerateDataKey",
+          "kms:ReEncryptTo",
+          "kms:ReEncryptFrom"
+        ],
+        "Condition": {
+          "ForAnyValue:StringEquals": {
+            "kms:EncryptionContextKeys": "aws:dsql:ClusterId"
+          },
+          "StringLike": {
+            "kms:ViaService": [
+              "dsql.*.amazonaws.com"
+            ]
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "KMSCryptographicPermissions"
       }
     ],
     "Version": "2012-10-17"
@@ -108,26 +149,6 @@
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "dsql:ListClusters",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Write",
-      "action": "dsql:CreateMultiRegionClusters",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "dsql:CreateMultiRegionClusters",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Write",
-      "action": "dsql:DeleteMultiRegionClusters",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "dsql:DeleteMultiRegionClusters",
       "privesc": false,
       "resource_exposure": false
     },
@@ -254,6 +275,117 @@
       "effective_action": "iam:CreateServiceLinkedRole",
       "privesc": true,
       "resource_exposure": true
+    },
+    {
+      "access_level": "Read",
+      "action": "kms:DescribeKey",
+      "condition": {
+        "StringLike": {
+          "kms:ViaService": [
+            "dsql.*.amazonaws.com"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "kms:DescribeKey",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "kms:Decrypt",
+      "condition": {
+        "ForAnyValue:StringEquals": {
+          "kms:EncryptionContextKeys": "aws:dsql:ClusterId"
+        },
+        "StringLike": {
+          "kms:ViaService": [
+            "dsql.*.amazonaws.com"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "kms:Decrypt",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "kms:Encrypt",
+      "condition": {
+        "ForAnyValue:StringEquals": {
+          "kms:EncryptionContextKeys": "aws:dsql:ClusterId"
+        },
+        "StringLike": {
+          "kms:ViaService": [
+            "dsql.*.amazonaws.com"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "kms:Encrypt",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "kms:GenerateDataKey",
+      "condition": {
+        "ForAnyValue:StringEquals": {
+          "kms:EncryptionContextKeys": "aws:dsql:ClusterId"
+        },
+        "StringLike": {
+          "kms:ViaService": [
+            "dsql.*.amazonaws.com"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "kms:GenerateDataKey",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "kms:ReEncryptTo",
+      "condition": {
+        "ForAnyValue:StringEquals": {
+          "kms:EncryptionContextKeys": "aws:dsql:ClusterId"
+        },
+        "StringLike": {
+          "kms:ViaService": [
+            "dsql.*.amazonaws.com"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "kms:ReEncryptTo",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "kms:ReEncryptFrom",
+      "condition": {
+        "ForAnyValue:StringEquals": {
+          "kms:EncryptionContextKeys": "aws:dsql:ClusterId"
+        },
+        "StringLike": {
+          "kms:ViaService": [
+            "dsql.*.amazonaws.com"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "kms:ReEncryptFrom",
+      "privesc": false,
+      "resource_exposure": false
     }
   ],
   "grantless": false,
@@ -262,7 +394,32 @@
   "privesc": true,
   "resource_exposure": true,
   "undocumented_actions": false,
-  "unknown_actions": [],
-  "updatedate": "2025-05-14T19:37:06+00:00",
-  "version": "v2"
+  "unknown_actions": [
+    {
+      "action": "dsql:StartBackupJob",
+      "condition": null
+    },
+    {
+      "action": "dsql:GetBackupJob",
+      "condition": null
+    },
+    {
+      "action": "dsql:StopBackupJob",
+      "condition": null
+    },
+    {
+      "action": "dsql:StartRestoreJob",
+      "condition": null
+    },
+    {
+      "action": "dsql:GetRestoreJob",
+      "condition": null
+    },
+    {
+      "action": "dsql:StopRestoreJob",
+      "condition": null
+    }
+  ],
+  "updatedate": "2025-05-21T21:22:07+00:00",
+  "version": "v3"
 }

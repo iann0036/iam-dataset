@@ -7,7 +7,7 @@
     "Permissions management"
   ],
   "arn": "arn:aws:iam::aws:policy/service-role/AWSBackupServiceRolePolicyForRestores",
-  "createdate": "2025-03-27T21:52:06Z",
+  "createdate": "2025-05-22T00:37:06Z",
   "credentials_exposure": false,
   "data_access": true,
   "deprecated": false,
@@ -61,11 +61,25 @@
           "ec2:DescribeSubnets",
           "ec2:DescribeVpcs",
           "ec2:DescribeInternetGateways",
-          "ec2:DescribeSnapshotTierStatus"
+          "ec2:DescribeSnapshotTierStatus",
+          "ec2:DescribeRouteTables"
         ],
         "Effect": "Allow",
         "Resource": "*",
         "Sid": "EC2DescribePermissions"
+      },
+      {
+        "Action": [
+          "ec2:CreateTags"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceTag/AmazonFSx": "ManagedByAmazonFSx"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:ec2:*:*:route-table/*",
+        "Sid": "CreateTagsPermissions"
       },
       {
         "Action": [
@@ -139,12 +153,29 @@
       },
       {
         "Action": [
+          "dsql:StartRestoreJob",
+          "dsql:GetRestoreJob",
+          "dsql:StopRestoreJob",
+          "dsql:TagResource",
+          "dsql:CreateCluster",
+          "dsql:PutMultiRegionProperties",
+          "dsql:PutWitnessRegion"
+        ],
+        "Effect": "Allow",
+        "Resource": [
+          "*"
+        ],
+        "Sid": "DSQLResourcePermissionsForRestore"
+      },
+      {
+        "Action": [
           "kms:Decrypt",
           "kms:Encrypt",
           "kms:GenerateDataKey",
           "kms:ReEncryptTo",
           "kms:ReEncryptFrom",
-          "kms:GenerateDataKeyWithoutPlaintext"
+          "kms:GenerateDataKeyWithoutPlaintext",
+          "kms:DescribeKey"
         ],
         "Condition": {
           "StringLike": {
@@ -154,6 +185,7 @@
               "elasticfilesystem.*.amazonaws.com",
               "rds.*.amazonaws.com",
               "redshift.*.amazonaws.com",
+              "dsql.*.amazonaws.com",
               "redshift-serverless.*.amazonaws.com"
             ]
           }
@@ -714,6 +746,30 @@
       "resource_exposure": false
     },
     {
+      "access_level": "List",
+      "action": "ec2:DescribeRouteTables",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:DescribeRouteTables",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Tagging",
+      "action": "ec2:CreateTags",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/AmazonFSx": "ManagedByAmazonFSx"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:CreateTags",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
       "access_level": "Write",
       "action": "storagegateway:DeleteVolume",
       "condition": null,
@@ -994,6 +1050,46 @@
       "resource_exposure": false
     },
     {
+      "access_level": "Tagging",
+      "action": "dsql:TagResource",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "dsql:TagResource",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "dsql:CreateCluster",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "dsql:CreateCluster",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "dsql:PutMultiRegionProperties",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "dsql:PutMultiRegionProperties",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "dsql:PutWitnessRegion",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "dsql:PutWitnessRegion",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
       "access_level": "Write",
       "action": "kms:Decrypt",
       "condition": {
@@ -1004,6 +1100,7 @@
             "elasticfilesystem.*.amazonaws.com",
             "rds.*.amazonaws.com",
             "redshift.*.amazonaws.com",
+            "dsql.*.amazonaws.com",
             "redshift-serverless.*.amazonaws.com"
           ]
         }
@@ -1025,6 +1122,7 @@
             "elasticfilesystem.*.amazonaws.com",
             "rds.*.amazonaws.com",
             "redshift.*.amazonaws.com",
+            "dsql.*.amazonaws.com",
             "redshift-serverless.*.amazonaws.com"
           ]
         }
@@ -1046,6 +1144,7 @@
             "elasticfilesystem.*.amazonaws.com",
             "rds.*.amazonaws.com",
             "redshift.*.amazonaws.com",
+            "dsql.*.amazonaws.com",
             "redshift-serverless.*.amazonaws.com"
           ]
         }
@@ -1067,6 +1166,7 @@
             "elasticfilesystem.*.amazonaws.com",
             "rds.*.amazonaws.com",
             "redshift.*.amazonaws.com",
+            "dsql.*.amazonaws.com",
             "redshift-serverless.*.amazonaws.com"
           ]
         }
@@ -1088,6 +1188,7 @@
             "elasticfilesystem.*.amazonaws.com",
             "rds.*.amazonaws.com",
             "redshift.*.amazonaws.com",
+            "dsql.*.amazonaws.com",
             "redshift-serverless.*.amazonaws.com"
           ]
         }
@@ -1109,6 +1210,7 @@
             "elasticfilesystem.*.amazonaws.com",
             "rds.*.amazonaws.com",
             "redshift.*.amazonaws.com",
+            "dsql.*.amazonaws.com",
             "redshift-serverless.*.amazonaws.com"
           ]
         }
@@ -1116,6 +1218,28 @@
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "kms:GenerateDataKeyWithoutPlaintext",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "kms:DescribeKey",
+      "condition": {
+        "StringLike": {
+          "kms:ViaService": [
+            "dynamodb.*.amazonaws.com",
+            "ec2.*.amazonaws.com",
+            "elasticfilesystem.*.amazonaws.com",
+            "rds.*.amazonaws.com",
+            "redshift.*.amazonaws.com",
+            "dsql.*.amazonaws.com",
+            "redshift-serverless.*.amazonaws.com"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "kms:DescribeKey",
       "privesc": false,
       "resource_exposure": false
     },
@@ -1643,7 +1767,20 @@
   "privesc": true,
   "resource_exposure": true,
   "undocumented_actions": false,
-  "unknown_actions": [],
-  "updatedate": "2025-03-27T21:52:06+00:00",
-  "version": "v22"
+  "unknown_actions": [
+    {
+      "action": "dsql:StartRestoreJob",
+      "condition": null
+    },
+    {
+      "action": "dsql:GetRestoreJob",
+      "condition": null
+    },
+    {
+      "action": "dsql:StopRestoreJob",
+      "condition": null
+    }
+  ],
+  "updatedate": "2025-05-22T00:37:06+00:00",
+  "version": "v23"
 }
