@@ -6,7 +6,7 @@
     "Write"
   ],
   "arn": "arn:aws:iam::aws:policy/aws-service-role/AWSSecurityIncidentResponseTriageServiceRolePolicy",
-  "createdate": "2024-12-01T16:36:07Z",
+  "createdate": "2025-06-02T18:22:06Z",
   "credentials_exposure": false,
   "data_access": false,
   "deprecated": false,
@@ -40,10 +40,12 @@
           "guardduty:ArchiveFindings",
           "guardduty:CreateFilter",
           "guardduty:DescribeMalwareScans",
+          "guardduty:GetAdministratorAccount",
           "guardduty:GetDetector",
           "guardduty:GetFilter",
           "guardduty:GetFindings",
           "guardduty:ListDetectors",
+          "guardduty:ListFilters",
           "guardduty:StartMalwareScan",
           "guardduty:UpdateFindingsFeedback"
         ],
@@ -68,10 +70,36 @@
           "security-ir:TagResource"
         ],
         "Condition": {
+          "ForAllValues:StringEquals": {
+            "aws:TagKeys": [
+              "SecurityIncidentResponseManaged"
+            ]
+          },
           "StringEquals": {
-            "aws:RequestTag/SecurityIncidentResponseManaged": "true"
+            "aws:RequestTag/SecurityIncidentResponseManaged": "true",
+            "aws:ResourceTag/SecurityIncidentResponseManaged": "true"
           }
         },
+        "Effect": "Allow",
+        "Resource": "*"
+      },
+      {
+        "Action": [
+          "security-ir:UpdateCase"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceTag/SecurityIncidentResponseManaged": "true"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "*"
+      },
+      {
+        "Action": [
+          "security-ir:GetMembership",
+          "security-ir:ListMemberships"
+        ],
         "Effect": "Allow",
         "Resource": "*"
       }
@@ -187,6 +215,16 @@
     },
     {
       "access_level": "Read",
+      "action": "guardduty:GetAdministratorAccount",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "guardduty:GetAdministratorAccount",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
       "action": "guardduty:GetDetector",
       "condition": null,
       "credentials_exposure": false,
@@ -222,6 +260,16 @@
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "guardduty:ListDetectors",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "guardduty:ListFilters",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "guardduty:ListFilters",
       "privesc": false,
       "resource_exposure": false
     },
@@ -309,8 +357,14 @@
       "access_level": "Write",
       "action": "security-ir:CreateCase",
       "condition": {
+        "ForAllValues:StringEquals": {
+          "aws:TagKeys": [
+            "SecurityIncidentResponseManaged"
+          ]
+        },
         "StringEquals": {
-          "aws:RequestTag/SecurityIncidentResponseManaged": "true"
+          "aws:RequestTag/SecurityIncidentResponseManaged": "true",
+          "aws:ResourceTag/SecurityIncidentResponseManaged": "true"
         }
       },
       "credentials_exposure": false,
@@ -323,13 +377,53 @@
       "access_level": "Tagging",
       "action": "security-ir:TagResource",
       "condition": {
+        "ForAllValues:StringEquals": {
+          "aws:TagKeys": [
+            "SecurityIncidentResponseManaged"
+          ]
+        },
         "StringEquals": {
-          "aws:RequestTag/SecurityIncidentResponseManaged": "true"
+          "aws:RequestTag/SecurityIncidentResponseManaged": "true",
+          "aws:ResourceTag/SecurityIncidentResponseManaged": "true"
         }
       },
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "security-ir:TagResource",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "security-ir:UpdateCase",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/SecurityIncidentResponseManaged": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "security-ir:UpdateCase",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "security-ir:GetMembership",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "security-ir:GetMembership",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "security-ir:ListMemberships",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "security-ir:ListMemberships",
       "privesc": false,
       "resource_exposure": false
     }
@@ -341,6 +435,6 @@
   "resource_exposure": false,
   "undocumented_actions": false,
   "unknown_actions": [],
-  "updatedate": "2024-12-01T16:36:07+00:00",
-  "version": "v1"
+  "updatedate": "2025-06-02T18:22:06+00:00",
+  "version": "v2"
 }
