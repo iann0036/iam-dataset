@@ -2,10 +2,11 @@
   "access_levels": [
     "List",
     "Read",
+    "Tagging",
     "Write"
   ],
   "arn": "arn:aws:iam::aws:policy/aws-service-role/AWSControlTowerAccountServiceRolePolicy",
-  "createdate": "2023-06-05T22:04:50Z",
+  "createdate": "2025-06-03T17:07:06Z",
   "credentials_exposure": false,
   "data_access": false,
   "deprecated": false,
@@ -78,6 +79,43 @@
         "Effect": "Allow",
         "Resource": "arn:aws:securityhub:*:*:hub/default",
         "Sid": "AllowActionsForSecurityHubIntegration"
+      },
+      {
+        "Action": [
+          "config:DeleteConfigRule"
+        ],
+        "Effect": "Allow",
+        "Resource": "arn:aws:config:*:*:config-rule/aws-service-rule/controltower.*/*",
+        "Sid": "AllowDeleteConfigRule"
+      },
+      {
+        "Action": [
+          "config:PutConfigRule"
+        ],
+        "Effect": "Allow",
+        "Resource": "arn:aws:config:*:*:config-rule/aws-service-rule/controltower.*/*",
+        "Sid": "AllowPutConfigRule"
+      },
+      {
+        "Action": [
+          "config:TagResource"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:RequestTag/aws-control-tower": "managed-by-control-tower"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:config:*:*:config-rule/aws-service-rule/controltower.*/*",
+        "Sid": "AllowConfigTagResource"
+      },
+      {
+        "Action": [
+          "config:DescribeConfigRules"
+        ],
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "AllowConfigRulesDescribe"
       }
     ],
     "Version": "2012-10-17"
@@ -227,6 +265,50 @@
       "effective_action": "securityhub:GetEnabledStandards",
       "privesc": false,
       "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "config:DeleteConfigRule",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "config:DeleteConfigRule",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "config:PutConfigRule",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "config:PutConfigRule",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Tagging",
+      "action": "config:TagResource",
+      "condition": {
+        "StringEquals": {
+          "aws:RequestTag/aws-control-tower": "managed-by-control-tower"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "config:TagResource",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "config:DescribeConfigRules",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "config:DescribeConfigRules",
+      "privesc": false,
+      "resource_exposure": false
     }
   ],
   "grantless": false,
@@ -236,6 +318,6 @@
   "resource_exposure": false,
   "undocumented_actions": false,
   "unknown_actions": [],
-  "updatedate": "2023-06-05T22:04:50+00:00",
-  "version": "v1"
+  "updatedate": "2025-06-03T17:07:06+00:00",
+  "version": "v2"
 }
