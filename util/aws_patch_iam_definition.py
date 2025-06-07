@@ -204,7 +204,7 @@ for k, v in access_level_overrides.items():
     for i in range(len(iam_def)):
         if iam_def[i]['prefix'] == k.split(":")[0]:
             for j in range(len(iam_def[i]['privileges'])):
-                if iam_def[i]['privileges'][j]['privilege'] == k.split(":")[1]:
+                if iam_def[i]['privileges'][j]['privilege'].lower() == k.split(":")[1].lower():
                     iam_def[i]['privileges'][j]['privilege'] = v
 
 # Sort condition keys
