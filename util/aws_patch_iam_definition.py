@@ -195,6 +195,18 @@ for k, v in mapdata['sdk_method_iam_mappings'].items():
 
                         iam_def[i]['privileges'].sort(key=lambda x: x['privilege'])
 
+# Access level overrides
+print("Processing access level overrides")
+access_level_overrides = {}
+with open("aws/access_level_overrides.json", "r") as f:
+    access_level_overrides = json.loads(f.read())
+for k, v in access_level_overrides.items():
+    for i in range(len(iam_def)):
+        if iam_def[i]['prefix'] == k.split(":")[0]:
+            for j in range(len(iam_def[i]['privileges'])):
+                if iam_def[i]['privileges'][j]['privilege'] == k.split(":")[1]:
+                    iam_def[i]['privileges'][j]['privilege'] = v
+
 # Sort condition keys
 print("Sorting condition keys")
 for i in range(len(iam_def)):
