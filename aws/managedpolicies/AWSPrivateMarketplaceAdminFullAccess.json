@@ -6,12 +6,64 @@
     "Write"
   ],
   "arn": "arn:aws:iam::aws:policy/AWSPrivateMarketplaceAdminFullAccess",
-  "createdate": "2024-02-14T22:05:08Z",
+  "createdate": "2025-06-11T16:22:07Z",
   "credentials_exposure": false,
   "data_access": false,
   "deprecated": false,
   "document": {
     "Statement": [
+      {
+        "Action": [
+          "iam:GetRole"
+        ],
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:iam::*:role/*AWSServiceRoleForPrivateMarketplaceAdmin"
+        ],
+        "Sid": "PrivateMarketplaceGetRolePermissions"
+      },
+      {
+        "Action": [
+          "iam:CreateServiceLinkedRole"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "iam:AWSServiceName": "private-marketplace.marketplace.amazonaws.com"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:iam::*:role/aws-service-role/private-marketplace.marketplace.amazonaws.com/AWSServiceRoleForPrivateMarketplaceAdmin"
+        ],
+        "Sid": "PrivateMarketplaceCreateSLRPermissions"
+      },
+      {
+        "Action": [
+          "organizations:RegisterDelegatedAdministrator",
+          "organizations:DeregisterDelegatedAdministrator"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "organizations:ServicePrincipal": "private-marketplace.marketplace.amazonaws.com"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "PrivateMarketplaceManageDelegatedAdministratorPermissions"
+      },
+      {
+        "Action": [
+          "organizations:EnableAWSServiceAccess"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "organizations:ServicePrincipal": "private-marketplace.marketplace.amazonaws.com"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "PrivateMarketplaceEnableServiceAccessPermissions"
+      },
       {
         "Action": [
           "aws-marketplace:AssociateProductsWithPrivateMarketplace",
@@ -69,6 +121,58 @@
     "Version": "2012-10-17"
   },
   "effective_actions": [
+    {
+      "access_level": "Read",
+      "action": "iam:GetRole",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "iam:GetRole",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "organizations:RegisterDelegatedAdministrator",
+      "condition": {
+        "StringEquals": {
+          "organizations:ServicePrincipal": "private-marketplace.marketplace.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "organizations:RegisterDelegatedAdministrator",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "organizations:DeregisterDelegatedAdministrator",
+      "condition": {
+        "StringEquals": {
+          "organizations:ServicePrincipal": "private-marketplace.marketplace.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "organizations:DeregisterDelegatedAdministrator",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "organizations:EnableAWSServiceAccess",
+      "condition": {
+        "StringEquals": {
+          "organizations:ServicePrincipal": "private-marketplace.marketplace.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "organizations:EnableAWSServiceAccess",
+      "privesc": false,
+      "resource_exposure": false
+    },
     {
       "access_level": "Write",
       "action": "aws-marketplace:AssociateProductsWithPrivateMarketplace",
@@ -306,7 +410,16 @@
   "privesc": false,
   "resource_exposure": false,
   "undocumented_actions": false,
-  "unknown_actions": [],
-  "updatedate": "2024-02-14T22:05:08+00:00",
-  "version": "v6"
+  "unknown_actions": [
+    {
+      "action": "iam:CreateServiceLinkedRole",
+      "condition": {
+        "StringEquals": {
+          "iam:AWSServiceName": "private-marketplace.marketplace.amazonaws.com"
+        }
+      }
+    }
+  ],
+  "updatedate": "2025-06-11T16:22:07+00:00",
+  "version": "v7"
 }
