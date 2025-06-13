@@ -7,7 +7,7 @@
     "Permissions management"
   ],
   "arn": "arn:aws:iam::aws:policy/SageMakerStudioProjectUserRolePolicy",
-  "createdate": "2025-06-04T00:07:07Z",
+  "createdate": "2025-06-12T23:07:07Z",
   "credentials_exposure": true,
   "data_access": true,
   "deprecated": false,
@@ -679,22 +679,6 @@
           "s3:ListBucket"
         ],
         "Condition": {
-          "StringEquals": {
-            "aws:ResourceAccount": "${aws:PrincipalAccount}"
-          },
-          "StringNotEquals": {
-            "aws:PrincipalTag/DomainBucketName": ""
-          }
-        },
-        "Effect": "Allow",
-        "Resource": "arn:aws:s3:::${aws:PrincipalTag/DomainBucketName}",
-        "Sid": "AirflowListDomainS3BucketPermissions"
-      },
-      {
-        "Action": [
-          "s3:ListBucket"
-        ],
-        "Condition": {
           "ArnEquals": {
             "lambda:SourceFunctionArn": "arn:aws:lambda:*:*:function:athenafederatedcatalog_*"
           },
@@ -822,22 +806,6 @@
       },
       {
         "Action": [
-          "ec2:AuthorizeSecurityGroupEgress",
-          "ec2:AuthorizeSecurityGroupIngress",
-          "ec2:RevokeSecurityGroupEgress",
-          "ec2:RevokeSecurityGroupIngress"
-        ],
-        "Condition": {
-          "StringEquals": {
-            "aws:ResourceTag/AmazonDataZoneProject": "${aws:PrincipalTag/AmazonDataZoneProject}"
-          }
-        },
-        "Effect": "Allow",
-        "Resource": "*",
-        "Sid": "DataLakeEC2Permissions"
-      },
-      {
-        "Action": [
           "athena:TerminateSession",
           "athena:CreatePreparedStatement",
           "athena:StopCalculationExecution",
@@ -886,21 +854,6 @@
         "Effect": "Allow",
         "Resource": "*",
         "Sid": "DataLakeAthenaPermissions"
-      },
-      {
-        "Action": [
-          "athena:GetDatabase",
-          "athena:GetDataCatalog",
-          "athena:GetTableMetadata",
-          "athena:ListDatabases",
-          "athena:ListTableMetadata"
-        ],
-        "Effect": "Allow",
-        "Resource": [
-          "arn:aws:athena:*:*:datacatalog/AwsDataCatalog",
-          "arn:aws:athena:*:*:datacatalog/awsdatacatalog"
-        ],
-        "Sid": "DefaultAthenaDataCatalogPermissions"
       },
       {
         "Action": [
@@ -1501,7 +1454,6 @@
           "elasticmapreduce:ListInstanceFleets",
           "elasticmapreduce:ListInstanceGroups",
           "elasticmapreduce:ListBootstrapActions",
-          "elasticmapreduce:TerminateJobFlows",
           "elasticmapreduce:GetManagedScalingPolicy",
           "elasticmapreduce:GetOnClusterAppUIPresignedURL"
         ],
@@ -1985,7 +1937,8 @@
       {
         "Action": [
           "bedrock:ListEvaluationJobs",
-          "bedrock:RetrieveAndGenerate"
+          "bedrock:RetrieveAndGenerate",
+          "bedrock:ListFoundationModels"
         ],
         "Condition": {
           "StringEquals": {
@@ -5618,23 +5571,6 @@
       "access_level": "List",
       "action": "s3:ListBucket",
       "condition": {
-        "StringEquals": {
-          "aws:ResourceAccount": "${aws:PrincipalAccount}"
-        },
-        "StringNotEquals": {
-          "aws:PrincipalTag/DomainBucketName": ""
-        }
-      },
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "s3:ListBucket",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "s3:ListBucket",
-      "condition": {
         "ArnEquals": {
           "lambda:SourceFunctionArn": "arn:aws:lambda:*:*:function:athenafederatedcatalog_*"
         },
@@ -6212,62 +6148,6 @@
     },
     {
       "access_level": "Write",
-      "action": "ec2:AuthorizeSecurityGroupEgress",
-      "condition": {
-        "StringEquals": {
-          "aws:ResourceTag/AmazonDataZoneProject": "${aws:PrincipalTag/AmazonDataZoneProject}"
-        }
-      },
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:AuthorizeSecurityGroupEgress",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Write",
-      "action": "ec2:AuthorizeSecurityGroupIngress",
-      "condition": {
-        "StringEquals": {
-          "aws:ResourceTag/AmazonDataZoneProject": "${aws:PrincipalTag/AmazonDataZoneProject}"
-        }
-      },
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:AuthorizeSecurityGroupIngress",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Write",
-      "action": "ec2:RevokeSecurityGroupEgress",
-      "condition": {
-        "StringEquals": {
-          "aws:ResourceTag/AmazonDataZoneProject": "${aws:PrincipalTag/AmazonDataZoneProject}"
-        }
-      },
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:RevokeSecurityGroupEgress",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Write",
-      "action": "ec2:RevokeSecurityGroupIngress",
-      "condition": {
-        "StringEquals": {
-          "aws:ResourceTag/AmazonDataZoneProject": "${aws:PrincipalTag/AmazonDataZoneProject}"
-        }
-      },
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:RevokeSecurityGroupIngress",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Write",
       "action": "athena:TerminateSession",
       "condition": {
         "StringEquals": {
@@ -6809,56 +6689,6 @@
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "athena:ListPreparedStatements",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Read",
-      "action": "athena:GetDatabase",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "athena:GetDatabase",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Read",
-      "action": "athena:GetDataCatalog",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "athena:GetDataCatalog",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Read",
-      "action": "athena:GetTableMetadata",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "athena:GetTableMetadata",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "athena:ListDatabases",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "athena:ListDatabases",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Read",
-      "action": "athena:ListTableMetadata",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "athena:ListTableMetadata",
       "privesc": false,
       "resource_exposure": false
     },
@@ -8930,20 +8760,6 @@
       "resource_exposure": false
     },
     {
-      "access_level": "Write",
-      "action": "elasticmapreduce:TerminateJobFlows",
-      "condition": {
-        "StringEquals": {
-          "aws:ResourceTag/AmazonDataZoneProject": "${aws:PrincipalTag/AmazonDataZoneProject}"
-        }
-      },
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "elasticmapreduce:TerminateJobFlows",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
       "access_level": "Read",
       "action": "elasticmapreduce:GetManagedScalingPolicy",
       "condition": {
@@ -10869,6 +10685,20 @@
       "resource_exposure": false
     },
     {
+      "access_level": "List",
+      "action": "bedrock:ListFoundationModels",
+      "condition": {
+        "StringEquals": {
+          "aws:PrincipalTag/EnableAmazonBedrockPermissions": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "bedrock:ListFoundationModels",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
       "access_level": "Tagging",
       "action": "bedrock:TagResource",
       "condition": {
@@ -12189,6 +12019,6 @@
       }
     }
   ],
-  "updatedate": "2025-06-04T00:07:07+00:00",
-  "version": "v11"
+  "updatedate": "2025-06-12T23:07:07+00:00",
+  "version": "v12"
 }
