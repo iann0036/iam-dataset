@@ -3,7 +3,8 @@
     "List",
     "Read",
     "Tagging",
-    "Write"
+    "Write",
+    "Permissions management"
   ],
   "arn": "arn:aws:iam::aws:policy/aws-service-role/AmazonRDSCustomServiceRolePolicy",
   "createdate": "2025-03-25T23:22:06Z",
@@ -1835,6 +1836,20 @@
       "resource_exposure": false
     },
     {
+      "access_level": "Permissions management",
+      "action": "iam:PassRole",
+      "condition": {
+        "StringLike": {
+          "iam:PassedToService": "ec2.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "iam:PassRole",
+      "privesc": true,
+      "resource_exposure": true
+    },
+    {
       "access_level": "Read",
       "action": "cloudtrail:GetTrailStatus",
       "condition": null,
@@ -1985,6 +2000,22 @@
       "resource_exposure": false
     },
     {
+      "access_level": "Write",
+      "action": "ssm:PutParameter",
+      "condition": {
+        "StringLike": {
+          "aws:RequestTag/AWSRDSCustom": [
+            "custom-oracle-rac"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ssm:PutParameter",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
       "access_level": "Tagging",
       "action": "ssm:AddTagsToResource",
       "condition": {
@@ -2013,6 +2044,24 @@
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "ssm:DeleteParameter",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "events:PutRule",
+      "condition": {
+        "StringLike": {
+          "aws:RequestTag/AWSRDSCustom": [
+            "custom-oracle",
+            "custom-sqlserver",
+            "custom-oracle-rac"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "events:PutRule",
       "privesc": false,
       "resource_exposure": false
     },
@@ -2162,6 +2211,22 @@
     },
     {
       "access_level": "Write",
+      "action": "events:PutRule",
+      "condition": {
+        "StringLike": {
+          "events:ManagedBy": [
+            "custom.rds.amazonaws.com"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "events:PutRule",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
       "action": "events:PutTargets",
       "condition": {
         "StringLike": {
@@ -2279,6 +2344,24 @@
       "resource_exposure": false
     },
     {
+      "access_level": "Write",
+      "action": "secretsmanager:CreateSecret",
+      "condition": {
+        "StringLike": {
+          "aws:RequestTag/AWSRDSCustom": [
+            "custom-oracle",
+            "custom-sqlserver",
+            "custom-oracle-rac"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "secretsmanager:CreateSecret",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
       "access_level": "Tagging",
       "action": "secretsmanager:TagResource",
       "condition": {
@@ -2381,6 +2464,23 @@
       "effective_action": "secretsmanager:ListSecrets",
       "privesc": false,
       "resource_exposure": false
+    },
+    {
+      "access_level": "Permissions management",
+      "action": "sqs:CreateQueue",
+      "condition": {
+        "StringLike": {
+          "aws:RequestTag/AWSRDSCustom": [
+            "custom-sqlserver",
+            "custom-oracle"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sqs:CreateQueue",
+      "privesc": false,
+      "resource_exposure": true
     },
     {
       "access_level": "Tagging",
@@ -2498,74 +2598,10 @@
   "grantless": false,
   "malformed": false,
   "name": "AmazonRDSCustomServiceRolePolicy",
-  "privesc": false,
-  "resource_exposure": false,
+  "privesc": true,
+  "resource_exposure": true,
   "undocumented_actions": false,
-  "unknown_actions": [
-    {
-      "action": "iam:PassRole",
-      "condition": {
-        "StringLike": {
-          "iam:PassedToService": "ec2.amazonaws.com"
-        }
-      }
-    },
-    {
-      "action": "ssm:PutParameter",
-      "condition": {
-        "StringLike": {
-          "aws:RequestTag/AWSRDSCustom": [
-            "custom-oracle-rac"
-          ]
-        }
-      }
-    },
-    {
-      "action": "events:PutRule",
-      "condition": {
-        "StringLike": {
-          "aws:RequestTag/AWSRDSCustom": [
-            "custom-oracle",
-            "custom-sqlserver",
-            "custom-oracle-rac"
-          ]
-        }
-      }
-    },
-    {
-      "action": "events:PutRule",
-      "condition": {
-        "StringLike": {
-          "events:ManagedBy": [
-            "custom.rds.amazonaws.com"
-          ]
-        }
-      }
-    },
-    {
-      "action": "secretsmanager:CreateSecret",
-      "condition": {
-        "StringLike": {
-          "aws:RequestTag/AWSRDSCustom": [
-            "custom-oracle",
-            "custom-sqlserver",
-            "custom-oracle-rac"
-          ]
-        }
-      }
-    },
-    {
-      "action": "sqs:CreateQueue",
-      "condition": {
-        "StringLike": {
-          "aws:RequestTag/AWSRDSCustom": [
-            "custom-sqlserver",
-            "custom-oracle"
-          ]
-        }
-      }
-    }
-  ],
+  "unknown_actions": [],
   "updatedate": "2025-03-25T23:22:06+00:00",
   "version": "v12"
 }

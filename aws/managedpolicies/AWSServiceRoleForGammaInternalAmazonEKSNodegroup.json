@@ -3,7 +3,8 @@
     "List",
     "Read",
     "Tagging",
-    "Write"
+    "Write",
+    "Permissions management"
   ],
   "arn": null,
   "createdate": "2020-01-16T21:47:47Z",
@@ -455,6 +456,20 @@
       "resource_exposure": false
     },
     {
+      "access_level": "Permissions management",
+      "action": "iam:CreateServiceLinkedRole",
+      "condition": {
+        "StringEquals": {
+          "iam:AWSServiceName": "autoscaling.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "iam:CreateServiceLinkedRole",
+      "privesc": true,
+      "resource_exposure": true
+    },
+    {
       "access_level": "Tagging",
       "action": "autoscaling:CreateOrUpdateTags",
       "condition": {
@@ -471,6 +486,66 @@
       "effective_action": "autoscaling:CreateOrUpdateTags",
       "privesc": false,
       "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "autoscaling:CreateAutoScalingGroup",
+      "condition": {
+        "ForAnyValue:StringEquals": {
+          "aws:TagKeys": [
+            "eks",
+            "eks:cluster-name",
+            "eks:nodegroup-name"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "autoscaling:CreateAutoScalingGroup",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Permissions management",
+      "action": "iam:PassRole",
+      "condition": {
+        "StringEqualsIfExists": {
+          "iam:PassedToService": "iam.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "iam:PassRole",
+      "privesc": true,
+      "resource_exposure": true
+    },
+    {
+      "access_level": "Permissions management",
+      "action": "iam:PassRole",
+      "condition": {
+        "StringEqualsIfExists": {
+          "iam:PassedToService": "autoscaling.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "iam:PassRole",
+      "privesc": true,
+      "resource_exposure": true
+    },
+    {
+      "access_level": "Permissions management",
+      "action": "iam:PassRole",
+      "condition": {
+        "StringEqualsIfExists": {
+          "iam:PassedToService": "ec2.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "iam:PassRole",
+      "privesc": true,
+      "resource_exposure": true
     },
     {
       "access_level": "Read",
@@ -593,6 +668,46 @@
       "resource_exposure": false
     },
     {
+      "access_level": "Permissions management",
+      "action": "iam:CreateInstanceProfile",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "iam:CreateInstanceProfile",
+      "privesc": false,
+      "resource_exposure": true
+    },
+    {
+      "access_level": "Permissions management",
+      "action": "iam:DeleteInstanceProfile",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "iam:DeleteInstanceProfile",
+      "privesc": false,
+      "resource_exposure": true
+    },
+    {
+      "access_level": "Permissions management",
+      "action": "iam:RemoveRoleFromInstanceProfile",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "iam:RemoveRoleFromInstanceProfile",
+      "privesc": false,
+      "resource_exposure": true
+    },
+    {
+      "access_level": "Permissions management",
+      "action": "iam:AddRoleToInstanceProfile",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "iam:AddRoleToInstanceProfile",
+      "privesc": false,
+      "resource_exposure": true
+    },
+    {
       "access_level": "Tagging",
       "action": "ec2:CreateTags",
       "condition": {
@@ -634,71 +749,10 @@
   "grantless": false,
   "malformed": false,
   "name": "AWSServiceRoleForGammaInternalAmazonEKSNodegroup",
-  "privesc": false,
-  "resource_exposure": false,
+  "privesc": true,
+  "resource_exposure": true,
   "undocumented_actions": false,
-  "unknown_actions": [
-    {
-      "action": "iam:CreateServiceLinkedRole",
-      "condition": {
-        "StringEquals": {
-          "iam:AWSServiceName": "autoscaling.amazonaws.com"
-        }
-      }
-    },
-    {
-      "action": "autoscaling:CreateAutoScalingGroup",
-      "condition": {
-        "ForAnyValue:StringEquals": {
-          "aws:TagKeys": [
-            "eks",
-            "eks:cluster-name",
-            "eks:nodegroup-name"
-          ]
-        }
-      }
-    },
-    {
-      "action": "iam:PassRole",
-      "condition": {
-        "StringEqualsIfExists": {
-          "iam:PassedToService": "iam.amazonaws.com"
-        }
-      }
-    },
-    {
-      "action": "iam:PassRole",
-      "condition": {
-        "StringEqualsIfExists": {
-          "iam:PassedToService": "autoscaling.amazonaws.com"
-        }
-      }
-    },
-    {
-      "action": "iam:PassRole",
-      "condition": {
-        "StringEqualsIfExists": {
-          "iam:PassedToService": "ec2.amazonaws.com"
-        }
-      }
-    },
-    {
-      "action": "iam:CreateInstanceProfile",
-      "condition": null
-    },
-    {
-      "action": "iam:DeleteInstanceProfile",
-      "condition": null
-    },
-    {
-      "action": "iam:RemoveRoleFromInstanceProfile",
-      "condition": null
-    },
-    {
-      "action": "iam:AddRoleToInstanceProfile",
-      "condition": null
-    }
-  ],
+  "unknown_actions": [],
   "updatedate": null,
   "version": "v1"
 }

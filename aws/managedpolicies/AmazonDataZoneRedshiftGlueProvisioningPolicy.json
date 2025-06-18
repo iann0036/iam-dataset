@@ -347,6 +347,23 @@
   "effective_actions": [
     {
       "access_level": "Permissions management",
+      "action": "iam:CreateRole",
+      "condition": {
+        "StringEquals": {
+          "aws:CalledViaFirst": [
+            "cloudformation.amazonaws.com"
+          ],
+          "iam:PermissionsBoundary": "arn:aws:iam::aws:policy/AmazonDataZoneEnvironmentRolePermissionsBoundary"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "iam:CreateRole",
+      "privesc": false,
+      "resource_exposure": true
+    },
+    {
+      "access_level": "Permissions management",
       "action": "iam:DetachRolePolicy",
       "condition": {
         "StringEquals": {
@@ -411,6 +428,42 @@
       "data_access": false,
       "effective_action": "iam:PutRolePolicy",
       "privesc": true,
+      "resource_exposure": true
+    },
+    {
+      "access_level": "Permissions management",
+      "action": "iam:PassRole",
+      "condition": {
+        "StringEquals": {
+          "aws:CalledViaFirst": [
+            "cloudformation.amazonaws.com"
+          ],
+          "iam:PassedToService": [
+            "glue.amazonaws.com",
+            "lakeformation.amazonaws.com"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "iam:PassRole",
+      "privesc": true,
+      "resource_exposure": true
+    },
+    {
+      "access_level": "Permissions management",
+      "action": "iam:DeleteRole",
+      "condition": {
+        "StringEquals": {
+          "aws:CalledViaFirst": [
+            "cloudformation.amazonaws.com"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "iam:DeleteRole",
+      "privesc": false,
       "resource_exposure": true
     },
     {
@@ -710,6 +763,28 @@
       "resource_exposure": false
     },
     {
+      "access_level": "Write",
+      "action": "athena:CreateWorkGroup",
+      "condition": {
+        "ForAnyValue:StringLike": {
+          "aws:TagKeys": "AmazonDataZoneEnvironment"
+        },
+        "Null": {
+          "aws:ResourceTag/AmazonDataZoneEnvironment": "false"
+        },
+        "StringEquals": {
+          "aws:CalledViaFirst": [
+            "cloudformation.amazonaws.com"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "athena:CreateWorkGroup",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
       "access_level": "Tagging",
       "action": "athena:TagResource",
       "condition": {
@@ -772,6 +847,28 @@
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "iam:TagPolicy",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Tagging",
+      "action": "logs:TagLogGroup",
+      "condition": {
+        "ForAnyValue:StringLike": {
+          "aws:TagKeys": "AmazonDataZoneEnvironment"
+        },
+        "Null": {
+          "aws:ResourceTag/AmazonDataZoneEnvironment": "false"
+        },
+        "StringEquals": {
+          "aws:CalledViaFirst": [
+            "cloudformation.amazonaws.com"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "logs:TagLogGroup",
       "privesc": false,
       "resource_exposure": false
     },
@@ -1050,75 +1147,7 @@
   "privesc": true,
   "resource_exposure": true,
   "undocumented_actions": false,
-  "unknown_actions": [
-    {
-      "action": "iam:CreateRole",
-      "condition": {
-        "StringEquals": {
-          "aws:CalledViaFirst": [
-            "cloudformation.amazonaws.com"
-          ],
-          "iam:PermissionsBoundary": "arn:aws:iam::aws:policy/AmazonDataZoneEnvironmentRolePermissionsBoundary"
-        }
-      }
-    },
-    {
-      "action": "iam:PassRole",
-      "condition": {
-        "StringEquals": {
-          "aws:CalledViaFirst": [
-            "cloudformation.amazonaws.com"
-          ],
-          "iam:PassedToService": [
-            "glue.amazonaws.com",
-            "lakeformation.amazonaws.com"
-          ]
-        }
-      }
-    },
-    {
-      "action": "iam:DeleteRole",
-      "condition": {
-        "StringEquals": {
-          "aws:CalledViaFirst": [
-            "cloudformation.amazonaws.com"
-          ]
-        }
-      }
-    },
-    {
-      "action": "athena:CreateWorkGroup",
-      "condition": {
-        "ForAnyValue:StringLike": {
-          "aws:TagKeys": "AmazonDataZoneEnvironment"
-        },
-        "Null": {
-          "aws:ResourceTag/AmazonDataZoneEnvironment": "false"
-        },
-        "StringEquals": {
-          "aws:CalledViaFirst": [
-            "cloudformation.amazonaws.com"
-          ]
-        }
-      }
-    },
-    {
-      "action": "logs:TagLogGroup",
-      "condition": {
-        "ForAnyValue:StringLike": {
-          "aws:TagKeys": "AmazonDataZoneEnvironment"
-        },
-        "Null": {
-          "aws:ResourceTag/AmazonDataZoneEnvironment": "false"
-        },
-        "StringEquals": {
-          "aws:CalledViaFirst": [
-            "cloudformation.amazonaws.com"
-          ]
-        }
-      }
-    }
-  ],
+  "unknown_actions": [],
   "updatedate": "2024-10-23T18:29:09+00:00",
   "version": "v4"
 }

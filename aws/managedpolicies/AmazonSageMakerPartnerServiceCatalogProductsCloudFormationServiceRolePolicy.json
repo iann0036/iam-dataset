@@ -1,7 +1,9 @@
 {
   "access_levels": [
     "Read",
-    "Write"
+    "Tagging",
+    "Write",
+    "Permissions management"
   ],
   "arn": "arn:aws:iam::aws:policy/service-role/AmazonSageMakerPartnerServiceCatalogProductsCloudFormationServiceRolePolicy",
   "createdate": "2023-08-01T15:06:46Z",
@@ -153,6 +155,34 @@
   },
   "effective_actions": [
     {
+      "access_level": "Permissions management",
+      "action": "iam:PassRole",
+      "condition": {
+        "StringEquals": {
+          "iam:PassedToService": "lambda.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "iam:PassRole",
+      "privesc": true,
+      "resource_exposure": true
+    },
+    {
+      "access_level": "Permissions management",
+      "action": "iam:PassRole",
+      "condition": {
+        "StringEquals": {
+          "iam:PassedToService": "apigateway.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "iam:PassRole",
+      "privesc": true,
+      "resource_exposure": true
+    },
+    {
       "access_level": "Write",
       "action": "lambda:DeleteFunction",
       "condition": {
@@ -230,6 +260,27 @@
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "lambda:CreateFunction",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Tagging",
+      "action": "lambda:TagResource",
+      "condition": {
+        "ForAnyValue:StringEquals": {
+          "aws:TagKeys": [
+            "sagemaker:project-name",
+            "sagemaker:partner"
+          ]
+        },
+        "Null": {
+          "aws:ResourceTag/sagemaker:partner": "false",
+          "aws:ResourceTag/sagemaker:project-name": "false"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "lambda:TagResource",
       "privesc": false,
       "resource_exposure": false
     },
@@ -408,42 +459,10 @@
   "grantless": false,
   "malformed": false,
   "name": "AmazonSageMakerPartnerServiceCatalogProductsCloudFormationServiceRolePolicy",
-  "privesc": false,
-  "resource_exposure": false,
+  "privesc": true,
+  "resource_exposure": true,
   "undocumented_actions": false,
-  "unknown_actions": [
-    {
-      "action": "iam:PassRole",
-      "condition": {
-        "StringEquals": {
-          "iam:PassedToService": "lambda.amazonaws.com"
-        }
-      }
-    },
-    {
-      "action": "iam:PassRole",
-      "condition": {
-        "StringEquals": {
-          "iam:PassedToService": "apigateway.amazonaws.com"
-        }
-      }
-    },
-    {
-      "action": "lambda:TagResource",
-      "condition": {
-        "ForAnyValue:StringEquals": {
-          "aws:TagKeys": [
-            "sagemaker:project-name",
-            "sagemaker:partner"
-          ]
-        },
-        "Null": {
-          "aws:ResourceTag/sagemaker:partner": "false",
-          "aws:ResourceTag/sagemaker:project-name": "false"
-        }
-      }
-    }
-  ],
+  "unknown_actions": [],
   "updatedate": "2023-08-01T15:06:46+00:00",
   "version": "v1"
 }

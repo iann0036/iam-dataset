@@ -3,7 +3,8 @@
     "List",
     "Read",
     "Tagging",
-    "Write"
+    "Write",
+    "Permissions management"
   ],
   "arn": "arn:aws:iam::aws:policy/AmazonCodeGuruReviewerFullAccess",
   "createdate": "2020-08-29T04:16:08Z",
@@ -299,6 +300,30 @@
       "resource_exposure": false
     },
     {
+      "access_level": "Permissions management",
+      "action": "iam:CreateServiceLinkedRole",
+      "condition": {
+        "StringLike": {
+          "iam:AWSServiceName": "codeguru-reviewer.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "iam:CreateServiceLinkedRole",
+      "privesc": true,
+      "resource_exposure": true
+    },
+    {
+      "access_level": "Permissions management",
+      "action": "iam:DeleteServiceLinkedRole",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "iam:DeleteServiceLinkedRole",
+      "privesc": false,
+      "resource_exposure": true
+    },
+    {
       "access_level": "Read",
       "action": "iam:GetServiceLinkedRoleDeletionStatus",
       "condition": null,
@@ -315,6 +340,34 @@
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "codecommit:ListRepositories",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Tagging",
+      "action": "codecommit:TagResource",
+      "condition": {
+        "ForAllValues:StringEquals": {
+          "aws:TagKeys": "codeguru-reviewer"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "codecommit:TagResource",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Tagging",
+      "action": "codecommit:UntagResource",
+      "condition": {
+        "ForAllValues:StringEquals": {
+          "aws:TagKeys": "codeguru-reviewer"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "codecommit:UntagResource",
       "privesc": false,
       "resource_exposure": false
     },
@@ -413,6 +466,20 @@
     },
     {
       "access_level": "Write",
+      "action": "events:PutRule",
+      "condition": {
+        "StringEquals": {
+          "events:ManagedBy": "codeguru-reviewer.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "events:PutRule",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
       "action": "events:PutTargets",
       "condition": {
         "StringEquals": {
@@ -457,47 +524,10 @@
   "grantless": false,
   "malformed": false,
   "name": "AmazonCodeGuruReviewerFullAccess",
-  "privesc": false,
-  "resource_exposure": false,
+  "privesc": true,
+  "resource_exposure": true,
   "undocumented_actions": false,
-  "unknown_actions": [
-    {
-      "action": "iam:CreateServiceLinkedRole",
-      "condition": {
-        "StringLike": {
-          "iam:AWSServiceName": "codeguru-reviewer.amazonaws.com"
-        }
-      }
-    },
-    {
-      "action": "iam:DeleteServiceLinkedRole",
-      "condition": null
-    },
-    {
-      "action": "codecommit:TagResource",
-      "condition": {
-        "ForAllValues:StringEquals": {
-          "aws:TagKeys": "codeguru-reviewer"
-        }
-      }
-    },
-    {
-      "action": "codecommit:UntagResource",
-      "condition": {
-        "ForAllValues:StringEquals": {
-          "aws:TagKeys": "codeguru-reviewer"
-        }
-      }
-    },
-    {
-      "action": "events:PutRule",
-      "condition": {
-        "StringEquals": {
-          "events:ManagedBy": "codeguru-reviewer.amazonaws.com"
-        }
-      }
-    }
-  ],
+  "unknown_actions": [],
   "updatedate": "2020-08-29T04:16:08+00:00",
   "version": "v3"
 }

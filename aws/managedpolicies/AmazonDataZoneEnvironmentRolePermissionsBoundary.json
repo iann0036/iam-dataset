@@ -1779,6 +1779,20 @@
       "resource_exposure": false
     },
     {
+      "access_level": "Permissions management",
+      "action": "iam:PassRole",
+      "condition": {
+        "StringEquals": {
+          "iam:PassedToService": "glue.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "iam:PassRole",
+      "privesc": true,
+      "resource_exposure": true
+    },
+    {
       "access_level": "Read",
       "action": "kms:DescribeKey",
       "condition": {
@@ -7543,6 +7557,30 @@
       "resource_exposure": false
     },
     {
+      "access_level": "Write",
+      "action": "secretsmanager:CreateSecret",
+      "condition": {
+        "ForAllValues:StringEquals": {
+          "aws:TagKeys": [
+            "AmazonDataZoneDomain",
+            "AmazonDataZoneProject"
+          ]
+        },
+        "Null": {
+          "aws:TagKeys": "false"
+        },
+        "StringLike": {
+          "aws:ResourceTag/AmazonDataZoneDomain": "*",
+          "aws:ResourceTag/AmazonDataZoneProject": "*"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "secretsmanager:CreateSecret",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
       "access_level": "Tagging",
       "action": "secretsmanager:TagResource",
       "condition": {
@@ -7677,37 +7715,10 @@
   "grantless": false,
   "malformed": false,
   "name": "AmazonDataZoneEnvironmentRolePermissionsBoundary",
-  "privesc": false,
+  "privesc": true,
   "resource_exposure": true,
   "undocumented_actions": false,
-  "unknown_actions": [
-    {
-      "action": "iam:PassRole",
-      "condition": {
-        "StringEquals": {
-          "iam:PassedToService": "glue.amazonaws.com"
-        }
-      }
-    },
-    {
-      "action": "secretsmanager:CreateSecret",
-      "condition": {
-        "ForAllValues:StringEquals": {
-          "aws:TagKeys": [
-            "AmazonDataZoneDomain",
-            "AmazonDataZoneProject"
-          ]
-        },
-        "Null": {
-          "aws:TagKeys": "false"
-        },
-        "StringLike": {
-          "aws:ResourceTag/AmazonDataZoneDomain": "*",
-          "aws:ResourceTag/AmazonDataZoneProject": "*"
-        }
-      }
-    }
-  ],
+  "unknown_actions": [],
   "updatedate": "2023-11-17T23:29:08+00:00",
   "version": "v4"
 }

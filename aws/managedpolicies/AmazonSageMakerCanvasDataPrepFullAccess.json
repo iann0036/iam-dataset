@@ -3,7 +3,8 @@
     "List",
     "Read",
     "Tagging",
-    "Write"
+    "Write",
+    "Permissions management"
   ],
   "arn": "arn:aws:iam::aws:policy/AmazonSageMakerCanvasDataPrepFullAccess",
   "createdate": "2024-08-16T18:11:13Z",
@@ -759,6 +760,37 @@
       "resource_exposure": false
     },
     {
+      "access_level": "Permissions management",
+      "action": "iam:PassRole",
+      "condition": {
+        "StringEquals": {
+          "iam:PassedToService": [
+            "sagemaker.amazonaws.com",
+            "events.amazonaws.com"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "iam:PassRole",
+      "privesc": true,
+      "resource_exposure": true
+    },
+    {
+      "access_level": "Write",
+      "action": "events:PutRule",
+      "condition": {
+        "StringEquals": {
+          "aws:RequestTag/sagemaker:is-canvas-data-prep-job": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "events:PutRule",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
       "access_level": "Read",
       "action": "events:DescribeRule",
       "condition": {
@@ -1022,6 +1054,16 @@
       "resource_exposure": false
     },
     {
+      "access_level": "Write",
+      "action": "secretsmanager:CreateSecret",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "secretsmanager:CreateSecret",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
       "access_level": "Read",
       "action": "secretsmanager:DescribeSecret",
       "condition": {
@@ -1224,48 +1266,30 @@
       "effective_action": "emr-serverless:TagResource",
       "privesc": false,
       "resource_exposure": false
-    }
-  ],
-  "grantless": false,
-  "malformed": false,
-  "name": "AmazonSageMakerCanvasDataPrepFullAccess",
-  "privesc": false,
-  "resource_exposure": false,
-  "undocumented_actions": false,
-  "unknown_actions": [
-    {
-      "action": "iam:PassRole",
-      "condition": {
-        "StringEquals": {
-          "iam:PassedToService": [
-            "sagemaker.amazonaws.com",
-            "events.amazonaws.com"
-          ]
-        }
-      }
     },
     {
-      "action": "events:PutRule",
-      "condition": {
-        "StringEquals": {
-          "aws:RequestTag/sagemaker:is-canvas-data-prep-job": "true"
-        }
-      }
-    },
-    {
-      "action": "secretsmanager:CreateSecret",
-      "condition": null
-    },
-    {
+      "access_level": "Permissions management",
       "action": "iam:PassRole",
       "condition": {
         "StringEquals": {
           "aws:ResourceAccount": "${aws:PrincipalAccount}",
           "iam:PassedToService": "emr-serverless.amazonaws.com"
         }
-      }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "iam:PassRole",
+      "privesc": true,
+      "resource_exposure": true
     }
   ],
+  "grantless": false,
+  "malformed": false,
+  "name": "AmazonSageMakerCanvasDataPrepFullAccess",
+  "privesc": true,
+  "resource_exposure": true,
+  "undocumented_actions": false,
+  "unknown_actions": [],
   "updatedate": "2024-08-16T18:11:13+00:00",
   "version": "v4"
 }

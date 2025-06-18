@@ -1,7 +1,8 @@
 {
   "access_levels": [
     "Read",
-    "Write"
+    "Write",
+    "Permissions management"
   ],
   "arn": "arn:aws:iam::aws:policy/aws-service-role/AmazonEKSConnectorServiceRolePolicy",
   "createdate": "2021-09-04T20:31:08Z",
@@ -138,6 +139,37 @@
       "resource_exposure": false
     },
     {
+      "access_level": "Permissions management",
+      "action": "iam:PassRole",
+      "condition": {
+        "StringEquals": {
+          "iam:PassedToService": [
+            "ssm.amazonaws.com"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "iam:PassRole",
+      "privesc": true,
+      "resource_exposure": true
+    },
+    {
+      "access_level": "Write",
+      "action": "events:PutRule",
+      "condition": {
+        "StringEquals": {
+          "events:ManagedBy": "eks-connector.amazonaws.com",
+          "events:source": "aws.ssm"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "events:PutRule",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
       "access_level": "Write",
       "action": "events:PutTargets",
       "condition": {
@@ -155,30 +187,10 @@
   "grantless": false,
   "malformed": false,
   "name": "AmazonEKSConnectorServiceRolePolicy",
-  "privesc": false,
-  "resource_exposure": false,
+  "privesc": true,
+  "resource_exposure": true,
   "undocumented_actions": false,
-  "unknown_actions": [
-    {
-      "action": "iam:PassRole",
-      "condition": {
-        "StringEquals": {
-          "iam:PassedToService": [
-            "ssm.amazonaws.com"
-          ]
-        }
-      }
-    },
-    {
-      "action": "events:PutRule",
-      "condition": {
-        "StringEquals": {
-          "events:ManagedBy": "eks-connector.amazonaws.com",
-          "events:source": "aws.ssm"
-        }
-      }
-    }
-  ],
+  "unknown_actions": [],
   "updatedate": "2021-09-04T20:31:08+00:00",
   "version": "v1"
 }

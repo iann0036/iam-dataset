@@ -3,7 +3,8 @@
     "List",
     "Read",
     "Tagging",
-    "Write"
+    "Write",
+    "Permissions management"
   ],
   "arn": "arn:aws:iam::aws:policy/aws-service-role/BatchServiceRolePolicy",
   "createdate": "2023-12-05T22:52:40Z",
@@ -703,6 +704,43 @@
       "resource_exposure": false
     },
     {
+      "access_level": "Permissions management",
+      "action": "iam:PassRole",
+      "condition": {
+        "StringEquals": {
+          "iam:PassedToService": [
+            "ec2.amazonaws.com",
+            "ec2.amazonaws.com.cn",
+            "ecs-tasks.amazonaws.com"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "iam:PassRole",
+      "privesc": true,
+      "resource_exposure": true
+    },
+    {
+      "access_level": "Permissions management",
+      "action": "iam:CreateServiceLinkedRole",
+      "condition": {
+        "StringEquals": {
+          "iam:AWSServiceName": [
+            "spot.amazonaws.com",
+            "spotfleet.amazonaws.com",
+            "autoscaling.amazonaws.com",
+            "ecs.amazonaws.com"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "iam:CreateServiceLinkedRole",
+      "privesc": true,
+      "resource_exposure": true
+    },
+    {
       "access_level": "Write",
       "action": "ec2:CreateLaunchTemplate",
       "condition": {
@@ -789,6 +827,16 @@
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "autoscaling:DeleteLaunchConfiguration",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "autoscaling:CreateAutoScalingGroup",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "autoscaling:CreateAutoScalingGroup",
       "privesc": false,
       "resource_exposure": false
     },
@@ -1016,40 +1064,10 @@
   "grantless": false,
   "malformed": false,
   "name": "BatchServiceRolePolicy",
-  "privesc": false,
-  "resource_exposure": false,
+  "privesc": true,
+  "resource_exposure": true,
   "undocumented_actions": false,
-  "unknown_actions": [
-    {
-      "action": "iam:PassRole",
-      "condition": {
-        "StringEquals": {
-          "iam:PassedToService": [
-            "ec2.amazonaws.com",
-            "ec2.amazonaws.com.cn",
-            "ecs-tasks.amazonaws.com"
-          ]
-        }
-      }
-    },
-    {
-      "action": "iam:CreateServiceLinkedRole",
-      "condition": {
-        "StringEquals": {
-          "iam:AWSServiceName": [
-            "spot.amazonaws.com",
-            "spotfleet.amazonaws.com",
-            "autoscaling.amazonaws.com",
-            "ecs.amazonaws.com"
-          ]
-        }
-      }
-    },
-    {
-      "action": "autoscaling:CreateAutoScalingGroup",
-      "condition": null
-    }
-  ],
+  "unknown_actions": [],
   "updatedate": "2023-12-05T22:52:40+00:00",
   "version": "v7"
 }

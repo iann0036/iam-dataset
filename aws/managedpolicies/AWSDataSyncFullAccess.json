@@ -3,7 +3,8 @@
     "List",
     "Read",
     "Tagging",
-    "Write"
+    "Write",
+    "Permissions management"
   ],
   "arn": "arn:aws:iam::aws:policy/AWSDataSyncFullAccess",
   "createdate": "2025-05-20T19:07:07Z",
@@ -600,7 +601,17 @@
       "condition": null,
       "credentials_exposure": false,
       "data_access": false,
-      "effective_action": "datasync:Tagging",
+      "effective_action": "datasync:TagResource",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Tagging",
+      "action": "datasync:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "datasync:UntagResource",
       "privesc": false,
       "resource_exposure": false
     },
@@ -773,6 +784,16 @@
       "effective_action": "ec2:CreateNetworkInterface",
       "privesc": false,
       "resource_exposure": false
+    },
+    {
+      "access_level": "Permissions management",
+      "action": "ec2:CreateNetworkInterfacePermission",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:CreateNetworkInterfacePermission",
+      "privesc": false,
+      "resource_exposure": true
     },
     {
       "access_level": "Write",
@@ -1045,6 +1066,50 @@
       "resource_exposure": false
     },
     {
+      "access_level": "Permissions management",
+      "action": "iam:PassRole",
+      "condition": {
+        "StringEquals": {
+          "iam:PassedToService": [
+            "datasync.amazonaws.com"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "iam:PassRole",
+      "privesc": true,
+      "resource_exposure": true
+    },
+    {
+      "access_level": "Permissions management",
+      "action": "iam:CreateServiceLinkedRole",
+      "condition": {
+        "StringEquals": {
+          "iam:AWSServiceName": "datasync.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "iam:CreateServiceLinkedRole",
+      "privesc": true,
+      "resource_exposure": true
+    },
+    {
+      "access_level": "Write",
+      "action": "secretsmanager:CreateSecret",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "secretsmanager:CreateSecret",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
       "access_level": "Write",
       "action": "secretsmanager:DeleteSecret",
       "condition": {
@@ -1093,41 +1158,10 @@
   "grantless": false,
   "malformed": false,
   "name": "AWSDataSyncFullAccess",
-  "privesc": false,
-  "resource_exposure": false,
+  "privesc": true,
+  "resource_exposure": true,
   "undocumented_actions": false,
-  "unknown_actions": [
-    {
-      "action": "ec2:CreateNetworkInterfacePermission",
-      "condition": null
-    },
-    {
-      "action": "iam:PassRole",
-      "condition": {
-        "StringEquals": {
-          "iam:PassedToService": [
-            "datasync.amazonaws.com"
-          ]
-        }
-      }
-    },
-    {
-      "action": "iam:CreateServiceLinkedRole",
-      "condition": {
-        "StringEquals": {
-          "iam:AWSServiceName": "datasync.amazonaws.com"
-        }
-      }
-    },
-    {
-      "action": "secretsmanager:CreateSecret",
-      "condition": {
-        "StringEquals": {
-          "aws:ResourceAccount": "${aws:PrincipalAccount}"
-        }
-      }
-    }
-  ],
+  "unknown_actions": [],
   "updatedate": "2025-05-20T19:07:07+00:00",
   "version": "v10"
 }
