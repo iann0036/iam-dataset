@@ -2,10 +2,11 @@
   "access_levels": [
     "List",
     "Read",
+    "Tagging",
     "Write"
   ],
   "arn": "arn:aws:iam::aws:policy/AWSSecurityHubOrganizationsAccess",
-  "createdate": "2023-11-16T21:13:44Z",
+  "createdate": "2025-06-24T22:22:08Z",
   "credentials_exposure": false,
   "data_access": false,
   "deprecated": false,
@@ -20,8 +21,12 @@
           "organizations:ListAWSServiceAccessForOrganization",
           "organizations:ListOrganizationalUnitsForParent",
           "organizations:ListAccountsForParent",
+          "organizations:ListParents",
           "organizations:DescribeAccount",
-          "organizations:DescribeOrganizationalUnit"
+          "organizations:DescribeOrganizationalUnit",
+          "organizations:ListPolicies",
+          "organizations:ListPoliciesForTarget",
+          "organizations:ListTargetsForPolicy"
         ],
         "Effect": "Allow",
         "Resource": "*",
@@ -53,6 +58,44 @@
         "Effect": "Allow",
         "Resource": "arn:aws:organizations::*:account/o-*/*",
         "Sid": "OrganizationPermissionsDelegatedAdmin"
+      },
+      {
+        "Action": [
+          "organizations:DescribePolicy",
+          "organizations:DescribeEffectivePolicy",
+          "organizations:CreatePolicy",
+          "organizations:UpdatePolicy",
+          "organizations:DeletePolicy",
+          "organizations:AttachPolicy",
+          "organizations:DetachPolicy",
+          "organizations:EnablePolicyType",
+          "organizations:DisablePolicyType"
+        ],
+        "Condition": {
+          "StringLikeIfExists": {
+            "organizations:PolicyType": "SECURITYHUB_POLICY"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:organizations::*:root/o-*/*",
+          "arn:aws:organizations::*:account/o-*/*",
+          "arn:aws:organizations::*:ou/o-*/*",
+          "arn:aws:organizations::*:policy/o-*/securityhub_policy/*"
+        ],
+        "Sid": "OrganizationPolicyPermissions"
+      },
+      {
+        "Action": [
+          "organizations:TagResource",
+          "organizations:UntagResource",
+          "organizations:ListTagsForResource"
+        ],
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:organizations::*:policy/o-*/securityhub_policy/*"
+        ],
+        "Sid": "OrganizationPolicyTaggingPermissions"
       }
     ],
     "Version": "2012-10-17"
@@ -129,6 +172,16 @@
       "resource_exposure": false
     },
     {
+      "access_level": "List",
+      "action": "organizations:ListParents",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "organizations:ListParents",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
       "access_level": "Read",
       "action": "organizations:DescribeAccount",
       "condition": null,
@@ -145,6 +198,36 @@
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "organizations:DescribeOrganizationalUnit",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "organizations:ListPolicies",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "organizations:ListPolicies",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "organizations:ListPoliciesForTarget",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "organizations:ListPoliciesForTarget",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "organizations:ListTargetsForPolicy",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "organizations:ListTargetsForPolicy",
       "privesc": false,
       "resource_exposure": false
     },
@@ -189,6 +272,162 @@
       "effective_action": "organizations:DeregisterDelegatedAdministrator",
       "privesc": false,
       "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "organizations:DescribePolicy",
+      "condition": {
+        "StringLikeIfExists": {
+          "organizations:PolicyType": "SECURITYHUB_POLICY"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "organizations:DescribePolicy",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "organizations:DescribeEffectivePolicy",
+      "condition": {
+        "StringLikeIfExists": {
+          "organizations:PolicyType": "SECURITYHUB_POLICY"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "organizations:DescribeEffectivePolicy",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "organizations:CreatePolicy",
+      "condition": {
+        "StringLikeIfExists": {
+          "organizations:PolicyType": "SECURITYHUB_POLICY"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "organizations:CreatePolicy",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "organizations:UpdatePolicy",
+      "condition": {
+        "StringLikeIfExists": {
+          "organizations:PolicyType": "SECURITYHUB_POLICY"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "organizations:UpdatePolicy",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "organizations:DeletePolicy",
+      "condition": {
+        "StringLikeIfExists": {
+          "organizations:PolicyType": "SECURITYHUB_POLICY"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "organizations:DeletePolicy",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "organizations:AttachPolicy",
+      "condition": {
+        "StringLikeIfExists": {
+          "organizations:PolicyType": "SECURITYHUB_POLICY"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "organizations:AttachPolicy",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "organizations:DetachPolicy",
+      "condition": {
+        "StringLikeIfExists": {
+          "organizations:PolicyType": "SECURITYHUB_POLICY"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "organizations:DetachPolicy",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "organizations:EnablePolicyType",
+      "condition": {
+        "StringLikeIfExists": {
+          "organizations:PolicyType": "SECURITYHUB_POLICY"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "organizations:EnablePolicyType",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "organizations:DisablePolicyType",
+      "condition": {
+        "StringLikeIfExists": {
+          "organizations:PolicyType": "SECURITYHUB_POLICY"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "organizations:DisablePolicyType",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Tagging",
+      "action": "organizations:TagResource",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "organizations:TagResource",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Tagging",
+      "action": "organizations:UntagResource",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "organizations:UntagResource",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "organizations:ListTagsForResource",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "organizations:ListTagsForResource",
+      "privesc": false,
+      "resource_exposure": false
     }
   ],
   "grantless": false,
@@ -198,6 +437,6 @@
   "resource_exposure": false,
   "undocumented_actions": false,
   "unknown_actions": [],
-  "updatedate": "2023-11-16T21:13:44+00:00",
-  "version": "v2"
+  "updatedate": "2025-06-24T22:22:08+00:00",
+  "version": "v3"
 }
