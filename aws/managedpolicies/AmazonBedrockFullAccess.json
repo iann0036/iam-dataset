@@ -7,7 +7,7 @@
     "Permissions management"
   ],
   "arn": "arn:aws:iam::aws:policy/AmazonBedrockFullAccess",
-  "createdate": "2024-12-04T19:51:07Z",
+  "createdate": "2025-06-29T22:22:06Z",
   "credentials_exposure": false,
   "data_access": false,
   "deprecated": false,
@@ -119,6 +119,8 @@
           "sagemaker:DescribeEndpoint",
           "sagemaker:DescribeEndpointConfig",
           "sagemaker:DescribeModel",
+          "sagemaker:DescribeInferenceComponent",
+          "sagemaker:ListEndpoints",
           "sagemaker:ListTags"
         ],
         "Condition": {
@@ -202,6 +204,21 @@
         "Effect": "Allow",
         "Resource": "arn:aws:iam::*:role/*AmazonBedrock*",
         "Sid": "PassRoleToBedrock"
+      },
+      {
+        "Action": [
+          "aws-marketplace:Subscribe",
+          "aws-marketplace:ViewSubscriptions",
+          "aws-marketplace:Unsubscribe"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:CalledViaLast": "bedrock.amazonaws.com"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "MarketplaceOperationsFromBedrockFor3pModels"
       }
     ],
     "Version": "2012-10-17"
@@ -2381,6 +2398,34 @@
       "resource_exposure": false
     },
     {
+      "access_level": "Read",
+      "action": "sagemaker:DescribeInferenceComponent",
+      "condition": {
+        "StringEquals": {
+          "aws:CalledViaLast": "bedrock.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sagemaker:DescribeInferenceComponent",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "sagemaker:ListEndpoints",
+      "condition": {
+        "StringEquals": {
+          "aws:CalledViaLast": "bedrock.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sagemaker:ListEndpoints",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
       "access_level": "List",
       "action": "sagemaker:ListTags",
       "condition": {
@@ -2476,6 +2521,48 @@
       "effective_action": "iam:PassRole",
       "privesc": true,
       "resource_exposure": true
+    },
+    {
+      "access_level": "Write",
+      "action": "aws-marketplace:Subscribe",
+      "condition": {
+        "StringEquals": {
+          "aws:CalledViaLast": "bedrock.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "aws-marketplace:Subscribe",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "aws-marketplace:ViewSubscriptions",
+      "condition": {
+        "StringEquals": {
+          "aws:CalledViaLast": "bedrock.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "aws-marketplace:ViewSubscriptions",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "aws-marketplace:Unsubscribe",
+      "condition": {
+        "StringEquals": {
+          "aws:CalledViaLast": "bedrock.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "aws-marketplace:Unsubscribe",
+      "privesc": false,
+      "resource_exposure": false
     }
   ],
   "grantless": false,
@@ -2485,6 +2572,6 @@
   "resource_exposure": true,
   "undocumented_actions": false,
   "unknown_actions": [],
-  "updatedate": "2024-12-04T19:51:07+00:00",
-  "version": "v2"
+  "updatedate": "2025-06-29T22:22:06+00:00",
+  "version": "v3"
 }

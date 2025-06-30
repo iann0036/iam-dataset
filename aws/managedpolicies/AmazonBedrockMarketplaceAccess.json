@@ -1,0 +1,545 @@
+{
+  "access_levels": [
+    "List",
+    "Read",
+    "Tagging",
+    "Write",
+    "Permissions management"
+  ],
+  "arn": "arn:aws:iam::aws:policy/AmazonBedrockMarketplaceAccess",
+  "createdate": "2025-06-29T22:22:07Z",
+  "credentials_exposure": false,
+  "data_access": false,
+  "deprecated": false,
+  "document": {
+    "Statement": [
+      {
+        "Action": [
+          "bedrock:CreateMarketplaceModelEndpoint",
+          "bedrock:DeleteMarketplaceModelEndpoint",
+          "bedrock:DeregisterMarketplaceModelEndpoint",
+          "bedrock:RegisterMarketplaceModelEndpoint",
+          "bedrock:UpdateMarketplaceModelEndpoint"
+        ],
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "BedrockMarketplaceAPIs"
+      },
+      {
+        "Action": [
+          "sagemaker:CreateEndpoint",
+          "sagemaker:CreateEndpointConfig",
+          "sagemaker:CreateModel",
+          "sagemaker:DeleteEndpoint",
+          "sagemaker:UpdateEndpoint"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:CalledViaLast": "bedrock.amazonaws.com",
+            "aws:ResourceTag/sagemaker-sdk:bedrock": "compatible"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:sagemaker:*:*:endpoint/*",
+          "arn:aws:sagemaker:*:*:endpoint-config/*",
+          "arn:aws:sagemaker:*:*:model/*"
+        ],
+        "Sid": "MarketplaceModelEndpointMutatingAPIs"
+      },
+      {
+        "Action": [
+          "sagemaker:AddTags"
+        ],
+        "Condition": {
+          "ForAllValues:StringEquals": {
+            "aws:TagKeys": [
+              "sagemaker-sdk:bedrock",
+              "bedrock:marketplace-registration-status",
+              "sagemaker-studio:hub-content-arn"
+            ]
+          },
+          "StringLike": {
+            "aws:RequestTag/bedrock:marketplace-registration-status": "registered",
+            "aws:RequestTag/sagemaker-sdk:bedrock": "compatible",
+            "aws:RequestTag/sagemaker-studio:hub-content-arn": "arn:aws:sagemaker:*:aws:hub-content/SageMakerPublicHub/Model/*"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:sagemaker:*:*:endpoint/*",
+          "arn:aws:sagemaker:*:*:endpoint-config/*",
+          "arn:aws:sagemaker:*:*:model/*"
+        ],
+        "Sid": "MarketplaceModelEndpointAddTagsOperations"
+      },
+      {
+        "Action": [
+          "sagemaker:DeleteTags"
+        ],
+        "Condition": {
+          "ForAllValues:StringEquals": {
+            "aws:TagKeys": [
+              "sagemaker-sdk:bedrock",
+              "bedrock:marketplace-registration-status",
+              "sagemaker-studio:hub-content-arn"
+            ]
+          },
+          "StringLike": {
+            "aws:ResourceTag/bedrock:marketplace-registration-status": "registered",
+            "aws:ResourceTag/sagemaker-sdk:bedrock": "compatible",
+            "aws:ResourceTag/sagemaker-studio:hub-content-arn": "arn:aws:sagemaker:*:aws:hub-content/SageMakerPublicHub/Model/*"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:sagemaker:*:*:endpoint/*",
+          "arn:aws:sagemaker:*:*:endpoint-config/*",
+          "arn:aws:sagemaker:*:*:model/*"
+        ],
+        "Sid": "MarketplaceModelEndpointDeleteTagsOperations"
+      },
+      {
+        "Action": [
+          "sagemaker:DescribeEndpoint",
+          "sagemaker:DescribeEndpointConfig",
+          "sagemaker:DescribeModel",
+          "sagemaker:DescribeInferenceComponent",
+          "sagemaker:ListEndpoints",
+          "sagemaker:ListTags"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:CalledViaLast": "bedrock.amazonaws.com"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:sagemaker:*:*:endpoint/*",
+          "arn:aws:sagemaker:*:*:endpoint-config/*",
+          "arn:aws:sagemaker:*:*:model/*"
+        ],
+        "Sid": "MarketplaceModelEndpointNonMutatingAPIs"
+      },
+      {
+        "Action": [
+          "sagemaker:InvokeEndpoint",
+          "sagemaker:InvokeEndpointWithResponseStream"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:CalledViaLast": "bedrock.amazonaws.com",
+            "aws:ResourceTag/sagemaker-sdk:bedrock": "compatible"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:sagemaker:*:*:endpoint/*"
+        ],
+        "Sid": "MarketplaceModelEndpointInvokingOperations"
+      },
+      {
+        "Action": [
+          "sagemaker:DescribeHubContent"
+        ],
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:sagemaker:*:aws:hub-content/SageMakerPublicHub/Model/*",
+          "arn:aws:sagemaker:*:aws:hub/SageMakerPublicHub"
+        ],
+        "Sid": "DiscoveringMarketplaceModel"
+      },
+      {
+        "Action": [
+          "sagemaker:ListHubContents"
+        ],
+        "Effect": "Allow",
+        "Resource": "arn:aws:sagemaker:*:aws:hub/SageMakerPublicHub",
+        "Sid": "AllowMarketplaceModelsListing"
+      },
+      {
+        "Action": [
+          "iam:PassRole"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "iam:PassedToService": [
+              "sagemaker.amazonaws.com",
+              "bedrock.amazonaws.com"
+            ]
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:iam::*:role/*SageMaker*ForBedrock*"
+        ],
+        "Sid": "PassRoleToSageMaker"
+      },
+      {
+        "Action": [
+          "iam:PassRole"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "iam:PassedToService": [
+              "bedrock.amazonaws.com"
+            ]
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:iam::*:role/*AmazonBedrock*",
+        "Sid": "PassRoleToBedrock"
+      }
+    ],
+    "Version": "2012-10-17"
+  },
+  "effective_actions": [
+    {
+      "access_level": "Write",
+      "action": "bedrock:CreateMarketplaceModelEndpoint",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "bedrock:CreateMarketplaceModelEndpoint",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "bedrock:DeleteMarketplaceModelEndpoint",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "bedrock:DeleteMarketplaceModelEndpoint",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "bedrock:DeregisterMarketplaceModelEndpoint",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "bedrock:DeregisterMarketplaceModelEndpoint",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "bedrock:RegisterMarketplaceModelEndpoint",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "bedrock:RegisterMarketplaceModelEndpoint",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "bedrock:UpdateMarketplaceModelEndpoint",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "bedrock:UpdateMarketplaceModelEndpoint",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "sagemaker:CreateEndpoint",
+      "condition": {
+        "StringEquals": {
+          "aws:CalledViaLast": "bedrock.amazonaws.com",
+          "aws:ResourceTag/sagemaker-sdk:bedrock": "compatible"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sagemaker:CreateEndpoint",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "sagemaker:CreateEndpointConfig",
+      "condition": {
+        "StringEquals": {
+          "aws:CalledViaLast": "bedrock.amazonaws.com",
+          "aws:ResourceTag/sagemaker-sdk:bedrock": "compatible"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sagemaker:CreateEndpointConfig",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "sagemaker:CreateModel",
+      "condition": {
+        "StringEquals": {
+          "aws:CalledViaLast": "bedrock.amazonaws.com",
+          "aws:ResourceTag/sagemaker-sdk:bedrock": "compatible"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sagemaker:CreateModel",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "sagemaker:DeleteEndpoint",
+      "condition": {
+        "StringEquals": {
+          "aws:CalledViaLast": "bedrock.amazonaws.com",
+          "aws:ResourceTag/sagemaker-sdk:bedrock": "compatible"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sagemaker:DeleteEndpoint",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "sagemaker:UpdateEndpoint",
+      "condition": {
+        "StringEquals": {
+          "aws:CalledViaLast": "bedrock.amazonaws.com",
+          "aws:ResourceTag/sagemaker-sdk:bedrock": "compatible"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sagemaker:UpdateEndpoint",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Tagging",
+      "action": "sagemaker:AddTags",
+      "condition": {
+        "ForAllValues:StringEquals": {
+          "aws:TagKeys": [
+            "sagemaker-sdk:bedrock",
+            "bedrock:marketplace-registration-status",
+            "sagemaker-studio:hub-content-arn"
+          ]
+        },
+        "StringLike": {
+          "aws:RequestTag/bedrock:marketplace-registration-status": "registered",
+          "aws:RequestTag/sagemaker-sdk:bedrock": "compatible",
+          "aws:RequestTag/sagemaker-studio:hub-content-arn": "arn:aws:sagemaker:*:aws:hub-content/SageMakerPublicHub/Model/*"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sagemaker:AddTags",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Tagging",
+      "action": "sagemaker:DeleteTags",
+      "condition": {
+        "ForAllValues:StringEquals": {
+          "aws:TagKeys": [
+            "sagemaker-sdk:bedrock",
+            "bedrock:marketplace-registration-status",
+            "sagemaker-studio:hub-content-arn"
+          ]
+        },
+        "StringLike": {
+          "aws:ResourceTag/bedrock:marketplace-registration-status": "registered",
+          "aws:ResourceTag/sagemaker-sdk:bedrock": "compatible",
+          "aws:ResourceTag/sagemaker-studio:hub-content-arn": "arn:aws:sagemaker:*:aws:hub-content/SageMakerPublicHub/Model/*"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sagemaker:DeleteTags",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "sagemaker:DescribeEndpoint",
+      "condition": {
+        "StringEquals": {
+          "aws:CalledViaLast": "bedrock.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sagemaker:DescribeEndpoint",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "sagemaker:DescribeEndpointConfig",
+      "condition": {
+        "StringEquals": {
+          "aws:CalledViaLast": "bedrock.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sagemaker:DescribeEndpointConfig",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "sagemaker:DescribeModel",
+      "condition": {
+        "StringEquals": {
+          "aws:CalledViaLast": "bedrock.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sagemaker:DescribeModel",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "sagemaker:DescribeInferenceComponent",
+      "condition": {
+        "StringEquals": {
+          "aws:CalledViaLast": "bedrock.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sagemaker:DescribeInferenceComponent",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "sagemaker:ListEndpoints",
+      "condition": {
+        "StringEquals": {
+          "aws:CalledViaLast": "bedrock.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sagemaker:ListEndpoints",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "sagemaker:ListTags",
+      "condition": {
+        "StringEquals": {
+          "aws:CalledViaLast": "bedrock.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sagemaker:ListTags",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "sagemaker:InvokeEndpoint",
+      "condition": {
+        "StringEquals": {
+          "aws:CalledViaLast": "bedrock.amazonaws.com",
+          "aws:ResourceTag/sagemaker-sdk:bedrock": "compatible"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sagemaker:InvokeEndpoint",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "sagemaker:InvokeEndpointWithResponseStream",
+      "condition": {
+        "StringEquals": {
+          "aws:CalledViaLast": "bedrock.amazonaws.com",
+          "aws:ResourceTag/sagemaker-sdk:bedrock": "compatible"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sagemaker:InvokeEndpointWithResponseStream",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "sagemaker:DescribeHubContent",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sagemaker:DescribeHubContent",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "sagemaker:ListHubContents",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sagemaker:ListHubContents",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Permissions management",
+      "action": "iam:PassRole",
+      "condition": {
+        "StringEquals": {
+          "iam:PassedToService": [
+            "sagemaker.amazonaws.com",
+            "bedrock.amazonaws.com"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "iam:PassRole",
+      "privesc": true,
+      "resource_exposure": true
+    },
+    {
+      "access_level": "Permissions management",
+      "action": "iam:PassRole",
+      "condition": {
+        "StringEquals": {
+          "iam:PassedToService": [
+            "bedrock.amazonaws.com"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "iam:PassRole",
+      "privesc": true,
+      "resource_exposure": true
+    }
+  ],
+  "grantless": false,
+  "malformed": false,
+  "name": "AmazonBedrockMarketplaceAccess",
+  "privesc": true,
+  "resource_exposure": true,
+  "undocumented_actions": false,
+  "unknown_actions": [],
+  "updatedate": "2025-06-29T22:22:07+00:00",
+  "version": "v1"
+}
