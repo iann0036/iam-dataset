@@ -1,0 +1,727 @@
+{
+  "access_levels": [
+    "List",
+    "Read",
+    "Tagging",
+    "Write",
+    "Permissions management"
+  ],
+  "arn": "arn:aws:iam::aws:policy/AmazonSageMakerHyperPodObservabilityAdminAccess",
+  "createdate": "2025-07-10T14:37:07Z",
+  "credentials_exposure": false,
+  "data_access": false,
+  "deprecated": false,
+  "document": {
+    "Statement": [
+      {
+        "Action": [
+          "aps:CreateWorkspace"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:RequestTag/SageMaker": "true"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "PrometheusCreateAccess"
+      },
+      {
+        "Action": [
+          "aps:TagResource"
+        ],
+        "Condition": {
+          "ForAllValues:StringEquals": {
+            "aws:TagKeys": [
+              "SageMaker"
+            ]
+          },
+          "StringEquals": {
+            "aws:RequestTag/SageMaker": "true",
+            "aws:ResourceTag/SageMaker": "true"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:aps:*:*:/workspaces",
+          "arn:aws:aps:*:*:rulegroupsnamespace/*/HyperPodObservabilityNamespace"
+        ],
+        "Sid": "PrometheusTagsAccess"
+      },
+      {
+        "Action": [
+          "aps:DescribeWorkspace"
+        ],
+        "Effect": "Allow",
+        "Resource": "arn:aws:aps:*:*:workspace/*",
+        "Sid": "PrometheusDescribeAccess"
+      },
+      {
+        "Action": [
+          "aps:ListWorkspaces"
+        ],
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "PrometheusListAccess"
+      },
+      {
+        "Action": [
+          "aps:CreateAlertManagerDefinition",
+          "aps:DescribeAlertManagerDefinition",
+          "aps:DescribeRuleGroupsNamespace",
+          "aps:ListRuleGroupsNamespaces"
+        ],
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:aps:*:*:workspace/*",
+          "arn:aws:aps:*:*:rulegroupsnamespace/*/HyperPodObservabilityNamespace"
+        ],
+        "Sid": "PrometheusAlertsRuleGroupAccess"
+      },
+      {
+        "Action": [
+          "aps:CreateRuleGroupsNamespace"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:RequestTag/SageMaker": "true",
+            "aws:ResourceTag/SageMaker": "true"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:aps:*:*:rulegroupsnamespace/*/HyperPodObservabilityNamespace",
+        "Sid": "PrometheusCreateRuleGroupAccess"
+      },
+      {
+        "Action": [
+          "grafana:CreateWorkspace"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:RequestTag/SageMaker": "true"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "GrafanaCreateWorkspaceAccess"
+      },
+      {
+        "Action": [
+          "grafana:TagResource"
+        ],
+        "Condition": {
+          "ForAllValues:StringEquals": {
+            "aws:TagKeys": [
+              "SageMaker"
+            ]
+          },
+          "StringEquals": {
+            "aws:RequestTag/SageMaker": "true",
+            "aws:ResourceTag/SageMaker": "true"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:grafana:*:*:/workspaces",
+        "Sid": "GrafanaTagsAccess"
+      },
+      {
+        "Action": [
+          "grafana:ListWorkspaces"
+        ],
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "GrafanaListAccess"
+      },
+      {
+        "Action": [
+          "grafana:DescribeWorkspace",
+          "grafana:CreateWorkspaceApiKey",
+          "grafana:CreateWorkspaceServiceAccount",
+          "grafana:CreateWorkspaceServiceAccountToken",
+          "grafana:ListWorkspaceServiceAccounts",
+          "grafana:ListWorkspaceServiceAccountTokens",
+          "grafana:DeleteWorkspaceServiceAccountToken"
+        ],
+        "Effect": "Allow",
+        "Resource": "arn:aws:grafana:*:*:/workspaces/*",
+        "Sid": "GrafanaServiceAccountAccess"
+      },
+      {
+        "Action": [
+          "iam:PassRole"
+        ],
+        "Condition": {
+          "StringLike": {
+            "iam:PassedToService": [
+              "grafana.amazonaws.com"
+            ]
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:iam::*:role/AmazonSageMakerHyperPodObservabilityGrafanaAccess-*",
+        "Sid": "IAMGrafanaPassRoleAccess"
+      },
+      {
+        "Action": [
+          "iam:PassRole"
+        ],
+        "Condition": {
+          "StringLike": {
+            "iam:PassedToService": [
+              "pods.eks.amazonaws.com"
+            ]
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:iam::*:role/AmazonSageMakerHyperPodObservabilityAddonAccess-*",
+        "Sid": "IAMEKSPassRoleAccess"
+      },
+      {
+        "Action": [
+          "iam:GetRole"
+        ],
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:iam::*:role/AmazonSageMakerHyperPodObservabilityAddonAccess-*"
+        ],
+        "Sid": "IAMGetRoleAccess"
+      },
+      {
+        "Action": [
+          "sagemaker:ListClusters",
+          "sagemaker:DescribeCluster"
+        ],
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "HyperPodClusterAccess"
+      },
+      {
+        "Action": [
+          "eks:DeleteAddon",
+          "eks:UpdateAddon",
+          "eks:DescribeAddon"
+        ],
+        "Effect": "Allow",
+        "Resource": "arn:aws:eks:*:*:addon/*/amazon-sagemaker-hyperpod-observability/*",
+        "Sid": "EKSAddonAccess"
+      },
+      {
+        "Action": [
+          "eks:DescribeAddonConfiguration",
+          "eks:DescribeAddonVersions"
+        ],
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "EKSAddonDescribeAccess"
+      },
+      {
+        "Action": [
+          "eks:DescribePodIdentityAssociation"
+        ],
+        "Effect": "Allow",
+        "Resource": "arn:aws:eks:*:*:podidentityassociation/*/*",
+        "Sid": "EKSAddonDescribePodIdentityAccess"
+      },
+      {
+        "Action": [
+          "eks:ListAddons",
+          "eks:DescribeCluster"
+        ],
+        "Effect": "Allow",
+        "Resource": "arn:aws:eks:*:*:cluster/*",
+        "Sid": "EKSListDescribeAccess"
+      },
+      {
+        "Action": [
+          "eks:CreateAddon",
+          "eks:CreatePodIdentityAssociation"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:RequestTag/SageMaker": "true"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:eks:*:*:cluster/*",
+        "Sid": "EKSCreateAccess"
+      },
+      {
+        "Action": [
+          "eks:TagResource"
+        ],
+        "Condition": {
+          "ForAllValues:StringEquals": {
+            "aws:TagKeys": [
+              "SageMaker"
+            ]
+          },
+          "StringEquals": {
+            "aws:RequestTag/SageMaker": "true",
+            "aws:ResourceTag/SageMaker": "true"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:eks:*:*:cluster/*",
+          "arn:aws:eks:*:*:addon/*/*/*",
+          "arn:aws:eks:*:*:podidentityassociation/*/*"
+        ],
+        "Sid": "EKSTagsAccess"
+      },
+      {
+        "Action": [
+          "sso:DescribeRegisteredRegions",
+          "sso:CreateManagedApplicationInstance"
+        ],
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "SSOAccess"
+      }
+    ],
+    "Version": "2012-10-17"
+  },
+  "effective_actions": [
+    {
+      "access_level": "Write",
+      "action": "aps:CreateWorkspace",
+      "condition": {
+        "StringEquals": {
+          "aws:RequestTag/SageMaker": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "aps:CreateWorkspace",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Tagging",
+      "action": "aps:TagResource",
+      "condition": {
+        "ForAllValues:StringEquals": {
+          "aws:TagKeys": [
+            "SageMaker"
+          ]
+        },
+        "StringEquals": {
+          "aws:RequestTag/SageMaker": "true",
+          "aws:ResourceTag/SageMaker": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "aps:TagResource",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "aps:DescribeWorkspace",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "aps:DescribeWorkspace",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "aps:ListWorkspaces",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "aps:ListWorkspaces",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "aps:CreateAlertManagerDefinition",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "aps:CreateAlertManagerDefinition",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "aps:DescribeAlertManagerDefinition",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "aps:DescribeAlertManagerDefinition",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "aps:DescribeRuleGroupsNamespace",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "aps:DescribeRuleGroupsNamespace",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "aps:ListRuleGroupsNamespaces",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "aps:ListRuleGroupsNamespaces",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "aps:CreateRuleGroupsNamespace",
+      "condition": {
+        "StringEquals": {
+          "aws:RequestTag/SageMaker": "true",
+          "aws:ResourceTag/SageMaker": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "aps:CreateRuleGroupsNamespace",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "grafana:CreateWorkspace",
+      "condition": {
+        "StringEquals": {
+          "aws:RequestTag/SageMaker": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "grafana:CreateWorkspace",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Tagging",
+      "action": "grafana:TagResource",
+      "condition": {
+        "ForAllValues:StringEquals": {
+          "aws:TagKeys": [
+            "SageMaker"
+          ]
+        },
+        "StringEquals": {
+          "aws:RequestTag/SageMaker": "true",
+          "aws:ResourceTag/SageMaker": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "grafana:TagResource",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "grafana:ListWorkspaces",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "grafana:ListWorkspaces",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "grafana:DescribeWorkspace",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "grafana:DescribeWorkspace",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "grafana:CreateWorkspaceApiKey",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "grafana:CreateWorkspaceApiKey",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "grafana:CreateWorkspaceServiceAccount",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "grafana:CreateWorkspaceServiceAccount",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "grafana:CreateWorkspaceServiceAccountToken",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "grafana:CreateWorkspaceServiceAccountToken",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "grafana:ListWorkspaceServiceAccounts",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "grafana:ListWorkspaceServiceAccounts",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "grafana:ListWorkspaceServiceAccountTokens",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "grafana:ListWorkspaceServiceAccountTokens",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "grafana:DeleteWorkspaceServiceAccountToken",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "grafana:DeleteWorkspaceServiceAccountToken",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Permissions management",
+      "action": "iam:PassRole",
+      "condition": {
+        "StringLike": {
+          "iam:PassedToService": [
+            "grafana.amazonaws.com"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "iam:PassRole",
+      "privesc": true,
+      "resource_exposure": true
+    },
+    {
+      "access_level": "Permissions management",
+      "action": "iam:PassRole",
+      "condition": {
+        "StringLike": {
+          "iam:PassedToService": [
+            "pods.eks.amazonaws.com"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "iam:PassRole",
+      "privesc": true,
+      "resource_exposure": true
+    },
+    {
+      "access_level": "Read",
+      "action": "iam:GetRole",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "iam:GetRole",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "sagemaker:ListClusters",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sagemaker:ListClusters",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "sagemaker:DescribeCluster",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sagemaker:DescribeCluster",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "eks:DeleteAddon",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "eks:DeleteAddon",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "eks:UpdateAddon",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "eks:UpdateAddon",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "eks:DescribeAddon",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "eks:DescribeAddon",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "eks:DescribeAddonConfiguration",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "eks:DescribeAddonConfiguration",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "eks:DescribeAddonVersions",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "eks:DescribeAddonVersions",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "eks:DescribePodIdentityAssociation",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "eks:DescribePodIdentityAssociation",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "eks:ListAddons",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "eks:ListAddons",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "eks:DescribeCluster",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "eks:DescribeCluster",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "eks:CreateAddon",
+      "condition": {
+        "StringEquals": {
+          "aws:RequestTag/SageMaker": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "eks:CreateAddon",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "eks:CreatePodIdentityAssociation",
+      "condition": {
+        "StringEquals": {
+          "aws:RequestTag/SageMaker": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "eks:CreatePodIdentityAssociation",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Tagging",
+      "action": "eks:TagResource",
+      "condition": {
+        "ForAllValues:StringEquals": {
+          "aws:TagKeys": [
+            "SageMaker"
+          ]
+        },
+        "StringEquals": {
+          "aws:RequestTag/SageMaker": "true",
+          "aws:ResourceTag/SageMaker": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "eks:TagResource",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "sso:DescribeRegisteredRegions",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sso:DescribeRegisteredRegions",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "sso:CreateManagedApplicationInstance",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sso:CreateManagedApplicationInstance",
+      "privesc": false,
+      "resource_exposure": false
+    }
+  ],
+  "grantless": false,
+  "malformed": false,
+  "name": "AmazonSageMakerHyperPodObservabilityAdminAccess",
+  "privesc": true,
+  "resource_exposure": true,
+  "undocumented_actions": false,
+  "unknown_actions": [],
+  "updatedate": "2025-07-10T14:37:07+00:00",
+  "version": "v1"
+}
