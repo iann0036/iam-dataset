@@ -7,7 +7,7 @@
     "Permissions management"
   ],
   "arn": "arn:aws:iam::aws:policy/SageMakerStudioProjectUserRolePolicy",
-  "createdate": "2025-06-25T04:22:08Z",
+  "createdate": "2025-07-11T17:52:08Z",
   "credentials_exposure": true,
   "data_access": true,
   "deprecated": false,
@@ -350,7 +350,11 @@
           "glue:PutDataQualityStatisticAnnotation",
           "glue:StartDataQualityRuleRecommendationRun",
           "glue:StartDataQualityRulesetEvaluationRun",
-          "glue:UpdateDataQualityRuleset"
+          "glue:UpdateDataQualityRuleset",
+          "glue:GetJobRun",
+          "glue:GetJobRuns",
+          "glue:BatchGetJobs",
+          "glue:GetJob"
         ],
         "Condition": {
           "StringEquals": {
@@ -371,6 +375,20 @@
       },
       {
         "Action": [
+          "glue:ListJobs"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:PrincipalTag/EnableGlueWorkloadsPermissions": "true",
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "GlueListJobsPermissions"
+      },
+      {
+        "Action": [
           "glue:GetGeneratedCode"
         ],
         "Effect": "Allow",
@@ -383,7 +401,10 @@
           "glue:GetCompletion"
         ],
         "Effect": "Allow",
-        "Resource": "arn:aws:glue:*:*:completion/*",
+        "Resource": [
+          "arn:aws:glue:*:*:completion/*",
+          "arn:aws:glue:*:*:job/*"
+        ],
         "Sid": "GlueCompletionsPermissions"
       },
       {
@@ -536,6 +557,22 @@
         "Effect": "Allow",
         "Resource": "*",
         "Sid": "AirflowCloudwatchActions"
+      },
+      {
+        "Action": [
+          "cloudwatch:PutMetricData"
+        ],
+        "Condition": {
+          "StringLike": {
+            "cloudwatch:namespace": [
+              "Glue",
+              "AWS/Glue"
+            ]
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "GlueJobCloudwatchPutMetricActions"
       },
       {
         "Action": [
@@ -736,6 +773,19 @@
       },
       {
         "Action": [
+          "s3:GetBucketAcl"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:s3:::${aws:PrincipalTag/DomainBucketName}",
+        "Sid": "AccessLevelControlS3BucketPermissions"
+      },
+      {
+        "Action": [
           "s3:PutObjectTagging"
         ],
         "Condition": {
@@ -787,11 +837,48 @@
       },
       {
         "Action": [
+          "kms:GenerateDataKey",
+          "kms:Decrypt"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "kms:EncryptionContext:aws:datazone:domainId": "${aws:PrincipalTag/AmazonDataZoneDomain}",
+            "kms:ViaService": [
+              "datazone.*.amazonaws.com"
+            ]
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:kms:*:*:key/${aws:PrincipalTag/DomainKmsKeyId}",
+        "Sid": "DZDomainKMSKeyXAcctPerm"
+      },
+      {
+        "Action": [
           "logs:DescribeLogGroups"
         ],
         "Effect": "Allow",
         "Resource": "*",
         "Sid": "ListLogGroupsPermissions"
+      },
+      {
+        "Action": [
+          "logs:DescribeLogStreams",
+          "logs:StartQuery",
+          "logs:GetLogEvents",
+          "logs:GetLogRecord",
+          "logs:GetLogGroupFields",
+          "logs:GetQueryResults",
+          "logs:PutLogEvents",
+          "logs:CreateLogGroup",
+          "logs:CreateLogStream",
+          "logs:FilterLogEvents"
+        ],
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:logs:*:*:log-group:${aws:PrincipalTag/LogGroupName}/*",
+          "arn:aws:logs:*:*:log-group:${aws:PrincipalTag/LogGroupName}/*:log-stream:*"
+        ],
+        "Sid": "GlueJobLogGroupPermissions"
       },
       {
         "Action": [
@@ -1244,7 +1331,8 @@
               "glue.amazonaws.com",
               "airflow.amazonaws.com",
               "emr-serverless.amazonaws.com",
-              "scheduler.amazonaws.com"
+              "scheduler.amazonaws.com",
+              "access-grants.s3.amazonaws.com"
             ]
           }
         },
@@ -1426,7 +1514,10 @@
             "aws:ViaAWSService": "true"
           },
           "ForAnyValue:StringEquals": {
-            "aws:CalledVia": "redshift-data.amazonaws.com"
+            "aws:CalledVia": [
+              "redshift-data.amazonaws.com",
+              "sqlworkbench.amazonaws.com"
+            ]
           }
         },
         "Effect": "Allow",
@@ -2421,6 +2512,7 @@
           "lakeformation:BatchGrantPermissions",
           "lakeformation:BatchRevokePermissions",
           "lakeformation:ListPermissions",
+          "lakeformation:DescribeResource",
           "ram:GetResourceShareInvitations",
           "lakeformation:CreateDataCellsFilter",
           "lakeformation:ListDataCellsFilter",
@@ -2522,7 +2614,8 @@
         "Condition": {
           "StringLike": {
             "ram:ResourceShareName": [
-              "LakeFormation*"
+              "LakeFormation*",
+              "DataZoneS3AG*"
             ]
           }
         },
@@ -4737,6 +4830,85 @@
     },
     {
       "access_level": "Read",
+      "action": "glue:GetJobRun",
+      "condition": {
+        "StringEquals": {
+          "aws:PrincipalTag/EnableGlueWorkloadsPermissions": "true",
+          "aws:ResourceAccount": "${aws:PrincipalAccount}",
+          "aws:ResourceTag/AmazonDataZoneProject": "${aws:PrincipalTag/AmazonDataZoneProject}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "glue:GetJobRun",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "glue:GetJobRuns",
+      "condition": {
+        "StringEquals": {
+          "aws:PrincipalTag/EnableGlueWorkloadsPermissions": "true",
+          "aws:ResourceAccount": "${aws:PrincipalAccount}",
+          "aws:ResourceTag/AmazonDataZoneProject": "${aws:PrincipalTag/AmazonDataZoneProject}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "glue:GetJobRuns",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "glue:BatchGetJobs",
+      "condition": {
+        "StringEquals": {
+          "aws:PrincipalTag/EnableGlueWorkloadsPermissions": "true",
+          "aws:ResourceAccount": "${aws:PrincipalAccount}",
+          "aws:ResourceTag/AmazonDataZoneProject": "${aws:PrincipalTag/AmazonDataZoneProject}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "glue:BatchGetJobs",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "glue:GetJob",
+      "condition": {
+        "StringEquals": {
+          "aws:PrincipalTag/EnableGlueWorkloadsPermissions": "true",
+          "aws:ResourceAccount": "${aws:PrincipalAccount}",
+          "aws:ResourceTag/AmazonDataZoneProject": "${aws:PrincipalTag/AmazonDataZoneProject}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "glue:GetJob",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "glue:ListJobs",
+      "condition": {
+        "StringEquals": {
+          "aws:PrincipalTag/EnableGlueWorkloadsPermissions": "true",
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "glue:ListJobs",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
       "action": "glue:GetGeneratedCode",
       "condition": null,
       "credentials_exposure": false,
@@ -5133,6 +5305,23 @@
       "condition": {
         "StringLike": {
           "cloudwatch:namespace": "AmazonMWAA"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudwatch:PutMetricData",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "cloudwatch:PutMetricData",
+      "condition": {
+        "StringLike": {
+          "cloudwatch:namespace": [
+            "Glue",
+            "AWS/Glue"
+          ]
         }
       },
       "credentials_exposure": false,
@@ -6046,6 +6235,20 @@
       "resource_exposure": false
     },
     {
+      "access_level": "Read",
+      "action": "s3:GetBucketAcl",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3:GetBucketAcl",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
       "access_level": "Tagging",
       "action": "s3:PutObjectTagging",
       "condition": {
@@ -6118,12 +6321,146 @@
       "resource_exposure": false
     },
     {
+      "access_level": "Write",
+      "action": "kms:GenerateDataKey",
+      "condition": {
+        "StringEquals": {
+          "kms:EncryptionContext:aws:datazone:domainId": "${aws:PrincipalTag/AmazonDataZoneDomain}",
+          "kms:ViaService": [
+            "datazone.*.amazonaws.com"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "kms:GenerateDataKey",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "kms:Decrypt",
+      "condition": {
+        "StringEquals": {
+          "kms:EncryptionContext:aws:datazone:domainId": "${aws:PrincipalTag/AmazonDataZoneDomain}",
+          "kms:ViaService": [
+            "datazone.*.amazonaws.com"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "kms:Decrypt",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
       "access_level": "List",
       "action": "logs:DescribeLogGroups",
       "condition": null,
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "logs:DescribeLogGroups",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "logs:DescribeLogStreams",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "logs:DescribeLogStreams",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "logs:StartQuery",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "logs:StartQuery",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "logs:GetLogEvents",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": true,
+      "effective_action": "logs:GetLogEvents",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "logs:GetLogRecord",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": true,
+      "effective_action": "logs:GetLogRecord",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "logs:GetLogGroupFields",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "logs:GetLogGroupFields",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "logs:GetQueryResults",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": true,
+      "effective_action": "logs:GetQueryResults",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "logs:PutLogEvents",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "logs:PutLogEvents",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "logs:CreateLogGroup",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "logs:CreateLogGroup",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "logs:CreateLogStream",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "logs:CreateLogStream",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "logs:FilterLogEvents",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "logs:FilterLogEvents",
       "privesc": false,
       "resource_exposure": false
     },
@@ -7995,7 +8332,8 @@
             "glue.amazonaws.com",
             "airflow.amazonaws.com",
             "emr-serverless.amazonaws.com",
-            "scheduler.amazonaws.com"
+            "scheduler.amazonaws.com",
+            "access-grants.s3.amazonaws.com"
           ]
         }
       },
@@ -8763,7 +9101,10 @@
           "aws:ViaAWSService": "true"
         },
         "ForAnyValue:StringEquals": {
-          "aws:CalledVia": "redshift-data.amazonaws.com"
+          "aws:CalledVia": [
+            "redshift-data.amazonaws.com",
+            "sqlworkbench.amazonaws.com"
+          ]
         }
       },
       "credentials_exposure": false,
@@ -11662,6 +12003,16 @@
     },
     {
       "access_level": "Read",
+      "action": "lakeformation:DescribeResource",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "lakeformation:DescribeResource",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
       "action": "ram:GetResourceShareInvitations",
       "condition": null,
       "credentials_exposure": false,
@@ -11912,7 +12263,8 @@
       "condition": {
         "StringLike": {
           "ram:ResourceShareName": [
-            "LakeFormation*"
+            "LakeFormation*",
+            "DataZoneS3AG*"
           ]
         }
       },
@@ -12194,6 +12546,6 @@
   "resource_exposure": true,
   "undocumented_actions": false,
   "unknown_actions": [],
-  "updatedate": "2025-06-25T04:22:08+00:00",
-  "version": "v14"
+  "updatedate": "2025-07-11T17:52:08+00:00",
+  "version": "v15"
 }
