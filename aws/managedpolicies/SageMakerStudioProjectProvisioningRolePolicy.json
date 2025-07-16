@@ -7,7 +7,7 @@
     "Permissions management"
   ],
   "arn": "arn:aws:iam::aws:policy/service-role/SageMakerStudioProjectProvisioningRolePolicy",
-  "createdate": "2025-07-03T18:07:07Z",
+  "createdate": "2025-07-15T16:22:08Z",
   "credentials_exposure": true,
   "data_access": true,
   "deprecated": false,
@@ -396,6 +396,7 @@
               "EnableSageMakerMLWorkloadsPermissions",
               "DomainBucketName",
               "KmsKeyId",
+              "DomainKmsKeyId",
               "LogGroupName",
               "RoleName",
               "vpcArn",
@@ -423,6 +424,29 @@
           "arn:aws:iam::*:role/SageMakerStudioQueryExecutionRole"
         ],
         "Sid": "IamTag"
+      },
+      {
+        "Action": [
+          "iam:TagRole",
+          "iam:UntagRole"
+        ],
+        "Condition": {
+          "ForAllValues:StringLike": {
+            "aws:TagKeys": [
+              "AmazonDataZoneScopeName",
+              "BootstrappedServices",
+              "AmazonDataZoneAdminProject"
+            ]
+          },
+          "Null": {
+            "aws:ResourceTag/AmazonDataZoneProject": "false"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:iam::*:role/datazone_usr_role_*"
+        ],
+        "Sid": "AdminProjectTagRoleManagement"
       },
       {
         "Action": [
@@ -859,7 +883,6 @@
         ],
         "Condition": {
           "StringEquals": {
-            "aws:CalledViaFirst": "cloudformation.amazonaws.com",
             "aws:ResourceAccount": "${aws:PrincipalAccount}"
           }
         },
@@ -1284,7 +1307,8 @@
         "Effect": "Allow",
         "Resource": [
           "arn:aws:iam::*:role/SageMakerStudioQueryExecutionRole",
-          "arn:aws:iam::*:role/service-role/AmazonSageMakerQueryExecution"
+          "arn:aws:iam::*:role/service-role/AmazonSageMakerQueryExecution",
+          "arn:aws:iam::*:role/datazone_s3tables_*"
         ],
         "Sid": "GetRole"
       },
@@ -1818,6 +1842,7 @@
         ],
         "Effect": "Allow",
         "Resource": [
+          "arn:aws:iam::*:role/aws-service-role/neptune-graph.amazonaws.com/AWSServiceRoleForNeptuneGraph",
           "arn:aws:iam::*:role/aws-service-role/redshift.amazonaws.com/AWSServiceRoleForRedshift",
           "arn:aws:iam::*:role/aws-service-role/sagemaker.amazonaws.com/AWSServiceRoleForAmazonSageMakerNotebooks",
           "arn:aws:iam::*:role/aws-service-role/ops.emr-serverless.amazonaws.com/AWSServiceRoleForAmazonEMRServerless",
@@ -2316,6 +2341,62 @@
       },
       {
         "Action": [
+          "neptune-graph:CreateGraph",
+          "neptune-graph:UpdateGraph",
+          "neptune-graph:DeleteGraph",
+          "neptune-graph:ListGraphs",
+          "neptune-graph:GetGraph"
+        ],
+        "Condition": {
+          "Null": {
+            "aws:ResourceTag/AmazonDataZoneProject": "false"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "ManageNeptune"
+      },
+      {
+        "Action": [
+          "s3vectors:CreateVectorBucket",
+          "s3vectors:DeleteVectorBucket",
+          "s3vectors:ListVectorBuckets",
+          "s3vectors:GetVectorBucket",
+          "s3vectors:CreateIndex",
+          "s3vectors:DeleteIndex",
+          "s3vectors:ListIndexes",
+          "s3vectors:GetIndex"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:s3vectors:*:*:bucket/amazon-bedrock-ide-*",
+        "Sid": "S3VectorsManage"
+      },
+      {
+        "Action": [
+          "neptune-graph:TagResource"
+        ],
+        "Condition": {
+          "ForAllValues:StringLike": {
+            "aws:TagKeys": [
+              "AmazonDataZone*",
+              "AmazonBedrock*"
+            ]
+          },
+          "Null": {
+            "aws:ResourceTag/AmazonDataZoneProject": "false"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:neptune-graph:*:*:graph/*",
+        "Sid": "TagNeptune"
+      },
+      {
+        "Action": [
           "s3:GetObject",
           "s3:GetObjectVersion"
         ],
@@ -2327,7 +2408,7 @@
         },
         "Effect": "Allow",
         "Resource": "arn:aws:s3:::*/dzd*/*/genAI/*",
-        "Sid": "GetBedrockCfnResourceDefinitionS3"
+        "Sid": "GetS3GenAI"
       },
       {
         "Action": [
@@ -2616,13 +2697,15 @@
           },
           "StringLike": {
             "kms:ViaService": [
-              "airflow.*.amazonaws.com"
+              "airflow.*.amazonaws.com",
+              "neptune-graph.*.amazonaws.com",
+              "s3vectors.*.amazonaws.com"
             ]
           }
         },
         "Effect": "Allow",
         "Resource": "*",
-        "Sid": "AirflowKmsCreateGrant"
+        "Sid": "KmsCreate"
       },
       {
         "Action": [
@@ -3863,6 +3946,7 @@
             "EnableSageMakerMLWorkloadsPermissions",
             "DomainBucketName",
             "KmsKeyId",
+            "DomainKmsKeyId",
             "LogGroupName",
             "RoleName",
             "vpcArn",
@@ -3900,6 +3984,7 @@
             "EnableSageMakerMLWorkloadsPermissions",
             "DomainBucketName",
             "KmsKeyId",
+            "DomainKmsKeyId",
             "LogGroupName",
             "RoleName",
             "vpcArn",
@@ -3914,6 +3999,48 @@
         },
         "StringEquals": {
           "aws:CalledViaFirst": "cloudformation.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "iam:UntagRole",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Tagging",
+      "action": "iam:TagRole",
+      "condition": {
+        "ForAllValues:StringLike": {
+          "aws:TagKeys": [
+            "AmazonDataZoneScopeName",
+            "BootstrappedServices",
+            "AmazonDataZoneAdminProject"
+          ]
+        },
+        "Null": {
+          "aws:ResourceTag/AmazonDataZoneProject": "false"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "iam:TagRole",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Tagging",
+      "action": "iam:UntagRole",
+      "condition": {
+        "ForAllValues:StringLike": {
+          "aws:TagKeys": [
+            "AmazonDataZoneScopeName",
+            "BootstrappedServices",
+            "AmazonDataZoneAdminProject"
+          ]
+        },
+        "Null": {
+          "aws:ResourceTag/AmazonDataZoneProject": "false"
         }
       },
       "credentials_exposure": false,
@@ -4585,7 +4712,6 @@
       "action": "glue:DeleteDatabase",
       "condition": {
         "StringEquals": {
-          "aws:CalledViaFirst": "cloudformation.amazonaws.com",
           "aws:ResourceAccount": "${aws:PrincipalAccount}"
         }
       },
@@ -7486,6 +7612,208 @@
       "resource_exposure": false
     },
     {
+      "access_level": "Write",
+      "action": "neptune-graph:CreateGraph",
+      "condition": {
+        "Null": {
+          "aws:ResourceTag/AmazonDataZoneProject": "false"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "neptune-graph:CreateGraph",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "neptune-graph:UpdateGraph",
+      "condition": {
+        "Null": {
+          "aws:ResourceTag/AmazonDataZoneProject": "false"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "neptune-graph:UpdateGraph",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "neptune-graph:DeleteGraph",
+      "condition": {
+        "Null": {
+          "aws:ResourceTag/AmazonDataZoneProject": "false"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "neptune-graph:DeleteGraph",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "neptune-graph:ListGraphs",
+      "condition": {
+        "Null": {
+          "aws:ResourceTag/AmazonDataZoneProject": "false"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "neptune-graph:ListGraphs",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "neptune-graph:GetGraph",
+      "condition": {
+        "Null": {
+          "aws:ResourceTag/AmazonDataZoneProject": "false"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "neptune-graph:GetGraph",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "s3vectors:CreateVectorBucket",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3vectors:CreateVectorBucket",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "s3vectors:DeleteVectorBucket",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3vectors:DeleteVectorBucket",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "s3vectors:ListVectorBuckets",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3vectors:ListVectorBuckets",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "s3vectors:GetVectorBucket",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3vectors:GetVectorBucket",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "s3vectors:CreateIndex",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3vectors:CreateIndex",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "s3vectors:DeleteIndex",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3vectors:DeleteIndex",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "s3vectors:ListIndexes",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3vectors:ListIndexes",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "s3vectors:GetIndex",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3vectors:GetIndex",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Tagging",
+      "action": "neptune-graph:TagResource",
+      "condition": {
+        "ForAllValues:StringLike": {
+          "aws:TagKeys": [
+            "AmazonDataZone*",
+            "AmazonBedrock*"
+          ]
+        },
+        "Null": {
+          "aws:ResourceTag/AmazonDataZoneProject": "false"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "neptune-graph:TagResource",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
       "access_level": "Read",
       "action": "s3:GetObject",
       "condition": {
@@ -9094,7 +9422,9 @@
         },
         "StringLike": {
           "kms:ViaService": [
-            "airflow.*.amazonaws.com"
+            "airflow.*.amazonaws.com",
+            "neptune-graph.*.amazonaws.com",
+            "s3vectors.*.amazonaws.com"
           ]
         }
       },
@@ -10104,6 +10434,6 @@
   "resource_exposure": true,
   "undocumented_actions": false,
   "unknown_actions": [],
-  "updatedate": "2025-07-03T18:07:07+00:00",
-  "version": "v16"
+  "updatedate": "2025-07-15T16:22:08+00:00",
+  "version": "v17"
 }

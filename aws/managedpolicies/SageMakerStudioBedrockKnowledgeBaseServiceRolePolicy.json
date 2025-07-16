@@ -5,7 +5,7 @@
     "Write"
   ],
   "arn": "arn:aws:iam::aws:policy/service-role/SageMakerStudioBedrockKnowledgeBaseServiceRolePolicy",
-  "createdate": "2025-04-16T20:37:07Z",
+  "createdate": "2025-07-15T17:22:07Z",
   "credentials_exposure": false,
   "data_access": true,
   "deprecated": false,
@@ -102,6 +102,87 @@
         "Effect": "Allow",
         "Resource": "arn:aws:s3:::${aws:PrincipalTag/DomainBucketName}/${aws:PrincipalTag/AmazonDataZoneDomain}/${aws:PrincipalTag/AmazonDataZoneProject}/*",
         "Sid": "AccessDomainS3BucketPermissions"
+      },
+      {
+        "Action": [
+          "kms:Decrypt",
+          "kms:GenerateDataKey"
+        ],
+        "Condition": {
+          "Null": {
+            "kms:EncryptionContextKeys": "false"
+          },
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          },
+          "StringLike": {
+            "kms:ViaService": [
+              "neptune-graph.*.amazonaws.com",
+              "s3vectors.*.amazonaws.com"
+            ]
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:kms:*:*:key/${aws:PrincipalTag/KmsKeyId}",
+        "Sid": "VectorStoresKms"
+      },
+      {
+        "Action": [
+          "kms:DescribeKey"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          },
+          "StringLike": {
+            "kms:ViaService": [
+              "neptune-graph.*.amazonaws.com",
+              "s3vectors.*.amazonaws.com"
+            ]
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:kms:*:*:key/${aws:PrincipalTag/KmsKeyId}",
+        "Sid": "VectorStoresKmsDescribeKey"
+      },
+      {
+        "Action": [
+          "neptune-graph:GetGraph",
+          "neptune-graph:DeleteDataViaQuery",
+          "neptune-graph:WriteDataViaQuery",
+          "neptune-graph:ReadDataViaQuery"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}",
+            "aws:ResourceTag/AmazonDataZoneProject": "${aws:PrincipalTag/AmazonDataZoneProject}"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:neptune-graph:*:*:graph/*",
+        "Sid": "NeptuneGraphDataAccess"
+      },
+      {
+        "Action": [
+          "s3vectors:GetVectorBucket",
+          "s3vectors:GetIndex",
+          "s3vectors:PutVectors",
+          "s3vectors:GetVectors",
+          "s3vectors:ListVectors",
+          "s3vectors:QueryVectors",
+          "s3vectors:DeleteVectors"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          },
+          "StringNotEquals": {
+            "aws:PrincipalTag/AmazonDataZoneProject": ""
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:s3vectors:*:*:bucket/amazon-bedrock-ide-${aws:PrincipalTag/AmazonDataZoneProject}*",
+        "Sid": "S3VectorsDataAccess"
       },
       {
         "Action": [
@@ -319,6 +400,251 @@
       "access_level": "Write",
       "action": "kms:Decrypt",
       "condition": {
+        "Null": {
+          "kms:EncryptionContextKeys": "false"
+        },
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        },
+        "StringLike": {
+          "kms:ViaService": [
+            "neptune-graph.*.amazonaws.com",
+            "s3vectors.*.amazonaws.com"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "kms:Decrypt",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "kms:GenerateDataKey",
+      "condition": {
+        "Null": {
+          "kms:EncryptionContextKeys": "false"
+        },
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        },
+        "StringLike": {
+          "kms:ViaService": [
+            "neptune-graph.*.amazonaws.com",
+            "s3vectors.*.amazonaws.com"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "kms:GenerateDataKey",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "kms:DescribeKey",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        },
+        "StringLike": {
+          "kms:ViaService": [
+            "neptune-graph.*.amazonaws.com",
+            "s3vectors.*.amazonaws.com"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "kms:DescribeKey",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "neptune-graph:GetGraph",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}",
+          "aws:ResourceTag/AmazonDataZoneProject": "${aws:PrincipalTag/AmazonDataZoneProject}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "neptune-graph:GetGraph",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "neptune-graph:DeleteDataViaQuery",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}",
+          "aws:ResourceTag/AmazonDataZoneProject": "${aws:PrincipalTag/AmazonDataZoneProject}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "neptune-graph:DeleteDataViaQuery",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "neptune-graph:WriteDataViaQuery",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}",
+          "aws:ResourceTag/AmazonDataZoneProject": "${aws:PrincipalTag/AmazonDataZoneProject}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "neptune-graph:WriteDataViaQuery",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "neptune-graph:ReadDataViaQuery",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}",
+          "aws:ResourceTag/AmazonDataZoneProject": "${aws:PrincipalTag/AmazonDataZoneProject}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "neptune-graph:ReadDataViaQuery",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "s3vectors:GetVectorBucket",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        },
+        "StringNotEquals": {
+          "aws:PrincipalTag/AmazonDataZoneProject": ""
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3vectors:GetVectorBucket",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "s3vectors:GetIndex",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        },
+        "StringNotEquals": {
+          "aws:PrincipalTag/AmazonDataZoneProject": ""
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3vectors:GetIndex",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "s3vectors:PutVectors",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        },
+        "StringNotEquals": {
+          "aws:PrincipalTag/AmazonDataZoneProject": ""
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3vectors:PutVectors",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "s3vectors:GetVectors",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        },
+        "StringNotEquals": {
+          "aws:PrincipalTag/AmazonDataZoneProject": ""
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3vectors:GetVectors",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "s3vectors:ListVectors",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        },
+        "StringNotEquals": {
+          "aws:PrincipalTag/AmazonDataZoneProject": ""
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3vectors:ListVectors",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "s3vectors:QueryVectors",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        },
+        "StringNotEquals": {
+          "aws:PrincipalTag/AmazonDataZoneProject": ""
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3vectors:QueryVectors",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "s3vectors:DeleteVectors",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        },
+        "StringNotEquals": {
+          "aws:PrincipalTag/AmazonDataZoneProject": ""
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3vectors:DeleteVectors",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "kms:Decrypt",
+      "condition": {
         "StringEquals": {
           "aws:ResourceAccount": "${aws:PrincipalAccount}"
         },
@@ -430,6 +756,6 @@
   "resource_exposure": false,
   "undocumented_actions": false,
   "unknown_actions": [],
-  "updatedate": "2025-04-16T20:37:07+00:00",
-  "version": "v2"
+  "updatedate": "2025-07-15T17:22:07+00:00",
+  "version": "v3"
 }
