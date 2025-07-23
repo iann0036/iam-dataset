@@ -1,12 +1,11 @@
 {
   "access_levels": [
-    "List",
     "Read",
     "Write",
     "Permissions management"
   ],
   "arn": "arn:aws:iam::aws:policy/service-role/SageMakerStudioEMRServiceRolePolicy",
-  "createdate": "2025-02-27T00:22:06Z",
+  "createdate": "2025-07-22T16:52:07Z",
   "credentials_exposure": false,
   "data_access": true,
   "deprecated": false,
@@ -55,8 +54,6 @@
       {
         "Action": [
           "kms:CreateGrant",
-          "kms:ReEncryptFrom",
-          "kms:ReEncryptTo",
           "kms:Decrypt",
           "kms:Encrypt",
           "kms:GenerateDataKeyWithoutPlaintext"
@@ -93,36 +90,16 @@
       },
       {
         "Action": [
-          "kms:ListGrants",
-          "kms:RevokeGrant",
           "kms:DescribeKey"
         ],
         "Condition": {
           "StringEquals": {
             "aws:ResourceAccount": "${aws:PrincipalAccount}"
-          },
-          "StringLike": {
-            "kms:ViaService": [
-              "ec2.*.amazonaws.com"
-            ]
           }
         },
         "Effect": "Allow",
         "Resource": "arn:aws:kms:*:*:key/${aws:PrincipalTag/KmsKeyId}",
-        "Sid": "AllowEMRForKMSManagement"
-      },
-      {
-        "Action": [
-          "kms:ListAliases"
-        ],
-        "Condition": {
-          "StringEquals": {
-            "aws:ResourceAccount": "${aws:PrincipalAccount}"
-          }
-        },
-        "Effect": "Allow",
-        "Resource": "arn:aws:kms:*:*:key/${aws:PrincipalTag/KmsKeyId}",
-        "Sid": "AllowEMRToListKmsAliases"
+        "Sid": "AllowDescribeKeyForLogPusherCMK"
       }
     ],
     "Version": "2012-10-17"
@@ -218,50 +195,6 @@
     },
     {
       "access_level": "Write",
-      "action": "kms:ReEncryptFrom",
-      "condition": {
-        "Null": {
-          "kms:EncryptionContextKeys": "false"
-        },
-        "StringEquals": {
-          "aws:ResourceAccount": "${aws:PrincipalAccount}"
-        },
-        "StringLike": {
-          "kms:ViaService": [
-            "ec2.*.amazonaws.com"
-          ]
-        }
-      },
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "kms:ReEncryptFrom",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Write",
-      "action": "kms:ReEncryptTo",
-      "condition": {
-        "Null": {
-          "kms:EncryptionContextKeys": "false"
-        },
-        "StringEquals": {
-          "aws:ResourceAccount": "${aws:PrincipalAccount}"
-        },
-        "StringLike": {
-          "kms:ViaService": [
-            "ec2.*.amazonaws.com"
-          ]
-        }
-      },
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "kms:ReEncryptTo",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Write",
       "action": "kms:Decrypt",
       "condition": {
         "Null": {
@@ -341,73 +274,16 @@
       "resource_exposure": false
     },
     {
-      "access_level": "List",
-      "action": "kms:ListGrants",
-      "condition": {
-        "StringEquals": {
-          "aws:ResourceAccount": "${aws:PrincipalAccount}"
-        },
-        "StringLike": {
-          "kms:ViaService": [
-            "ec2.*.amazonaws.com"
-          ]
-        }
-      },
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "kms:ListGrants",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Permissions management",
-      "action": "kms:RevokeGrant",
-      "condition": {
-        "StringEquals": {
-          "aws:ResourceAccount": "${aws:PrincipalAccount}"
-        },
-        "StringLike": {
-          "kms:ViaService": [
-            "ec2.*.amazonaws.com"
-          ]
-        }
-      },
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "kms:RevokeGrant",
-      "privesc": false,
-      "resource_exposure": true
-    },
-    {
       "access_level": "Read",
       "action": "kms:DescribeKey",
       "condition": {
         "StringEquals": {
           "aws:ResourceAccount": "${aws:PrincipalAccount}"
-        },
-        "StringLike": {
-          "kms:ViaService": [
-            "ec2.*.amazonaws.com"
-          ]
         }
       },
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "kms:DescribeKey",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "kms:ListAliases",
-      "condition": {
-        "StringEquals": {
-          "aws:ResourceAccount": "${aws:PrincipalAccount}"
-        }
-      },
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "kms:ListAliases",
       "privesc": false,
       "resource_exposure": false
     }
@@ -419,6 +295,6 @@
   "resource_exposure": true,
   "undocumented_actions": false,
   "unknown_actions": [],
-  "updatedate": "2025-02-27T00:22:06+00:00",
-  "version": "v2"
+  "updatedate": "2025-07-22T16:52:07+00:00",
+  "version": "v3"
 }

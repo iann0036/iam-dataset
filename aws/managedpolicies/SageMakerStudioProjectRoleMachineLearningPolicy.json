@@ -7,7 +7,7 @@
     "Permissions management"
   ],
   "arn": "arn:aws:iam::aws:policy/SageMakerStudioProjectRoleMachineLearningPolicy",
-  "createdate": "2025-07-14T22:07:08Z",
+  "createdate": "2025-07-22T20:07:08Z",
   "credentials_exposure": true,
   "data_access": true,
   "deprecated": false,
@@ -1082,13 +1082,10 @@
           "ram:CreateResourceShare"
         ],
         "Condition": {
-          "ArnEquals": {
-            "ram:ResourceArn": [
-              "arn:aws:s3:*:*:access-grants/default"
-            ]
-          },
           "StringEquals": {
-            "aws:ResourceAccount": "${aws:PrincipalAccount}",
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          },
+          "StringEqualsIfExists": {
             "ram:RequestedResourceType": [
               "s3:AccessGrants"
             ]
@@ -1097,6 +1094,19 @@
         "Effect": "Allow",
         "Resource": "*",
         "Sid": "CrossAccountS3AGResourceSharingPermissions"
+      },
+      {
+        "Action": [
+          "s3:PutAccessGrantsInstanceResourcePolicy"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:s3:*:*:access-grants/default",
+        "Sid": "CrossAccountS3AGResourceSharingPolicyPermissions"
       },
       {
         "Action": [
@@ -4871,13 +4881,10 @@
       "access_level": "Permissions management",
       "action": "ram:CreateResourceShare",
       "condition": {
-        "ArnEquals": {
-          "ram:ResourceArn": [
-            "arn:aws:s3:*:*:access-grants/default"
-          ]
-        },
         "StringEquals": {
-          "aws:ResourceAccount": "${aws:PrincipalAccount}",
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        },
+        "StringEqualsIfExists": {
           "ram:RequestedResourceType": [
             "s3:AccessGrants"
           ]
@@ -4888,6 +4895,20 @@
       "effective_action": "ram:CreateResourceShare",
       "privesc": false,
       "resource_exposure": true
+    },
+    {
+      "access_level": "Permissions management",
+      "action": "s3:PutAccessGrantsInstanceResourcePolicy",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3:PutAccessGrantsInstanceResourcePolicy",
+      "privesc": false,
+      "resource_exposure": false
     },
     {
       "access_level": "Tagging",
@@ -4965,6 +4986,6 @@
   "resource_exposure": true,
   "undocumented_actions": false,
   "unknown_actions": [],
-  "updatedate": "2025-07-14T22:07:08+00:00",
-  "version": "v9"
+  "updatedate": "2025-07-22T20:07:08+00:00",
+  "version": "v10"
 }
