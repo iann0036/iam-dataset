@@ -7,7 +7,7 @@
     "Permissions management"
   ],
   "arn": "arn:aws:iam::aws:policy/SageMakerStudioProjectUserRolePolicy",
-  "createdate": "2025-07-11T17:52:08Z",
+  "createdate": "2025-07-28T22:22:06Z",
   "credentials_exposure": true,
   "data_access": true,
   "deprecated": false,
@@ -460,7 +460,10 @@
           }
         },
         "Effect": "Allow",
-        "Resource": "arn:aws:kms:*:*:key/${aws:PrincipalTag/KmsKeyId}",
+        "Resource": [
+          "arn:aws:kms:*:*:key/${aws:PrincipalTag/DefaultGlueCatalogKmsKeyId}",
+          "arn:aws:kms:*:*:key/${aws:PrincipalTag/KmsKeyId}"
+        ],
         "Sid": "GlueKmsPermissions"
       },
       {
@@ -875,8 +878,10 @@
         ],
         "Effect": "Allow",
         "Resource": [
-          "arn:aws:logs:*:*:log-group:${aws:PrincipalTag/LogGroupName}/*",
-          "arn:aws:logs:*:*:log-group:${aws:PrincipalTag/LogGroupName}/*:log-stream:*"
+          "arn:aws:logs:*:*:log-group:${aws:PrincipalTag/LogGroupName}/output",
+          "arn:aws:logs:*:*:log-group:${aws:PrincipalTag/LogGroupName}/error",
+          "arn:aws:logs:*:*:log-group:${aws:PrincipalTag/LogGroupName}/output:log-stream:*",
+          "arn:aws:logs:*:*:log-group:${aws:PrincipalTag/LogGroupName}/error:log-stream:*"
         ],
         "Sid": "GlueJobLogGroupPermissions"
       },
@@ -1284,6 +1289,24 @@
           "arn:aws:sts::*:self"
         ],
         "Sid": "SetContextForTrustedIdentityPropagation"
+      },
+      {
+        "Action": [
+          "sts:SetContext"
+        ],
+        "Condition": {
+          "ForAllValues:ArnEquals": {
+            "sts:RequestContextProviders": [
+              "arn:aws:iam::aws:contextProvider/IdentityCenter"
+            ]
+          },
+          "Null": {
+            "sts:RequestContextProviders": "false"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "StsContext"
       },
       {
         "Action": [
@@ -8230,6 +8253,25 @@
       "resource_exposure": false
     },
     {
+      "access_level": "Write",
+      "action": "sts:SetContext",
+      "condition": {
+        "ForAllValues:ArnEquals": {
+          "sts:RequestContextProviders": [
+            "arn:aws:iam::aws:contextProvider/IdentityCenter"
+          ]
+        },
+        "Null": {
+          "sts:RequestContextProviders": "false"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sts:SetContext",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
       "access_level": "Read",
       "action": "glue:GetConnection",
       "condition": {
@@ -12546,6 +12588,6 @@
   "resource_exposure": true,
   "undocumented_actions": false,
   "unknown_actions": [],
-  "updatedate": "2025-07-11T17:52:08+00:00",
-  "version": "v15"
+  "updatedate": "2025-07-28T22:22:06+00:00",
+  "version": "v16"
 }
