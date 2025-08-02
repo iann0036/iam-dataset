@@ -4,7 +4,7 @@
     "Permissions management"
   ],
   "arn": "arn:aws:iam::aws:policy/aws-service-role/AWSMarketplaceResaleAuthorizationServiceRolePolicy",
-  "createdate": "2024-03-05T18:47:54Z",
+  "createdate": "2025-08-01T15:19:07Z",
   "credentials_exposure": false,
   "data_access": false,
   "deprecated": false,
@@ -16,7 +16,7 @@
         ],
         "Condition": {
           "ArnLike": {
-            "ram:ResourceArn": "arn:aws:aws-marketplace:*:*:AWSMarketplace/ResaleAuthorization/*"
+            "ram:ResourceArn": "arn:aws:aws-marketplace:*:*:*/ResaleAuthorization/*"
           },
           "Null": {
             "ram:Principal": "true"
@@ -51,7 +51,8 @@
       },
       {
         "Action": [
-          "ram:AcceptResourceShareInvitation"
+          "ram:AcceptResourceShareInvitation",
+          "ram:DeleteResourceShare"
         ],
         "Condition": {
           "StringEquals": {
@@ -62,7 +63,7 @@
         "Resource": [
           "arn:aws:ram:*:*:*"
         ],
-        "Sid": "AllowResaleAuthorizationShareActionsRAMAccept"
+        "Sid": "AllowResaleAuthorizationShareActionsRAMAcceptDelete"
       },
       {
         "Action": [
@@ -78,7 +79,8 @@
       {
         "Action": [
           "aws-marketplace:PutResourcePolicy",
-          "aws-marketplace:GetResourcePolicy"
+          "aws-marketplace:GetResourcePolicy",
+          "aws-marketplace:DeleteResourcePolicy"
         ],
         "Condition": {
           "ForAnyValue:StringEquals": {
@@ -88,7 +90,7 @@
           }
         },
         "Effect": "Allow",
-        "Resource": "arn:aws:aws-marketplace:*:*:AWSMarketplace/ResaleAuthorization/*",
+        "Resource": "arn:aws:aws-marketplace:*:*:*/ResaleAuthorization/*",
         "Sid": "AllowResaleAuthorizationShareActionsMarketplace"
       },
       {
@@ -96,7 +98,7 @@
           "aws-marketplace:DescribeEntity"
         ],
         "Effect": "Allow",
-        "Resource": "arn:aws:aws-marketplace:*:*:AWSMarketplace/ResaleAuthorization/*",
+        "Resource": "arn:aws:aws-marketplace:*:*:*/ResaleAuthorization/*",
         "Sid": "AllowResaleAuthorizationShareActionsMarketplaceDescribe"
       }
     ],
@@ -108,7 +110,7 @@
       "action": "ram:CreateResourceShare",
       "condition": {
         "ArnLike": {
-          "ram:ResourceArn": "arn:aws:aws-marketplace:*:*:AWSMarketplace/ResaleAuthorization/*"
+          "ram:ResourceArn": "arn:aws:aws-marketplace:*:*:*/ResaleAuthorization/*"
         },
         "Null": {
           "ram:Principal": "true"
@@ -151,6 +153,20 @@
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "ram:AcceptResourceShareInvitation",
+      "privesc": false,
+      "resource_exposure": true
+    },
+    {
+      "access_level": "Permissions management",
+      "action": "ram:DeleteResourceShare",
+      "condition": {
+        "StringEquals": {
+          "ram:ResourceShareName": "AWSMarketplaceResaleAuthorization"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ram:DeleteResourceShare",
       "privesc": false,
       "resource_exposure": true
     },
@@ -207,6 +223,22 @@
       "resource_exposure": false
     },
     {
+      "access_level": "Permissions management",
+      "action": "aws-marketplace:DeleteResourcePolicy",
+      "condition": {
+        "ForAnyValue:StringEquals": {
+          "aws:CalledVia": [
+            "ram.amazonaws.com"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "aws-marketplace:DeleteResourcePolicy",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
       "access_level": "Read",
       "action": "aws-marketplace:DescribeEntity",
       "condition": null,
@@ -224,6 +256,6 @@
   "resource_exposure": true,
   "undocumented_actions": false,
   "unknown_actions": [],
-  "updatedate": "2024-03-05T18:47:54+00:00",
-  "version": "v1"
+  "updatedate": "2025-08-01T15:19:07+00:00",
+  "version": "v2"
 }
