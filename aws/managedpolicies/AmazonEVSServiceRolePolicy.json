@@ -6,7 +6,7 @@
     "Permissions management"
   ],
   "arn": "arn:aws:iam::aws:policy/aws-service-role/AmazonEVSServiceRolePolicy",
-  "createdate": "2025-05-16T23:37:06Z",
+  "createdate": "2025-08-05T18:34:07Z",
   "credentials_exposure": false,
   "data_access": false,
   "deprecated": false,
@@ -32,6 +32,19 @@
           "arn:aws:ec2:*:*:security-group/*"
         ],
         "Sid": "CreateEniInSubnetStatement"
+      },
+      {
+        "Action": [
+          "ec2:DeleteSubnet"
+        ],
+        "Condition": {
+          "Null": {
+            "aws:ResourceTag/AmazonEVSManaged": "false"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:ec2:*:*:subnet/*",
+        "Sid": "ManageSubnetStatement"
       },
       {
         "Action": [
@@ -87,6 +100,22 @@
         "Effect": "Allow",
         "Resource": "arn:aws:ec2:*:*:security-group/*",
         "Sid": "UpdateSecurityGroupStatement"
+      },
+      {
+        "Action": [
+          "cloudwatch:PutMetricData"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "cloudwatch:namespace": [
+              "AWS/Usage",
+              "AWS/EVS"
+            ]
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "CloudWatchPutMetricDataStatement"
       }
     ],
     "Version": "2012-10-17"
@@ -129,6 +158,20 @@
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "ec2:CreateNetworkInterface",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:DeleteSubnet",
+      "condition": {
+        "Null": {
+          "aws:ResourceTag/AmazonEVSManaged": "false"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:DeleteSubnet",
       "privesc": false,
       "resource_exposure": false
     },
@@ -230,6 +273,23 @@
       "effective_action": "ec2:ModifyNetworkInterfaceAttribute",
       "privesc": false,
       "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "cloudwatch:PutMetricData",
+      "condition": {
+        "StringEquals": {
+          "cloudwatch:namespace": [
+            "AWS/Usage",
+            "AWS/EVS"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudwatch:PutMetricData",
+      "privesc": false,
+      "resource_exposure": false
     }
   ],
   "grantless": false,
@@ -239,6 +299,6 @@
   "resource_exposure": true,
   "undocumented_actions": false,
   "unknown_actions": [],
-  "updatedate": "2025-05-16T23:37:06+00:00",
-  "version": "v1"
+  "updatedate": "2025-08-05T18:34:07+00:00",
+  "version": "v2"
 }
