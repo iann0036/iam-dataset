@@ -1,11 +1,12 @@
 {
   "access_levels": [
     "List",
+    "Read",
     "Tagging",
     "Write"
   ],
   "arn": "arn:aws:iam::aws:policy/aws-service-role/AWSSecurityIncidentResponseServiceRolePolicy",
-  "createdate": "2024-12-01T16:36:06Z",
+  "createdate": "2025-08-06T16:19:07Z",
   "credentials_exposure": false,
   "data_access": false,
   "deprecated": false,
@@ -14,8 +15,15 @@
       {
         "Action": [
           "organizations:ListAccounts",
-          "organizations:ListChildren"
+          "organizations:ListChildren",
+          "organizations:DescribeAccount",
+          "organizations:ListDelegatedAdministrators"
         ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          }
+        },
         "Effect": "Allow",
         "Resource": "*",
         "Sid": "SecurityIncidentResponseOrganizationsPolicy"
@@ -47,7 +55,11 @@
     {
       "access_level": "List",
       "action": "organizations:ListAccounts",
-      "condition": null,
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "organizations:ListAccounts",
@@ -57,10 +69,42 @@
     {
       "access_level": "List",
       "action": "organizations:ListChildren",
-      "condition": null,
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "organizations:ListChildren",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "organizations:DescribeAccount",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "organizations:DescribeAccount",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "organizations:ListDelegatedAdministrators",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "organizations:ListDelegatedAdministrators",
       "privesc": false,
       "resource_exposure": false
     },
@@ -112,6 +156,6 @@
   "resource_exposure": false,
   "undocumented_actions": false,
   "unknown_actions": [],
-  "updatedate": "2024-12-01T16:36:06+00:00",
-  "version": "v1"
+  "updatedate": "2025-08-06T16:19:07+00:00",
+  "version": "v2"
 }
