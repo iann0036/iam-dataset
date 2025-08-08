@@ -7,7 +7,7 @@
     "Permissions management"
   ],
   "arn": "arn:aws:iam::aws:policy/aws-service-role/AmazonRDSCustomPreviewServiceRolePolicy",
-  "createdate": "2025-03-25T22:22:06Z",
+  "createdate": "2025-08-07T20:19:07Z",
   "credentials_exposure": false,
   "data_access": true,
   "deprecated": false,
@@ -398,7 +398,6 @@
       },
       {
         "Action": [
-          "ec2:CopySnapshot",
           "ec2:CreateSnapshots"
         ],
         "Condition": {
@@ -433,6 +432,33 @@
           "arn:aws:ec2:*:*:volume/*"
         ],
         "Sid": "eccSnapshot3"
+      },
+      {
+        "Action": [
+          "ec2:CopySnapshot"
+        ],
+        "Effect": "Allow",
+        "Resource": "arn:aws:ec2:*::snapshot/snap-*",
+        "Sid": "eccSnapshotCopySource"
+      },
+      {
+        "Action": [
+          "ec2:CopySnapshot"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:RequestTag/AWSRDSCustom": [
+              "custom-oracle",
+              "custom-sqlserver",
+              "custom-oracle-rac"
+            ]
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:ec2:*::snapshot/${*}"
+        ],
+        "Sid": "eccSnapshotCopyDestination"
       },
       {
         "Action": [
@@ -1557,24 +1583,6 @@
     },
     {
       "access_level": "Write",
-      "action": "ec2:CopySnapshot",
-      "condition": {
-        "StringLike": {
-          "aws:RequestTag/AWSRDSCustom": [
-            "custom-oracle",
-            "custom-sqlserver",
-            "custom-oracle-rac"
-          ]
-        }
-      },
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:CopySnapshot",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Write",
       "action": "ec2:CreateSnapshots",
       "condition": {
         "StringLike": {
@@ -1606,6 +1614,34 @@
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "ec2:CreateSnapshots",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:CopySnapshot",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:CopySnapshot",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:CopySnapshot",
+      "condition": {
+        "StringEquals": {
+          "aws:RequestTag/AWSRDSCustom": [
+            "custom-oracle",
+            "custom-sqlserver",
+            "custom-oracle-rac"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:CopySnapshot",
       "privesc": false,
       "resource_exposure": false
     },
@@ -2449,6 +2485,6 @@
   "resource_exposure": true,
   "undocumented_actions": false,
   "unknown_actions": [],
-  "updatedate": "2025-03-25T22:22:06+00:00",
-  "version": "v8"
+  "updatedate": "2025-08-07T20:19:07+00:00",
+  "version": "v9"
 }
