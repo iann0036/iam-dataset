@@ -12,13 +12,14 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v1
-      - name: Set up Cloud SDK
-        uses: google-github-actions/setup-gcloud@v2
+      - name: Auth gcloud
+        uses: google-github-actions/auth@v0
         with:
           project_id: ${{ secrets.GCP_PROJECT_ID }}
-          service_account_key: ${{ secrets.GCP_SA_KEY }}
-          export_default_credentials: true
-          credentials_file_path: gcreds
+          create_credentials_file: true
+          service_account_key: ${{ secrets.GCP_KEY_JSON }}
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v2
       - name: Azure Login
         uses: azure/login@v1
         with:
@@ -57,7 +58,7 @@ jobs:
           python3 util/gcp_crawl.py || true
           rm -rf gcp/google-api-go-client
           rm -rf gcp/google-cloud-node
-          rm gcreds
+          rm gcreds || true
           git clone https://github.com/Azure/azure-rest-api-specs.git
           python3 util/azure_process_spec.py
           az provider operation list > azure/provider-operations.json
