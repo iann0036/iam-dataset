@@ -7,7 +7,7 @@
     "Permissions management"
   ],
   "arn": "arn:aws:iam::aws:policy/service-role/ROSAInstallerPolicy",
-  "createdate": "2025-04-10T23:52:06Z",
+  "createdate": "2025-08-11T17:34:06Z",
   "credentials_exposure": false,
   "data_access": true,
   "deprecated": false,
@@ -28,6 +28,7 @@
           "ec2:DescribeVpcAttribute",
           "ec2:DescribeVpcs",
           "ec2:DescribeInstanceTypeOfferings",
+          "ec2:DescribeCapacityReservations",
           "elasticloadbalancing:DescribeAccountLimits",
           "elasticloadbalancing:DescribeLoadBalancers",
           "iam:GetOpenIDConnectProvider",
@@ -340,6 +341,26 @@
       },
       {
         "Action": [
+          "ec2:DeleteTags"
+        ],
+        "Condition": {
+          "ForAllValues:StringLike": {
+            "aws:TagKeys": [
+              "kubernetes.io/cluster/*"
+            ]
+          },
+          "Null": {
+            "aws:TagKeys": "false"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:ec2:*:*:subnet/*"
+        ],
+        "Sid": "DeleteTagsK8sSubnet"
+      },
+      {
+        "Action": [
           "iam:ListAttachedRolePolicies",
           "iam:ListRolePolicies"
         ],
@@ -483,6 +504,16 @@
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "ec2:DescribeInstanceTypeOfferings",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "ec2:DescribeCapacityReservations",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:DescribeCapacityReservations",
       "privesc": false,
       "resource_exposure": false
     },
@@ -995,6 +1026,25 @@
       "resource_exposure": false
     },
     {
+      "access_level": "Tagging",
+      "action": "ec2:DeleteTags",
+      "condition": {
+        "ForAllValues:StringLike": {
+          "aws:TagKeys": [
+            "kubernetes.io/cluster/*"
+          ]
+        },
+        "Null": {
+          "aws:TagKeys": "false"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:DeleteTags",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
       "access_level": "List",
       "action": "iam:ListAttachedRolePolicies",
       "condition": {
@@ -1030,6 +1080,6 @@
   "resource_exposure": true,
   "undocumented_actions": false,
   "unknown_actions": [],
-  "updatedate": "2025-04-10T23:52:06+00:00",
-  "version": "v5"
+  "updatedate": "2025-08-11T17:34:06+00:00",
+  "version": "v6"
 }
