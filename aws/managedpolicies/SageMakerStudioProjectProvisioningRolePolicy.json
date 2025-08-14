@@ -7,7 +7,7 @@
     "Permissions management"
   ],
   "arn": "arn:aws:iam::aws:policy/service-role/SageMakerStudioProjectProvisioningRolePolicy",
-  "createdate": "2025-07-15T16:22:08Z",
+  "createdate": "2025-08-13T23:49:07Z",
   "credentials_exposure": true,
   "data_access": true,
   "deprecated": false,
@@ -151,6 +151,7 @@
       {
         "Action": [
           "codecommit:DeleteRepository",
+          "codecommit:UntagResource",
           "codecommit:UpdateRepositoryEncryptionKey",
           "codecommit:PutRepositoryTriggers"
         ],
@@ -555,6 +556,7 @@
       {
         "Action": [
           "iam:DeleteRole",
+          "iam:DeleteRolePolicy",
           "iam:ListRolePolicies",
           "iam:GetRolePolicy",
           "iam:ListAttachedRolePolicies"
@@ -1640,6 +1642,7 @@
       {
         "Action": [
           "logs:DeleteLogGroup",
+          "logs:UntagResource",
           "logs:DeleteRetentionPolicy",
           "logs:GetDataProtectionPolicy",
           "logs:PutDataProtectionPolicy",
@@ -1691,6 +1694,8 @@
       {
         "Action": [
           "athena:DeleteWorkGroup",
+          "athena:UpdateWorkGroup",
+          "athena:UntagResource",
           "athena:GetWorkGroup"
         ],
         "Condition": {
@@ -2787,7 +2792,8 @@
       },
       {
         "Action": [
-          "ec2:DeleteSecurityGroup"
+          "ec2:DeleteSecurityGroup",
+          "ec2:DeleteTags"
         ],
         "Condition": {
           "Null": {
@@ -2841,7 +2847,8 @@
       },
       {
         "Action": [
-          "scheduler:DeleteScheduleGroup"
+          "scheduler:DeleteScheduleGroup",
+          "scheduler:UntagResource"
         ],
         "Condition": {
           "Null": {
@@ -3427,6 +3434,24 @@
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "codecommit:DeleteRepository",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Tagging",
+      "action": "codecommit:UntagResource",
+      "condition": {
+        "Null": {
+          "aws:ResourceTag/AmazonDataZoneProject": "false"
+        },
+        "StringEquals": {
+          "aws:CalledViaFirst": "cloudformation.amazonaws.com",
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "codecommit:UntagResource",
       "privesc": false,
       "resource_exposure": false
     },
@@ -4225,6 +4250,23 @@
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "iam:DeleteRole",
+      "privesc": false,
+      "resource_exposure": true
+    },
+    {
+      "access_level": "Permissions management",
+      "action": "iam:DeleteRolePolicy",
+      "condition": {
+        "Null": {
+          "aws:ResourceTag/AmazonDataZoneProject": "false"
+        },
+        "StringEquals": {
+          "aws:CalledViaFirst": "cloudformation.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "iam:DeleteRolePolicy",
       "privesc": false,
       "resource_exposure": true
     },
@@ -6058,6 +6100,24 @@
       "resource_exposure": false
     },
     {
+      "access_level": "Tagging",
+      "action": "logs:UntagResource",
+      "condition": {
+        "Null": {
+          "aws:ResourceTag/AmazonDataZoneProject": "false"
+        },
+        "StringEquals": {
+          "aws:CalledViaFirst": "cloudformation.amazonaws.com",
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "logs:UntagResource",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
       "access_level": "Write",
       "action": "logs:DeleteRetentionPolicy",
       "condition": {
@@ -6246,6 +6306,42 @@
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "athena:DeleteWorkGroup",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "athena:UpdateWorkGroup",
+      "condition": {
+        "Null": {
+          "aws:ResourceTag/AmazonDataZoneProject": "false"
+        },
+        "StringEquals": {
+          "aws:CalledViaFirst": "cloudformation.amazonaws.com",
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "athena:UpdateWorkGroup",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Tagging",
+      "action": "athena:UntagResource",
+      "condition": {
+        "Null": {
+          "aws:ResourceTag/AmazonDataZoneProject": "false"
+        },
+        "StringEquals": {
+          "aws:CalledViaFirst": "cloudformation.amazonaws.com",
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "athena:UntagResource",
       "privesc": false,
       "resource_exposure": false
     },
@@ -9602,6 +9698,20 @@
       "resource_exposure": false
     },
     {
+      "access_level": "Tagging",
+      "action": "ec2:DeleteTags",
+      "condition": {
+        "Null": {
+          "aws:ResourceTag/AmazonDataZoneProject": "false"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:DeleteTags",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
       "access_level": "List",
       "action": "iam:ListAttachedRolePolicies",
       "condition": {
@@ -9736,6 +9846,24 @@
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "scheduler:DeleteScheduleGroup",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Tagging",
+      "action": "scheduler:UntagResource",
+      "condition": {
+        "Null": {
+          "aws:ResourceTag/AmazonDataZoneProject": "false"
+        },
+        "StringEquals": {
+          "aws:CalledViaFirst": "cloudformation.amazonaws.com",
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "scheduler:UntagResource",
       "privesc": false,
       "resource_exposure": false
     },
@@ -10434,6 +10562,6 @@
   "resource_exposure": true,
   "undocumented_actions": false,
   "unknown_actions": [],
-  "updatedate": "2025-07-15T16:22:08+00:00",
-  "version": "v17"
+  "updatedate": "2025-08-13T23:49:07+00:00",
+  "version": "v18"
 }
