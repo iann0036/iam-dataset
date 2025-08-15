@@ -6,7 +6,7 @@
     "Permissions management"
   ],
   "arn": "arn:aws:iam::aws:policy/aws-service-role/AmazonEVSServiceRolePolicy",
-  "createdate": "2025-08-05T18:34:07Z",
+  "createdate": "2025-08-14T16:04:06Z",
   "credentials_exposure": false,
   "data_access": false,
   "deprecated": false,
@@ -92,6 +92,61 @@
         "Effect": "Allow",
         "Resource": "arn:aws:ec2:*:*:network-interface/*",
         "Sid": "ManageEniStatement"
+      },
+      {
+        "Action": [
+          "ec2:TerminateInstances",
+          "ec2:ModifyInstanceAttribute",
+          "ec2:DescribeInstanceAttribute"
+        ],
+        "Condition": {
+          "Null": {
+            "aws:ResourceTag/AmazonEVSManaged": "false"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:ec2:*:*:instance/*",
+        "Sid": "ManageInstanceStatement"
+      },
+      {
+        "Action": [
+          "ec2:DescribeInstances",
+          "ec2:DescribeVolumes"
+        ],
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "DescribeInstanceAndVolumeStatement"
+      },
+      {
+        "Action": [
+          "ec2:DeleteVolume",
+          "ec2:DetachVolume"
+        ],
+        "Condition": {
+          "Null": {
+            "aws:ResourceTag/AmazonEVSManaged": "false"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:ec2:*:*:volume/*"
+        ],
+        "Sid": "ManageVolumeStatement"
+      },
+      {
+        "Action": [
+          "secretsmanager:DeleteSecret"
+        ],
+        "Condition": {
+          "Null": {
+            "aws:ResourceTag/AmazonEVSManaged": "false"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:secretsmanager:*:*:secret:*"
+        ],
+        "Sid": "ManageSecretStatement"
       },
       {
         "Action": [
@@ -266,6 +321,110 @@
     },
     {
       "access_level": "Write",
+      "action": "ec2:TerminateInstances",
+      "condition": {
+        "Null": {
+          "aws:ResourceTag/AmazonEVSManaged": "false"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:TerminateInstances",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:ModifyInstanceAttribute",
+      "condition": {
+        "Null": {
+          "aws:ResourceTag/AmazonEVSManaged": "false"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:ModifyInstanceAttribute",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "ec2:DescribeInstanceAttribute",
+      "condition": {
+        "Null": {
+          "aws:ResourceTag/AmazonEVSManaged": "false"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:DescribeInstanceAttribute",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "ec2:DescribeInstances",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:DescribeInstances",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "ec2:DescribeVolumes",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:DescribeVolumes",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:DeleteVolume",
+      "condition": {
+        "Null": {
+          "aws:ResourceTag/AmazonEVSManaged": "false"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:DeleteVolume",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:DetachVolume",
+      "condition": {
+        "Null": {
+          "aws:ResourceTag/AmazonEVSManaged": "false"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:DetachVolume",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "secretsmanager:DeleteSecret",
+      "condition": {
+        "Null": {
+          "aws:ResourceTag/AmazonEVSManaged": "false"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "secretsmanager:DeleteSecret",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
       "action": "ec2:ModifyNetworkInterfaceAttribute",
       "condition": null,
       "credentials_exposure": false,
@@ -299,6 +458,6 @@
   "resource_exposure": true,
   "undocumented_actions": false,
   "unknown_actions": [],
-  "updatedate": "2025-08-05T18:34:07+00:00",
-  "version": "v2"
+  "updatedate": "2025-08-14T16:04:06+00:00",
+  "version": "v3"
 }
