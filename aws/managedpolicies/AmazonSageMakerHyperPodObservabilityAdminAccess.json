@@ -7,7 +7,7 @@
     "Permissions management"
   ],
   "arn": "arn:aws:iam::aws:policy/AmazonSageMakerHyperPodObservabilityAdminAccess",
-  "createdate": "2025-07-10T14:37:07Z",
+  "createdate": "2025-08-21T21:19:07Z",
   "credentials_exposure": false,
   "data_access": false,
   "deprecated": false,
@@ -158,7 +158,7 @@
           }
         },
         "Effect": "Allow",
-        "Resource": "arn:aws:iam::*:role/AmazonSageMakerHyperPodObservabilityGrafanaAccess-*",
+        "Resource": "arn:aws:iam::*:role/service-role/AmazonSageMakerHyperPodObservabilityGrafanaAccess-*",
         "Sid": "IAMGrafanaPassRoleAccess"
       },
       {
@@ -173,7 +173,7 @@
           }
         },
         "Effect": "Allow",
-        "Resource": "arn:aws:iam::*:role/AmazonSageMakerHyperPodObservabilityAddonAccess-*",
+        "Resource": "arn:aws:iam::*:role/service-role/AmazonSageMakerHyperPodObservabilityAddonAccess-*",
         "Sid": "IAMEKSPassRoleAccess"
       },
       {
@@ -182,7 +182,7 @@
         ],
         "Effect": "Allow",
         "Resource": [
-          "arn:aws:iam::*:role/AmazonSageMakerHyperPodObservabilityAddonAccess-*"
+          "arn:aws:iam::*:role/service-role/AmazonSageMakerHyperPodObservabilityAddonAccess-*"
         ],
         "Sid": "IAMGetRoleAccess"
       },
@@ -216,11 +216,18 @@
       },
       {
         "Action": [
-          "eks:DescribePodIdentityAssociation"
+          "eks:DescribePodIdentityAssociation",
+          "eks:DeletePodIdentityAssociation",
+          "eks:UpdatePodIdentityAssociation"
         ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceTag/SageMaker": "true"
+          }
+        },
         "Effect": "Allow",
         "Resource": "arn:aws:eks:*:*:podidentityassociation/*/*",
-        "Sid": "EKSAddonDescribePodIdentityAccess"
+        "Sid": "EKSAddonPodIdentityAccess"
       },
       {
         "Action": [
@@ -619,10 +626,42 @@
     {
       "access_level": "Read",
       "action": "eks:DescribePodIdentityAssociation",
-      "condition": null,
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/SageMaker": "true"
+        }
+      },
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "eks:DescribePodIdentityAssociation",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "eks:DeletePodIdentityAssociation",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/SageMaker": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "eks:DeletePodIdentityAssociation",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "eks:UpdatePodIdentityAssociation",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/SageMaker": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "eks:UpdatePodIdentityAssociation",
       "privesc": false,
       "resource_exposure": false
     },
@@ -722,6 +761,6 @@
   "resource_exposure": true,
   "undocumented_actions": false,
   "unknown_actions": [],
-  "updatedate": "2025-07-10T14:37:07+00:00",
-  "version": "v1"
+  "updatedate": "2025-08-21T21:19:07+00:00",
+  "version": "v2"
 }
