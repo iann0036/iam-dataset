@@ -4,6 +4,7 @@
   "includedPermissions": [
     "artifactregistry.aptartifacts.create",
     "artifactregistry.attachments.create",
+    "artifactregistry.attachments.delete",
     "artifactregistry.attachments.get",
     "artifactregistry.attachments.list",
     "artifactregistry.dockerimages.get",
