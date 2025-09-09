@@ -7,7 +7,7 @@
     "Permissions management"
   ],
   "arn": "arn:aws:iam::aws:policy/SageMakerStudioProjectRoleMachineLearningPolicy",
-  "createdate": "2025-07-22T20:07:08Z",
+  "createdate": "2025-09-08T18:34:08Z",
   "credentials_exposure": true,
   "data_access": true,
   "deprecated": false,
@@ -792,6 +792,20 @@
           "arn:aws:sagemaker:*:*:app/*/*/JupyterLab/*"
         ],
         "Sid": "SageMakerStudioRestrictPrivateSpaceAppsToOwnerUser"
+      },
+      {
+        "Action": [
+          "sagemaker:StartSession"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceTag/AmazonDataZoneProject": "${aws:PrincipalTag/AmazonDataZoneProject}",
+            "aws:ResourceTag/AmazonDataZoneUser": "${aws:PrincipalTag/datazone:userId}"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:sagemaker:*:*:space/*",
+        "Sid": "AllowStartSessionForSpaceRemoteConnection"
       },
       {
         "Action": [
@@ -4212,6 +4226,21 @@
     },
     {
       "access_level": "Write",
+      "action": "sagemaker:StartSession",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/AmazonDataZoneProject": "${aws:PrincipalTag/AmazonDataZoneProject}",
+          "aws:ResourceTag/AmazonDataZoneUser": "${aws:PrincipalTag/datazone:userId}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sagemaker:StartSession",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
       "action": "cloudwatch:PutMetricData",
       "condition": {
         "StringLike": {
@@ -4986,6 +5015,6 @@
   "resource_exposure": true,
   "undocumented_actions": false,
   "unknown_actions": [],
-  "updatedate": "2025-07-22T20:07:08+00:00",
-  "version": "v10"
+  "updatedate": "2025-09-08T18:34:08+00:00",
+  "version": "v11"
 }

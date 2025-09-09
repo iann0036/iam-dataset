@@ -7,7 +7,7 @@
     "Permissions management"
   ],
   "arn": "arn:aws:iam::aws:policy/MultiPartyApprovalFullAccess",
-  "createdate": "2025-06-18T20:22:07Z",
+  "createdate": "2025-09-08T17:04:06Z",
   "credentials_exposure": false,
   "data_access": true,
   "deprecated": false,
@@ -71,6 +71,38 @@
         "Effect": "Allow",
         "Resource": "*",
         "Sid": "SSOManagementAccess"
+      },
+      {
+        "Action": [
+          "kms:Decrypt"
+        ],
+        "Condition": {
+          "ArnLike": {
+            "kms:EncryptionContext:aws:sso:instance-arn": "arn:*:sso:::instance/*"
+          },
+          "StringLike": {
+            "kms:ViaService": "sso.*.amazonaws.com"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "AllowKmsAccessViaIdentityCenter"
+      },
+      {
+        "Action": [
+          "kms:Decrypt"
+        ],
+        "Condition": {
+          "ArnLike": {
+            "kms:EncryptionContext:aws:identitystore:identitystore-arn": "arn:*:identitystore::*:identitystore/*"
+          },
+          "StringLike": {
+            "kms:ViaService": "identitystore.*.amazonaws.com"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "AllowKmsAccessViaIdentityStore"
       }
     ],
     "Version": "2012-10-17"
@@ -489,6 +521,40 @@
       "effective_action": "sso:ListInstances",
       "privesc": false,
       "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "kms:Decrypt",
+      "condition": {
+        "ArnLike": {
+          "kms:EncryptionContext:aws:sso:instance-arn": "arn:*:sso:::instance/*"
+        },
+        "StringLike": {
+          "kms:ViaService": "sso.*.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "kms:Decrypt",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "kms:Decrypt",
+      "condition": {
+        "ArnLike": {
+          "kms:EncryptionContext:aws:identitystore:identitystore-arn": "arn:*:identitystore::*:identitystore/*"
+        },
+        "StringLike": {
+          "kms:ViaService": "identitystore.*.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "kms:Decrypt",
+      "privesc": false,
+      "resource_exposure": false
     }
   ],
   "grantless": false,
@@ -498,6 +564,6 @@
   "resource_exposure": false,
   "undocumented_actions": false,
   "unknown_actions": [],
-  "updatedate": "2025-06-18T20:22:07+00:00",
-  "version": "v1"
+  "updatedate": "2025-09-08T17:04:06+00:00",
+  "version": "v2"
 }
