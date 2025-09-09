@@ -89,6 +89,9 @@ def resources_recurse(resources, resource_type_path):
                             api_path = proto[resources[resource_type]['methods'][method_name]['httpMethod'].lower()][normalized_flatpath]
                             del proto[resources[resource_type]['methods'][method_name]['httpMethod'].lower()][normalized_flatpath]
 
+                    # sort api_path to minimize git history changes
+                    api_path = sorted(api_path)
+
                     result[api['name']]['methods'][method_id] = {
                         'description': resources[resource_type]['methods'][method_name]['description'] if 'description' in resources[resource_type]['methods'][method_name] else '',
                         'httpMethod': resources[resource_type]['methods'][method_name]['httpMethod'],
