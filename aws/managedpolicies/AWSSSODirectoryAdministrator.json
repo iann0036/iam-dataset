@@ -6,7 +6,7 @@
     "Permissions management"
   ],
   "arn": "arn:aws:iam::aws:policy/AWSSSODirectoryAdministrator",
-  "createdate": "2022-10-20T20:34:07Z",
+  "createdate": "2025-09-16T19:49:08Z",
   "credentials_exposure": true,
   "data_access": true,
   "deprecated": false,
@@ -22,6 +22,20 @@
         "Effect": "Allow",
         "Resource": "*",
         "Sid": "AWSSSODirectoryAdministrator"
+      },
+      {
+        "Action": [
+          "kms:Decrypt"
+        ],
+        "Condition": {
+          "StringLike": {
+            "kms:EncryptionContext:aws:identitystore:identitystore-arn": "*",
+            "kms:ViaService": "identitystore.*.amazonaws.com"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "AllowKMSKeyUseViaAWSIdentityStoreService"
       }
     ],
     "Version": "2012-10-17"
@@ -856,6 +870,21 @@
       "effective_action": "sso:ListDirectoryAssociations",
       "privesc": false,
       "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "kms:Decrypt",
+      "condition": {
+        "StringLike": {
+          "kms:EncryptionContext:aws:identitystore:identitystore-arn": "*",
+          "kms:ViaService": "identitystore.*.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "kms:Decrypt",
+      "privesc": false,
+      "resource_exposure": false
     }
   ],
   "grantless": false,
@@ -866,5 +895,5 @@
   "undocumented_actions": false,
   "unknown_actions": [],
   "updatedate": "2022-10-20T20:34:07+00:00",
-  "version": "v4"
+  "version": "v5"
 }
