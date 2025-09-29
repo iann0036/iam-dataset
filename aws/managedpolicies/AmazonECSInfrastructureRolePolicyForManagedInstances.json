@@ -1,0 +1,416 @@
+{
+  "access_levels": [
+    "List",
+    "Tagging",
+    "Write",
+    "Permissions management"
+  ],
+  "arn": null,
+  "createdate": "2025-09-26T18:04:07Z",
+  "credentials_exposure": false,
+  "data_access": false,
+  "deprecated": false,
+  "document": {
+    "Statement": [
+      {
+        "Action": [
+          "ec2:CreateLaunchTemplate"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:RequestTag/AmazonECSManaged": "true"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:ec2:*:*:launch-template/*"
+        ],
+        "Sid": "CreateLaunchTemplateForManagedInstances"
+      },
+      {
+        "Action": [
+          "ec2:CreateLaunchTemplateVersion",
+          "ec2:ModifyLaunchTemplate"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "ec2:ManagedResourceOperator": "ecs.amazonaws.com"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:ec2:*:*:launch-template/*"
+        ],
+        "Sid": "CreateLaunchTemplateVersionsForManagedInstances"
+      },
+      {
+        "Action": [
+          "ec2:CreateFleet"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:RequestTag/AmazonECSManaged": "true"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:ec2:*:*:fleet/*",
+          "arn:aws:ec2:*:*:instance/*",
+          "arn:aws:ec2:*:*:network-interface/*",
+          "arn:aws:ec2:*:*:launch-template/*",
+          "arn:aws:ec2:*:*:security-group/*",
+          "arn:aws:ec2:*:*:subnet/*",
+          "arn:aws:ec2:*:*:volume/*",
+          "arn:aws:ec2:*:*:image/*"
+        ],
+        "Sid": "ProvisionEC2InstancesForManagedInstances"
+      },
+      {
+        "Action": [
+          "ec2:RunInstances"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:RequestTag/AmazonECSManaged": "true"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:ec2:*:*:instance/*",
+          "arn:aws:ec2:*:*:volume/*",
+          "arn:aws:ec2:*:*:network-interface/*"
+        ],
+        "Sid": "RunInstancesForManagedInstances"
+      },
+      {
+        "Action": [
+          "ec2:RunInstances"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "ec2:ResourceTag/AmazonECSManaged": "true"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:ec2:*:*:launch-template/*"
+        ],
+        "Sid": "RunInstancesForECSManagedLaunchTemplates"
+      },
+      {
+        "Action": [
+          "ec2:RunInstances"
+        ],
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:ec2:*:*:subnet/*",
+          "arn:aws:ec2:*:*:security-group/*",
+          "arn:aws:ec2:*::image/*"
+        ],
+        "Sid": "RunInstancesForSupportingResources"
+      },
+      {
+        "Action": [
+          "ec2:CreateTags"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "ec2:CreateAction": [
+              "CreateFleet",
+              "CreateLaunchTemplate",
+              "RunInstances"
+            ]
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:ec2:*:*:fleet/*",
+          "arn:aws:ec2:*:*:launch-template/*",
+          "arn:aws:ec2:*:*:network-interface/*",
+          "arn:aws:ec2:*:*:instance/*",
+          "arn:aws:ec2:*:*:volume/*"
+        ],
+        "Sid": "TagOnCreateEC2ResourcesForManagedInstances"
+      },
+      {
+        "Action": [
+          "iam:PassRole"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "iam:PassedToService": "ec2.amazonaws.com"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:iam::*:role/ecsInstanceProfile*"
+        ],
+        "Sid": "PassInstanceRoleForManagedInstances"
+      },
+      {
+        "Action": [
+          "iam:CreateServiceLinkedRole"
+        ],
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:iam::*:role/aws-service-role/spot.amazonaws.com/AWSServiceRoleForEC2Spot"
+        ],
+        "Sid": "CreateServiceLinkedRoleForEC2Spot"
+      },
+      {
+        "Action": [
+          "ec2:DescribeInstances",
+          "ec2:DescribeInstanceTypes",
+          "ec2:DescribeLaunchTemplates",
+          "ec2:DescribeNetworkInterfaces",
+          "ec2:DescribeInstanceTypeOfferings",
+          "ec2:DescribeAvailabilityZones",
+          "ec2:DescribeSecurityGroups",
+          "ec2:DescribeSubnets",
+          "ec2:DescribeVpcs"
+        ],
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "DescribeEC2ResourcesManagedByECS"
+      }
+    ],
+    "Version": "2012-10-17"
+  },
+  "effective_actions": [
+    {
+      "access_level": "Write",
+      "action": "ec2:CreateLaunchTemplate",
+      "condition": {
+        "StringEquals": {
+          "aws:RequestTag/AmazonECSManaged": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:CreateLaunchTemplate",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:CreateLaunchTemplateVersion",
+      "condition": {
+        "StringEquals": {
+          "ec2:ManagedResourceOperator": "ecs.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:CreateLaunchTemplateVersion",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:ModifyLaunchTemplate",
+      "condition": {
+        "StringEquals": {
+          "ec2:ManagedResourceOperator": "ecs.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:ModifyLaunchTemplate",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:CreateFleet",
+      "condition": {
+        "StringEquals": {
+          "aws:RequestTag/AmazonECSManaged": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:CreateFleet",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:RunInstances",
+      "condition": {
+        "StringEquals": {
+          "aws:RequestTag/AmazonECSManaged": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:RunInstances",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:RunInstances",
+      "condition": {
+        "StringEquals": {
+          "ec2:ResourceTag/AmazonECSManaged": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:RunInstances",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:RunInstances",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:RunInstances",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Tagging",
+      "action": "ec2:CreateTags",
+      "condition": {
+        "StringEquals": {
+          "ec2:CreateAction": [
+            "CreateFleet",
+            "CreateLaunchTemplate",
+            "RunInstances"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:CreateTags",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Permissions management",
+      "action": "iam:PassRole",
+      "condition": {
+        "StringEquals": {
+          "iam:PassedToService": "ec2.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "iam:PassRole",
+      "privesc": true,
+      "resource_exposure": true
+    },
+    {
+      "access_level": "Permissions management",
+      "action": "iam:CreateServiceLinkedRole",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "iam:CreateServiceLinkedRole",
+      "privesc": true,
+      "resource_exposure": true
+    },
+    {
+      "access_level": "List",
+      "action": "ec2:DescribeInstances",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:DescribeInstances",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "ec2:DescribeInstanceTypes",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:DescribeInstanceTypes",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "ec2:DescribeLaunchTemplates",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:DescribeLaunchTemplates",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "ec2:DescribeNetworkInterfaces",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:DescribeNetworkInterfaces",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "ec2:DescribeInstanceTypeOfferings",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:DescribeInstanceTypeOfferings",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "ec2:DescribeAvailabilityZones",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:DescribeAvailabilityZones",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "ec2:DescribeSecurityGroups",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:DescribeSecurityGroups",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "ec2:DescribeSubnets",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:DescribeSubnets",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "ec2:DescribeVpcs",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:DescribeVpcs",
+      "privesc": false,
+      "resource_exposure": false
+    }
+  ],
+  "grantless": false,
+  "malformed": false,
+  "name": "AmazonECSInfrastructureRolePolicyForManagedInstances",
+  "privesc": true,
+  "resource_exposure": true,
+  "undocumented_actions": false,
+  "unknown_actions": [],
+  "updatedate": null,
+  "version": "v1"
+}
