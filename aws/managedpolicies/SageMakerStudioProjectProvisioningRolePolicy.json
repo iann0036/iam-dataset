@@ -7,7 +7,7 @@
     "Permissions management"
   ],
   "arn": "arn:aws:iam::aws:policy/service-role/SageMakerStudioProjectProvisioningRolePolicy",
-  "createdate": "2025-08-27T21:04:07Z",
+  "createdate": "2025-09-29T20:04:07Z",
   "credentials_exposure": true,
   "data_access": true,
   "deprecated": false,
@@ -94,7 +94,8 @@
           "lakeformation:GrantPermissions",
           "lakeformation:BatchGrantPermissions",
           "lakeformation:ListResources",
-          "lakeformation:DescribeResource"
+          "lakeformation:DescribeResource",
+          "lakeformation:*LakeFormationIdentityCenterConfiguration"
         ],
         "Effect": "Allow",
         "Resource": "*",
@@ -653,7 +654,8 @@
       {
         "Action": [
           "glue:ListConnectionTypes",
-          "glue:DescribeConnectionType"
+          "glue:DescribeConnectionType",
+          "glue:*GlueIdentityCenterConfiguration"
         ],
         "Effect": "Allow",
         "Resource": "*",
@@ -2591,13 +2593,9 @@
       {
         "Action": [
           "elasticmapreduce:CreateSecurityConfiguration",
-          "elasticmapreduce:DeleteSecurityConfiguration"
+          "elasticmapreduce:DeleteSecurityConfiguration",
+          "elasticmapreduce:DescribeSecurityConfiguration"
         ],
-        "Condition": {
-          "StringEquals": {
-            "aws:CalledViaFirst": "cloudformation.amazonaws.com"
-          }
-        },
         "Effect": "Allow",
         "Resource": "*",
         "Sid": "EMRManage"
@@ -3094,6 +3092,32 @@
         "Effect": "Allow",
         "Resource": "*",
         "Sid": "S3AGPerm"
+      },
+      {
+        "Action": [
+          "sso:CreateApplication",
+          "sso:DeleteApplication",
+          "sso:DescribeApplication",
+          "sso:DescribeInstance",
+          "sso:ListInstances",
+          "sso:PutApplicationAccessScope",
+          "sso:PutApplicationAssignmentConfiguration",
+          "sso:PutApplicationAuthenticationMethod",
+          "sso:PutApplicationGrant"
+        ],
+        "Condition": {
+          "ForAnyValue:StringLike": {
+            "aws:CalledVia": [
+              "elasticmapreduce.amazonaws.com",
+              "glue.amazonaws.com",
+              "lakeformation.amazonaws.com",
+              "ops.emr-serverless.amazonaws.com"
+            ]
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "SSOManage"
       }
     ],
     "Version": "2012-10-17"
@@ -3341,6 +3365,46 @@
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "lakeformation:DescribeResource",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "lakeformation:*LakeFormationIdentityCenterConfiguration",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "lakeformation:CreateLakeFormationIdentityCenterConfiguration",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "lakeformation:*LakeFormationIdentityCenterConfiguration",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "lakeformation:DeleteLakeFormationIdentityCenterConfiguration",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "lakeformation:*LakeFormationIdentityCenterConfiguration",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "lakeformation:DescribeLakeFormationIdentityCenterConfiguration",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "lakeformation:*LakeFormationIdentityCenterConfiguration",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "lakeformation:UpdateLakeFormationIdentityCenterConfiguration",
       "privesc": false,
       "resource_exposure": false
     },
@@ -4480,6 +4544,46 @@
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "glue:DescribeConnectionType",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "glue:*GlueIdentityCenterConfiguration",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "glue:CreateGlueIdentityCenterConfiguration",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "glue:*GlueIdentityCenterConfiguration",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "glue:DeleteGlueIdentityCenterConfiguration",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "glue:*GlueIdentityCenterConfiguration",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "glue:GetGlueIdentityCenterConfiguration",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "glue:*GlueIdentityCenterConfiguration",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "glue:UpdateGlueIdentityCenterConfiguration",
       "privesc": false,
       "resource_exposure": false
     },
@@ -9228,11 +9332,7 @@
     {
       "access_level": "Write",
       "action": "elasticmapreduce:CreateSecurityConfiguration",
-      "condition": {
-        "StringEquals": {
-          "aws:CalledViaFirst": "cloudformation.amazonaws.com"
-        }
-      },
+      "condition": null,
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "elasticmapreduce:CreateSecurityConfiguration",
@@ -9242,14 +9342,20 @@
     {
       "access_level": "Write",
       "action": "elasticmapreduce:DeleteSecurityConfiguration",
-      "condition": {
-        "StringEquals": {
-          "aws:CalledViaFirst": "cloudformation.amazonaws.com"
-        }
-      },
+      "condition": null,
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "elasticmapreduce:DeleteSecurityConfiguration",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "elasticmapreduce:DescribeSecurityConfiguration",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "elasticmapreduce:DescribeSecurityConfiguration",
       "privesc": false,
       "resource_exposure": false
     },
@@ -10553,6 +10659,177 @@
       "effective_action": "s3:CreateAccessGrantsInstance",
       "privesc": false,
       "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "sso:CreateApplication",
+      "condition": {
+        "ForAnyValue:StringLike": {
+          "aws:CalledVia": [
+            "elasticmapreduce.amazonaws.com",
+            "glue.amazonaws.com",
+            "lakeformation.amazonaws.com",
+            "ops.emr-serverless.amazonaws.com"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sso:CreateApplication",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "sso:DeleteApplication",
+      "condition": {
+        "ForAnyValue:StringLike": {
+          "aws:CalledVia": [
+            "elasticmapreduce.amazonaws.com",
+            "glue.amazonaws.com",
+            "lakeformation.amazonaws.com",
+            "ops.emr-serverless.amazonaws.com"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sso:DeleteApplication",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "sso:DescribeApplication",
+      "condition": {
+        "ForAnyValue:StringLike": {
+          "aws:CalledVia": [
+            "elasticmapreduce.amazonaws.com",
+            "glue.amazonaws.com",
+            "lakeformation.amazonaws.com",
+            "ops.emr-serverless.amazonaws.com"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sso:DescribeApplication",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "sso:DescribeInstance",
+      "condition": {
+        "ForAnyValue:StringLike": {
+          "aws:CalledVia": [
+            "elasticmapreduce.amazonaws.com",
+            "glue.amazonaws.com",
+            "lakeformation.amazonaws.com",
+            "ops.emr-serverless.amazonaws.com"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sso:DescribeInstance",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "sso:ListInstances",
+      "condition": {
+        "ForAnyValue:StringLike": {
+          "aws:CalledVia": [
+            "elasticmapreduce.amazonaws.com",
+            "glue.amazonaws.com",
+            "lakeformation.amazonaws.com",
+            "ops.emr-serverless.amazonaws.com"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sso:ListInstances",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "sso:PutApplicationAccessScope",
+      "condition": {
+        "ForAnyValue:StringLike": {
+          "aws:CalledVia": [
+            "elasticmapreduce.amazonaws.com",
+            "glue.amazonaws.com",
+            "lakeformation.amazonaws.com",
+            "ops.emr-serverless.amazonaws.com"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sso:PutApplicationAccessScope",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "sso:PutApplicationAssignmentConfiguration",
+      "condition": {
+        "ForAnyValue:StringLike": {
+          "aws:CalledVia": [
+            "elasticmapreduce.amazonaws.com",
+            "glue.amazonaws.com",
+            "lakeformation.amazonaws.com",
+            "ops.emr-serverless.amazonaws.com"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sso:PutApplicationAssignmentConfiguration",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "sso:PutApplicationAuthenticationMethod",
+      "condition": {
+        "ForAnyValue:StringLike": {
+          "aws:CalledVia": [
+            "elasticmapreduce.amazonaws.com",
+            "glue.amazonaws.com",
+            "lakeformation.amazonaws.com",
+            "ops.emr-serverless.amazonaws.com"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sso:PutApplicationAuthenticationMethod",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "sso:PutApplicationGrant",
+      "condition": {
+        "ForAnyValue:StringLike": {
+          "aws:CalledVia": [
+            "elasticmapreduce.amazonaws.com",
+            "glue.amazonaws.com",
+            "lakeformation.amazonaws.com",
+            "ops.emr-serverless.amazonaws.com"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sso:PutApplicationGrant",
+      "privesc": false,
+      "resource_exposure": false
     }
   ],
   "grantless": false,
@@ -10563,5 +10840,5 @@
   "undocumented_actions": false,
   "unknown_actions": [],
   "updatedate": "2025-08-27T21:04:07+00:00",
-  "version": "v20"
+  "version": "v21"
 }

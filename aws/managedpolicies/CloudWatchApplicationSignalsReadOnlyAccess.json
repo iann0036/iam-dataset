@@ -4,7 +4,7 @@
     "Read"
   ],
   "arn": "arn:aws:iam::aws:policy/CloudWatchApplicationSignalsReadOnlyAccess",
-  "createdate": "2024-06-06T22:48:30Z",
+  "createdate": "2025-09-29T16:19:08Z",
   "credentials_exposure": false,
   "data_access": true,
   "deprecated": false,
@@ -20,7 +20,10 @@
           "application-signals:ListServiceDependents",
           "application-signals:ListServiceOperations",
           "application-signals:ListServices",
-          "application-signals:ListTagsForResource"
+          "application-signals:ListTagsForResource",
+          "application-signals:ListServiceStates",
+          "application-signals:ListAuditFindings",
+          "application-signals:ListGroupingAttributeDefinitions"
         ],
         "Effect": "Allow",
         "Resource": "*",
@@ -36,16 +39,10 @@
       },
       {
         "Action": [
-          "logs:StartQuery"
-        ],
-        "Effect": "Allow",
-        "Resource": "arn:aws:logs:*:*:log-group:/aws/application-signals/data:*",
-        "Sid": "CloudWatchApplicationSignalsLogGroupPermissions"
-      },
-      {
-        "Action": [
+          "logs:StartQuery",
           "logs:StopQuery",
-          "logs:GetQueryResults"
+          "logs:GetQueryResults",
+          "logs:DescribeLogGroups"
         ],
         "Effect": "Allow",
         "Resource": "*",
@@ -95,7 +92,59 @@
         ],
         "Effect": "Allow",
         "Resource": "*",
+        "Sid": "CloudWatchApplicationSignalsXrayTracePermissions"
+      },
+      {
+        "Action": [
+          "xray:StartTraceRetrieval",
+          "xray:ListRetrievedTraces",
+          "xray:BatchGetTraces",
+          "xray:GetTraceSegmentDestination"
+        ],
+        "Condition": {
+          "ForAnyValue:StringEquals": {
+            "aws:CalledVia": [
+              "application-signals.cloudwatch.amazonaws.com"
+            ]
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "*",
         "Sid": "CloudWatchApplicationSignalsXrayReadPermissions"
+      },
+      {
+        "Action": [
+          "cloudtrail:GetChannel"
+        ],
+        "Effect": "Allow",
+        "Resource": "arn:aws:cloudtrail:*:*:channel/aws-service-channel/application-signals/*",
+        "Sid": "CloudWatchApplicationSignalsCloudTrailPermissions"
+      },
+      {
+        "Action": [
+          "cloudtrail:ListChannels"
+        ],
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "CloudWatchApplicationSignalsCloudTrailListPermissions"
+      },
+      {
+        "Action": [
+          "servicequotas:GetServiceQuota"
+        ],
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:servicequotas:*:*:s3/*",
+          "arn:aws:servicequotas:*:*:dynamodb/*",
+          "arn:aws:servicequotas:*:*:kinesis/*",
+          "arn:aws:servicequotas:*:*:sns/*",
+          "arn:aws:servicequotas:*:*:bedrock/*",
+          "arn:aws:servicequotas:*:*:lambda/*",
+          "arn:aws:servicequotas:*:*:fargate/*",
+          "arn:aws:servicequotas:*:*:elasticloadbalancing/*",
+          "arn:aws:servicequotas:*:*:ec2/*"
+        ],
+        "Sid": "CloudWatchApplicationSignalsServiceQuotaPermissions"
       }
     ],
     "Version": "2012-10-17"
@@ -192,6 +241,36 @@
       "resource_exposure": false
     },
     {
+      "access_level": "List",
+      "action": "application-signals:ListServiceStates",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "application-signals:ListServiceStates",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "application-signals:ListAuditFindings",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "application-signals:ListAuditFindings",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "application-signals:ListGroupingAttributeDefinitions",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "application-signals:ListGroupingAttributeDefinitions",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
       "access_level": "Read",
       "action": "iam:GetRole",
       "condition": null,
@@ -228,6 +307,16 @@
       "credentials_exposure": false,
       "data_access": true,
       "effective_action": "logs:GetQueryResults",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "logs:DescribeLogGroups",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "logs:DescribeLogGroups",
       "privesc": false,
       "resource_exposure": false
     },
@@ -340,6 +429,100 @@
       "effective_action": "xray:GetTraceSummaries",
       "privesc": false,
       "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "xray:StartTraceRetrieval",
+      "condition": {
+        "ForAnyValue:StringEquals": {
+          "aws:CalledVia": [
+            "application-signals.cloudwatch.amazonaws.com"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "xray:StartTraceRetrieval",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "xray:ListRetrievedTraces",
+      "condition": {
+        "ForAnyValue:StringEquals": {
+          "aws:CalledVia": [
+            "application-signals.cloudwatch.amazonaws.com"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "xray:ListRetrievedTraces",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "xray:BatchGetTraces",
+      "condition": {
+        "ForAnyValue:StringEquals": {
+          "aws:CalledVia": [
+            "application-signals.cloudwatch.amazonaws.com"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "xray:BatchGetTraces",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "xray:GetTraceSegmentDestination",
+      "condition": {
+        "ForAnyValue:StringEquals": {
+          "aws:CalledVia": [
+            "application-signals.cloudwatch.amazonaws.com"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "xray:GetTraceSegmentDestination",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "cloudtrail:GetChannel",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudtrail:GetChannel",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "cloudtrail:ListChannels",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudtrail:ListChannels",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "servicequotas:GetServiceQuota",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "servicequotas:GetServiceQuota",
+      "privesc": false,
+      "resource_exposure": false
     }
   ],
   "grantless": false,
@@ -349,6 +532,6 @@
   "resource_exposure": false,
   "undocumented_actions": false,
   "unknown_actions": [],
-  "updatedate": "2024-06-06T22:48:30+00:00",
-  "version": "v1"
+  "updatedate": "2025-09-29T16:19:08+00:00",
+  "version": "v2"
 }
