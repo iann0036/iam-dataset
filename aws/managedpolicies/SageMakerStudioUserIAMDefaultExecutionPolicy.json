@@ -8,7 +8,7 @@
     "Unknown"
   ],
   "arn": "arn:aws:iam::aws:policy/SageMakerStudioUserIAMDefaultExecutionPolicy",
-  "createdate": "2025-08-26T21:34:06Z",
+  "createdate": "2025-10-03T18:04:07Z",
   "credentials_exposure": true,
   "data_access": true,
   "deprecated": false,
@@ -156,6 +156,19 @@
       },
       {
         "Action": [
+          "sagemaker:StartSession"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceTag/AmazonDataZoneUser": "${aws:PrincipalTag/datazone:userId}"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:sagemaker:*:*:space/*",
+        "Sid": "AllowStartSessionForSpaceRemoteConnection"
+      },
+      {
+        "Action": [
           "resource-groups:GetGroupQuery",
           "resource-groups:ListGroupResources"
         ],
@@ -232,6 +245,7 @@
           "glue:StopSession",
           "glue:UseGlueStudio",
           "glue:TagResource",
+          "glue:UntagResource",
           "glue:*Job*"
         ],
         "Effect": "Allow",
@@ -1801,6 +1815,20 @@
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "sagemaker:UpdateSpace",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "sagemaker:StartSession",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/AmazonDataZoneUser": "${aws:PrincipalTag/datazone:userId}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sagemaker:StartSession",
       "privesc": false,
       "resource_exposure": false
     },
@@ -6591,6 +6619,16 @@
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "glue:TagResource",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Tagging",
+      "action": "glue:UntagResource",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "glue:UntagResource",
       "privesc": false,
       "resource_exposure": false
     },
@@ -19339,6 +19377,6 @@
   "resource_exposure": true,
   "undocumented_actions": true,
   "unknown_actions": [],
-  "updatedate": "2025-08-26T21:34:06+00:00",
-  "version": "v2"
+  "updatedate": "2025-10-03T18:04:07+00:00",
+  "version": "v3"
 }
