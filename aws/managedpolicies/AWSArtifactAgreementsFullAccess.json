@@ -6,7 +6,7 @@
     "Permissions management"
   ],
   "arn": "arn:aws:iam::aws:policy/AWSArtifactAgreementsFullAccess",
-  "createdate": "2024-11-22T19:36:07Z",
+  "createdate": "2025-10-16T20:19:07Z",
   "credentials_exposure": false,
   "data_access": false,
   "deprecated": false,
@@ -66,13 +66,27 @@
       },
       {
         "Action": [
-          "organizations:EnableAWSServiceAccess",
           "organizations:ListAWSServiceAccessForOrganization",
           "organizations:DescribeOrganization"
         ],
         "Effect": "Allow",
         "Resource": "*",
         "Sid": "EnableServiceTrust"
+      },
+      {
+        "Action": [
+          "organizations:EnableAWSServiceAccess"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "organizations:ServicePrincipal": [
+              "aws-artifact-account-sync.amazonaws.com"
+            ]
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "EnableServiceTrustForArtifact"
       }
     ],
     "Version": "2012-10-17"
@@ -185,16 +199,6 @@
       "resource_exposure": false
     },
     {
-      "access_level": "Write",
-      "action": "organizations:EnableAWSServiceAccess",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "organizations:EnableAWSServiceAccess",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
       "access_level": "List",
       "action": "organizations:ListAWSServiceAccessForOrganization",
       "condition": null,
@@ -213,6 +217,22 @@
       "effective_action": "organizations:DescribeOrganization",
       "privesc": false,
       "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "organizations:EnableAWSServiceAccess",
+      "condition": {
+        "StringEquals": {
+          "organizations:ServicePrincipal": [
+            "aws-artifact-account-sync.amazonaws.com"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "organizations:EnableAWSServiceAccess",
+      "privesc": false,
+      "resource_exposure": false
     }
   ],
   "grantless": false,
@@ -222,6 +242,6 @@
   "resource_exposure": true,
   "undocumented_actions": false,
   "unknown_actions": [],
-  "updatedate": "2024-11-22T19:36:07+00:00",
-  "version": "v1"
+  "updatedate": "2025-10-16T20:19:07+00:00",
+  "version": "v2"
 }
