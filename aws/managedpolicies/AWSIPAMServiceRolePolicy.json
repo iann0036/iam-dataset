@@ -5,7 +5,7 @@
     "Write"
   ],
   "arn": "arn:aws:iam::aws:policy/aws-service-role/AWSIPAMServiceRolePolicy",
-  "createdate": "2024-11-08T16:29:09Z",
+  "createdate": "2025-10-23T15:19:07Z",
   "credentials_exposure": false,
   "data_access": false,
   "deprecated": false,
@@ -35,7 +35,10 @@
           "organizations:ListDelegatedAdministrators",
           "organizations:ListChildren",
           "organizations:ListParents",
-          "organizations:DescribeOrganizationalUnit"
+          "organizations:DescribeOrganizationalUnit",
+          "cloudfront:ListAnycastIpLists",
+          "cloudfront:ListDistributionsByAnycastIpListId",
+          "cloudfront:ListTagsForResource"
         ],
         "Effect": "Allow",
         "Resource": "*",
@@ -53,6 +56,40 @@
         "Effect": "Allow",
         "Resource": "*",
         "Sid": "CloudWatchMetricsPublishActions"
+      },
+      {
+        "Action": [
+          "ec2:AllocateIpamPoolCidr"
+        ],
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "IPAMAllocationPolicyActions"
+      },
+      {
+        "Action": [
+          "ec2:ModifyManagedPrefixList"
+        ],
+        "Condition": {
+          "Null": {
+            "ec2:Attribute/ExpectedIpamPrefixListResolverTarget": "false"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:ec2:*:*:prefix-list/pl-*"
+        ],
+        "Sid": "PrefixListResolverWriteActions"
+      },
+      {
+        "Action": [
+          "ec2:DescribeManagedPrefixLists",
+          "ec2:GetManagedPrefixListEntries"
+        ],
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:ec2:*:*:prefix-list/pl-*"
+        ],
+        "Sid": "PrefixListResolverReadActions"
       }
     ],
     "Version": "2012-10-17"
@@ -289,6 +326,36 @@
       "resource_exposure": false
     },
     {
+      "access_level": "List",
+      "action": "cloudfront:ListAnycastIpLists",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudfront:ListAnycastIpLists",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "cloudfront:ListDistributionsByAnycastIpListId",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudfront:ListDistributionsByAnycastIpListId",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "cloudfront:ListTagsForResource",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudfront:ListTagsForResource",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
       "access_level": "Write",
       "action": "cloudwatch:PutMetricData",
       "condition": {
@@ -301,6 +368,50 @@
       "effective_action": "cloudwatch:PutMetricData",
       "privesc": false,
       "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:AllocateIpamPoolCidr",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:AllocateIpamPoolCidr",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:ModifyManagedPrefixList",
+      "condition": {
+        "Null": {
+          "ec2:Attribute/ExpectedIpamPrefixListResolverTarget": "false"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:ModifyManagedPrefixList",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "ec2:DescribeManagedPrefixLists",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:DescribeManagedPrefixLists",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "ec2:GetManagedPrefixListEntries",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:GetManagedPrefixListEntries",
+      "privesc": false,
+      "resource_exposure": false
     }
   ],
   "grantless": false,
@@ -310,6 +421,6 @@
   "resource_exposure": false,
   "undocumented_actions": false,
   "unknown_actions": [],
-  "updatedate": "2024-11-08T16:29:09+00:00",
-  "version": "v5"
+  "updatedate": "2025-10-23T15:19:07+00:00",
+  "version": "v6"
 }
