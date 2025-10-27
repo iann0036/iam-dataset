@@ -7,7 +7,7 @@
     "Permissions management"
   ],
   "arn": "arn:aws:iam::aws:policy/AWSQuickSetupSSMDeploymentRolePolicy",
-  "createdate": "2025-05-05T10:52:06Z",
+  "createdate": "2025-10-27T11:49:07Z",
   "credentials_exposure": false,
   "data_access": true,
   "deprecated": false,
@@ -361,6 +361,110 @@
           "arn:aws:iam::*:role/AWS-SSM-Remediation*",
           "arn:aws:iam::*:role/AWS-SSM-Diagnosis*"
         ]
+      },
+      {
+        "Action": [
+          "ssm:CreateAssociation",
+          "ssm:AddTagsToResource"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:RequestTag/QuickSetupDocument": [
+              "AWSQuickSetupType-SSM"
+            ]
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:ssm:*:*:association/*"
+        ]
+      },
+      {
+        "Action": [
+          "ssm:CreateAssociation",
+          "ssm:UpdateAssociation",
+          "ssm:DeleteAssociation",
+          "ssm:DescribeAssociation"
+        ],
+        "Effect": "Allow",
+        "Resource": "arn:aws:ssm:*::document/AWSQuickSetupType-SSM-ManageResources"
+      },
+      {
+        "Action": [
+          "ssm:UpdateAssociation",
+          "ssm:DeleteAssociation",
+          "ssm:DescribeAssociation"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceTag/QuickSetupDocument": [
+              "AWSQuickSetupType-SSM"
+            ]
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:ssm:*:*:association/*"
+        ]
+      },
+      {
+        "Action": [
+          "ssm:AddTagsToResource",
+          "ssm:RemoveTagsFromResource"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceTag/QuickSetupDocument": [
+              "AWSQuickSetupType-SSM"
+            ]
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:ssm:*:*:automation-execution/*",
+          "arn:aws:ssm:*:*:association/*"
+        ]
+      },
+      {
+        "Action": [
+          "ssm:DescribeAssociationExecutions",
+          "ssm:DescribeAssociationExecutionTargets",
+          "ssm:GetAutomationExecution"
+        ],
+        "Condition": {
+          "ForAnyValue:StringEquals": {
+            "aws:CalledVia": [
+              "cloudformation.amazonaws.com"
+            ]
+          },
+          "StringEquals": {
+            "aws:ResourceTag/QuickSetupDocument": [
+              "AWSQuickSetupType-SSM"
+            ]
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:ssm:*:*:automation-execution/*",
+          "arn:aws:ssm:*:*:association/*"
+        ]
+      },
+      {
+        "Action": [
+          "iam:PassRole"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "iam:PassedToService": [
+              "ssm.amazonaws.com"
+            ],
+            "iam:ResourceTag/QuickSetupDocument": [
+              "AWSQuickSetupType-SSM"
+            ]
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:iam::*:role/AWS-QuickSetup-SSM-ManageResources*"
       }
     ],
     "Version": "2012-10-17"
@@ -1226,6 +1330,240 @@
       "effective_action": "iam:TagRole",
       "privesc": false,
       "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ssm:CreateAssociation",
+      "condition": {
+        "StringEquals": {
+          "aws:RequestTag/QuickSetupDocument": [
+            "AWSQuickSetupType-SSM"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ssm:CreateAssociation",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Tagging",
+      "action": "ssm:AddTagsToResource",
+      "condition": {
+        "StringEquals": {
+          "aws:RequestTag/QuickSetupDocument": [
+            "AWSQuickSetupType-SSM"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ssm:AddTagsToResource",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ssm:CreateAssociation",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ssm:CreateAssociation",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ssm:UpdateAssociation",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ssm:UpdateAssociation",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ssm:DeleteAssociation",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ssm:DeleteAssociation",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "ssm:DescribeAssociation",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ssm:DescribeAssociation",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ssm:UpdateAssociation",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/QuickSetupDocument": [
+            "AWSQuickSetupType-SSM"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ssm:UpdateAssociation",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ssm:DeleteAssociation",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/QuickSetupDocument": [
+            "AWSQuickSetupType-SSM"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ssm:DeleteAssociation",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "ssm:DescribeAssociation",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/QuickSetupDocument": [
+            "AWSQuickSetupType-SSM"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ssm:DescribeAssociation",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Tagging",
+      "action": "ssm:AddTagsToResource",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/QuickSetupDocument": [
+            "AWSQuickSetupType-SSM"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ssm:AddTagsToResource",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Tagging",
+      "action": "ssm:RemoveTagsFromResource",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/QuickSetupDocument": [
+            "AWSQuickSetupType-SSM"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ssm:RemoveTagsFromResource",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "ssm:DescribeAssociationExecutions",
+      "condition": {
+        "ForAnyValue:StringEquals": {
+          "aws:CalledVia": [
+            "cloudformation.amazonaws.com"
+          ]
+        },
+        "StringEquals": {
+          "aws:ResourceTag/QuickSetupDocument": [
+            "AWSQuickSetupType-SSM"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ssm:DescribeAssociationExecutions",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "ssm:DescribeAssociationExecutionTargets",
+      "condition": {
+        "ForAnyValue:StringEquals": {
+          "aws:CalledVia": [
+            "cloudformation.amazonaws.com"
+          ]
+        },
+        "StringEquals": {
+          "aws:ResourceTag/QuickSetupDocument": [
+            "AWSQuickSetupType-SSM"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ssm:DescribeAssociationExecutionTargets",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "ssm:GetAutomationExecution",
+      "condition": {
+        "ForAnyValue:StringEquals": {
+          "aws:CalledVia": [
+            "cloudformation.amazonaws.com"
+          ]
+        },
+        "StringEquals": {
+          "aws:ResourceTag/QuickSetupDocument": [
+            "AWSQuickSetupType-SSM"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ssm:GetAutomationExecution",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Permissions management",
+      "action": "iam:PassRole",
+      "condition": {
+        "StringEquals": {
+          "iam:PassedToService": [
+            "ssm.amazonaws.com"
+          ],
+          "iam:ResourceTag/QuickSetupDocument": [
+            "AWSQuickSetupType-SSM"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "iam:PassRole",
+      "privesc": true,
+      "resource_exposure": true
     }
   ],
   "grantless": false,
@@ -1235,6 +1573,6 @@
   "resource_exposure": true,
   "undocumented_actions": false,
   "unknown_actions": [],
-  "updatedate": "2025-05-05T10:52:06+00:00",
-  "version": "v3"
+  "updatedate": "2025-10-27T11:49:07+00:00",
+  "version": "v4"
 }

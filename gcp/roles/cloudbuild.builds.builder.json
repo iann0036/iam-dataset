@@ -30,6 +30,7 @@
     "artifactregistry.repositories.createOnPush",
     "artifactregistry.repositories.deleteArtifacts",
     "artifactregistry.repositories.downloadArtifacts",
+    "artifactregistry.repositories.exportArtifacts",
     "artifactregistry.repositories.get",
     "artifactregistry.repositories.list",
     "artifactregistry.repositories.listEffectiveTags",
