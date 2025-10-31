@@ -4,7 +4,7 @@
     "Write"
   ],
   "arn": "arn:aws:iam::aws:policy/service-role/SageMakerStudioEMRContainersSystemNamespaceRolePolicy",
-  "createdate": "2025-10-23T18:34:06Z",
+  "createdate": "2025-10-30T20:34:06Z",
   "credentials_exposure": true,
   "data_access": false,
   "deprecated": false,
@@ -12,38 +12,59 @@
     "Statement": [
       {
         "Action": [
-          "sts:AssumeRole",
-          "sts:TagSession"
+          "sts:AssumeRole"
         ],
         "Condition": {
           "StringEquals": {
-            "aws:CalledViaLast": "emr-containers.amazonaws.com",
             "aws:ResourceTag/AmazonDataZoneProject": "${aws:PrincipalTag/AmazonDataZoneProject}"
-          },
-          "StringEqualsIfExists": {
-            "aws:RequestTag/AmazonDataZoneProject": "${aws:PrincipalTag/AmazonDataZoneProject}"
           }
         },
         "Effect": "Allow",
         "Resource": [
-          "arn:aws:iam::*:role/datazone_emr_containers_query_engine_role_*",
           "arn:aws:iam::*:role/datazone_usr_role_*"
         ],
         "Sid": "AssumeProjectRoles"
       },
       {
         "Action": [
-          "sts:SetContext"
+          "sts:TagSession"
         ],
         "Condition": {
+          "ForAllValues:StringEquals": {
+            "aws:TagKeys": [
+              "LakeFormationAuthorizedCaller"
+            ]
+          },
           "StringEquals": {
-            "aws:CalledViaLast": "emr-containers.amazonaws.com",
+            "aws:RequestTag/LakeFormationAuthorizedCaller": "EMR on EKS Engine",
             "aws:ResourceTag/AmazonDataZoneProject": "${aws:PrincipalTag/AmazonDataZoneProject}"
           }
         },
         "Effect": "Allow",
         "Resource": [
-          "arn:aws:iam::*:role/datazone_emr_containers_query_engine_role_*",
+          "arn:aws:iam::*:role/datazone_usr_role_*"
+        ],
+        "Sid": "TagSessionProjectRoles"
+      },
+      {
+        "Action": [
+          "sts:SetContext"
+        ],
+        "Condition": {
+          "ForAllValues:ArnEquals": {
+            "sts:RequestContextProviders": [
+              "arn:aws:iam::aws:contextProvider/IdentityCenter"
+            ]
+          },
+          "Null": {
+            "sts:RequestContextProviders": "false"
+          },
+          "StringEquals": {
+            "aws:ResourceTag/AmazonDataZoneProject": "${aws:PrincipalTag/AmazonDataZoneProject}"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
           "arn:aws:iam::*:role/datazone_usr_role_*"
         ],
         "Sid": "SetContextProjectRoles"
@@ -57,11 +78,7 @@
       "action": "sts:AssumeRole",
       "condition": {
         "StringEquals": {
-          "aws:CalledViaLast": "emr-containers.amazonaws.com",
           "aws:ResourceTag/AmazonDataZoneProject": "${aws:PrincipalTag/AmazonDataZoneProject}"
-        },
-        "StringEqualsIfExists": {
-          "aws:RequestTag/AmazonDataZoneProject": "${aws:PrincipalTag/AmazonDataZoneProject}"
         }
       },
       "credentials_exposure": true,
@@ -74,12 +91,14 @@
       "access_level": "Tagging",
       "action": "sts:TagSession",
       "condition": {
-        "StringEquals": {
-          "aws:CalledViaLast": "emr-containers.amazonaws.com",
-          "aws:ResourceTag/AmazonDataZoneProject": "${aws:PrincipalTag/AmazonDataZoneProject}"
+        "ForAllValues:StringEquals": {
+          "aws:TagKeys": [
+            "LakeFormationAuthorizedCaller"
+          ]
         },
-        "StringEqualsIfExists": {
-          "aws:RequestTag/AmazonDataZoneProject": "${aws:PrincipalTag/AmazonDataZoneProject}"
+        "StringEquals": {
+          "aws:RequestTag/LakeFormationAuthorizedCaller": "EMR on EKS Engine",
+          "aws:ResourceTag/AmazonDataZoneProject": "${aws:PrincipalTag/AmazonDataZoneProject}"
         }
       },
       "credentials_exposure": false,
@@ -92,8 +111,15 @@
       "access_level": "Write",
       "action": "sts:SetContext",
       "condition": {
+        "ForAllValues:ArnEquals": {
+          "sts:RequestContextProviders": [
+            "arn:aws:iam::aws:contextProvider/IdentityCenter"
+          ]
+        },
+        "Null": {
+          "sts:RequestContextProviders": "false"
+        },
         "StringEquals": {
-          "aws:CalledViaLast": "emr-containers.amazonaws.com",
           "aws:ResourceTag/AmazonDataZoneProject": "${aws:PrincipalTag/AmazonDataZoneProject}"
         }
       },
@@ -111,6 +137,6 @@
   "resource_exposure": false,
   "undocumented_actions": false,
   "unknown_actions": [],
-  "updatedate": "2025-10-23T18:34:06+00:00",
-  "version": "v1"
+  "updatedate": "2025-10-30T20:34:06+00:00",
+  "version": "v2"
 }
