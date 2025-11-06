@@ -3,10 +3,11 @@
     "List",
     "Read",
     "Tagging",
-    "Write"
+    "Write",
+    "Permissions management"
   ],
   "arn": "arn:aws:iam::aws:policy/aws-service-role/AWSControlTowerAccountServiceRolePolicy",
-  "createdate": "2025-06-03T17:07:06Z",
+  "createdate": "2025-11-05T23:19:09Z",
   "credentials_exposure": false,
   "data_access": false,
   "deprecated": false,
@@ -116,6 +117,115 @@
         "Effect": "Allow",
         "Resource": "*",
         "Sid": "AllowConfigRulesDescribe"
+      },
+      {
+        "Action": [
+          "config:PutConfigurationAggregator"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:config:*:*:config-aggregator/aws-service-config-aggregator/controltower.amazonaws.com/*"
+        ],
+        "Sid": "AllowControlTowerToCreateConfigAggregator"
+      },
+      {
+        "Action": [
+          "config:DeleteConfigurationAggregator",
+          "config:DescribeAggregateComplianceByConfigRules",
+          "config:SelectAggregateResourceConfig"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:config:*:*:config-aggregator/aws-service-config-aggregator/controltower.amazonaws.com/config-aggregator-*"
+        ],
+        "Sid": "AllowControlTowerToManageConfigAggregator"
+      },
+      {
+        "Action": [
+          "config:TagResource"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:RequestTag/aws-control-tower": "managed-by-control-tower",
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:config:*:*:config-aggregator/aws-service-config-aggregator/controltower.amazonaws.com/*"
+        ],
+        "Sid": "AllowControlTowerToTagConfigAggregator"
+      },
+      {
+        "Action": [
+          "iam:PassRole"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}",
+            "iam:PassedToService": "config.amazonaws.com"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:iam::*:role/aws-service-role/config.amazonaws.com/AWSServiceRoleForConfig"
+        ],
+        "Sid": "AllowControlTowerToPassAggregatorRoleToConfig"
+      },
+      {
+        "Action": [
+          "config:DescribeConfigurationAggregators"
+        ],
+        "Effect": "Allow",
+        "Resource": [
+          "*"
+        ],
+        "Sid": "AllowDescribeConfigurationAggregators"
+      },
+      {
+        "Action": [
+          "organizations:ListDelegatedAdministrators"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "organizations:ServicePrincipal": "config.amazonaws.com"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "*"
+        ],
+        "Sid": "AllowListDelegatedAdministratorsForConfig"
+      },
+      {
+        "Action": [
+          "organizations:DescribeOrganization"
+        ],
+        "Effect": "Allow",
+        "Resource": [
+          "*"
+        ],
+        "Sid": "AllowListDescribeOrganization"
+      },
+      {
+        "Action": [
+          "cloudformation:SetTypeConfiguration",
+          "cloudformation:DeactivateType",
+          "cloudformation:ActivateType"
+        ],
+        "Effect": "Allow",
+        "Resource": "arn:aws:cloudformation:*:*:type/hook/AWS-ControlTower*",
+        "Sid": "AllowActionsForCloudFormationHooksIntegration"
       }
     ],
     "Version": "2012-10-17"
@@ -309,15 +419,165 @@
       "effective_action": "config:DescribeConfigRules",
       "privesc": false,
       "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "config:PutConfigurationAggregator",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "config:PutConfigurationAggregator",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "config:DeleteConfigurationAggregator",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "config:DeleteConfigurationAggregator",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "config:DescribeAggregateComplianceByConfigRules",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "config:DescribeAggregateComplianceByConfigRules",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "config:SelectAggregateResourceConfig",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "config:SelectAggregateResourceConfig",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Tagging",
+      "action": "config:TagResource",
+      "condition": {
+        "StringEquals": {
+          "aws:RequestTag/aws-control-tower": "managed-by-control-tower",
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "config:TagResource",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Permissions management",
+      "action": "iam:PassRole",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}",
+          "iam:PassedToService": "config.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "iam:PassRole",
+      "privesc": true,
+      "resource_exposure": true
+    },
+    {
+      "access_level": "List",
+      "action": "config:DescribeConfigurationAggregators",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "config:DescribeConfigurationAggregators",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "organizations:ListDelegatedAdministrators",
+      "condition": {
+        "StringEquals": {
+          "organizations:ServicePrincipal": "config.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "organizations:ListDelegatedAdministrators",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "organizations:DescribeOrganization",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "organizations:DescribeOrganization",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "cloudformation:SetTypeConfiguration",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudformation:SetTypeConfiguration",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "cloudformation:DeactivateType",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudformation:DeactivateType",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "cloudformation:ActivateType",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudformation:ActivateType",
+      "privesc": false,
+      "resource_exposure": false
     }
   ],
   "grantless": false,
   "malformed": false,
   "name": "AWSControlTowerAccountServiceRolePolicy",
-  "privesc": false,
-  "resource_exposure": false,
+  "privesc": true,
+  "resource_exposure": true,
   "undocumented_actions": false,
   "unknown_actions": [],
   "updatedate": "2025-06-03T17:07:06+00:00",
-  "version": "v2"
+  "version": "v3"
 }
