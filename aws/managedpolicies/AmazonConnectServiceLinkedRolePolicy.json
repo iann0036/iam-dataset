@@ -7,7 +7,7 @@
     "Permissions management"
   ],
   "arn": "arn:aws:iam::aws:policy/aws-service-role/AmazonConnectServiceLinkedRolePolicy",
-  "createdate": "2025-10-27T21:19:07Z",
+  "createdate": "2025-11-06T22:49:10Z",
   "credentials_exposure": true,
   "data_access": true,
   "deprecated": false,
@@ -107,7 +107,10 @@
           "profile:GetUploadJob",
           "profile:GetUploadJobPath",
           "profile:StartUploadJob",
-          "profile:StopUploadJob"
+          "profile:StopUploadJob",
+          "profile:GetProfileRecommendations",
+          "profile:GetProfileInsights",
+          "profile:ListRecommenders"
         ],
         "Effect": "Allow",
         "Resource": "arn:aws:profile:*:*:domains/amazon-connect-*",
@@ -156,13 +159,39 @@
         "Action": [
           "profile:ListProfileObjects",
           "profile:GetProfileObjectType",
-          "profile:ListObjectTypeAttributes"
+          "profile:ListObjectTypeAttributes",
+          "profile:ListObjectTypeAttributeValues"
         ],
         "Effect": "Allow",
         "Resource": [
           "arn:aws:profile:*:*:domains/amazon-connect-*/object-types/*"
         ],
         "Sid": "AllowReadPermissionForCustomerProfileObjects"
+      },
+      {
+        "Action": [
+          "profile:GetRecommender",
+          "profile:CreateRecommender",
+          "profile:UpdateRecommender",
+          "profile:DeleteRecommender",
+          "profile:StopRecommender",
+          "profile:StartRecommender"
+        ],
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:profile:*:*:domains/amazon-connect-*/recommenders/*"
+        ],
+        "Sid": "AllowReadPermissionForCustomerProfilePredictiveInsights"
+      },
+      {
+        "Action": [
+          "profile:ListRecommenderRecipes"
+        ],
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:profile:*:*:*"
+        ],
+        "Sid": "AllowReadPermissionForCustomerProfilesPersonalizeForRecommenderRecipes"
       },
       {
         "Action": [
@@ -180,6 +209,27 @@
         "Effect": "Allow",
         "Resource": "arn:aws:profile:*:*:/templates*",
         "Sid": "AllowReadForCustomerProfileObjectTemplates"
+      },
+      {
+        "Action": [
+          "app-integrations:GetDataIntegration",
+          "app-integrations:ListDataIntegrationAssociations",
+          "app-integrations:CreateDataIntegrationSchedule",
+          "app-integrations:StartDataIntegrationExecution",
+          "app-integrations:ListDataIntegrationExecutions",
+          "app-integrations:GetDataIntegrationExecution",
+          "app-integrations:ListDataIntegrationSchedules",
+          "app-integrations:UpdateDataIntegrationSchedule",
+          "app-integrations:GetDataIntegrationSchedule"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceTag/AmazonConnectEnabled": "True"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "AllowAppIntegrationsForConnectEnabledTaggedResources"
       },
       {
         "Action": [
@@ -4069,6 +4119,132 @@
       "resource_exposure": false
     },
     {
+      "access_level": "Read",
+      "action": "app-integrations:GetDataIntegration",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/AmazonConnectEnabled": "True"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "app-integrations:GetDataIntegration",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "app-integrations:ListDataIntegrationAssociations",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/AmazonConnectEnabled": "True"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "app-integrations:ListDataIntegrationAssociations",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "app-integrations:CreateDataIntegrationSchedule",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/AmazonConnectEnabled": "True"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "app-integrations:CreateDataIntegrationSchedule",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "app-integrations:StartDataIntegrationExecution",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/AmazonConnectEnabled": "True"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "app-integrations:StartDataIntegrationExecution",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "app-integrations:ListDataIntegrationExecutions",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/AmazonConnectEnabled": "True"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "app-integrations:ListDataIntegrationExecutions",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "app-integrations:GetDataIntegrationExecution",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/AmazonConnectEnabled": "True"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "app-integrations:GetDataIntegrationExecution",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "app-integrations:ListDataIntegrationSchedules",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/AmazonConnectEnabled": "True"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "app-integrations:ListDataIntegrationSchedules",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "app-integrations:UpdateDataIntegrationSchedule",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/AmazonConnectEnabled": "True"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "app-integrations:UpdateDataIntegrationSchedule",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "app-integrations:GetDataIntegrationSchedule",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/AmazonConnectEnabled": "True"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "app-integrations:GetDataIntegrationSchedule",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
       "access_level": "Write",
       "action": "wisdom:CreateContent",
       "condition": {
@@ -5516,7 +5692,52 @@
   "privesc": true,
   "resource_exposure": true,
   "undocumented_actions": false,
-  "unknown_actions": [],
-  "updatedate": "2025-10-27T21:19:07+00:00",
-  "version": "v29"
+  "unknown_actions": [
+    {
+      "action": "profile:GetProfileRecommendations",
+      "condition": null
+    },
+    {
+      "action": "profile:GetProfileInsights",
+      "condition": null
+    },
+    {
+      "action": "profile:ListRecommenders",
+      "condition": null
+    },
+    {
+      "action": "profile:ListObjectTypeAttributeValues",
+      "condition": null
+    },
+    {
+      "action": "profile:GetRecommender",
+      "condition": null
+    },
+    {
+      "action": "profile:CreateRecommender",
+      "condition": null
+    },
+    {
+      "action": "profile:UpdateRecommender",
+      "condition": null
+    },
+    {
+      "action": "profile:DeleteRecommender",
+      "condition": null
+    },
+    {
+      "action": "profile:StopRecommender",
+      "condition": null
+    },
+    {
+      "action": "profile:StartRecommender",
+      "condition": null
+    },
+    {
+      "action": "profile:ListRecommenderRecipes",
+      "condition": null
+    }
+  ],
+  "updatedate": "2025-11-06T22:49:10+00:00",
+  "version": "v30"
 }
