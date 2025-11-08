@@ -7,7 +7,7 @@
     "Permissions management"
   ],
   "arn": "arn:aws:iam::aws:policy/SageMakerStudioProjectUserRolePolicy",
-  "createdate": "2025-09-17T21:04:07Z",
+  "createdate": "2025-11-07T17:34:09Z",
   "credentials_exposure": true,
   "data_access": true,
   "deprecated": false,
@@ -450,7 +450,6 @@
         ],
         "Condition": {
           "StringEquals": {
-            "aws:ResourceAccount": "${aws:PrincipalAccount}",
             "kms:EncryptionContext:glue_catalog_id": "${aws:PrincipalAccount}"
           },
           "StringLike": {
@@ -1372,22 +1371,46 @@
           "sqlworkbench:DriverExecute",
           "sqlworkbench:GetUserInfo",
           "sqlworkbench:ListTabs",
-          "sqlworkbench:GetAutocompletionMetadata",
-          "sqlworkbench:GetAutocompletionResource",
+          "sqlworkbench:GetAutocompletion*",
           "sqlworkbench:PassAccountSettings",
           "sqlworkbench:ListQueryExecutionHistory",
           "sqlworkbench:GetQueryExecutionHistory",
           "sqlworkbench:CreateConnection",
-          "sqlworkbench:PutQCustomContext",
-          "sqlworkbench:GetQCustomContext",
-          "sqlworkbench:DeleteQCustomContext",
-          "sqlworkbench:GetQSqlRecommendations",
-          "sqlworkbench:GetQSqlPromptQuotas",
+          "sqlworkbench:*QCustomContext",
+          "sqlworkbench:GetQSql*",
           "sqlworkbench:GetSchemaInference"
         ],
         "Effect": "Allow",
         "Resource": "*",
         "Sid": "SQLWorkBenchActionsWithoutResourceType"
+      },
+      {
+        "Action": [
+          "sqlworkbench:AssociateNotebookWithTab"
+        ],
+        "Effect": "Allow",
+        "Resource": "arn:*:sqlworkbench:*:*:notebook/*",
+        "Sid": "SQLWorkBenchActions"
+      },
+      {
+        "Action": [
+          "sqlworkbench:CreateNotebook*",
+          "sqlworkbench:GetNotebook",
+          "sqlworkbench:UpdateNotebook*",
+          "sqlworkbench:DeleteNotebook*",
+          "sqlworkbench:ExportNotebook",
+          "sqlworkbench:BatchGetNotebookCell",
+          "sqlworkbench:TagResource"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceTag/AmazonDataZoneProject": "${aws:PrincipalTag/AmazonDataZoneProject}",
+            "aws:ResourceTag/sqlworkbench-resource-owner": "${aws:userid}"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "SQLWorkBenchNotebookActions"
       },
       {
         "Action": [
@@ -1499,6 +1522,10 @@
       },
       {
         "Action": [
+          "emr-containers:DescribeManagedEndpoint",
+          "emr-containers:DescribeSecurityConfiguration",
+          "emr-containers:DescribeVirtualCluster",
+          "emr-containers:GetManagedEndpointSessionCredentials",
           "redshift-serverless:GetCredentials",
           "redshift:GetClusterCredentialsWithIAM"
         ],
@@ -1509,7 +1536,7 @@
         },
         "Effect": "Allow",
         "Resource": "*",
-        "Sid": "RedshiftGetCredentials"
+        "Sid": "ComputeCredentials"
       },
       {
         "Action": [
@@ -1645,6 +1672,21 @@
           "arn:aws:elasticmapreduce:*:*:cluster/*"
         ],
         "Sid": "EMRGetClusterSessionCredentials"
+      },
+      {
+        "Action": [
+          "sso:DescribeApplication"
+        ],
+        "Condition": {
+          "ForAnyValue:StringLike": {
+            "aws:CalledVia": [
+              "emr-containers.amazonaws.com"
+            ]
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "EmrContainersSSO"
       },
       {
         "Action": [
@@ -5043,7 +5085,6 @@
       "action": "kms:Decrypt",
       "condition": {
         "StringEquals": {
-          "aws:ResourceAccount": "${aws:PrincipalAccount}",
           "kms:EncryptionContext:glue_catalog_id": "${aws:PrincipalAccount}"
         },
         "StringLike": {
@@ -5063,7 +5104,6 @@
       "action": "kms:Encrypt",
       "condition": {
         "StringEquals": {
-          "aws:ResourceAccount": "${aws:PrincipalAccount}",
           "kms:EncryptionContext:glue_catalog_id": "${aws:PrincipalAccount}"
         },
         "StringLike": {
@@ -5083,7 +5123,6 @@
       "action": "kms:GenerateDataKey",
       "condition": {
         "StringEquals": {
-          "aws:ResourceAccount": "${aws:PrincipalAccount}",
           "kms:EncryptionContext:glue_catalog_id": "${aws:PrincipalAccount}"
         },
         "StringLike": {
@@ -8463,7 +8502,7 @@
     },
     {
       "access_level": "Read",
-      "action": "sqlworkbench:GetAutocompletionMetadata",
+      "action": "sqlworkbench:GetAutocompletion*",
       "condition": null,
       "credentials_exposure": false,
       "data_access": false,
@@ -8473,7 +8512,7 @@
     },
     {
       "access_level": "Read",
-      "action": "sqlworkbench:GetAutocompletionResource",
+      "action": "sqlworkbench:GetAutocompletion*",
       "condition": null,
       "credentials_exposure": false,
       "data_access": false,
@@ -8523,27 +8562,7 @@
     },
     {
       "access_level": "Write",
-      "action": "sqlworkbench:PutQCustomContext",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "sqlworkbench:PutQCustomContext",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Read",
-      "action": "sqlworkbench:GetQCustomContext",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "sqlworkbench:GetQCustomContext",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Write",
-      "action": "sqlworkbench:DeleteQCustomContext",
+      "action": "sqlworkbench:*QCustomContext",
       "condition": null,
       "credentials_exposure": false,
       "data_access": false,
@@ -8553,21 +8572,41 @@
     },
     {
       "access_level": "Read",
-      "action": "sqlworkbench:GetQSqlRecommendations",
+      "action": "sqlworkbench:*QCustomContext",
       "condition": null,
       "credentials_exposure": false,
       "data_access": false,
-      "effective_action": "sqlworkbench:GetQSqlRecommendations",
+      "effective_action": "sqlworkbench:GetQCustomContext",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "sqlworkbench:*QCustomContext",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sqlworkbench:PutQCustomContext",
       "privesc": false,
       "resource_exposure": false
     },
     {
       "access_level": "Read",
-      "action": "sqlworkbench:GetQSqlPromptQuotas",
+      "action": "sqlworkbench:GetQSql*",
       "condition": null,
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "sqlworkbench:GetQSqlPromptQuotas",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "sqlworkbench:GetQSql*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sqlworkbench:GetQSqlRecommendations",
       "privesc": false,
       "resource_exposure": false
     },
@@ -8578,6 +8617,226 @@
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "sqlworkbench:GetSchemaInference",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "sqlworkbench:AssociateNotebookWithTab",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sqlworkbench:AssociateNotebookWithTab",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "sqlworkbench:CreateNotebook*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/AmazonDataZoneProject": "${aws:PrincipalTag/AmazonDataZoneProject}",
+          "aws:ResourceTag/sqlworkbench-resource-owner": "${aws:userid}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sqlworkbench:CreateNotebook",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "sqlworkbench:CreateNotebook*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/AmazonDataZoneProject": "${aws:PrincipalTag/AmazonDataZoneProject}",
+          "aws:ResourceTag/sqlworkbench-resource-owner": "${aws:userid}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sqlworkbench:CreateNotebookCell",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "sqlworkbench:CreateNotebook*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/AmazonDataZoneProject": "${aws:PrincipalTag/AmazonDataZoneProject}",
+          "aws:ResourceTag/sqlworkbench-resource-owner": "${aws:userid}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sqlworkbench:CreateNotebookFromVersion",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "sqlworkbench:CreateNotebook*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/AmazonDataZoneProject": "${aws:PrincipalTag/AmazonDataZoneProject}",
+          "aws:ResourceTag/sqlworkbench-resource-owner": "${aws:userid}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sqlworkbench:CreateNotebookVersion",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "sqlworkbench:GetNotebook",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/AmazonDataZoneProject": "${aws:PrincipalTag/AmazonDataZoneProject}",
+          "aws:ResourceTag/sqlworkbench-resource-owner": "${aws:userid}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sqlworkbench:GetNotebook",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "sqlworkbench:UpdateNotebook*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/AmazonDataZoneProject": "${aws:PrincipalTag/AmazonDataZoneProject}",
+          "aws:ResourceTag/sqlworkbench-resource-owner": "${aws:userid}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sqlworkbench:UpdateNotebook",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "sqlworkbench:UpdateNotebook*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/AmazonDataZoneProject": "${aws:PrincipalTag/AmazonDataZoneProject}",
+          "aws:ResourceTag/sqlworkbench-resource-owner": "${aws:userid}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sqlworkbench:UpdateNotebookCellContent",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "sqlworkbench:UpdateNotebook*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/AmazonDataZoneProject": "${aws:PrincipalTag/AmazonDataZoneProject}",
+          "aws:ResourceTag/sqlworkbench-resource-owner": "${aws:userid}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sqlworkbench:UpdateNotebookCellLayout",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "sqlworkbench:DeleteNotebook*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/AmazonDataZoneProject": "${aws:PrincipalTag/AmazonDataZoneProject}",
+          "aws:ResourceTag/sqlworkbench-resource-owner": "${aws:userid}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sqlworkbench:DeleteNotebook",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "sqlworkbench:DeleteNotebook*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/AmazonDataZoneProject": "${aws:PrincipalTag/AmazonDataZoneProject}",
+          "aws:ResourceTag/sqlworkbench-resource-owner": "${aws:userid}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sqlworkbench:DeleteNotebookCell",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "sqlworkbench:DeleteNotebook*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/AmazonDataZoneProject": "${aws:PrincipalTag/AmazonDataZoneProject}",
+          "aws:ResourceTag/sqlworkbench-resource-owner": "${aws:userid}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sqlworkbench:DeleteNotebookVersion",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "sqlworkbench:ExportNotebook",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/AmazonDataZoneProject": "${aws:PrincipalTag/AmazonDataZoneProject}",
+          "aws:ResourceTag/sqlworkbench-resource-owner": "${aws:userid}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sqlworkbench:ExportNotebook",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "sqlworkbench:BatchGetNotebookCell",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/AmazonDataZoneProject": "${aws:PrincipalTag/AmazonDataZoneProject}",
+          "aws:ResourceTag/sqlworkbench-resource-owner": "${aws:userid}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sqlworkbench:BatchGetNotebookCell",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Tagging",
+      "action": "sqlworkbench:TagResource",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/AmazonDataZoneProject": "${aws:PrincipalTag/AmazonDataZoneProject}",
+          "aws:ResourceTag/sqlworkbench-resource-owner": "${aws:userid}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sqlworkbench:TagResource",
       "privesc": false,
       "resource_exposure": false
     },
@@ -9036,6 +9295,62 @@
       "resource_exposure": false
     },
     {
+      "access_level": "Read",
+      "action": "emr-containers:DescribeManagedEndpoint",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/AmazonDataZoneProject": "${aws:PrincipalTag/AmazonDataZoneProject}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "emr-containers:DescribeManagedEndpoint",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "emr-containers:DescribeSecurityConfiguration",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/AmazonDataZoneProject": "${aws:PrincipalTag/AmazonDataZoneProject}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "emr-containers:DescribeSecurityConfiguration",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "emr-containers:DescribeVirtualCluster",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/AmazonDataZoneProject": "${aws:PrincipalTag/AmazonDataZoneProject}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "emr-containers:DescribeVirtualCluster",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "emr-containers:GetManagedEndpointSessionCredentials",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/AmazonDataZoneProject": "${aws:PrincipalTag/AmazonDataZoneProject}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "emr-containers:GetManagedEndpointSessionCredentials",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
       "access_level": "Write",
       "action": "redshift-serverless:GetCredentials",
       "condition": {
@@ -9422,6 +9737,22 @@
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "elasticmapreduce:GetClusterSessionCredentials",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "sso:DescribeApplication",
+      "condition": {
+        "ForAnyValue:StringLike": {
+          "aws:CalledVia": [
+            "emr-containers.amazonaws.com"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sso:DescribeApplication",
       "privesc": false,
       "resource_exposure": false
     },
@@ -12614,6 +12945,6 @@
   "resource_exposure": true,
   "undocumented_actions": false,
   "unknown_actions": [],
-  "updatedate": "2025-09-17T21:04:07+00:00",
-  "version": "v18"
+  "updatedate": "2025-11-07T17:34:09+00:00",
+  "version": "v19"
 }
