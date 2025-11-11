@@ -5,7 +5,7 @@
     "Write"
   ],
   "arn": "arn:aws:iam::aws:policy/aws-service-role/AmazonInspector2ServiceRolePolicy",
-  "createdate": "2025-04-29T17:37:06Z",
+  "createdate": "2025-11-10T18:19:10Z",
   "credentials_exposure": true,
   "data_access": true,
   "deprecated": false,
@@ -321,6 +321,33 @@
         "Effect": "Allow",
         "Resource": "arn:aws:ecs:*:*:task/*",
         "Sid": "AllowAccessToECSTasks"
+      },
+      {
+        "Action": [
+          "inspector2:Enable",
+          "inspector2:Disable",
+          "inspector2:EnableDelegatedAdminAccount",
+          "inspector2:AssociateMember"
+        ],
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "AllowInspectorEnablementForAwsOrgPolicy"
+      },
+      {
+        "Action": [
+          "organizations:ListDelegatedAdministrators"
+        ],
+        "Condition": {
+          "StringLikeIfExists": {
+            "organizations:ServicePrincipal": [
+              "agentless.inspector2.amazonaws.com",
+              "inspector2.amazonaws.com"
+            ]
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "AllowInspectorServiceDelegatedAdminFromAwsOrg"
       }
     ],
     "Version": "2012-10-17"
@@ -1607,6 +1634,63 @@
       "effective_action": "ecs:DescribeTasks",
       "privesc": false,
       "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "inspector2:Enable",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "inspector2:Enable",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "inspector2:Disable",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "inspector2:Disable",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "inspector2:EnableDelegatedAdminAccount",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "inspector2:EnableDelegatedAdminAccount",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "inspector2:AssociateMember",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "inspector2:AssociateMember",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "organizations:ListDelegatedAdministrators",
+      "condition": {
+        "StringLikeIfExists": {
+          "organizations:ServicePrincipal": [
+            "agentless.inspector2.amazonaws.com",
+            "inspector2.amazonaws.com"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "organizations:ListDelegatedAdministrators",
+      "privesc": false,
+      "resource_exposure": false
     }
   ],
   "grantless": false,
@@ -1616,6 +1700,6 @@
   "resource_exposure": false,
   "undocumented_actions": false,
   "unknown_actions": [],
-  "updatedate": "2025-04-29T17:37:06+00:00",
-  "version": "v16"
+  "updatedate": "2025-11-10T18:19:10+00:00",
+  "version": "v17"
 }

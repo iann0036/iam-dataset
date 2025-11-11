@@ -7,7 +7,7 @@
     "Permissions management"
   ],
   "arn": "arn:aws:iam::aws:policy/service-role/AWSBackupServiceRolePolicyForRestores",
-  "createdate": "2025-07-14T22:22:07Z",
+  "createdate": "2025-11-10T19:34:08Z",
   "credentials_exposure": false,
   "data_access": true,
   "deprecated": false,
@@ -514,6 +514,110 @@
           "*"
         ],
         "Sid": "TimestreamEndpointPermissions"
+      },
+      {
+        "Action": [
+          "eks:CreateCluster",
+          "eks:DescribeCluster",
+          "eks:CreateAccessEntry",
+          "eks:DescribeAccessEntry",
+          "eks:AssociateAccessPolicy",
+          "eks:ListAssociatedAccessPolicies",
+          "eks:CreateAddon",
+          "eks:DescribeAddon",
+          "eks:CreateNodegroup",
+          "eks:DescribeNodegroup",
+          "eks:CreateFargateProfile",
+          "eks:DescribeFargateProfile",
+          "eks:CreatePodIdentityAssociation",
+          "eks:DescribePodIdentityAssociation",
+          "eks:TagResource"
+        ],
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:eks:*:*:access-entry/*",
+          "arn:aws:eks:*:*:addon/*",
+          "arn:aws:eks:*:*:cluster/*",
+          "arn:aws:eks:*:*:fargateprofile/*",
+          "arn:aws:eks:*:*:nodegroup/*",
+          "arn:aws:eks:*:*:podidentityassociation/*"
+        ],
+        "Sid": "EKSClusterRestore"
+      },
+      {
+        "Action": [
+          "eks:AssociateAccessPolicy",
+          "eks:DisassociateAccessPolicy"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "eks:accessScope": "cluster",
+            "eks:policyArn": "arn:aws:eks::aws:cluster-access-policy/AWSBackupFullAccessPolicyForRestore"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:eks:*:*:access-entry/*",
+        "Sid": "AssociateRestoreAccessPolicy"
+      },
+      {
+        "Action": [
+          "iam:PassRole"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "iam:PassedToService": [
+              "eks.amazonaws.com",
+              "ec2.amazonaws.com",
+              "pods.eks.amazonaws.com",
+              "backup.amazonaws.com"
+            ]
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:iam::*:role/*",
+        "Sid": "CreateClusterIAMPerms"
+      },
+      {
+        "Action": [
+          "ec2:DescribeLaunchTemplateVersions",
+          "ec2:DescribeSubnets",
+          "ec2:RunInstances",
+          "iam:GetRole",
+          "iam:ListAttachedRolePolicies"
+        ],
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "CreateEKSNodeGroupPermissions"
+      },
+      {
+        "Action": [
+          "ec2:CreateTags"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "ec2:CreateAction": [
+              "RunInstances"
+            ]
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:ec2:*:*:instance/*",
+          "arn:aws:ec2:*:*:volume/*",
+          "arn:aws:ec2:*:*:network-interface/*"
+        ],
+        "Sid": "EKSNodeGroupTagOnCreate"
+      },
+      {
+        "Action": [
+          "backup:StartRestoreJob",
+          "backup:ListRestoreJobs",
+          "backup:ListRecoveryPointsByBackupVault",
+          "backup:DescribeRestoreJob"
+        ],
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "BackupRestoreJobManagementPermissions"
       }
     ],
     "Version": "2012-10-17"
@@ -1833,6 +1937,311 @@
       "effective_action": "timestream:DescribeEndpoints",
       "privesc": false,
       "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "eks:CreateCluster",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "eks:CreateCluster",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "eks:DescribeCluster",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "eks:DescribeCluster",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "eks:CreateAccessEntry",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "eks:CreateAccessEntry",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "eks:DescribeAccessEntry",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "eks:DescribeAccessEntry",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "eks:AssociateAccessPolicy",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "eks:AssociateAccessPolicy",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "eks:ListAssociatedAccessPolicies",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "eks:ListAssociatedAccessPolicies",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "eks:CreateAddon",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "eks:CreateAddon",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "eks:DescribeAddon",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "eks:DescribeAddon",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "eks:CreateNodegroup",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "eks:CreateNodegroup",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "eks:DescribeNodegroup",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "eks:DescribeNodegroup",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "eks:CreateFargateProfile",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "eks:CreateFargateProfile",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "eks:DescribeFargateProfile",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "eks:DescribeFargateProfile",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "eks:CreatePodIdentityAssociation",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "eks:CreatePodIdentityAssociation",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "eks:DescribePodIdentityAssociation",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "eks:DescribePodIdentityAssociation",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Tagging",
+      "action": "eks:TagResource",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "eks:TagResource",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "eks:AssociateAccessPolicy",
+      "condition": {
+        "StringEquals": {
+          "eks:accessScope": "cluster",
+          "eks:policyArn": "arn:aws:eks::aws:cluster-access-policy/AWSBackupFullAccessPolicyForRestore"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "eks:AssociateAccessPolicy",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "eks:DisassociateAccessPolicy",
+      "condition": {
+        "StringEquals": {
+          "eks:accessScope": "cluster",
+          "eks:policyArn": "arn:aws:eks::aws:cluster-access-policy/AWSBackupFullAccessPolicyForRestore"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "eks:DisassociateAccessPolicy",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Permissions management",
+      "action": "iam:PassRole",
+      "condition": {
+        "StringEquals": {
+          "iam:PassedToService": [
+            "eks.amazonaws.com",
+            "ec2.amazonaws.com",
+            "pods.eks.amazonaws.com",
+            "backup.amazonaws.com"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "iam:PassRole",
+      "privesc": true,
+      "resource_exposure": true
+    },
+    {
+      "access_level": "List",
+      "action": "ec2:DescribeLaunchTemplateVersions",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:DescribeLaunchTemplateVersions",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "ec2:DescribeSubnets",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:DescribeSubnets",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:RunInstances",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:RunInstances",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "iam:GetRole",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "iam:GetRole",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "iam:ListAttachedRolePolicies",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "iam:ListAttachedRolePolicies",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Tagging",
+      "action": "ec2:CreateTags",
+      "condition": {
+        "StringEquals": {
+          "ec2:CreateAction": [
+            "RunInstances"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:CreateTags",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "backup:StartRestoreJob",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "backup:StartRestoreJob",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "backup:ListRestoreJobs",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "backup:ListRestoreJobs",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "backup:ListRecoveryPointsByBackupVault",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "backup:ListRecoveryPointsByBackupVault",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "backup:DescribeRestoreJob",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "backup:DescribeRestoreJob",
+      "privesc": false,
+      "resource_exposure": false
     }
   ],
   "grantless": false,
@@ -1842,6 +2251,6 @@
   "resource_exposure": true,
   "undocumented_actions": false,
   "unknown_actions": [],
-  "updatedate": "2025-07-14T22:22:07+00:00",
-  "version": "v24"
+  "updatedate": "2025-11-10T19:34:08+00:00",
+  "version": "v25"
 }
