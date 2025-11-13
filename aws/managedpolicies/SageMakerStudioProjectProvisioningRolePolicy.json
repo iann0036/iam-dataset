@@ -7,7 +7,7 @@
     "Permissions management"
   ],
   "arn": "arn:aws:iam::aws:policy/service-role/SageMakerStudioProjectProvisioningRolePolicy",
-  "createdate": "2025-10-30T22:19:07Z",
+  "createdate": "2025-11-11T23:04:09Z",
   "credentials_exposure": true,
   "data_access": true,
   "deprecated": false,
@@ -298,7 +298,6 @@
             "iam:PolicyARN": [
               "arn:aws:iam::aws:policy/SageMakerStudioProjectUserRolePolicy",
               "arn:aws:iam::aws:policy/SageMakerStudioProjectRoleMachineLearningPolicy",
-              "arn:aws:iam::aws:policy/service-role/SageMakerStudioEMRContainersQueryEngineRolePolicy",
               "arn:aws:iam::aws:policy/service-role/SageMakerStudioEMRContainersSystemNamespaceRolePolicy",
               "arn:aws:iam::aws:policy/service-role/SageMakerStudioEMRServiceRolePolicy",
               "arn:aws:iam::aws:policy/service-role/SageMakerStudioEMRInstanceRolePolicy",
@@ -509,7 +508,8 @@
         "Effect": "Allow",
         "Resource": [
           "arn:aws:iam::*:role/datazone_emr_service_role_*",
-          "arn:aws:iam::*:role/datazone_emr_ec2_instance_role_*"
+          "arn:aws:iam::*:role/datazone_emr_ec2_instance_role_*",
+          "arn:aws:iam::*:role/datazone_emr_containers_system_namespace_role_*"
         ],
         "Sid": "IamTagEMR"
       },
@@ -1816,7 +1816,8 @@
           "arn:aws:iam::*:role/aws-service-role/sagemaker.amazonaws.com/AWSServiceRoleForAmazonSageMakerNotebooks",
           "arn:aws:iam::*:role/aws-service-role/ops.emr-serverless.amazonaws.com/AWSServiceRoleForAmazonEMRServerless",
           "arn:aws:iam::*:role/aws-service-role/airflow.amazonaws.com/AWSServiceRoleForAmazonMWAA",
-          "arn:aws:iam::*:role/aws-service-role/elasticmapreduce.amazonaws.com/AWSServiceRoleForEMRCleanup"
+          "arn:aws:iam::*:role/aws-service-role/elasticmapreduce.amazonaws.com/AWSServiceRoleForEMRCleanup",
+          "arn:aws:iam::*:role/aws-service-role/emr-containers.amazonaws.com/AWSServiceRoleForAmazonEMRContainers"
         ],
         "Sid": "CreateSLR"
       },
@@ -1981,7 +1982,6 @@
       },
       {
         "Action": [
-          "sagemaker:CreateDomain",
           "sagemaker:AddTags"
         ],
         "Condition": {
@@ -3105,6 +3105,8 @@
           "emr-containers:DeleteSecurityConfiguration",
           "emr-containers:DeleteVirtualCluster",
           "emr-containers:DescribeSecurityConfiguration",
+          "emr-containers:DescribeVirtualCluster",
+          "emr-containers:DescribeManagedEndpoint",
           "emr-containers:TagResource"
         ],
         "Condition": {
@@ -3873,7 +3875,6 @@
           "iam:PolicyARN": [
             "arn:aws:iam::aws:policy/SageMakerStudioProjectUserRolePolicy",
             "arn:aws:iam::aws:policy/SageMakerStudioProjectRoleMachineLearningPolicy",
-            "arn:aws:iam::aws:policy/service-role/SageMakerStudioEMRContainersQueryEngineRolePolicy",
             "arn:aws:iam::aws:policy/service-role/SageMakerStudioEMRContainersSystemNamespaceRolePolicy",
             "arn:aws:iam::aws:policy/service-role/SageMakerStudioEMRServiceRolePolicy",
             "arn:aws:iam::aws:policy/service-role/SageMakerStudioEMRInstanceRolePolicy",
@@ -3901,7 +3902,6 @@
           "iam:PolicyARN": [
             "arn:aws:iam::aws:policy/SageMakerStudioProjectUserRolePolicy",
             "arn:aws:iam::aws:policy/SageMakerStudioProjectRoleMachineLearningPolicy",
-            "arn:aws:iam::aws:policy/service-role/SageMakerStudioEMRContainersQueryEngineRolePolicy",
             "arn:aws:iam::aws:policy/service-role/SageMakerStudioEMRContainersSystemNamespaceRolePolicy",
             "arn:aws:iam::aws:policy/service-role/SageMakerStudioEMRServiceRolePolicy",
             "arn:aws:iam::aws:policy/service-role/SageMakerStudioEMRInstanceRolePolicy",
@@ -7241,23 +7241,6 @@
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "secretsmanager:TagResource",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Write",
-      "action": "sagemaker:CreateDomain",
-      "condition": {
-        "Null": {
-          "aws:ResourceTag/AmazonDataZoneProject": "false"
-        },
-        "StringEquals": {
-          "aws:ResourceAccount": "${aws:PrincipalAccount}"
-        }
-      },
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "sagemaker:CreateDomain",
       "privesc": false,
       "resource_exposure": false
     },
@@ -11097,6 +11080,34 @@
       "resource_exposure": false
     },
     {
+      "access_level": "Read",
+      "action": "emr-containers:DescribeVirtualCluster",
+      "condition": {
+        "Null": {
+          "aws:ResourceTag/AmazonDataZoneProject": "false"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "emr-containers:DescribeVirtualCluster",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "emr-containers:DescribeManagedEndpoint",
+      "condition": {
+        "Null": {
+          "aws:ResourceTag/AmazonDataZoneProject": "false"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "emr-containers:DescribeManagedEndpoint",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
       "access_level": "Tagging",
       "action": "emr-containers:TagResource",
       "condition": {
@@ -11246,6 +11257,6 @@
   "resource_exposure": true,
   "undocumented_actions": false,
   "unknown_actions": [],
-  "updatedate": "2025-10-30T22:19:07+00:00",
-  "version": "v22"
+  "updatedate": "2025-11-11T23:04:09+00:00",
+  "version": "v23"
 }

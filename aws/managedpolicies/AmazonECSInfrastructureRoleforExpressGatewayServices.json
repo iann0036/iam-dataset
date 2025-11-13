@@ -1,0 +1,1008 @@
+{
+  "access_levels": [
+    "List",
+    "Read",
+    "Tagging",
+    "Write",
+    "Permissions management"
+  ],
+  "arn": "arn:aws:iam::aws:policy/service-role/AmazonECSInfrastructureRoleforExpressGatewayServices",
+  "createdate": "2025-11-12T20:34:08Z",
+  "credentials_exposure": false,
+  "data_access": false,
+  "deprecated": false,
+  "document": {
+    "Statement": [
+      {
+        "Action": [
+          "iam:CreateServiceLinkedRole"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "iam:AWSServiceName": [
+              "ecs.application-autoscaling.amazonaws.com",
+              "elasticloadbalancing.amazonaws.com"
+            ]
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "CreateSLRForAutoscaling"
+      },
+      {
+        "Action": [
+          "elasticloadbalancing:CreateListener",
+          "elasticloadbalancing:CreateLoadBalancer",
+          "elasticloadbalancing:CreateRule",
+          "elasticloadbalancing:CreateTargetGroup",
+          "elasticloadbalancing:ModifyListener",
+          "elasticloadbalancing:ModifyRule",
+          "elasticloadbalancing:AddListenerCertificates",
+          "elasticloadbalancing:RemoveListenerCertificates",
+          "elasticloadbalancing:RegisterTargets",
+          "elasticloadbalancing:DeregisterTargets",
+          "elasticloadbalancing:DeleteTargetGroup",
+          "elasticloadbalancing:DeleteLoadBalancer",
+          "elasticloadbalancing:DeleteRule",
+          "elasticloadbalancing:DeleteListener"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceTag/AmazonECSManaged": "true"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:elasticloadbalancing:*:*:loadbalancer/app/*/*",
+          "arn:aws:elasticloadbalancing:*:*:listener/app/*/*/*",
+          "arn:aws:elasticloadbalancing:*:*:listener-rule/app/*/*/*/*",
+          "arn:aws:elasticloadbalancing:*:*:targetgroup/*/*"
+        ],
+        "Sid": "ELBOperations"
+      },
+      {
+        "Action": [
+          "elasticloadbalancing:AddTags"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "elasticloadbalancing:CreateAction": [
+              "CreateLoadBalancer",
+              "CreateListener",
+              "CreateRule",
+              "CreateTargetGroup"
+            ]
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:elasticloadbalancing:*:*:loadbalancer/app/*/*",
+          "arn:aws:elasticloadbalancing:*:*:listener/app/*/*/*",
+          "arn:aws:elasticloadbalancing:*:*:listener-rule/app/*/*/*/*",
+          "arn:aws:elasticloadbalancing:*:*:targetgroup/*/*"
+        ],
+        "Sid": "TagOnCreateELBResources"
+      },
+      {
+        "Action": [
+          "ec2:CreateSecurityGroup"
+        ],
+        "Effect": "Allow",
+        "Resource": "arn:aws:ec2:*:*:vpc/*",
+        "Sid": "BlanketAllowCreateSecurityGroupsInVPCs"
+      },
+      {
+        "Action": [
+          "ec2:CreateSecurityGroup",
+          "ec2:AuthorizeSecurityGroupEgress",
+          "ec2:AuthorizeSecurityGroupIngress"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:RequestTag/AmazonECSManaged": "true"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:ec2:*:*:security-group/*",
+          "arn:aws:ec2:*:*:security-group-rule/*",
+          "arn:aws:ec2:*:*:vpc/*"
+        ],
+        "Sid": "CreateSecurityGroupResourcesWithTags"
+      },
+      {
+        "Action": [
+          "ec2:AuthorizeSecurityGroupEgress",
+          "ec2:AuthorizeSecurityGroupIngress",
+          "ec2:DeleteSecurityGroup",
+          "ec2:RevokeSecurityGroupEgress",
+          "ec2:RevokeSecurityGroupIngress"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceTag/AmazonECSManaged": "true"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:ec2:*:*:security-group/*",
+          "arn:aws:ec2:*:*:vpc/*"
+        ],
+        "Sid": "ModifySecurityGroupOperations"
+      },
+      {
+        "Action": [
+          "ec2:CreateTags"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "ec2:CreateAction": [
+              "CreateSecurityGroup",
+              "AuthorizeSecurityGroupIngress",
+              "AuthorizeSecurityGroupEgress"
+            ]
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:ec2:*:*:security-group/*",
+          "arn:aws:ec2:*:*:security-group-rule/*"
+        ],
+        "Sid": "TagOnCreateEC2Resources"
+      },
+      {
+        "Action": [
+          "acm:RequestCertificate",
+          "acm:AddTagsToCertificate",
+          "acm:DeleteCertificate",
+          "acm:DescribeCertificate"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceTag/AmazonECSManaged": "true"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:acm:*:*:certificate/*"
+        ],
+        "Sid": "CertificateOperations"
+      },
+      {
+        "Action": [
+          "application-autoscaling:RegisterScalableTarget",
+          "application-autoscaling:TagResource",
+          "application-autoscaling:DeregisterScalableTarget"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceTag/AmazonECSManaged": "true"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:application-autoscaling:*:*:scalable-target/*"
+        ],
+        "Sid": "ApplicationAutoscalingCreateOperations"
+      },
+      {
+        "Action": [
+          "application-autoscaling:PutScalingPolicy",
+          "application-autoscaling:DeleteScalingPolicy"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "application-autoscaling:service-namespace": "ecs"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:application-autoscaling:*:*:scalable-target/*"
+        ],
+        "Sid": "ApplicationAutoscalingPolicyOperations"
+      },
+      {
+        "Action": [
+          "application-autoscaling:DescribeScalableTargets",
+          "application-autoscaling:DescribeScalingPolicies",
+          "application-autoscaling:DescribeScalingActivities"
+        ],
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:application-autoscaling:*:*:scalable-target/*"
+        ],
+        "Sid": "ApplicationAutoscalingReadOperations"
+      },
+      {
+        "Action": [
+          "cloudwatch:PutMetricAlarm",
+          "cloudwatch:TagResource"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:RequestTag/AmazonECSManaged": "true"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:cloudwatch:*:*:alarm:*"
+        ],
+        "Sid": "CloudWatchAlarmCreateOperations"
+      },
+      {
+        "Action": [
+          "cloudwatch:DeleteAlarms",
+          "cloudwatch:DescribeAlarms"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceTag/AmazonECSManaged": "true"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:cloudwatch:*:*:alarm:*"
+        ],
+        "Sid": "CloudWatchAlarmOperations"
+      },
+      {
+        "Action": [
+          "elasticloadbalancing:DescribeLoadBalancers",
+          "elasticloadbalancing:DescribeTargetGroups",
+          "elasticloadbalancing:DescribeListeners",
+          "elasticloadbalancing:DescribeRules"
+        ],
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "ELBReadOperations"
+      },
+      {
+        "Action": [
+          "ec2:DescribeSecurityGroups",
+          "ec2:DescribeSubnets",
+          "ec2:DescribeRouteTables",
+          "ec2:DescribeVpcs"
+        ],
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "VPCReadOperations"
+      },
+      {
+        "Action": [
+          "logs:CreateLogGroup",
+          "logs:TagResource"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:RequestTag/AmazonECSManaged": "true"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:logs:*:*:log-group:*",
+        "Sid": "CloudWatchLogsCreateOperations"
+      },
+      {
+        "Action": [
+          "logs:DescribeLogGroups"
+        ],
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "CloudWatchLogsReadOperations"
+      }
+    ],
+    "Version": "2012-10-17"
+  },
+  "effective_actions": [
+    {
+      "access_level": "Permissions management",
+      "action": "iam:CreateServiceLinkedRole",
+      "condition": {
+        "StringEquals": {
+          "iam:AWSServiceName": [
+            "ecs.application-autoscaling.amazonaws.com",
+            "elasticloadbalancing.amazonaws.com"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "iam:CreateServiceLinkedRole",
+      "privesc": true,
+      "resource_exposure": true
+    },
+    {
+      "access_level": "Write",
+      "action": "elasticloadbalancing:CreateListener",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/AmazonECSManaged": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "elasticloadbalancing:CreateListener",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "elasticloadbalancing:CreateLoadBalancer",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/AmazonECSManaged": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "elasticloadbalancing:CreateLoadBalancer",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "elasticloadbalancing:CreateRule",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/AmazonECSManaged": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "elasticloadbalancing:CreateRule",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "elasticloadbalancing:CreateTargetGroup",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/AmazonECSManaged": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "elasticloadbalancing:CreateTargetGroup",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "elasticloadbalancing:ModifyListener",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/AmazonECSManaged": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "elasticloadbalancing:ModifyListener",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "elasticloadbalancing:ModifyRule",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/AmazonECSManaged": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "elasticloadbalancing:ModifyRule",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "elasticloadbalancing:AddListenerCertificates",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/AmazonECSManaged": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "elasticloadbalancing:AddListenerCertificates",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "elasticloadbalancing:RemoveListenerCertificates",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/AmazonECSManaged": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "elasticloadbalancing:RemoveListenerCertificates",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "elasticloadbalancing:RegisterTargets",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/AmazonECSManaged": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "elasticloadbalancing:RegisterTargets",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "elasticloadbalancing:DeregisterTargets",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/AmazonECSManaged": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "elasticloadbalancing:DeregisterTargets",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "elasticloadbalancing:DeleteTargetGroup",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/AmazonECSManaged": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "elasticloadbalancing:DeleteTargetGroup",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "elasticloadbalancing:DeleteLoadBalancer",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/AmazonECSManaged": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "elasticloadbalancing:DeleteLoadBalancer",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "elasticloadbalancing:DeleteRule",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/AmazonECSManaged": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "elasticloadbalancing:DeleteRule",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "elasticloadbalancing:DeleteListener",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/AmazonECSManaged": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "elasticloadbalancing:DeleteListener",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Tagging",
+      "action": "elasticloadbalancing:AddTags",
+      "condition": {
+        "StringEquals": {
+          "elasticloadbalancing:CreateAction": [
+            "CreateLoadBalancer",
+            "CreateListener",
+            "CreateRule",
+            "CreateTargetGroup"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "elasticloadbalancing:AddTags",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:CreateSecurityGroup",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:CreateSecurityGroup",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:CreateSecurityGroup",
+      "condition": {
+        "StringEquals": {
+          "aws:RequestTag/AmazonECSManaged": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:CreateSecurityGroup",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:AuthorizeSecurityGroupEgress",
+      "condition": {
+        "StringEquals": {
+          "aws:RequestTag/AmazonECSManaged": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:AuthorizeSecurityGroupEgress",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:AuthorizeSecurityGroupIngress",
+      "condition": {
+        "StringEquals": {
+          "aws:RequestTag/AmazonECSManaged": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:AuthorizeSecurityGroupIngress",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:AuthorizeSecurityGroupEgress",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/AmazonECSManaged": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:AuthorizeSecurityGroupEgress",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:AuthorizeSecurityGroupIngress",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/AmazonECSManaged": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:AuthorizeSecurityGroupIngress",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:DeleteSecurityGroup",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/AmazonECSManaged": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:DeleteSecurityGroup",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:RevokeSecurityGroupEgress",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/AmazonECSManaged": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:RevokeSecurityGroupEgress",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:RevokeSecurityGroupIngress",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/AmazonECSManaged": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:RevokeSecurityGroupIngress",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Tagging",
+      "action": "ec2:CreateTags",
+      "condition": {
+        "StringEquals": {
+          "ec2:CreateAction": [
+            "CreateSecurityGroup",
+            "AuthorizeSecurityGroupIngress",
+            "AuthorizeSecurityGroupEgress"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:CreateTags",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "acm:RequestCertificate",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/AmazonECSManaged": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "acm:RequestCertificate",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Tagging",
+      "action": "acm:AddTagsToCertificate",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/AmazonECSManaged": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "acm:AddTagsToCertificate",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "acm:DeleteCertificate",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/AmazonECSManaged": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "acm:DeleteCertificate",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "acm:DescribeCertificate",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/AmazonECSManaged": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "acm:DescribeCertificate",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "application-autoscaling:RegisterScalableTarget",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/AmazonECSManaged": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "application-autoscaling:RegisterScalableTarget",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Tagging",
+      "action": "application-autoscaling:TagResource",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/AmazonECSManaged": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "application-autoscaling:TagResource",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "application-autoscaling:DeregisterScalableTarget",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/AmazonECSManaged": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "application-autoscaling:DeregisterScalableTarget",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "application-autoscaling:PutScalingPolicy",
+      "condition": {
+        "StringEquals": {
+          "application-autoscaling:service-namespace": "ecs"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "application-autoscaling:PutScalingPolicy",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "application-autoscaling:DeleteScalingPolicy",
+      "condition": {
+        "StringEquals": {
+          "application-autoscaling:service-namespace": "ecs"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "application-autoscaling:DeleteScalingPolicy",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "application-autoscaling:DescribeScalableTargets",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "application-autoscaling:DescribeScalableTargets",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "application-autoscaling:DescribeScalingPolicies",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "application-autoscaling:DescribeScalingPolicies",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "application-autoscaling:DescribeScalingActivities",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "application-autoscaling:DescribeScalingActivities",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "cloudwatch:PutMetricAlarm",
+      "condition": {
+        "StringEquals": {
+          "aws:RequestTag/AmazonECSManaged": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudwatch:PutMetricAlarm",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Tagging",
+      "action": "cloudwatch:TagResource",
+      "condition": {
+        "StringEquals": {
+          "aws:RequestTag/AmazonECSManaged": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudwatch:TagResource",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "cloudwatch:DeleteAlarms",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/AmazonECSManaged": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudwatch:DeleteAlarms",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "cloudwatch:DescribeAlarms",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/AmazonECSManaged": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudwatch:DescribeAlarms",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "elasticloadbalancing:DescribeLoadBalancers",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "elasticloadbalancing:DescribeLoadBalancers",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "elasticloadbalancing:DescribeTargetGroups",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "elasticloadbalancing:DescribeTargetGroups",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "elasticloadbalancing:DescribeListeners",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "elasticloadbalancing:DescribeListeners",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "elasticloadbalancing:DescribeRules",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "elasticloadbalancing:DescribeRules",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "ec2:DescribeSecurityGroups",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:DescribeSecurityGroups",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "ec2:DescribeSubnets",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:DescribeSubnets",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "ec2:DescribeRouteTables",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:DescribeRouteTables",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "ec2:DescribeVpcs",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:DescribeVpcs",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "logs:CreateLogGroup",
+      "condition": {
+        "StringEquals": {
+          "aws:RequestTag/AmazonECSManaged": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "logs:CreateLogGroup",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Tagging",
+      "action": "logs:TagResource",
+      "condition": {
+        "StringEquals": {
+          "aws:RequestTag/AmazonECSManaged": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "logs:TagResource",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "logs:DescribeLogGroups",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "logs:DescribeLogGroups",
+      "privesc": false,
+      "resource_exposure": false
+    }
+  ],
+  "grantless": false,
+  "malformed": false,
+  "name": "AmazonECSInfrastructureRoleforExpressGatewayServices",
+  "privesc": true,
+  "resource_exposure": true,
+  "undocumented_actions": false,
+  "unknown_actions": [],
+  "updatedate": "2025-11-12T20:34:08+00:00",
+  "version": "v1"
+}
