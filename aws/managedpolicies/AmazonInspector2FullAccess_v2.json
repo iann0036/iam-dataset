@@ -7,7 +7,7 @@
     "Permissions management"
   ],
   "arn": "arn:aws:iam::aws:policy/AmazonInspector2FullAccess_v2",
-  "createdate": "2025-07-03T16:07:07Z",
+  "createdate": "2025-11-14T23:34:08Z",
   "credentials_exposure": false,
   "data_access": false,
   "deprecated": false,
@@ -69,7 +69,7 @@
           "organizations:DescribeOrganizationalUnit"
         ],
         "Effect": "Allow",
-        "Resource": "arn:*:organizations::*:ou/o-*/ou-*",
+        "Resource": "arn:aws:organizations::*:ou/o-*/ou-*",
         "Sid": "AllowOrganizationalBasedAccessToOrganizationApis"
       },
       {
@@ -77,7 +77,7 @@
           "organizations:DescribeAccount"
         ],
         "Effect": "Allow",
-        "Resource": "arn:*:organizations::*:account/o-*/*",
+        "Resource": "arn:aws:organizations::*:account/o-*/*",
         "Sid": "AllowAccountsBasedAccessToOrganizationApis"
       },
       {
@@ -88,6 +88,44 @@
         "Effect": "Allow",
         "Resource": "*",
         "Sid": "AllowAccessToOrganizationApis"
+      },
+      {
+        "Action": [
+          "organizations:ListPolicies"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "organizations:PolicyType": [
+              "INSPECTOR_POLICY"
+            ]
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "AllowListPoliciesForInspectorPolicyType"
+      },
+      {
+        "Action": [
+          "organizations:DescribeResourcePolicy"
+        ],
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "AllowDescribeResourcePolicyForDelegation"
+      },
+      {
+        "Action": [
+          "organizations:DescribeEffectivePolicy"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "organizations:PolicyType": [
+              "INSPECTOR_POLICY"
+            ]
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "AllowDescribeEffectivePolicyForInspector"
       }
     ],
     "Version": "2012-10-17"
@@ -970,6 +1008,48 @@
       "effective_action": "organizations:DescribeOrganization",
       "privesc": false,
       "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "organizations:ListPolicies",
+      "condition": {
+        "StringEquals": {
+          "organizations:PolicyType": [
+            "INSPECTOR_POLICY"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "organizations:ListPolicies",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "organizations:DescribeResourcePolicy",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "organizations:DescribeResourcePolicy",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "organizations:DescribeEffectivePolicy",
+      "condition": {
+        "StringEquals": {
+          "organizations:PolicyType": [
+            "INSPECTOR_POLICY"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "organizations:DescribeEffectivePolicy",
+      "privesc": false,
+      "resource_exposure": false
     }
   ],
   "grantless": false,
@@ -980,5 +1060,5 @@
   "undocumented_actions": false,
   "unknown_actions": [],
   "updatedate": "2025-07-03T16:07:07+00:00",
-  "version": "v1"
+  "version": "v2"
 }

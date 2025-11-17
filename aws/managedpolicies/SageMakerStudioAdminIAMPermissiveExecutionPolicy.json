@@ -8,7 +8,7 @@
     "Unknown"
   ],
   "arn": "arn:aws:iam::aws:policy/SageMakerStudioAdminIAMPermissiveExecutionPolicy",
-  "createdate": "2025-10-30T19:34:08Z",
+  "createdate": "2025-11-15T03:04:09Z",
   "credentials_exposure": true,
   "data_access": true,
   "deprecated": false,
@@ -33,13 +33,15 @@
           "athena:*",
           "bedrock:*",
           "codewhisperer:*",
+          "sagemaker-unified-studio-mcp:*",
           "datazone:*",
           "q:*",
           "sagemaker:*",
           "sagemaker-mlflow:*",
           "scheduler:*",
           "sqlworkbench:*",
-          "emr-serverless:*"
+          "emr-serverless:*",
+          "airflow-serverless:*"
         ],
         "Effect": "Allow",
         "Resource": "*",
@@ -65,8 +67,47 @@
       },
       {
         "Action": [
+          "glue:CancelStatement",
+          "glue:CreateSession",
+          "glue:DeleteSession",
+          "glue:GetSession",
+          "glue:GetStatement",
+          "glue:RunStatement",
+          "glue:StopSession",
+          "glue:GetDashboardUrl"
+        ],
+        "Condition": {
+          "StringNotEquals": {
+            "aws:RequestTag/AmazonDataZoneSessionOwner": "${aws:SourceIdentity}",
+            "aws:ResourceTag/AmazonDataZoneSessionOwner": "${aws:SourceIdentity}"
+          }
+        },
+        "Effect": "Deny",
+        "Resource": [
+          "arn:aws:glue:*:*:session/*"
+        ],
+        "Sid": "GlueSessionIsolation"
+      },
+      {
+        "Action": [
+          "glue:TagResource",
+          "glue:UntagResource"
+        ],
+        "Condition": {
+          "StringNotEquals": {
+            "aws:ResourceTag/AmazonDataZoneSessionOwner": "${aws:SourceIdentity}"
+          }
+        },
+        "Effect": "Deny",
+        "Resource": "arn:aws:glue:*:*:session/*",
+        "Sid": "DenyTaggingUntaggingForeignSessions"
+      },
+      {
+        "Action": [
           "iam:GetRole",
           "iam:ListRoles",
+          "iam:GetUser",
+          "iam:ListUsers",
           "sts:AssumeRole"
         ],
         "Effect": "Allow",
@@ -84,9 +125,11 @@
           "arn:aws:iam::*:role/aws-service-role/sagemaker.amazonaws.com/AWSServiceRoleForAmazonSageMakerNotebooks",
           "arn:aws:iam::*:role/aws-service-role/ops.emr-serverless.amazonaws.com/AWSServiceRoleForAmazonEMRServerless",
           "arn:aws:iam::*:role/aws-service-role/airflow.amazonaws.com/AWSServiceRoleForAmazonMWAA",
+          "arn:aws:iam::*:role/aws-service-role/airflow-serverless.amazonaws.com/AWSServiceRoleForAmazonMWAAServerless",
           "arn:aws:iam::*:role/aws-service-role/elasticmapreduce.amazonaws.com/AWSServiceRoleForEMRCleanup",
           "arn:aws:iam::*:role/aws-service-role/sagemaker.application-autoscaling.amazonaws.com/AWSServiceRoleForApplicationAutoScaling_SageMakerEndpoint",
-          "arn:aws:iam::*:role/aws-service-role/observability.aoss.amazonaws.com/AWSServiceRoleForAmazonOpenSearchServerless"
+          "arn:aws:iam::*:role/aws-service-role/observability.aoss.amazonaws.com/AWSServiceRoleForAmazonOpenSearchServerless",
+          "arn:aws:iam::*:role/aws-service-role/ops.athena.amazonaws.com/AWSServiceRoleForAmazonAthena"
         ],
         "Sid": "CreateSLR"
       },
@@ -116,7 +159,10 @@
             "iam:PassedToService": [
               "sagemaker.amazonaws.com",
               "lakeformation.amazonaws.com",
-              "glue.amazonaws.com"
+              "athena.amazonaws.com",
+              "glue.amazonaws.com",
+              "datazone.amazonaws.com",
+              "airflow-serverless.amazonaws.com"
             ]
           }
         },
@@ -135,7 +181,9 @@
               "datazone.amazonaws.com",
               "redshift-serverless.amazonaws.com",
               "redshift.amazonaws.com",
-              "scheduler.amazonaws.com"
+              "scheduler.amazonaws.com",
+              "emr-serverless.amazonaws.com",
+              "airflow-serverless.amazonaws.com"
             ]
           }
         },
@@ -395,7 +443,9 @@
           "kms:Decrypt",
           "kms:Encrypt",
           "kms:GenerateDataKey",
-          "kms:GenerateDataKeyWithoutPlaintext"
+          "kms:GenerateDataKeyWithoutPlaintext",
+          "kms:ReEncryptTo",
+          "kms:ReEncryptFrom"
         ],
         "Condition": {
           "Null": {
@@ -458,6 +508,49 @@
         "Effect": "Allow",
         "Resource": "*",
         "Sid": "BedrockKms"
+      },
+      {
+        "Action": [
+          "kms:CreateGrant"
+        ],
+        "Condition": {
+          "ForAllValues:StringEquals": {
+            "kms:GrantOperations": [
+              "kms:Decrypt",
+              "kms:Encrypt",
+              "kms:GenerateDataKey",
+              "kms:GenerateDataKeyWithoutPlaintext"
+            ]
+          },
+          "ForAnyValue:StringEquals": {
+            "kms:EncryptionContextKeys": "aws:airflow-serverless:workflow-arn"
+          },
+          "StringLike": {
+            "kms:ViaService": "airflow-serverless.*.amazonaws.com"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:*:kms:*:*:key/*",
+        "Sid": "WorkflowsCreateGrant"
+      },
+      {
+        "Action": [
+          "kms:Decrypt",
+          "kms:Encrypt",
+          "kms:GenerateDataKey",
+          "kms:GenerateDataKeyWithoutPlaintext"
+        ],
+        "Condition": {
+          "ForAnyValue:StringEquals": {
+            "kms:EncryptionContextKeys": "aws:airflow-serverless:workflow-arn"
+          },
+          "StringLike": {
+            "kms:ViaService": "airflow-serverless.*.amazonaws.com"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:*:kms:*:*:key/*",
+        "Sid": "WorkflowsKms"
       },
       {
         "Action": [
@@ -525,7 +618,9 @@
       {
         "Action": [
           "ec2:CreateNetworkInterface",
-          "ec2:DeleteNetworkInterface"
+          "ec2:DeleteNetworkInterface",
+          "ec2:CreateNetworkInterfacePermission",
+          "ec2:DeleteNetworkInterfacePermission"
         ],
         "Effect": "Allow",
         "Resource": "*",
@@ -541,6 +636,41 @@
           "arn:aws:ec2:*:*:network-interface/*"
         ],
         "Sid": "EC2TagAccessForVpc"
+      },
+      {
+        "Action": [
+          "athena:StartSession",
+          "athena:GetSession",
+          "athena:TerminateSession",
+          "athena:GetSessionStatus",
+          "athena:GetSessionEndpoint",
+          "athena:GetResourceDashboard"
+        ],
+        "Condition": {
+          "StringNotEquals": {
+            "aws:RequestTag/AmazonDataZoneSessionOwner": "${aws:SourceIdentity}",
+            "aws:ResourceTag/AmazonDataZoneSessionOwner": "${aws:SourceIdentity}"
+          }
+        },
+        "Effect": "Deny",
+        "Resource": [
+          "arn:aws:athena:*:*:workgroup/*/session/*"
+        ],
+        "Sid": "AthenaSessionIsolation"
+      },
+      {
+        "Action": [
+          "athena:TagResource",
+          "athena:UntagResource"
+        ],
+        "Condition": {
+          "StringNotEquals": {
+            "aws:ResourceTag/AmazonDataZoneSessionOwner": "${aws:SourceIdentity}"
+          }
+        },
+        "Effect": "Deny",
+        "Resource": "arn:aws:athena:*:*:workgroup/*/session/*",
+        "Sid": "DenyTaggingUntaggingForeignAthenaSessions"
       }
     ],
     "Version": "2012-10-17"
@@ -12338,6 +12468,36 @@
     },
     {
       "access_level": "Write",
+      "action": "sagemaker-unified-studio-mcp:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sagemaker-unified-studio-mcp:CallPrivilegedTool",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "sagemaker-unified-studio-mcp:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sagemaker-unified-studio-mcp:CallReadOnlyTool",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "sagemaker-unified-studio-mcp:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sagemaker-unified-studio-mcp:InvokeMcp",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
       "action": "datazone:*",
       "condition": null,
       "credentials_exposure": false,
@@ -21717,6 +21877,26 @@
       "resource_exposure": false
     },
     {
+      "access_level": "Read",
+      "action": "iam:GetUser",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "iam:GetUser",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "iam:ListUsers",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "iam:ListUsers",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
       "access_level": "Write",
       "action": "sts:AssumeRole",
       "condition": null,
@@ -21777,7 +21957,10 @@
           "iam:PassedToService": [
             "sagemaker.amazonaws.com",
             "lakeformation.amazonaws.com",
-            "glue.amazonaws.com"
+            "athena.amazonaws.com",
+            "glue.amazonaws.com",
+            "datazone.amazonaws.com",
+            "airflow-serverless.amazonaws.com"
           ]
         }
       },
@@ -21797,7 +21980,9 @@
             "datazone.amazonaws.com",
             "redshift-serverless.amazonaws.com",
             "redshift.amazonaws.com",
-            "scheduler.amazonaws.com"
+            "scheduler.amazonaws.com",
+            "emr-serverless.amazonaws.com",
+            "airflow-serverless.amazonaws.com"
           ]
         }
       },
@@ -23681,6 +23866,40 @@
       "resource_exposure": false
     },
     {
+      "access_level": "Write",
+      "action": "kms:ReEncryptTo",
+      "condition": {
+        "Null": {
+          "kms:EncryptionContextKeys": "false"
+        },
+        "StringLike": {
+          "kms:ViaService": "sagemaker.*.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "kms:ReEncryptTo",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "kms:ReEncryptFrom",
+      "condition": {
+        "Null": {
+          "kms:EncryptionContextKeys": "false"
+        },
+        "StringLike": {
+          "kms:ViaService": "sagemaker.*.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "kms:ReEncryptFrom",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
       "access_level": "Permissions management",
       "action": "kms:CreateGrant",
       "condition": {
@@ -23810,6 +24029,99 @@
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "kms:GenerateDataKey",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Permissions management",
+      "action": "kms:CreateGrant",
+      "condition": {
+        "ForAllValues:StringEquals": {
+          "kms:GrantOperations": [
+            "kms:Decrypt",
+            "kms:Encrypt",
+            "kms:GenerateDataKey",
+            "kms:GenerateDataKeyWithoutPlaintext"
+          ]
+        },
+        "ForAnyValue:StringEquals": {
+          "kms:EncryptionContextKeys": "aws:airflow-serverless:workflow-arn"
+        },
+        "StringLike": {
+          "kms:ViaService": "airflow-serverless.*.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": true,
+      "effective_action": "kms:CreateGrant",
+      "privesc": true,
+      "resource_exposure": true
+    },
+    {
+      "access_level": "Write",
+      "action": "kms:Decrypt",
+      "condition": {
+        "ForAnyValue:StringEquals": {
+          "kms:EncryptionContextKeys": "aws:airflow-serverless:workflow-arn"
+        },
+        "StringLike": {
+          "kms:ViaService": "airflow-serverless.*.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "kms:Decrypt",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "kms:Encrypt",
+      "condition": {
+        "ForAnyValue:StringEquals": {
+          "kms:EncryptionContextKeys": "aws:airflow-serverless:workflow-arn"
+        },
+        "StringLike": {
+          "kms:ViaService": "airflow-serverless.*.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "kms:Encrypt",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "kms:GenerateDataKey",
+      "condition": {
+        "ForAnyValue:StringEquals": {
+          "kms:EncryptionContextKeys": "aws:airflow-serverless:workflow-arn"
+        },
+        "StringLike": {
+          "kms:ViaService": "airflow-serverless.*.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "kms:GenerateDataKey",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "kms:GenerateDataKeyWithoutPlaintext",
+      "condition": {
+        "ForAnyValue:StringEquals": {
+          "kms:EncryptionContextKeys": "aws:airflow-serverless:workflow-arn"
+        },
+        "StringLike": {
+          "kms:ViaService": "airflow-serverless.*.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "kms:GenerateDataKeyWithoutPlaintext",
       "privesc": false,
       "resource_exposure": false
     },
@@ -25669,6 +25981,26 @@
       "resource_exposure": false
     },
     {
+      "access_level": "Permissions management",
+      "action": "ec2:CreateNetworkInterfacePermission",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:CreateNetworkInterfacePermission",
+      "privesc": false,
+      "resource_exposure": true
+    },
+    {
+      "access_level": "Permissions management",
+      "action": "ec2:DeleteNetworkInterfacePermission",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:DeleteNetworkInterfacePermission",
+      "privesc": false,
+      "resource_exposure": true
+    },
+    {
       "access_level": "Tagging",
       "action": "ec2:CreateTags",
       "condition": null,
@@ -25695,7 +26027,12 @@
   "privesc": true,
   "resource_exposure": true,
   "undocumented_actions": true,
-  "unknown_actions": [],
+  "unknown_actions": [
+    {
+      "action": "airflow-serverless:*",
+      "condition": null
+    }
+  ],
   "updatedate": "2025-10-30T19:34:08+00:00",
-  "version": "v3"
+  "version": "v4"
 }
