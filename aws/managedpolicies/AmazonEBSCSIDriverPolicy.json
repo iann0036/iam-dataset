@@ -5,7 +5,7 @@
     "Write"
   ],
   "arn": "arn:aws:iam::aws:policy/service-role/AmazonEBSCSIDriverPolicy",
-  "createdate": "2025-07-15T20:37:06Z",
+  "createdate": "2025-11-17T17:04:07Z",
   "credentials_exposure": false,
   "data_access": false,
   "deprecated": false,
@@ -34,6 +34,15 @@
       },
       {
         "Action": [
+          "ec2:CopyVolumes"
+        ],
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:ec2:*:*:volume/vol-*"
+        ]
+      },
+      {
+        "Action": [
           "ec2:AttachVolume",
           "ec2:DetachVolume"
         ],
@@ -59,7 +68,8 @@
           "StringEquals": {
             "ec2:CreateAction": [
               "CreateVolume",
-              "CreateSnapshot"
+              "CreateSnapshot",
+              "CopyVolumes"
             ]
           }
         },
@@ -81,7 +91,8 @@
       },
       {
         "Action": [
-          "ec2:CreateVolume"
+          "ec2:CreateVolume",
+          "ec2:CopyVolumes"
         ],
         "Condition": {
           "StringLike": {
@@ -93,7 +104,8 @@
       },
       {
         "Action": [
-          "ec2:CreateVolume"
+          "ec2:CreateVolume",
+          "ec2:CopyVolumes"
         ],
         "Condition": {
           "StringLike": {
@@ -283,6 +295,16 @@
     },
     {
       "access_level": "Write",
+      "action": "ec2:CopyVolumes",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:CopyVolumes",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
       "action": "ec2:AttachVolume",
       "condition": null,
       "credentials_exposure": false,
@@ -328,7 +350,8 @@
         "StringEquals": {
           "ec2:CreateAction": [
             "CreateVolume",
-            "CreateSnapshot"
+            "CreateSnapshot",
+            "CopyVolumes"
           ]
         }
       },
@@ -364,6 +387,20 @@
     },
     {
       "access_level": "Write",
+      "action": "ec2:CopyVolumes",
+      "condition": {
+        "StringLike": {
+          "aws:RequestTag/ebs.csi.aws.com/cluster": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:CopyVolumes",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
       "action": "ec2:CreateVolume",
       "condition": {
         "StringLike": {
@@ -373,6 +410,20 @@
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "ec2:CreateVolume",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:CopyVolumes",
+      "condition": {
+        "StringLike": {
+          "aws:RequestTag/CSIVolumeName": "*"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:CopyVolumes",
       "privesc": false,
       "resource_exposure": false
     },
@@ -483,5 +534,5 @@
   "undocumented_actions": false,
   "unknown_actions": [],
   "updatedate": "2025-07-15T20:37:06+00:00",
-  "version": "v4"
+  "version": "v5"
 }
