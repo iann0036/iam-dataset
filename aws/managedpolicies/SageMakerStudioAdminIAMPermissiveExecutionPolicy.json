@@ -8,7 +8,7 @@
     "Unknown"
   ],
   "arn": "arn:aws:iam::aws:policy/SageMakerStudioAdminIAMPermissiveExecutionPolicy",
-  "createdate": "2025-11-15T03:04:09Z",
+  "createdate": "2025-11-18T23:34:07Z",
   "credentials_exposure": true,
   "data_access": true,
   "deprecated": false,
@@ -372,7 +372,11 @@
       {
         "Action": [
           "kms:Decrypt",
-          "kms:GenerateDataKey"
+          "kms:GenerateDataKey",
+          "kms:Encrypt",
+          "kms:GenerateDataKeyWithoutPlaintext",
+          "kms:ReEncryptTo",
+          "kms:ReEncryptFrom"
         ],
         "Condition": {
           "ForAnyValue:StringEquals": {
@@ -411,9 +415,6 @@
         "Condition": {
           "Null": {
             "kms:EncryptionContext:aws:scheduler:schedule:arn": "false"
-          },
-          "StringLike": {
-            "kms:ViaService": "scheduler.*.amazonaws.com"
           }
         },
         "Effect": "Allow",
@@ -474,6 +475,32 @@
       },
       {
         "Action": [
+          "kms:CreateGrant"
+        ],
+        "Condition": {
+          "ForAllValues:StringEquals": {
+            "kms:GrantOperations": [
+              "Encrypt",
+              "Decrypt",
+              "ReEncryptFrom",
+              "ReEncryptTo",
+              "GenerateDataKeyWithoutPlaintext",
+              "GenerateDataKey",
+              "DescribeKey",
+              "RetireGrant",
+              "CreateGrant"
+            ]
+          },
+          "StringLike": {
+            "kms:ViaService": "datazone.*.amazonaws.com"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "DataZoneCreateGrant"
+      },
+      {
+        "Action": [
           "kms:Decrypt",
           "kms:Encrypt",
           "kms:GenerateDataKey",
@@ -516,10 +543,11 @@
         "Condition": {
           "ForAllValues:StringEquals": {
             "kms:GrantOperations": [
-              "kms:Decrypt",
-              "kms:Encrypt",
-              "kms:GenerateDataKey",
-              "kms:GenerateDataKeyWithoutPlaintext"
+              "Decrypt",
+              "Encrypt",
+              "GenerateDataKey",
+              "GenerateDataKeyWithoutPlaintext",
+              "RetireGrant"
             ]
           },
           "ForAnyValue:StringEquals": {
@@ -543,9 +571,6 @@
         "Condition": {
           "ForAnyValue:StringEquals": {
             "kms:EncryptionContextKeys": "aws:airflow-serverless:workflow-arn"
-          },
-          "StringLike": {
-            "kms:ViaService": "airflow-serverless.*.amazonaws.com"
           }
         },
         "Effect": "Allow",
@@ -23870,6 +23895,74 @@
     },
     {
       "access_level": "Write",
+      "action": "kms:Encrypt",
+      "condition": {
+        "ForAnyValue:StringEquals": {
+          "kms:EncryptionContextKeys": "aws:datazone:domainId"
+        },
+        "StringLike": {
+          "kms:ViaService": "datazone.*.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "kms:Encrypt",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "kms:GenerateDataKeyWithoutPlaintext",
+      "condition": {
+        "ForAnyValue:StringEquals": {
+          "kms:EncryptionContextKeys": "aws:datazone:domainId"
+        },
+        "StringLike": {
+          "kms:ViaService": "datazone.*.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "kms:GenerateDataKeyWithoutPlaintext",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "kms:ReEncryptTo",
+      "condition": {
+        "ForAnyValue:StringEquals": {
+          "kms:EncryptionContextKeys": "aws:datazone:domainId"
+        },
+        "StringLike": {
+          "kms:ViaService": "datazone.*.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "kms:ReEncryptTo",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "kms:ReEncryptFrom",
+      "condition": {
+        "ForAnyValue:StringEquals": {
+          "kms:EncryptionContextKeys": "aws:datazone:domainId"
+        },
+        "StringLike": {
+          "kms:ViaService": "datazone.*.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "kms:ReEncryptFrom",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
       "action": "kms:Decrypt",
       "condition": {
         "Null": {
@@ -23908,9 +24001,6 @@
       "condition": {
         "Null": {
           "kms:EncryptionContext:aws:scheduler:schedule:arn": "false"
-        },
-        "StringLike": {
-          "kms:ViaService": "scheduler.*.amazonaws.com"
         }
       },
       "credentials_exposure": false,
@@ -23925,9 +24015,6 @@
       "condition": {
         "Null": {
           "kms:EncryptionContext:aws:scheduler:schedule:arn": "false"
-        },
-        "StringLike": {
-          "kms:ViaService": "scheduler.*.amazonaws.com"
         }
       },
       "credentials_exposure": false,
@@ -24104,6 +24191,33 @@
       "resource_exposure": true
     },
     {
+      "access_level": "Permissions management",
+      "action": "kms:CreateGrant",
+      "condition": {
+        "ForAllValues:StringEquals": {
+          "kms:GrantOperations": [
+            "Encrypt",
+            "Decrypt",
+            "ReEncryptFrom",
+            "ReEncryptTo",
+            "GenerateDataKeyWithoutPlaintext",
+            "GenerateDataKey",
+            "DescribeKey",
+            "RetireGrant",
+            "CreateGrant"
+          ]
+        },
+        "StringLike": {
+          "kms:ViaService": "datazone.*.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": true,
+      "effective_action": "kms:CreateGrant",
+      "privesc": true,
+      "resource_exposure": true
+    },
+    {
       "access_level": "Write",
       "action": "kms:Decrypt",
       "condition": {
@@ -24228,10 +24342,11 @@
       "condition": {
         "ForAllValues:StringEquals": {
           "kms:GrantOperations": [
-            "kms:Decrypt",
-            "kms:Encrypt",
-            "kms:GenerateDataKey",
-            "kms:GenerateDataKeyWithoutPlaintext"
+            "Decrypt",
+            "Encrypt",
+            "GenerateDataKey",
+            "GenerateDataKeyWithoutPlaintext",
+            "RetireGrant"
           ]
         },
         "ForAnyValue:StringEquals": {
@@ -24253,9 +24368,6 @@
       "condition": {
         "ForAnyValue:StringEquals": {
           "kms:EncryptionContextKeys": "aws:airflow-serverless:workflow-arn"
-        },
-        "StringLike": {
-          "kms:ViaService": "airflow-serverless.*.amazonaws.com"
         }
       },
       "credentials_exposure": false,
@@ -24270,9 +24382,6 @@
       "condition": {
         "ForAnyValue:StringEquals": {
           "kms:EncryptionContextKeys": "aws:airflow-serverless:workflow-arn"
-        },
-        "StringLike": {
-          "kms:ViaService": "airflow-serverless.*.amazonaws.com"
         }
       },
       "credentials_exposure": false,
@@ -24287,9 +24396,6 @@
       "condition": {
         "ForAnyValue:StringEquals": {
           "kms:EncryptionContextKeys": "aws:airflow-serverless:workflow-arn"
-        },
-        "StringLike": {
-          "kms:ViaService": "airflow-serverless.*.amazonaws.com"
         }
       },
       "credentials_exposure": false,
@@ -24304,9 +24410,6 @@
       "condition": {
         "ForAnyValue:StringEquals": {
           "kms:EncryptionContextKeys": "aws:airflow-serverless:workflow-arn"
-        },
-        "StringLike": {
-          "kms:ViaService": "airflow-serverless.*.amazonaws.com"
         }
       },
       "credentials_exposure": false,
@@ -26218,6 +26321,6 @@
   "resource_exposure": true,
   "undocumented_actions": true,
   "unknown_actions": [],
-  "updatedate": "2025-10-30T19:34:08+00:00",
-  "version": "v4"
+  "updatedate": "2025-11-18T23:34:07+00:00",
+  "version": "v5"
 }
