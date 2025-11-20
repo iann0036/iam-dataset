@@ -6,7 +6,7 @@
     "Permissions management"
   ],
   "arn": "arn:aws:iam::aws:policy/aws-service-role/SecurityLakeResourceManagementServiceRolePolicy",
-  "createdate": "2025-09-25T17:19:07Z",
+  "createdate": "2025-11-19T18:49:07Z",
   "credentials_exposure": false,
   "data_access": true,
   "deprecated": false,
@@ -66,6 +66,19 @@
           "arn:aws:lambda:*:*:function:AmazonSecurityLakeMetastoreManager-*-*"
         ],
         "Sid": "ManageSecurityLakeLambdaConfigurations"
+      },
+      {
+        "Action": [
+          "lambda:DeleteFunction"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:lambda:*:*:function:SecurityLake_Glue_Partition_Updater_Lambda*",
+        "Sid": "DeletePartitionUpdaterLambda"
       },
       {
         "Action": [
@@ -455,6 +468,20 @@
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "lambda:UpdateFunctionConfiguration",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "lambda:DeleteFunction",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "lambda:DeleteFunction",
       "privesc": false,
       "resource_exposure": false
     },
@@ -1002,5 +1029,5 @@
   "undocumented_actions": false,
   "unknown_actions": [],
   "updatedate": "2025-09-25T17:19:07+00:00",
-  "version": "v2"
+  "version": "v3"
 }

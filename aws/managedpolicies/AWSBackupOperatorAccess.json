@@ -6,7 +6,7 @@
     "Permissions management"
   ],
   "arn": "arn:aws:iam::aws:policy/AWSBackupOperatorAccess",
-  "createdate": "2025-11-10T19:19:07Z",
+  "createdate": "2025-11-20T03:34:08Z",
   "credentials_exposure": false,
   "data_access": false,
   "deprecated": false,
@@ -21,7 +21,8 @@
           "backup:DeleteBackupSelection",
           "backup:StartBackupJob",
           "backup:StartRestoreJob",
-          "backup:StartCopyJob"
+          "backup:StartCopyJob",
+          "backup:StartScanJob"
         ],
         "Effect": "Allow",
         "Resource": "*",
@@ -401,6 +402,22 @@
         "Effect": "Allow",
         "Resource": "arn:aws:eks:*:*:cluster/*",
         "Sid": "EKSClusterPermissions"
+      },
+      {
+        "Action": [
+          "iam:PassRole"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "iam:PassedToService": "malware-protection.guardduty.amazonaws.com"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:iam::*:role/*AwsBackupGuardDuty*",
+          "arn:aws:iam::*:role/*AWSBackupGuardDuty*"
+        ],
+        "Sid": "IamPassRolePermissionsForGuardDuty"
       }
     ],
     "Version": "2012-10-17"
@@ -1889,6 +1906,20 @@
       "effective_action": "eks:DescribeCluster",
       "privesc": false,
       "resource_exposure": false
+    },
+    {
+      "access_level": "Permissions management",
+      "action": "iam:PassRole",
+      "condition": {
+        "StringEquals": {
+          "iam:PassedToService": "malware-protection.guardduty.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "iam:PassRole",
+      "privesc": true,
+      "resource_exposure": true
     }
   ],
   "grantless": false,
@@ -1897,7 +1928,12 @@
   "privesc": true,
   "resource_exposure": true,
   "undocumented_actions": false,
-  "unknown_actions": [],
+  "unknown_actions": [
+    {
+      "action": "backup:StartScanJob",
+      "condition": null
+    }
+  ],
   "updatedate": "2025-11-10T19:19:07+00:00",
-  "version": "v19"
+  "version": "v20"
 }
