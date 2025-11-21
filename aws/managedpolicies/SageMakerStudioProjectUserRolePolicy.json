@@ -7,7 +7,7 @@
     "Permissions management"
   ],
   "arn": "arn:aws:iam::aws:policy/SageMakerStudioProjectUserRolePolicy",
-  "createdate": "2025-11-14T23:04:07Z",
+  "createdate": "2025-11-20T14:49:11Z",
   "credentials_exposure": true,
   "data_access": true,
   "deprecated": false,
@@ -1732,7 +1732,20 @@
         },
         "Effect": "Allow",
         "Resource": "arn:aws:kms:*:*:key/${aws:PrincipalTag/KmsKeyId}",
-        "Sid": "KmsWithEncryptPermissions"
+        "Sid": "KmsWithEncrypt"
+      },
+      {
+        "Action": [
+          "kms:Decrypt"
+        ],
+        "Condition": {
+          "Null": {
+            "kms:EncryptionContext:aws:scheduler:schedule:arn": "false"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:kms:*:*:key/${aws:PrincipalTag/KmsKeyId}",
+        "Sid": "EBDecrypt"
       },
       {
         "Action": [
@@ -1785,7 +1798,7 @@
         },
         "Effect": "Allow",
         "Resource": "arn:aws:kms:*:*:key/${aws:PrincipalTag/KmsKeyId}",
-        "Sid": "KmsManagementPermissions"
+        "Sid": "KmsManagement"
       },
       {
         "Action": [
@@ -1835,7 +1848,7 @@
         "Resource": [
           "arn:aws:kms:*:*:key/*"
         ],
-        "Sid": "AwsOwnedKmsManagementPermissions"
+        "Sid": "AwsOwnedKmsManagement"
       },
       {
         "Action": [
@@ -1848,7 +1861,7 @@
         },
         "Effect": "Allow",
         "Resource": "*",
-        "Sid": "ListKMSPermissions"
+        "Sid": "ListKMS"
       },
       {
         "Action": [
@@ -1877,7 +1890,7 @@
           "arn:aws:bedrock:*:*:custom-model/*",
           "arn:aws:bedrock:*:*:provisioned-model/*"
         ],
-        "Sid": "InvokeBedrockModelPermissions"
+        "Sid": "InvokeBedrockModel"
       },
       {
         "Action": [
@@ -9977,6 +9990,20 @@
       "resource_exposure": false
     },
     {
+      "access_level": "Write",
+      "action": "kms:Decrypt",
+      "condition": {
+        "Null": {
+          "kms:EncryptionContext:aws:scheduler:schedule:arn": "false"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "kms:Decrypt",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
       "access_level": "Permissions management",
       "action": "kms:CreateGrant",
       "condition": {
@@ -12985,6 +13012,6 @@
   "resource_exposure": true,
   "undocumented_actions": false,
   "unknown_actions": [],
-  "updatedate": "2025-11-14T23:04:07+00:00",
-  "version": "v20"
+  "updatedate": "2025-11-20T14:49:11+00:00",
+  "version": "v21"
 }
