@@ -1,0 +1,186 @@
+{
+  "access_levels": [
+    "Read",
+    "Write"
+  ],
+  "arn": null,
+  "createdate": "2025-11-22T00:34:08Z",
+  "credentials_exposure": false,
+  "data_access": false,
+  "deprecated": false,
+  "document": {
+    "Statement": [
+      {
+        "Action": [
+          "identitystore:CreateUser"
+        ],
+        "Condition": {
+          "ForAllValues:ArnEquals": {
+            "identitystore:UserExternalIdIssuers": [
+              "arn:aws:identitystore::*:provisioningtenant/${aws:PrincipalTag/IdentityStoreId}/${aws:PrincipalTag/IdentityStoreExternalIdIssuer}"
+            ]
+          },
+          "Null": {
+            "identitystore:ReservedUserId": "false",
+            "identitystore:UserExternalIdIssuers": "false"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:identitystore::*:identitystore/${aws:PrincipalTag/IdentityStoreId}",
+          "arn:aws:identitystore:::user/*"
+        ],
+        "Sid": "IdentityStoreUserCreation"
+      },
+      {
+        "Action": [
+          "identitystore:UpdateUser",
+          "identitystore:DeleteUser",
+          "identitystore:DescribeUser"
+        ],
+        "Condition": {
+          "ForAllValues:ArnEquals": {
+            "identitystore:UserExternalIdIssuers": [
+              "arn:aws:identitystore::*:provisioningtenant/${aws:PrincipalTag/IdentityStoreId}/${aws:PrincipalTag/IdentityStoreExternalIdIssuer}"
+            ]
+          },
+          "Null": {
+            "identitystore:UserExternalIdIssuers": "false"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:identitystore::*:identitystore/${aws:PrincipalTag/IdentityStoreId}",
+          "arn:aws:identitystore:::user/*"
+        ],
+        "Sid": "IdentityStoreUserManagement"
+      },
+      {
+        "Action": [
+          "kms:Decrypt"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "kms:EncryptionContext:aws:identitystore:identitystore-arn": [
+              "arn:aws:identitystore::${aws:PrincipalAccount}:identitystore/${aws:PrincipalTag/IdentityStoreId}"
+            ]
+          },
+          "StringLike": {
+            "kms:ViaService": "identitystore.*.amazonaws.com"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "IdentityStoreCMKAccess"
+      }
+    ],
+    "Version": "2012-10-17"
+  },
+  "effective_actions": [
+    {
+      "access_level": "Write",
+      "action": "identitystore:CreateUser",
+      "condition": {
+        "ForAllValues:ArnEquals": {
+          "identitystore:UserExternalIdIssuers": [
+            "arn:aws:identitystore::*:provisioningtenant/${aws:PrincipalTag/IdentityStoreId}/${aws:PrincipalTag/IdentityStoreExternalIdIssuer}"
+          ]
+        },
+        "Null": {
+          "identitystore:ReservedUserId": "false",
+          "identitystore:UserExternalIdIssuers": "false"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "identitystore:CreateUser",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "identitystore:UpdateUser",
+      "condition": {
+        "ForAllValues:ArnEquals": {
+          "identitystore:UserExternalIdIssuers": [
+            "arn:aws:identitystore::*:provisioningtenant/${aws:PrincipalTag/IdentityStoreId}/${aws:PrincipalTag/IdentityStoreExternalIdIssuer}"
+          ]
+        },
+        "Null": {
+          "identitystore:UserExternalIdIssuers": "false"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "identitystore:UpdateUser",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "identitystore:DeleteUser",
+      "condition": {
+        "ForAllValues:ArnEquals": {
+          "identitystore:UserExternalIdIssuers": [
+            "arn:aws:identitystore::*:provisioningtenant/${aws:PrincipalTag/IdentityStoreId}/${aws:PrincipalTag/IdentityStoreExternalIdIssuer}"
+          ]
+        },
+        "Null": {
+          "identitystore:UserExternalIdIssuers": "false"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "identitystore:DeleteUser",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "identitystore:DescribeUser",
+      "condition": {
+        "ForAllValues:ArnEquals": {
+          "identitystore:UserExternalIdIssuers": [
+            "arn:aws:identitystore::*:provisioningtenant/${aws:PrincipalTag/IdentityStoreId}/${aws:PrincipalTag/IdentityStoreExternalIdIssuer}"
+          ]
+        },
+        "Null": {
+          "identitystore:UserExternalIdIssuers": "false"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "identitystore:DescribeUser",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "kms:Decrypt",
+      "condition": {
+        "StringEquals": {
+          "kms:EncryptionContext:aws:identitystore:identitystore-arn": [
+            "arn:aws:identitystore::${aws:PrincipalAccount}:identitystore/${aws:PrincipalTag/IdentityStoreId}"
+          ]
+        },
+        "StringLike": {
+          "kms:ViaService": "identitystore.*.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "kms:Decrypt",
+      "privesc": false,
+      "resource_exposure": false
+    }
+  ],
+  "grantless": false,
+  "malformed": false,
+  "name": "AWSIdentityCenterExternalManagementPolicy",
+  "privesc": false,
+  "resource_exposure": false,
+  "undocumented_actions": false,
+  "unknown_actions": [],
+  "updatedate": null,
+  "version": "v1"
+}

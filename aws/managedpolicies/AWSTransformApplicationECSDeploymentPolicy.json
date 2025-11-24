@@ -7,7 +7,7 @@
     "Permissions management"
   ],
   "arn": "arn:aws:iam::aws:policy/service-role/AWSTransformApplicationECSDeploymentPolicy",
-  "createdate": "2025-09-29T22:49:07Z",
+  "createdate": "2025-11-21T23:34:10Z",
   "credentials_exposure": false,
   "data_access": true,
   "deprecated": false,
@@ -160,7 +160,10 @@
       },
       {
         "Action": [
-          "iam:GetRole"
+          "iam:GetRole",
+          "iam:GetRolePolicy",
+          "iam:ListRolePolicies",
+          "iam:ListAttachedRolePolicies"
         ],
         "Condition": {
           "StringEquals": {
@@ -323,6 +326,46 @@
         ],
         "Effect": "Allow",
         "Resource": "*"
+      },
+      {
+        "Action": [
+          "iam:CreateServiceLinkedRole"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "iam:AWSServiceName": "ecs.amazonaws.com"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:iam::*:role/aws-service-role/ecs.amazonaws.com/AWSServiceRoleForECS"
+      },
+      {
+        "Action": [
+          "kms:CreateGrant"
+        ],
+        "Condition": {
+          "Bool": {
+            "kms:GrantIsForAWSResource": "true"
+          },
+          "ForAllValues:StringEquals": {
+            "kms:GrantOperations": [
+              "Decrypt",
+              "GenerateDataKey"
+            ]
+          },
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}",
+            "kms:GrantConstraintType": "EncryptionContextSubset"
+          },
+          "StringLike": {
+            "kms:EncryptionContext:aws:ecr:arn": "*",
+            "kms:ViaService": [
+              "ecr.*.amazonaws.com"
+            ]
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:kms:*:*:key/*"
       }
     ],
     "Version": "2012-10-17"
@@ -542,6 +585,48 @@
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "iam:GetRole",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "iam:GetRolePolicy",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "iam:GetRolePolicy",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "iam:ListRolePolicies",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "iam:ListRolePolicies",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "iam:ListAttachedRolePolicies",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "iam:ListAttachedRolePolicies",
       "privesc": false,
       "resource_exposure": false
     },
@@ -852,6 +937,50 @@
       "effective_action": "logs:ListTagsForResource",
       "privesc": false,
       "resource_exposure": false
+    },
+    {
+      "access_level": "Permissions management",
+      "action": "iam:CreateServiceLinkedRole",
+      "condition": {
+        "StringEquals": {
+          "iam:AWSServiceName": "ecs.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "iam:CreateServiceLinkedRole",
+      "privesc": true,
+      "resource_exposure": true
+    },
+    {
+      "access_level": "Permissions management",
+      "action": "kms:CreateGrant",
+      "condition": {
+        "Bool": {
+          "kms:GrantIsForAWSResource": "true"
+        },
+        "ForAllValues:StringEquals": {
+          "kms:GrantOperations": [
+            "Decrypt",
+            "GenerateDataKey"
+          ]
+        },
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}",
+          "kms:GrantConstraintType": "EncryptionContextSubset"
+        },
+        "StringLike": {
+          "kms:EncryptionContext:aws:ecr:arn": "*",
+          "kms:ViaService": [
+            "ecr.*.amazonaws.com"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": true,
+      "effective_action": "kms:CreateGrant",
+      "privesc": true,
+      "resource_exposure": true
     }
   ],
   "grantless": false,
@@ -862,5 +991,5 @@
   "undocumented_actions": false,
   "unknown_actions": [],
   "updatedate": "2025-09-29T22:49:07+00:00",
-  "version": "v1"
+  "version": "v2"
 }
