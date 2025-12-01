@@ -7,9 +7,9 @@
     "Permissions management"
   ],
   "arn": "arn:aws:iam::aws:policy/AWSPartnerCentralFullAccess",
-  "createdate": "2025-11-19T16:34:12Z",
+  "createdate": "2025-12-01T00:34:08Z",
   "credentials_exposure": true,
-  "data_access": false,
+  "data_access": true,
   "deprecated": false,
   "document": {
     "Statement": [
@@ -54,6 +54,15 @@
       },
       {
         "Action": [
+          "partnercentral:StartVerification",
+          "partnercentral:GetVerification"
+        ],
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "VerificationAccess"
+      },
+      {
+        "Action": [
           "iam:PassRole"
         ],
         "Condition": {
@@ -69,6 +78,22 @@
       },
       {
         "Action": [
+          "partnercentral-account-management:AccessLegacyPartnerCentral"
+        ],
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "LegacyPartnerCentralAccess"
+      },
+      {
+        "Action": [
+          "partnercentral-account-management:AccessMarketingCentral"
+        ],
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "PartnerCentralMarketingAccess"
+      },
+      {
+        "Action": [
           "sts:AssumeRole"
         ],
         "Effect": "Allow",
@@ -77,6 +102,47 @@
           "arn:aws:iam::*:role/PartnerCentralChannelBillingTransferReadOnly"
         ],
         "Sid": "ChannelBillingTransferRoleAccess"
+      },
+      {
+        "Action": [
+          "s3:PutObject"
+        ],
+        "Effect": "Allow",
+        "Resource": "arn:aws:s3:::aws-partner-central-marketplace-ephemeral-writeonly-files/${aws:PrincipalAccount}/*",
+        "Sid": "PartnerCentralEphemeralWriteS3Access"
+      },
+      {
+        "Action": [
+          "support:CreateCase",
+          "support:DescribeCases",
+          "support:AddCommunicationToCase",
+          "support:ResolveCase",
+          "support:AddAttachmentsToSet",
+          "support:DescribeCommunications"
+        ],
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "SupportAccess"
+      },
+      {
+        "Action": [
+          "aws-marketplace:ListEntities"
+        ],
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "ListEntitiesAccess"
+      },
+      {
+        "Action": [
+          "aws-marketplace:DescribeEntity"
+        ],
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:aws-marketplace:*:*:AWSMarketplace*/Solution/*",
+          "arn:aws:aws-marketplace:*:*:AWSMarketplace*/OfferSet/*",
+          "arn:aws:aws-marketplace:*:*:AWSMarketplace*/Offer/*"
+        ],
+        "Sid": "DescribeEntityAccess"
       }
     ],
     "Version": "2012-10-17"
@@ -1050,6 +1116,96 @@
       "effective_action": "sts:AssumeRole",
       "privesc": false,
       "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "s3:PutObject",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3:PutObject",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "support:CreateCase",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "support:CreateCase",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "support:DescribeCases",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "support:DescribeCases",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "support:AddCommunicationToCase",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "support:AddCommunicationToCase",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "support:ResolveCase",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "support:ResolveCase",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "support:AddAttachmentsToSet",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "support:AddAttachmentsToSet",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "support:DescribeCommunications",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": true,
+      "effective_action": "support:DescribeCommunications",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "aws-marketplace:ListEntities",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "aws-marketplace:ListEntities",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "aws-marketplace:DescribeEntity",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "aws-marketplace:DescribeEntity",
+      "privesc": false,
+      "resource_exposure": false
     }
   ],
   "grantless": false,
@@ -1058,7 +1214,24 @@
   "privesc": true,
   "resource_exposure": true,
   "undocumented_actions": false,
-  "unknown_actions": [],
+  "unknown_actions": [
+    {
+      "action": "partnercentral:StartVerification",
+      "condition": null
+    },
+    {
+      "action": "partnercentral:GetVerification",
+      "condition": null
+    },
+    {
+      "action": "partnercentral-account-management:AccessLegacyPartnerCentral",
+      "condition": null
+    },
+    {
+      "action": "partnercentral-account-management:AccessMarketingCentral",
+      "condition": null
+    }
+  ],
   "updatedate": "2025-11-19T16:34:12+00:00",
-  "version": "v3"
+  "version": "v4"
 }

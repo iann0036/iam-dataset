@@ -2,10 +2,11 @@
   "access_levels": [
     "List",
     "Read",
+    "Tagging",
     "Write"
   ],
   "arn": "arn:aws:iam::aws:policy/AWSPartnerCentralOpportunityManagement",
-  "createdate": "2024-12-04T23:06:07Z",
+  "createdate": "2025-12-01T00:49:06Z",
   "credentials_exposure": false,
   "data_access": false,
   "deprecated": false,
@@ -17,6 +18,7 @@
           "partnercentral:AssignOpportunity",
           "partnercentral:AssociateOpportunity",
           "partnercentral:CreateEngagement",
+          "partnercentral:CreateEngagementContext",
           "partnercentral:CreateEngagementInvitation",
           "partnercentral:CreateOpportunity",
           "partnercentral:CreateResourceSnapshot",
@@ -36,17 +38,28 @@
           "partnercentral:ListEngagementResourceAssociations",
           "partnercentral:ListEngagements",
           "partnercentral:ListOpportunities",
+          "partnercentral:ListOpportunityFromEngagementTasks",
           "partnercentral:ListResourceSnapshotJobs",
           "partnercentral:ListResourceSnapshots",
           "partnercentral:ListSolutions",
           "partnercentral:RejectEngagementInvitation",
           "partnercentral:StartEngagementByAcceptingInvitationTask",
           "partnercentral:StartEngagementFromOpportunityTask",
+          "partnercentral:StartOpportunityFromEngagementTask",
           "partnercentral:StartResourceSnapshotJob",
           "partnercentral:StopResourceSnapshotJob",
           "partnercentral:SubmitOpportunity",
+          "partnercentral:UpdateEngagementContext",
           "partnercentral:UpdateOpportunity"
         ],
+        "Condition": {
+          "StringEquals": {
+            "partnercentral:Catalog": [
+              "AWS",
+              "Sandbox"
+            ]
+          }
+        },
         "Effect": "Allow",
         "Resource": "*",
         "Sid": "OpportunityManagement"
@@ -65,9 +78,84 @@
         ],
         "Effect": "Allow",
         "Resource": [
-          "arn:aws:aws-marketplace:*:*:AWSMarketplace/Offer/*"
+          "arn:aws:aws-marketplace:*:*:AWSMarketplace*/Solution/*",
+          "arn:aws:aws-marketplace:*:*:AWSMarketplace*/OfferSet/*",
+          "arn:aws:aws-marketplace:*:*:AWSMarketplace*/Offer/*"
         ],
-        "Sid": "AWSMarketplaceOffersAccess"
+        "Sid": "AWSMarketplaceEntityAccess"
+      },
+      {
+        "Action": [
+          "partnercentral-account-management:AccessLegacyPartnerCentral"
+        ],
+        "Condition": {
+          "ForAnyValue:StringEquals": {
+            "partnercentral-account-management:LegacyPartnerCentralRole": "AceManager"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "LegacyPartnerCentralAccess"
+      },
+      {
+        "Action": [
+          "partnercentral:GetPartnerDashboard"
+        ],
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:partnercentral::*:catalog/AWS/ReportingData/Opportunity_V1/Dashboard/*",
+          "arn:aws:partnercentral::*:catalog/AWS/ReportingData/Engagement_V1/Dashboard/*"
+        ],
+        "Sid": "PartnerDashboardAccess"
+      },
+      {
+        "Action": [
+          "partnercentral:CreateCollaborationChannelRequest",
+          "partnercentral:ListCollaborationChannels",
+          "partnercentral:GetCollaborationChannel",
+          "partnercentral:CreateCollaborationChannelMembers"
+        ],
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "CollaborationChannelAccess"
+      },
+      {
+        "Action": [
+          "partnercentral:ListPartners",
+          "partnercentral:GetPartner"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "partnercentral:Catalog": [
+              "AWS",
+              "Sandbox"
+            ]
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "PartnerResourceAccess"
+      },
+      {
+        "Action": [
+          "partnercentral:TagResource",
+          "partnercentral:UntagResource",
+          "partnercentral:ListTagsForResource"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "partnercentral:Catalog": [
+              "AWS",
+              "Sandbox"
+            ]
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:partnercentral:*:*:catalog/*/opportunity/*",
+          "arn:aws:partnercentral:*:*:catalog/*/resource-snapshot-job/*"
+        ],
+        "Sid": "TaggingAccess"
       }
     ],
     "Version": "2012-10-17"
@@ -76,7 +164,14 @@
     {
       "access_level": "Write",
       "action": "partnercentral:AcceptEngagementInvitation",
-      "condition": null,
+      "condition": {
+        "StringEquals": {
+          "partnercentral:Catalog": [
+            "AWS",
+            "Sandbox"
+          ]
+        }
+      },
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "partnercentral:AcceptEngagementInvitation",
@@ -86,7 +181,14 @@
     {
       "access_level": "Write",
       "action": "partnercentral:AssignOpportunity",
-      "condition": null,
+      "condition": {
+        "StringEquals": {
+          "partnercentral:Catalog": [
+            "AWS",
+            "Sandbox"
+          ]
+        }
+      },
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "partnercentral:AssignOpportunity",
@@ -96,7 +198,14 @@
     {
       "access_level": "Write",
       "action": "partnercentral:AssociateOpportunity",
-      "condition": null,
+      "condition": {
+        "StringEquals": {
+          "partnercentral:Catalog": [
+            "AWS",
+            "Sandbox"
+          ]
+        }
+      },
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "partnercentral:AssociateOpportunity",
@@ -106,7 +215,14 @@
     {
       "access_level": "Write",
       "action": "partnercentral:CreateEngagement",
-      "condition": null,
+      "condition": {
+        "StringEquals": {
+          "partnercentral:Catalog": [
+            "AWS",
+            "Sandbox"
+          ]
+        }
+      },
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "partnercentral:CreateEngagement",
@@ -116,7 +232,14 @@
     {
       "access_level": "Write",
       "action": "partnercentral:CreateEngagementInvitation",
-      "condition": null,
+      "condition": {
+        "StringEquals": {
+          "partnercentral:Catalog": [
+            "AWS",
+            "Sandbox"
+          ]
+        }
+      },
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "partnercentral:CreateEngagementInvitation",
@@ -126,7 +249,14 @@
     {
       "access_level": "Write",
       "action": "partnercentral:CreateOpportunity",
-      "condition": null,
+      "condition": {
+        "StringEquals": {
+          "partnercentral:Catalog": [
+            "AWS",
+            "Sandbox"
+          ]
+        }
+      },
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "partnercentral:CreateOpportunity",
@@ -136,7 +266,14 @@
     {
       "access_level": "Write",
       "action": "partnercentral:CreateResourceSnapshot",
-      "condition": null,
+      "condition": {
+        "StringEquals": {
+          "partnercentral:Catalog": [
+            "AWS",
+            "Sandbox"
+          ]
+        }
+      },
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "partnercentral:CreateResourceSnapshot",
@@ -146,7 +283,14 @@
     {
       "access_level": "Write",
       "action": "partnercentral:CreateResourceSnapshotJob",
-      "condition": null,
+      "condition": {
+        "StringEquals": {
+          "partnercentral:Catalog": [
+            "AWS",
+            "Sandbox"
+          ]
+        }
+      },
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "partnercentral:CreateResourceSnapshotJob",
@@ -156,7 +300,14 @@
     {
       "access_level": "Write",
       "action": "partnercentral:DeleteResourceSnapshotJob",
-      "condition": null,
+      "condition": {
+        "StringEquals": {
+          "partnercentral:Catalog": [
+            "AWS",
+            "Sandbox"
+          ]
+        }
+      },
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "partnercentral:DeleteResourceSnapshotJob",
@@ -166,7 +317,14 @@
     {
       "access_level": "Write",
       "action": "partnercentral:DisassociateOpportunity",
-      "condition": null,
+      "condition": {
+        "StringEquals": {
+          "partnercentral:Catalog": [
+            "AWS",
+            "Sandbox"
+          ]
+        }
+      },
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "partnercentral:DisassociateOpportunity",
@@ -176,7 +334,14 @@
     {
       "access_level": "Read",
       "action": "partnercentral:GetAwsOpportunitySummary",
-      "condition": null,
+      "condition": {
+        "StringEquals": {
+          "partnercentral:Catalog": [
+            "AWS",
+            "Sandbox"
+          ]
+        }
+      },
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "partnercentral:GetAwsOpportunitySummary",
@@ -186,7 +351,14 @@
     {
       "access_level": "Read",
       "action": "partnercentral:GetEngagement",
-      "condition": null,
+      "condition": {
+        "StringEquals": {
+          "partnercentral:Catalog": [
+            "AWS",
+            "Sandbox"
+          ]
+        }
+      },
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "partnercentral:GetEngagement",
@@ -196,7 +368,14 @@
     {
       "access_level": "Read",
       "action": "partnercentral:GetEngagementInvitation",
-      "condition": null,
+      "condition": {
+        "StringEquals": {
+          "partnercentral:Catalog": [
+            "AWS",
+            "Sandbox"
+          ]
+        }
+      },
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "partnercentral:GetEngagementInvitation",
@@ -206,7 +385,14 @@
     {
       "access_level": "Read",
       "action": "partnercentral:GetOpportunity",
-      "condition": null,
+      "condition": {
+        "StringEquals": {
+          "partnercentral:Catalog": [
+            "AWS",
+            "Sandbox"
+          ]
+        }
+      },
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "partnercentral:GetOpportunity",
@@ -216,7 +402,14 @@
     {
       "access_level": "Read",
       "action": "partnercentral:GetResourceSnapshot",
-      "condition": null,
+      "condition": {
+        "StringEquals": {
+          "partnercentral:Catalog": [
+            "AWS",
+            "Sandbox"
+          ]
+        }
+      },
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "partnercentral:GetResourceSnapshot",
@@ -226,7 +419,14 @@
     {
       "access_level": "Read",
       "action": "partnercentral:GetResourceSnapshotJob",
-      "condition": null,
+      "condition": {
+        "StringEquals": {
+          "partnercentral:Catalog": [
+            "AWS",
+            "Sandbox"
+          ]
+        }
+      },
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "partnercentral:GetResourceSnapshotJob",
@@ -236,7 +436,14 @@
     {
       "access_level": "List",
       "action": "partnercentral:ListEngagementByAcceptingInvitationTasks",
-      "condition": null,
+      "condition": {
+        "StringEquals": {
+          "partnercentral:Catalog": [
+            "AWS",
+            "Sandbox"
+          ]
+        }
+      },
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "partnercentral:ListEngagementByAcceptingInvitationTasks",
@@ -246,7 +453,14 @@
     {
       "access_level": "List",
       "action": "partnercentral:ListEngagementFromOpportunityTasks",
-      "condition": null,
+      "condition": {
+        "StringEquals": {
+          "partnercentral:Catalog": [
+            "AWS",
+            "Sandbox"
+          ]
+        }
+      },
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "partnercentral:ListEngagementFromOpportunityTasks",
@@ -256,7 +470,14 @@
     {
       "access_level": "List",
       "action": "partnercentral:ListEngagementInvitations",
-      "condition": null,
+      "condition": {
+        "StringEquals": {
+          "partnercentral:Catalog": [
+            "AWS",
+            "Sandbox"
+          ]
+        }
+      },
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "partnercentral:ListEngagementInvitations",
@@ -266,7 +487,14 @@
     {
       "access_level": "Read",
       "action": "partnercentral:ListEngagementMembers",
-      "condition": null,
+      "condition": {
+        "StringEquals": {
+          "partnercentral:Catalog": [
+            "AWS",
+            "Sandbox"
+          ]
+        }
+      },
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "partnercentral:ListEngagementMembers",
@@ -276,7 +504,14 @@
     {
       "access_level": "Read",
       "action": "partnercentral:ListEngagementResourceAssociations",
-      "condition": null,
+      "condition": {
+        "StringEquals": {
+          "partnercentral:Catalog": [
+            "AWS",
+            "Sandbox"
+          ]
+        }
+      },
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "partnercentral:ListEngagementResourceAssociations",
@@ -286,7 +521,14 @@
     {
       "access_level": "List",
       "action": "partnercentral:ListEngagements",
-      "condition": null,
+      "condition": {
+        "StringEquals": {
+          "partnercentral:Catalog": [
+            "AWS",
+            "Sandbox"
+          ]
+        }
+      },
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "partnercentral:ListEngagements",
@@ -296,7 +538,14 @@
     {
       "access_level": "List",
       "action": "partnercentral:ListOpportunities",
-      "condition": null,
+      "condition": {
+        "StringEquals": {
+          "partnercentral:Catalog": [
+            "AWS",
+            "Sandbox"
+          ]
+        }
+      },
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "partnercentral:ListOpportunities",
@@ -306,7 +555,14 @@
     {
       "access_level": "List",
       "action": "partnercentral:ListResourceSnapshotJobs",
-      "condition": null,
+      "condition": {
+        "StringEquals": {
+          "partnercentral:Catalog": [
+            "AWS",
+            "Sandbox"
+          ]
+        }
+      },
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "partnercentral:ListResourceSnapshotJobs",
@@ -316,7 +572,14 @@
     {
       "access_level": "List",
       "action": "partnercentral:ListResourceSnapshots",
-      "condition": null,
+      "condition": {
+        "StringEquals": {
+          "partnercentral:Catalog": [
+            "AWS",
+            "Sandbox"
+          ]
+        }
+      },
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "partnercentral:ListResourceSnapshots",
@@ -326,7 +589,14 @@
     {
       "access_level": "List",
       "action": "partnercentral:ListSolutions",
-      "condition": null,
+      "condition": {
+        "StringEquals": {
+          "partnercentral:Catalog": [
+            "AWS",
+            "Sandbox"
+          ]
+        }
+      },
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "partnercentral:ListSolutions",
@@ -336,7 +606,14 @@
     {
       "access_level": "Write",
       "action": "partnercentral:RejectEngagementInvitation",
-      "condition": null,
+      "condition": {
+        "StringEquals": {
+          "partnercentral:Catalog": [
+            "AWS",
+            "Sandbox"
+          ]
+        }
+      },
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "partnercentral:RejectEngagementInvitation",
@@ -346,7 +623,14 @@
     {
       "access_level": "Write",
       "action": "partnercentral:StartEngagementByAcceptingInvitationTask",
-      "condition": null,
+      "condition": {
+        "StringEquals": {
+          "partnercentral:Catalog": [
+            "AWS",
+            "Sandbox"
+          ]
+        }
+      },
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "partnercentral:StartEngagementByAcceptingInvitationTask",
@@ -356,7 +640,14 @@
     {
       "access_level": "Write",
       "action": "partnercentral:StartEngagementFromOpportunityTask",
-      "condition": null,
+      "condition": {
+        "StringEquals": {
+          "partnercentral:Catalog": [
+            "AWS",
+            "Sandbox"
+          ]
+        }
+      },
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "partnercentral:StartEngagementFromOpportunityTask",
@@ -366,7 +657,14 @@
     {
       "access_level": "Write",
       "action": "partnercentral:StartResourceSnapshotJob",
-      "condition": null,
+      "condition": {
+        "StringEquals": {
+          "partnercentral:Catalog": [
+            "AWS",
+            "Sandbox"
+          ]
+        }
+      },
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "partnercentral:StartResourceSnapshotJob",
@@ -376,7 +674,14 @@
     {
       "access_level": "Write",
       "action": "partnercentral:StopResourceSnapshotJob",
-      "condition": null,
+      "condition": {
+        "StringEquals": {
+          "partnercentral:Catalog": [
+            "AWS",
+            "Sandbox"
+          ]
+        }
+      },
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "partnercentral:StopResourceSnapshotJob",
@@ -386,7 +691,14 @@
     {
       "access_level": "Write",
       "action": "partnercentral:SubmitOpportunity",
-      "condition": null,
+      "condition": {
+        "StringEquals": {
+          "partnercentral:Catalog": [
+            "AWS",
+            "Sandbox"
+          ]
+        }
+      },
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "partnercentral:SubmitOpportunity",
@@ -396,7 +708,14 @@
     {
       "access_level": "Write",
       "action": "partnercentral:UpdateOpportunity",
-      "condition": null,
+      "condition": {
+        "StringEquals": {
+          "partnercentral:Catalog": [
+            "AWS",
+            "Sandbox"
+          ]
+        }
+      },
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "partnercentral:UpdateOpportunity",
@@ -422,6 +741,57 @@
       "effective_action": "aws-marketplace:DescribeEntity",
       "privesc": false,
       "resource_exposure": false
+    },
+    {
+      "access_level": "Tagging",
+      "action": "partnercentral:TagResource",
+      "condition": {
+        "StringEquals": {
+          "partnercentral:Catalog": [
+            "AWS",
+            "Sandbox"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "partnercentral:TagResource",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Tagging",
+      "action": "partnercentral:UntagResource",
+      "condition": {
+        "StringEquals": {
+          "partnercentral:Catalog": [
+            "AWS",
+            "Sandbox"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "partnercentral:UntagResource",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "partnercentral:ListTagsForResource",
+      "condition": {
+        "StringEquals": {
+          "partnercentral:Catalog": [
+            "AWS",
+            "Sandbox"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "partnercentral:ListTagsForResource",
+      "privesc": false,
+      "resource_exposure": false
     }
   ],
   "grantless": false,
@@ -430,7 +800,102 @@
   "privesc": false,
   "resource_exposure": false,
   "undocumented_actions": false,
-  "unknown_actions": [],
+  "unknown_actions": [
+    {
+      "action": "partnercentral:CreateEngagementContext",
+      "condition": {
+        "StringEquals": {
+          "partnercentral:Catalog": [
+            "AWS",
+            "Sandbox"
+          ]
+        }
+      }
+    },
+    {
+      "action": "partnercentral:ListOpportunityFromEngagementTasks",
+      "condition": {
+        "StringEquals": {
+          "partnercentral:Catalog": [
+            "AWS",
+            "Sandbox"
+          ]
+        }
+      }
+    },
+    {
+      "action": "partnercentral:StartOpportunityFromEngagementTask",
+      "condition": {
+        "StringEquals": {
+          "partnercentral:Catalog": [
+            "AWS",
+            "Sandbox"
+          ]
+        }
+      }
+    },
+    {
+      "action": "partnercentral:UpdateEngagementContext",
+      "condition": {
+        "StringEquals": {
+          "partnercentral:Catalog": [
+            "AWS",
+            "Sandbox"
+          ]
+        }
+      }
+    },
+    {
+      "action": "partnercentral-account-management:AccessLegacyPartnerCentral",
+      "condition": {
+        "ForAnyValue:StringEquals": {
+          "partnercentral-account-management:LegacyPartnerCentralRole": "AceManager"
+        }
+      }
+    },
+    {
+      "action": "partnercentral:GetPartnerDashboard",
+      "condition": null
+    },
+    {
+      "action": "partnercentral:CreateCollaborationChannelRequest",
+      "condition": null
+    },
+    {
+      "action": "partnercentral:ListCollaborationChannels",
+      "condition": null
+    },
+    {
+      "action": "partnercentral:GetCollaborationChannel",
+      "condition": null
+    },
+    {
+      "action": "partnercentral:CreateCollaborationChannelMembers",
+      "condition": null
+    },
+    {
+      "action": "partnercentral:ListPartners",
+      "condition": {
+        "StringEquals": {
+          "partnercentral:Catalog": [
+            "AWS",
+            "Sandbox"
+          ]
+        }
+      }
+    },
+    {
+      "action": "partnercentral:GetPartner",
+      "condition": {
+        "StringEquals": {
+          "partnercentral:Catalog": [
+            "AWS",
+            "Sandbox"
+          ]
+        }
+      }
+    }
+  ],
   "updatedate": "2024-12-04T23:06:07+00:00",
-  "version": "v2"
+  "version": "v3"
 }

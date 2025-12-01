@@ -6,7 +6,7 @@
     "Write"
   ],
   "arn": "arn:aws:iam::aws:policy/AWSPartnerCentralChannelManagement",
-  "createdate": "2025-11-19T16:34:09Z",
+  "createdate": "2025-12-01T00:34:07Z",
   "credentials_exposure": true,
   "data_access": false,
   "deprecated": false,
@@ -73,6 +73,46 @@
           "arn:aws:partnercentral:*:*:catalog/*/channel-handshake/*"
         ],
         "Sid": "TaggingAccess"
+      },
+      {
+        "Action": [
+          "partnercentral-account-management:AccessLegacyPartnerCentral"
+        ],
+        "Condition": {
+          "ForAnyValue:StringEquals": {
+            "partnercentral-account-management:LegacyPartnerCentralRole": "ChannelUser"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "LegacyPartnerCentralAccess"
+      },
+      {
+        "Action": [
+          "partnercentral:GetPartnerDashboard"
+        ],
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:partnercentral::*:catalog/AWS/ReportingData/Resell_V1/Dashboard/*"
+        ],
+        "Sid": "PartnerDashboardAccess"
+      },
+      {
+        "Action": [
+          "partnercentral:ListPartners",
+          "partnercentral:GetPartner"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "partnercentral:Catalog": [
+              "AWS",
+              "Sandbox"
+            ]
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "PartnerResourceAccess"
       }
     ],
     "Version": "2012-10-17"
@@ -401,7 +441,42 @@
   "privesc": false,
   "resource_exposure": false,
   "undocumented_actions": false,
-  "unknown_actions": [],
+  "unknown_actions": [
+    {
+      "action": "partnercentral-account-management:AccessLegacyPartnerCentral",
+      "condition": {
+        "ForAnyValue:StringEquals": {
+          "partnercentral-account-management:LegacyPartnerCentralRole": "ChannelUser"
+        }
+      }
+    },
+    {
+      "action": "partnercentral:GetPartnerDashboard",
+      "condition": null
+    },
+    {
+      "action": "partnercentral:ListPartners",
+      "condition": {
+        "StringEquals": {
+          "partnercentral:Catalog": [
+            "AWS",
+            "Sandbox"
+          ]
+        }
+      }
+    },
+    {
+      "action": "partnercentral:GetPartner",
+      "condition": {
+        "StringEquals": {
+          "partnercentral:Catalog": [
+            "AWS",
+            "Sandbox"
+          ]
+        }
+      }
+    }
+  ],
   "updatedate": "2025-11-19T16:34:09+00:00",
-  "version": "v1"
+  "version": "v2"
 }
