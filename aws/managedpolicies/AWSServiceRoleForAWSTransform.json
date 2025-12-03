@@ -5,9 +5,9 @@
     "Write"
   ],
   "arn": "arn:aws:iam::aws:policy/aws-service-role/AWSServiceRoleForAWSTransform",
-  "createdate": "2025-09-18T20:34:07Z",
+  "createdate": "2025-12-01T13:19:12Z",
   "credentials_exposure": false,
-  "data_access": false,
+  "data_access": true,
   "deprecated": false,
   "document": {
     "Statement": [
@@ -69,6 +69,32 @@
         "Effect": "Allow",
         "Resource": "*",
         "Sid": "AllowKmsAccessViaIdentityStore"
+      },
+      {
+        "Action": [
+          "support:CreateCase",
+          "support:DescribeCases",
+          "support:DescribeCommunications",
+          "support:AddCommunicationToCase",
+          "support:ResolveCase"
+        ],
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "SupportCaseManagement"
+      },
+      {
+        "Action": [
+          "secretsmanager:GetSecretValue"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}",
+            "secretsmanager:ResourceTag/aws:secretsmanager:owningService": "transform"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:secretsmanager:*:*:secret:transform!*",
+        "Sid": "ExternalIdpSecretsAccess"
       }
     ],
     "Version": "2012-10-17"
@@ -153,6 +179,71 @@
       "effective_action": "kms:Decrypt",
       "privesc": false,
       "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "support:CreateCase",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "support:CreateCase",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "support:DescribeCases",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "support:DescribeCases",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "support:DescribeCommunications",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": true,
+      "effective_action": "support:DescribeCommunications",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "support:AddCommunicationToCase",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "support:AddCommunicationToCase",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "support:ResolveCase",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "support:ResolveCase",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "secretsmanager:GetSecretValue",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}",
+          "secretsmanager:ResourceTag/aws:secretsmanager:owningService": "transform"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "secretsmanager:GetSecretValue",
+      "privesc": false,
+      "resource_exposure": false
     }
   ],
   "grantless": false,
@@ -162,6 +253,6 @@
   "resource_exposure": false,
   "undocumented_actions": false,
   "unknown_actions": [],
-  "updatedate": "2025-09-18T20:34:07+00:00",
-  "version": "v3"
+  "updatedate": "2025-12-01T13:19:12+00:00",
+  "version": "v4"
 }

@@ -7,7 +7,7 @@
     "Permissions management"
   ],
   "arn": "arn:aws:iam::aws:policy/CloudWatchFullAccessV2",
-  "createdate": "2025-11-20T19:34:08Z",
+  "createdate": "2025-12-02T16:49:09Z",
   "credentials_exposure": false,
   "data_access": true,
   "deprecated": false,
@@ -59,6 +59,17 @@
           "observabilityadmin:TagResource",
           "observabilityadmin:UntagResource",
           "observabilityadmin:ListTagsForResource",
+          "observabilityadmin:CreateTelemetryPipeline",
+          "observabilityadmin:GetTelemetryPipeline",
+          "observabilityadmin:UpdateTelemetryPipeline",
+          "observabilityadmin:DeleteTelemetryPipeline",
+          "observabilityadmin:ListTelemetryPipelines",
+          "observabilityadmin:TestTelemetryPipeline",
+          "observabilityadmin:ValidateTelemetryPipelineConfiguration",
+          "observabilityadmin:CreateS3TableIntegration",
+          "observabilityadmin:GetS3TableIntegration",
+          "observabilityadmin:ListS3TableIntegrations",
+          "observabilityadmin:DeleteS3TableIntegration",
           "rum:*",
           "synthetics:*",
           "xray:*"
@@ -170,6 +181,59 @@
         "Effect": "Allow",
         "Resource": "arn:aws:resource-explorer-2:*:*:index/*",
         "Sid": "CloudWatchResourceExplorerCreateIndexPermissions"
+      },
+      {
+        "Action": [
+          "iam:PassRole"
+        ],
+        "Condition": {
+          "ArnLike": {
+            "iam:AssociatedResourceArn": "arn:aws:observabilityadmin:*:*:s3tableintegration/*"
+          },
+          "StringEquals": {
+            "iam:PassedToService": "logs.amazonaws.com"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "*"
+      },
+      {
+        "Action": [
+          "iam:PassRole"
+        ],
+        "Condition": {
+          "ArnLike": {
+            "iam:AssociatedResourceArn": "arn:aws:observabilityadmin:*:*:telemetry-pipeline/*"
+          },
+          "StringEquals": {
+            "iam:PassedToService": [
+              "logs.amazonaws.com",
+              "telemetry-pipelines.observabilityadmin.amazonaws.com"
+            ]
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "*"
+      },
+      {
+        "Action": [
+          "s3tables:CreateTableBucket",
+          "s3tables:PutTableBucketEncryption"
+        ],
+        "Condition": {
+          "ForAnyValue:StringEquals": {
+            "aws:CalledVia": "observabilityadmin.amazonaws.com"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:s3tables:*:*:bucket/aws-cloudwatch"
+      },
+      {
+        "Action": [
+          "s3tables:PutTableBucketPolicy"
+        ],
+        "Effect": "Allow",
+        "Resource": "arn:aws:s3tables:*:*:bucket/aws-cloudwatch"
       }
     ],
     "Version": "2012-10-17"
@@ -3418,6 +3482,81 @@
       "effective_action": "resource-explorer-2:CreateIndex",
       "privesc": false,
       "resource_exposure": false
+    },
+    {
+      "access_level": "Permissions management",
+      "action": "iam:PassRole",
+      "condition": {
+        "ArnLike": {
+          "iam:AssociatedResourceArn": "arn:aws:observabilityadmin:*:*:s3tableintegration/*"
+        },
+        "StringEquals": {
+          "iam:PassedToService": "logs.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "iam:PassRole",
+      "privesc": true,
+      "resource_exposure": true
+    },
+    {
+      "access_level": "Permissions management",
+      "action": "iam:PassRole",
+      "condition": {
+        "ArnLike": {
+          "iam:AssociatedResourceArn": "arn:aws:observabilityadmin:*:*:telemetry-pipeline/*"
+        },
+        "StringEquals": {
+          "iam:PassedToService": [
+            "logs.amazonaws.com",
+            "telemetry-pipelines.observabilityadmin.amazonaws.com"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "iam:PassRole",
+      "privesc": true,
+      "resource_exposure": true
+    },
+    {
+      "access_level": "Write",
+      "action": "s3tables:CreateTableBucket",
+      "condition": {
+        "ForAnyValue:StringEquals": {
+          "aws:CalledVia": "observabilityadmin.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3tables:CreateTableBucket",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "s3tables:PutTableBucketEncryption",
+      "condition": {
+        "ForAnyValue:StringEquals": {
+          "aws:CalledVia": "observabilityadmin.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3tables:PutTableBucketEncryption",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Permissions management",
+      "action": "s3tables:PutTableBucketPolicy",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3tables:PutTableBucketPolicy",
+      "privesc": false,
+      "resource_exposure": false
     }
   ],
   "grantless": false,
@@ -3426,7 +3565,52 @@
   "privesc": true,
   "resource_exposure": true,
   "undocumented_actions": false,
-  "unknown_actions": [],
-  "updatedate": "2025-11-20T19:34:08+00:00",
-  "version": "v6"
+  "unknown_actions": [
+    {
+      "action": "observabilityadmin:CreateTelemetryPipeline",
+      "condition": null
+    },
+    {
+      "action": "observabilityadmin:GetTelemetryPipeline",
+      "condition": null
+    },
+    {
+      "action": "observabilityadmin:UpdateTelemetryPipeline",
+      "condition": null
+    },
+    {
+      "action": "observabilityadmin:DeleteTelemetryPipeline",
+      "condition": null
+    },
+    {
+      "action": "observabilityadmin:ListTelemetryPipelines",
+      "condition": null
+    },
+    {
+      "action": "observabilityadmin:TestTelemetryPipeline",
+      "condition": null
+    },
+    {
+      "action": "observabilityadmin:ValidateTelemetryPipelineConfiguration",
+      "condition": null
+    },
+    {
+      "action": "observabilityadmin:CreateS3TableIntegration",
+      "condition": null
+    },
+    {
+      "action": "observabilityadmin:GetS3TableIntegration",
+      "condition": null
+    },
+    {
+      "action": "observabilityadmin:ListS3TableIntegrations",
+      "condition": null
+    },
+    {
+      "action": "observabilityadmin:DeleteS3TableIntegration",
+      "condition": null
+    }
+  ],
+  "updatedate": "2025-12-02T16:49:09+00:00",
+  "version": "v7"
 }

@@ -7,7 +7,7 @@
     "Permissions management"
   ],
   "arn": "arn:aws:iam::aws:policy/BedrockAgentCoreFullAccess",
-  "createdate": "2025-11-03T21:04:07Z",
+  "createdate": "2025-12-02T13:34:12Z",
   "credentials_exposure": false,
   "data_access": true,
   "deprecated": false,
@@ -147,6 +147,16 @@
           "arn:aws:lambda:*:*:*"
         ],
         "Sid": "BedrockAgentCoreGatewayLambdaAccess"
+      },
+      {
+        "Action": [
+          "apigateway:GET"
+        ],
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:apigateway:*::/restapis/*/stages/*/exports/*"
+        ],
+        "Sid": "BedrockAgentCoreGatewayApiGateway"
       },
       {
         "Action": [
@@ -359,6 +369,40 @@
           "arn:aws:ecr:*:*:repository/*"
         ],
         "Sid": "BedrockAgentCoreRuntimeECRAccess"
+      },
+      {
+        "Action": [
+          "logs:CreateLogGroup"
+        ],
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:logs:*:*:log-group:/aws/bedrock-agentcore/evaluations/*"
+        ],
+        "Sid": "AgentCoreEvaluationCloudWatchLogCreate"
+      },
+      {
+        "Action": [
+          "logs:PutIndexPolicy",
+          "logs:DescribeIndexPolicies"
+        ],
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:logs:*:*:log-group:aws/spans",
+          "arn:aws:logs:*:*:log-group:aws/spans:*"
+        ],
+        "Sid": "AgentCoreEvaluationCloudWatchLogIndexAccess"
+      },
+      {
+        "Action": [
+          "bedrock:InvokeModel",
+          "bedrock:InvokeModelWithResponseStream"
+        ],
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:bedrock:*::foundation-model/*",
+          "arn:aws:bedrock:*:*:inference-profile/*"
+        ],
+        "Sid": "AgentCoreEvaluationBedrockInvokeAccess"
       }
     ],
     "Version": "2012-10-17"
@@ -1521,6 +1565,16 @@
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "lambda:ListFunctions",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "apigateway:GET",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "apigateway:GET",
       "privesc": false,
       "resource_exposure": false
     },
@@ -3419,6 +3473,56 @@
       "effective_action": "ecr:ListImages",
       "privesc": false,
       "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "logs:CreateLogGroup",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "logs:CreateLogGroup",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "logs:PutIndexPolicy",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "logs:PutIndexPolicy",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "logs:DescribeIndexPolicies",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "logs:DescribeIndexPolicies",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "bedrock:InvokeModel",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "bedrock:InvokeModel",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "bedrock:InvokeModelWithResponseStream",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "bedrock:InvokeModelWithResponseStream",
+      "privesc": false,
+      "resource_exposure": false
     }
   ],
   "grantless": false,
@@ -3428,6 +3532,6 @@
   "resource_exposure": true,
   "undocumented_actions": false,
   "unknown_actions": [],
-  "updatedate": "2025-11-03T21:04:07+00:00",
-  "version": "v4"
+  "updatedate": "2025-12-02T13:34:12+00:00",
+  "version": "v5"
 }

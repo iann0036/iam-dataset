@@ -7,7 +7,7 @@
     "Permissions management"
   ],
   "arn": "arn:aws:iam::aws:policy/AWSLambda_FullAccess",
-  "createdate": "2025-03-17T21:37:06Z",
+  "createdate": "2025-12-01T16:04:11Z",
   "credentials_exposure": false,
   "data_access": true,
   "deprecated": false,
@@ -22,6 +22,7 @@
           "ec2:DescribeSecurityGroups",
           "ec2:DescribeSubnets",
           "ec2:DescribeVpcs",
+          "kms:DescribeKey",
           "kms:ListAliases",
           "iam:GetPolicy",
           "iam:GetPolicyVersion",
@@ -63,6 +64,18 @@
         ],
         "Effect": "Allow",
         "Resource": "arn:aws:logs:*:*:log-group:/aws/lambda/*"
+      },
+      {
+        "Action": [
+          "iam:CreateServiceLinkedRole"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "iam:AWSServiceName": "lambda.amazonaws.com"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:iam::*:role/aws-service-role/lambda.amazonaws.com/AWSServiceRoleForLambda"
       }
     ],
     "Version": "2012-10-17"
@@ -135,6 +148,16 @@
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "ec2:DescribeVpcs",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "kms:DescribeKey",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "kms:DescribeKey",
       "privesc": false,
       "resource_exposure": false
     },
@@ -1041,6 +1064,20 @@
       "effective_action": "logs:StopLiveTail",
       "privesc": false,
       "resource_exposure": false
+    },
+    {
+      "access_level": "Permissions management",
+      "action": "iam:CreateServiceLinkedRole",
+      "condition": {
+        "StringEquals": {
+          "iam:AWSServiceName": "lambda.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "iam:CreateServiceLinkedRole",
+      "privesc": true,
+      "resource_exposure": true
     }
   ],
   "grantless": false,
@@ -1050,6 +1087,6 @@
   "resource_exposure": true,
   "undocumented_actions": false,
   "unknown_actions": [],
-  "updatedate": "2025-03-17T21:37:06+00:00",
-  "version": "v2"
+  "updatedate": "2025-12-01T16:04:11+00:00",
+  "version": "v3"
 }
