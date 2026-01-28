@@ -7,7 +7,7 @@
     "Permissions management"
   ],
   "arn": "arn:aws:iam::aws:policy/service-role/SageMakerStudioProjectProvisioningRolePolicy",
-  "createdate": "2025-11-21T00:04:06Z",
+  "createdate": "2026-01-27T21:04:10Z",
   "credentials_exposure": true,
   "data_access": true,
   "deprecated": false,
@@ -1995,7 +1995,8 @@
         "Effect": "Allow",
         "Resource": [
           "arn:aws:sagemaker:*:*:domain/*",
-          "arn:aws:sagemaker:*:*:mlflow-tracking-server/*"
+          "arn:aws:sagemaker:*:*:mlflow-tracking-server/*",
+          "arn:aws:sagemaker:*:*:mlflow-app/*"
         ],
         "Sid": "TagSMD"
       },
@@ -2015,7 +2016,8 @@
         "Effect": "Allow",
         "Resource": [
           "arn:aws:sagemaker:*:*:domain/*",
-          "arn:aws:sagemaker:*:*:mlflow-tracking-server/*"
+          "arn:aws:sagemaker:*:*:mlflow-tracking-server/*",
+          "arn:aws:sagemaker:*:*:mlflow-app/*"
         ],
         "Sid": "TagSMDForUpdate"
       },
@@ -2233,6 +2235,33 @@
         "Effect": "Allow",
         "Resource": "arn:aws:sagemaker:*:*:mlflow-tracking-server/*",
         "Sid": "MLFlowDelete"
+      },
+      {
+        "Action": [
+          "sagemaker:CreateMlflowApp"
+        ],
+        "Condition": {
+          "Null": {
+            "aws:RequestTag/AmazonDataZoneProject": "false"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:sagemaker:*:*:mlflow-app/*",
+        "Sid": "MLFlowServerlessCreate"
+      },
+      {
+        "Action": [
+          "sagemaker:DeleteMlflowApp",
+          "sagemaker:DescribeMlflowApp"
+        ],
+        "Condition": {
+          "Null": {
+            "aws:ResourceTag/AmazonDataZoneProject": "false"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:sagemaker:*:*:mlflow-app/*",
+        "Sid": "MLFlowServerlessDescribeDelete"
       },
       {
         "Action": [
@@ -7610,6 +7639,48 @@
       "resource_exposure": false
     },
     {
+      "access_level": "Write",
+      "action": "sagemaker:CreateMlflowApp",
+      "condition": {
+        "Null": {
+          "aws:RequestTag/AmazonDataZoneProject": "false"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sagemaker:CreateMlflowApp",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "sagemaker:DeleteMlflowApp",
+      "condition": {
+        "Null": {
+          "aws:ResourceTag/AmazonDataZoneProject": "false"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sagemaker:DeleteMlflowApp",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "sagemaker:DescribeMlflowApp",
+      "condition": {
+        "Null": {
+          "aws:ResourceTag/AmazonDataZoneProject": "false"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sagemaker:DescribeMlflowApp",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
       "access_level": "Read",
       "action": "aoss:GetAccessPolicy",
       "condition": {
@@ -11343,5 +11414,5 @@
   "undocumented_actions": false,
   "unknown_actions": [],
   "updatedate": "2025-11-21T00:04:06+00:00",
-  "version": "v24"
+  "version": "v25"
 }
