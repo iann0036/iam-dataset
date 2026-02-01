@@ -55,6 +55,7 @@
     "cloudbuild.operations.get",
     "cloudbuild.operations.list",
     "cloudbuild.workerpools.use",
+    "compute.images.create",
     "containeranalysis.occurrences.create",
     "containeranalysis.occurrences.delete",
     "containeranalysis.occurrences.get",
