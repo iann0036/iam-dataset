@@ -7,7 +7,7 @@
     "Permissions management"
   ],
   "arn": "arn:aws:iam::aws:policy/service-role/AWSBackupServiceRolePolicyForBackup",
-  "createdate": "2026-02-12T17:59:19Z",
+  "createdate": "2026-02-23T19:42:11Z",
   "credentials_exposure": false,
   "data_access": true,
   "deprecated": false,
@@ -648,6 +648,28 @@
         "Effect": "Allow",
         "Resource": "arn:aws:eks:*:*:access-entry/*",
         "Sid": "AssociateBackupAccessPolicy"
+      },
+      {
+        "Action": [
+          "guardduty:StartMalwareScan",
+          "guardduty:GetMalwareScan"
+        ],
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "GuardDutyMalwareScanPermissions"
+      },
+      {
+        "Action": [
+          "iam:PassRole"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "iam:PassedToService": "malware-protection.guardduty.amazonaws.com"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:iam::*:role/*",
+        "Sid": "GuardDutyMalwareScanIAMPassPermissions"
       }
     ],
     "Version": "2012-10-17"
@@ -2104,6 +2126,40 @@
       "effective_action": "eks:DisassociateAccessPolicy",
       "privesc": false,
       "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "guardduty:StartMalwareScan",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "guardduty:StartMalwareScan",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "guardduty:GetMalwareScan",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "guardduty:GetMalwareScan",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Permissions management",
+      "action": "iam:PassRole",
+      "condition": {
+        "StringEquals": {
+          "iam:PassedToService": "malware-protection.guardduty.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "iam:PassRole",
+      "privesc": true,
+      "resource_exposure": true
     }
   ],
   "grantless": false,
@@ -2113,6 +2169,6 @@
   "resource_exposure": true,
   "undocumented_actions": false,
   "unknown_actions": [],
-  "updatedate": "2026-02-12T17:59:19+00:00",
-  "version": "v29"
+  "updatedate": "2026-02-23T19:42:11+00:00",
+  "version": "v30"
 }
