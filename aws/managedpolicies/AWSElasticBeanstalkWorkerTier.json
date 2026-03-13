@@ -5,7 +5,7 @@
     "Write"
   ],
   "arn": "arn:aws:iam::aws:policy/AWSElasticBeanstalkWorkerTier",
-  "createdate": "2020-09-09T19:53:40Z",
+  "createdate": "2026-03-12T14:27:08+00:00",
   "credentials_exposure": true,
   "data_access": true,
   "deprecated": false,
@@ -93,6 +93,37 @@
           "arn:aws:elasticbeanstalk:*:*:environment/*"
         ],
         "Sid": "ElasticBeanstalkHealthAccess"
+      },
+      {
+        "Action": [
+          "bedrock:InvokeModel"
+        ],
+        "Effect": "Allow",
+        "Resource": "arn:aws:bedrock:*::foundation-model/anthropic.claude-*",
+        "Sid": "AIEnvironmentAnalysisInvokeFoundationModel"
+      },
+      {
+        "Action": [
+          "bedrock:InvokeModel"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:bedrock:*:*:inference-profile/*anthropic.claude-*",
+        "Sid": "AIEnvironmentAnalysisInvokeInferenceProfile"
+      },
+      {
+        "Action": [
+          "bedrock:ListFoundationModels",
+          "elasticbeanstalk:DescribeEvents",
+          "elasticbeanstalk:DescribeEnvironmentHealth"
+        ],
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "AIEnvironmentAnalysisReadOnly"
       }
     ],
     "Version": "2012-10-17"
@@ -1077,6 +1108,60 @@
       "effective_action": "elasticbeanstalk:PutInstanceStatistics",
       "privesc": false,
       "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "bedrock:InvokeModel",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "bedrock:InvokeModel",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "bedrock:InvokeModel",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "bedrock:InvokeModel",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "bedrock:ListFoundationModels",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "bedrock:ListFoundationModels",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "elasticbeanstalk:DescribeEvents",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "elasticbeanstalk:DescribeEvents",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "elasticbeanstalk:DescribeEnvironmentHealth",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "elasticbeanstalk:DescribeEnvironmentHealth",
+      "privesc": false,
+      "resource_exposure": false
     }
   ],
   "grantless": false,
@@ -1086,6 +1171,6 @@
   "resource_exposure": false,
   "undocumented_actions": false,
   "unknown_actions": [],
-  "updatedate": "2020-09-09T19:53:40+00:00",
-  "version": "v6"
+  "updatedate": "2026-03-12T14:27:08+00:00",
+  "version": "v7"
 }
