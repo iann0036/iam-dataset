@@ -7,7 +7,7 @@
     "Permissions management"
   ],
   "arn": "arn:aws:iam::aws:policy/aws-service-role/AWSElasticBeanstalkManagedUpdatesServiceRolePolicy",
-  "createdate": "2024-04-29T23:11:34+00:00",
+  "createdate": "2026-03-13T16:12:13+00:00",
   "credentials_exposure": false,
   "data_access": true,
   "deprecated": false,
@@ -18,7 +18,7 @@
           "iam:PassRole"
         ],
         "Condition": {
-          "StringLikeIfExists": {
+          "StringEquals": {
             "iam:PassedToService": [
               "elasticbeanstalk.amazonaws.com",
               "ec2.amazonaws.com",
@@ -30,7 +30,7 @@
           }
         },
         "Effect": "Allow",
-        "Resource": "*",
+        "Resource": "arn:aws:iam::*:role/*",
         "Sid": "AllowPassRoleToElasticBeanstalkAndDownstreamServices"
       },
       {
@@ -238,6 +238,23 @@
         "Effect": "Allow",
         "Resource": "*",
         "Sid": "AllowECSTagResource"
+      },
+      {
+        "Action": [
+          "ec2:createTags"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "ec2:CreateAction": [
+              "CreateLaunchTemplate",
+              "RunInstances",
+              "AllocateAddress"
+            ]
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "LaunchTemplateTagPropagationPermissions"
       }
     ],
     "Version": "2012-10-17"
@@ -247,7 +264,7 @@
       "access_level": "Permissions management",
       "action": "iam:PassRole",
       "condition": {
-        "StringLikeIfExists": {
+        "StringEquals": {
           "iam:PassedToService": [
             "elasticbeanstalk.amazonaws.com",
             "ec2.amazonaws.com",
@@ -4320,6 +4337,24 @@
       "effective_action": "ecs:TagResource",
       "privesc": false,
       "resource_exposure": false
+    },
+    {
+      "access_level": "Tagging",
+      "action": "ec2:createTags",
+      "condition": {
+        "StringEquals": {
+          "ec2:CreateAction": [
+            "CreateLaunchTemplate",
+            "RunInstances",
+            "AllocateAddress"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:CreateTags",
+      "privesc": false,
+      "resource_exposure": false
     }
   ],
   "grantless": false,
@@ -4330,5 +4365,5 @@
   "undocumented_actions": false,
   "unknown_actions": [],
   "updatedate": "2026-03-13T16:12:13+00:00",
-  "version": "v9"
+  "version": "v10"
 }
