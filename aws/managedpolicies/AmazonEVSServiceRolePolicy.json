@@ -1,12 +1,13 @@
 {
   "access_levels": [
     "List",
+    "Read",
     "Tagging",
     "Write",
     "Permissions management"
   ],
   "arn": "arn:aws:iam::aws:policy/aws-service-role/AmazonEVSServiceRolePolicy",
-  "createdate": "2026-02-12T17:58:28+00:00",
+  "createdate": "2026-03-22T18:12:13+00:00",
   "credentials_exposure": false,
   "data_access": false,
   "deprecated": false,
@@ -171,6 +172,61 @@
         "Effect": "Allow",
         "Resource": "*",
         "Sid": "CloudWatchPutMetricDataStatement"
+      },
+      {
+        "Action": [
+          "secretsmanager:GetSecretValue"
+        ],
+        "Condition": {
+          "Null": {
+            "aws:ResourceTag/EvsAccess": "false"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:secretsmanager:*:*:secret:*"
+        ],
+        "Sid": "AccessSecretStatement"
+      },
+      {
+        "Action": [
+          "kms:Decrypt"
+        ],
+        "Condition": {
+          "Null": {
+            "aws:ResourceTag/EvsAccess": "false"
+          },
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          },
+          "StringLike": {
+            "kms:EncryptionContext:SecretARN": "arn:aws:secretsmanager:*:*:secret:*",
+            "kms:EncryptionContext:SecretVersionId": "*",
+            "kms:ViaService": "secretsmanager.*.amazonaws.com"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:kms:*:*:key/*",
+        "Sid": "DecryptSecretWithKmsKeyStatement"
+      },
+      {
+        "Action": [
+          "kms:DescribeKey"
+        ],
+        "Condition": {
+          "Null": {
+            "aws:ResourceTag/EvsAccess": "false"
+          },
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          },
+          "StringLike": {
+            "kms:ViaService": "secretsmanager.*.amazonaws.com"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:kms:*:*:key/*",
+        "Sid": "DescribeKmsKeyStatement"
       }
     ],
     "Version": "2012-10-17"
@@ -449,6 +505,62 @@
       "effective_action": "cloudwatch:PutMetricData",
       "privesc": false,
       "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "secretsmanager:GetSecretValue",
+      "condition": {
+        "Null": {
+          "aws:ResourceTag/EvsAccess": "false"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "secretsmanager:GetSecretValue",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "kms:Decrypt",
+      "condition": {
+        "Null": {
+          "aws:ResourceTag/EvsAccess": "false"
+        },
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        },
+        "StringLike": {
+          "kms:EncryptionContext:SecretARN": "arn:aws:secretsmanager:*:*:secret:*",
+          "kms:EncryptionContext:SecretVersionId": "*",
+          "kms:ViaService": "secretsmanager.*.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "kms:Decrypt",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "kms:DescribeKey",
+      "condition": {
+        "Null": {
+          "aws:ResourceTag/EvsAccess": "false"
+        },
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        },
+        "StringLike": {
+          "kms:ViaService": "secretsmanager.*.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "kms:DescribeKey",
+      "privesc": false,
+      "resource_exposure": false
     }
   ],
   "grantless": false,
@@ -459,5 +571,5 @@
   "undocumented_actions": false,
   "unknown_actions": [],
   "updatedate": "2026-03-22T18:12:13+00:00",
-  "version": "v9"
+  "version": "v10"
 }

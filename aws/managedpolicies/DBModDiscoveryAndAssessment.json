@@ -1,0 +1,785 @@
+{
+  "access_levels": [
+    "List",
+    "Read",
+    "Write"
+  ],
+  "arn": "arn:aws:iam::aws:policy/DBModDiscoveryAndAssessment",
+  "createdate": "2026-03-25T20:27:16+00:00",
+  "credentials_exposure": false,
+  "data_access": false,
+  "deprecated": false,
+  "document": {
+    "Statement": [
+      {
+        "Action": [
+          "ec2:DescribeInstances",
+          "ec2:DescribeSubnets",
+          "ec2:DescribeVpcs",
+          "ec2:DescribeSecurityGroups",
+          "ec2:DescribeAvailabilityZones",
+          "ec2:DescribeVpcEndpoints",
+          "ec2:DescribeInternetGateways",
+          "rds:DescribeDBInstances",
+          "rds:DescribeDBClusters",
+          "rds:DescribeDBSubnetGroups",
+          "dms:DescribeEndpoints",
+          "dms:DescribeReplicationInstances",
+          "dms:DescribeReplicationTasks",
+          "dms:DescribeReplicationSubnetGroups",
+          "dms:DescribeOrderableReplicationInstances",
+          "dms:ListDataProviders",
+          "dms:ListInstanceProfiles",
+          "dms:ListMigrationProjects",
+          "dms:ModifyReplicationSubnetGroup",
+          "secretsmanager:ListSecrets",
+          "kms:ListAliases",
+          "kms:DescribeKey"
+        ],
+        "Effect": "Allow",
+        "Resource": "*"
+      },
+      {
+        "Action": [
+          "rds:ModifyDBSubnetGroup"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:rds:*:*:subgrp:*"
+      },
+      {
+        "Action": [
+          "rds:EnableHttpEndpoint",
+          "rds:DisableHttpEndpoint",
+          "rds-data:ExecuteStatement"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}",
+            "aws:ResourceTag/Owner": "database-connector",
+            "aws:ResourceTag/Project": "atx-db-modernization"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:rds:*:*:cluster:*"
+      },
+      {
+        "Action": [
+          "dms:DescribeTableStatistics",
+          "dms:DescribeReplicationTaskAssessmentRuns",
+          "dms:DescribeReplicationTaskIndividualAssessments",
+          "dms:DescribeApplicableIndividualAssessments"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}",
+            "aws:ResourceTag/Owner": "database-connector",
+            "aws:ResourceTag/Project": "atx-db-modernization"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:dms:*:*:task:*",
+          "arn:aws:dms:*:*:assessment-run:*",
+          "arn:aws:dms:*:*:instance-profile:*",
+          "arn:aws:dms:*:*:data-provider:*",
+          "arn:aws:dms:*:*:migration-project:*",
+          "arn:aws:dms:*:*:rep:*"
+        ]
+      },
+      {
+        "Action": [
+          "dms:ListMetadataModelAssessments",
+          "dms:ListMetadataModelConversions",
+          "dms:ListMetadataModelExports",
+          "dms:DescribeMetadataModelImports",
+          "dms:DescribeConversionConfiguration",
+          "dms:DescribeMetadataModelCreations",
+          "dms:DescribeMetadataModel",
+          "dms:DescribeMetadataModelChildren",
+          "dms:GetTargetSelectionRules"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "*"
+      },
+      {
+        "Action": [
+          "iam:GetRole",
+          "iam:ListAttachedRolePolicies",
+          "iam:ListRolePolicies",
+          "iam:GetRolePolicy"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:iam::*:role/dms-vpc-role",
+          "arn:aws:iam::*:role/dms-cloudwatch-logs-role",
+          "arn:aws:iam::*:role/dms-secrets-manager-role",
+          "arn:aws:iam::*:role/dms-s3-access-role",
+          "arn:aws:iam::*:role/aws-service-role/dms.amazonaws.com/AWSServiceRoleForDMSServerless"
+        ]
+      },
+      {
+        "Action": [
+          "iam:GetPolicy",
+          "iam:GetPolicyVersion"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:iam::*:policy/*"
+        ]
+      },
+      {
+        "Action": [
+          "iam:GetPolicy",
+          "iam:GetPolicyVersion"
+        ],
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:iam::aws:policy/service-role/AmazonDMSCloudWatchLogsRole",
+          "arn:aws:iam::aws:policy/service-role/AmazonDMSVPCManagementRole"
+        ]
+      },
+      {
+        "Action": [
+          "kms:Decrypt"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          },
+          "StringLike": {
+            "kms:EncryptionContext:SecretArn": "arn:aws:secretsmanager:*:${aws:PrincipalAccount}:secret:*",
+            "kms:ViaService": "secretsmanager.*.amazonaws.com"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:kms:*:*:key/*"
+      }
+    ],
+    "Version": "2012-10-17"
+  },
+  "effective_actions": [
+    {
+      "access_level": "List",
+      "action": "ec2:DescribeInstances",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:DescribeInstances",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "ec2:DescribeSubnets",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:DescribeSubnets",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "ec2:DescribeVpcs",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:DescribeVpcs",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "ec2:DescribeSecurityGroups",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:DescribeSecurityGroups",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "ec2:DescribeAvailabilityZones",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:DescribeAvailabilityZones",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "ec2:DescribeVpcEndpoints",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:DescribeVpcEndpoints",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "ec2:DescribeInternetGateways",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:DescribeInternetGateways",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "rds:DescribeDBInstances",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "rds:DescribeDBInstances",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "rds:DescribeDBClusters",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "rds:DescribeDBClusters",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "rds:DescribeDBSubnetGroups",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "rds:DescribeDBSubnetGroups",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "dms:DescribeEndpoints",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "dms:DescribeEndpoints",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "dms:DescribeReplicationInstances",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "dms:DescribeReplicationInstances",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "dms:DescribeReplicationTasks",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "dms:DescribeReplicationTasks",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "dms:DescribeReplicationSubnetGroups",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "dms:DescribeReplicationSubnetGroups",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "dms:DescribeOrderableReplicationInstances",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "dms:DescribeOrderableReplicationInstances",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "dms:ListDataProviders",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "dms:ListDataProviders",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "dms:ListInstanceProfiles",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "dms:ListInstanceProfiles",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "dms:ListMigrationProjects",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "dms:ListMigrationProjects",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "dms:ModifyReplicationSubnetGroup",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "dms:ModifyReplicationSubnetGroup",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "secretsmanager:ListSecrets",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "secretsmanager:ListSecrets",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "kms:ListAliases",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "kms:ListAliases",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "kms:DescribeKey",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "kms:DescribeKey",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "rds:ModifyDBSubnetGroup",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "rds:ModifyDBSubnetGroup",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "rds:EnableHttpEndpoint",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}",
+          "aws:ResourceTag/Owner": "database-connector",
+          "aws:ResourceTag/Project": "atx-db-modernization"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "rds:EnableHttpEndpoint",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "rds:DisableHttpEndpoint",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}",
+          "aws:ResourceTag/Owner": "database-connector",
+          "aws:ResourceTag/Project": "atx-db-modernization"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "rds:DisableHttpEndpoint",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "rds-data:ExecuteStatement",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}",
+          "aws:ResourceTag/Owner": "database-connector",
+          "aws:ResourceTag/Project": "atx-db-modernization"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "rds-data:ExecuteStatement",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "dms:DescribeTableStatistics",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}",
+          "aws:ResourceTag/Owner": "database-connector",
+          "aws:ResourceTag/Project": "atx-db-modernization"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "dms:DescribeTableStatistics",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "dms:DescribeReplicationTaskAssessmentRuns",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}",
+          "aws:ResourceTag/Owner": "database-connector",
+          "aws:ResourceTag/Project": "atx-db-modernization"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "dms:DescribeReplicationTaskAssessmentRuns",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "dms:DescribeReplicationTaskIndividualAssessments",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}",
+          "aws:ResourceTag/Owner": "database-connector",
+          "aws:ResourceTag/Project": "atx-db-modernization"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "dms:DescribeReplicationTaskIndividualAssessments",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "dms:DescribeApplicableIndividualAssessments",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}",
+          "aws:ResourceTag/Owner": "database-connector",
+          "aws:ResourceTag/Project": "atx-db-modernization"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "dms:DescribeApplicableIndividualAssessments",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "dms:ListMetadataModelAssessments",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "dms:ListMetadataModelAssessments",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "dms:ListMetadataModelConversions",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "dms:ListMetadataModelConversions",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "dms:ListMetadataModelExports",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "dms:ListMetadataModelExports",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "dms:DescribeMetadataModelImports",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "dms:DescribeMetadataModelImports",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "dms:DescribeConversionConfiguration",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "dms:DescribeConversionConfiguration",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "dms:DescribeMetadataModelCreations",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "dms:DescribeMetadataModelCreations",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "dms:DescribeMetadataModel",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "dms:DescribeMetadataModel",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "dms:DescribeMetadataModelChildren",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "dms:DescribeMetadataModelChildren",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "dms:GetTargetSelectionRules",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "dms:GetTargetSelectionRules",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "iam:GetRole",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "iam:GetRole",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "iam:ListAttachedRolePolicies",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "iam:ListAttachedRolePolicies",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "iam:ListRolePolicies",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "iam:ListRolePolicies",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "iam:GetRolePolicy",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "iam:GetRolePolicy",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "iam:GetPolicy",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "iam:GetPolicy",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "iam:GetPolicyVersion",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "iam:GetPolicyVersion",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "iam:GetPolicy",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "iam:GetPolicy",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "iam:GetPolicyVersion",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "iam:GetPolicyVersion",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "kms:Decrypt",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        },
+        "StringLike": {
+          "kms:EncryptionContext:SecretArn": "arn:aws:secretsmanager:*:${aws:PrincipalAccount}:secret:*",
+          "kms:ViaService": "secretsmanager.*.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "kms:Decrypt",
+      "privesc": false,
+      "resource_exposure": false
+    }
+  ],
+  "grantless": false,
+  "malformed": false,
+  "name": "DBModDiscoveryAndAssessment",
+  "privesc": false,
+  "resource_exposure": false,
+  "undocumented_actions": false,
+  "unknown_actions": [],
+  "updatedate": "2026-03-25T20:27:16+00:00",
+  "version": "v1"
+}

@@ -7,7 +7,7 @@
     "Permissions management"
   ],
   "arn": "arn:aws:iam::aws:policy/SageMakerStudioAdminIAMConsolePolicy",
-  "createdate": "2026-03-05T17:42:10+00:00",
+  "createdate": "2026-03-27T17:42:13+00:00",
   "credentials_exposure": false,
   "data_access": true,
   "deprecated": false,
@@ -489,6 +489,40 @@
         "Effect": "Allow",
         "Resource": "*",
         "Sid": "GlueCatalogPermissions"
+      },
+      {
+        "Action": [
+          "sso:DeleteApplication"
+        ],
+        "Condition": {
+          "Bool": {
+            "aws:ViaAWSService": "true"
+          },
+          "ForAnyValue:StringEquals": {
+            "aws:CalledVia": "datazone.amazonaws.com"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:sso::*:application/*/*"
+        ],
+        "Sid": "SSOApplicationPermissions"
+      },
+      {
+        "Action": [
+          "kms:Decrypt"
+        ],
+        "Condition": {
+          "Null": {
+            "kms:EncryptionContext:aws:sso:instance-arn": "false"
+          },
+          "StringLike": {
+            "kms:ViaService": "sso.*.amazonaws.com"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "SSOKMSPermissions"
       }
     ],
     "Version": "2012-10-17"
@@ -3627,6 +3661,40 @@
       "effective_action": "glue:GetCatalog",
       "privesc": false,
       "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "sso:DeleteApplication",
+      "condition": {
+        "Bool": {
+          "aws:ViaAWSService": "true"
+        },
+        "ForAnyValue:StringEquals": {
+          "aws:CalledVia": "datazone.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sso:DeleteApplication",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "kms:Decrypt",
+      "condition": {
+        "Null": {
+          "kms:EncryptionContext:aws:sso:instance-arn": "false"
+        },
+        "StringLike": {
+          "kms:ViaService": "sso.*.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "kms:Decrypt",
+      "privesc": false,
+      "resource_exposure": false
     }
   ],
   "grantless": false,
@@ -3637,5 +3705,5 @@
   "undocumented_actions": false,
   "unknown_actions": [],
   "updatedate": "2026-03-27T17:42:13+00:00",
-  "version": "v7"
+  "version": "v8"
 }

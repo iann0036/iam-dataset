@@ -8,7 +8,7 @@
     "Unknown"
   ],
   "arn": "arn:aws:iam::aws:policy/SageMakerStudioAdminIAMPermissiveExecutionPolicy",
-  "createdate": "2026-03-05T17:42:13+00:00",
+  "createdate": "2026-03-27T17:27:08+00:00",
   "credentials_exposure": true,
   "data_access": true,
   "deprecated": false,
@@ -54,7 +54,8 @@
         ],
         "Effect": "Allow",
         "Resource": [
-          "arn:aws:cloudformation:*:*:stack/DataZone*"
+          "arn:aws:cloudformation:*:*:stack/DataZone*",
+          "arn:aws:cloudformation:*:*:transform/*"
         ],
         "Sid": "CfnManage"
       },
@@ -265,7 +266,8 @@
           "lakeformation:RevokePermissions",
           "lakeformation:ListLakeFormationOptIns",
           "lakeformation:CreateLakeFormationOptIn",
-          "lakeformation:DeleteLakeFormationOptIn"
+          "lakeformation:DeleteLakeFormationOptIn",
+          "lakeformation:*DataCellsFilter"
         ],
         "Effect": "Allow",
         "Resource": "*",
@@ -697,6 +699,51 @@
         "Effect": "Deny",
         "Resource": "arn:aws:athena:*:*:workgroup/*/session/*",
         "Sid": "DenyTaggingUntaggingForeignAthenaSessions"
+      },
+      {
+        "Action": [
+          "sso:CreateApplication",
+          "sso:PutApplicationGrant",
+          "sso:PutApplicationAssignmentConfiguration",
+          "sso:PutApplicationAuthenticationMethod",
+          "sso:PutApplicationAccessScope",
+          "sso:UpdateApplication",
+          "sso:CreateApplicationAssignment",
+          "sso:DeleteApplicationAssignment"
+        ],
+        "Condition": {
+          "Bool": {
+            "aws:ViaAWSService": "true"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "SSOApplicationPermissions"
+      },
+      {
+        "Action": [
+          "sso:ListInstances",
+          "organizations:DescribeOrganization"
+        ],
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "SSOReadOnlyPermissions"
+      },
+      {
+        "Action": [
+          "kms:Decrypt"
+        ],
+        "Condition": {
+          "Null": {
+            "kms:EncryptionContext:aws:sso:instance-arn": "false"
+          },
+          "StringLike": {
+            "kms:ViaService": "sso.*.amazonaws.com"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "SSOKMSPermissions"
       }
     ],
     "Version": "2012-10-17"
@@ -23621,6 +23668,56 @@
       "resource_exposure": false
     },
     {
+      "access_level": "Write",
+      "action": "lakeformation:*DataCellsFilter",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "lakeformation:CreateDataCellsFilter",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "lakeformation:*DataCellsFilter",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "lakeformation:DeleteDataCellsFilter",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "lakeformation:*DataCellsFilter",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "lakeformation:GetDataCellsFilter",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "lakeformation:*DataCellsFilter",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "lakeformation:ListDataCellsFilter",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "lakeformation:*DataCellsFilter",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "lakeformation:UpdateDataCellsFilter",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
       "access_level": "List",
       "action": "dynamodb:List*",
       "condition": null,
@@ -27593,6 +27690,155 @@
       "effective_action": "ec2:DeleteTags",
       "privesc": false,
       "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "sso:CreateApplication",
+      "condition": {
+        "Bool": {
+          "aws:ViaAWSService": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sso:CreateApplication",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "sso:PutApplicationGrant",
+      "condition": {
+        "Bool": {
+          "aws:ViaAWSService": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sso:PutApplicationGrant",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "sso:PutApplicationAssignmentConfiguration",
+      "condition": {
+        "Bool": {
+          "aws:ViaAWSService": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sso:PutApplicationAssignmentConfiguration",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "sso:PutApplicationAuthenticationMethod",
+      "condition": {
+        "Bool": {
+          "aws:ViaAWSService": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sso:PutApplicationAuthenticationMethod",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "sso:PutApplicationAccessScope",
+      "condition": {
+        "Bool": {
+          "aws:ViaAWSService": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sso:PutApplicationAccessScope",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "sso:UpdateApplication",
+      "condition": {
+        "Bool": {
+          "aws:ViaAWSService": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sso:UpdateApplication",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "sso:CreateApplicationAssignment",
+      "condition": {
+        "Bool": {
+          "aws:ViaAWSService": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sso:CreateApplicationAssignment",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "sso:DeleteApplicationAssignment",
+      "condition": {
+        "Bool": {
+          "aws:ViaAWSService": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sso:DeleteApplicationAssignment",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "sso:ListInstances",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sso:ListInstances",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "organizations:DescribeOrganization",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "organizations:DescribeOrganization",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "kms:Decrypt",
+      "condition": {
+        "Null": {
+          "kms:EncryptionContext:aws:sso:instance-arn": "false"
+        },
+        "StringLike": {
+          "kms:ViaService": "sso.*.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "kms:Decrypt",
+      "privesc": false,
+      "resource_exposure": false
     }
   ],
   "grantless": false,
@@ -27603,5 +27849,5 @@
   "undocumented_actions": true,
   "unknown_actions": [],
   "updatedate": "2026-03-27T17:27:08+00:00",
-  "version": "v16"
+  "version": "v17"
 }
