@@ -1,10 +1,12 @@
 {
   "access_levels": [
     "List",
-    "Read"
+    "Read",
+    "Tagging",
+    "Write"
   ],
   "arn": "arn:aws:iam::aws:policy/AnthropicReadOnlyAccess",
-  "createdate": "2026-04-01T04:57:09+00:00",
+  "createdate": "2026-04-01T22:42:18+00:00",
   "credentials_exposure": false,
   "data_access": false,
   "deprecated": false,
@@ -27,6 +29,33 @@
         "Effect": "Allow",
         "Resource": "*",
         "Sid": "AnthropicReadOnlyResourceless"
+      },
+      {
+        "Action": [
+          "sts:GetWebIdentityToken"
+        ],
+        "Condition": {
+          "ForAnyValue:StringEquals": {
+            "sts:IdentityTokenAudience": [
+              "https://api.anthropic.com",
+              "https://platform.claude.com"
+            ]
+          },
+          "StringEquals": {
+            "aws:CalledViaLast": "aws-external-anthropic.amazonaws.com"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "AnthropicReadOnlyGetToken"
+      },
+      {
+        "Action": [
+          "sts:TagGetWebIdentityToken"
+        ],
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "AnthropicReadOnlyTagToken"
       }
     ],
     "Version": "2012-10-17"
@@ -181,6 +210,36 @@
       "effective_action": "aws-external-anthropic:CallWithBearerToken",
       "privesc": false,
       "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "sts:GetWebIdentityToken",
+      "condition": {
+        "ForAnyValue:StringEquals": {
+          "sts:IdentityTokenAudience": [
+            "https://api.anthropic.com",
+            "https://platform.claude.com"
+          ]
+        },
+        "StringEquals": {
+          "aws:CalledViaLast": "aws-external-anthropic.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sts:GetWebIdentityToken",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Tagging",
+      "action": "sts:TagGetWebIdentityToken",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sts:TagGetWebIdentityToken",
+      "privesc": false,
+      "resource_exposure": false
     }
   ],
   "grantless": false,
@@ -190,6 +249,6 @@
   "resource_exposure": false,
   "undocumented_actions": false,
   "unknown_actions": [],
-  "updatedate": "2026-04-01T04:57:09+00:00",
-  "version": "v1"
+  "updatedate": "2026-04-01T22:42:18+00:00",
+  "version": "v2"
 }

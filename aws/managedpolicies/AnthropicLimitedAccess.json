@@ -2,10 +2,11 @@
   "access_levels": [
     "List",
     "Read",
+    "Tagging",
     "Write"
   ],
   "arn": "arn:aws:iam::aws:policy/AnthropicLimitedAccess",
-  "createdate": "2026-04-01T04:57:18+00:00",
+  "createdate": "2026-04-01T22:42:15+00:00",
   "credentials_exposure": false,
   "data_access": false,
   "deprecated": false,
@@ -34,12 +35,30 @@
       },
       {
         "Action": [
-          "aws-external-anthropic:GetAccountStatus",
-          "aws-external-anthropic:CallWithBearerToken"
+          "sts:GetWebIdentityToken"
+        ],
+        "Condition": {
+          "ForAnyValue:StringEquals": {
+            "sts:IdentityTokenAudience": [
+              "https://api.anthropic.com",
+              "https://platform.claude.com"
+            ]
+          },
+          "StringEquals": {
+            "aws:CalledViaLast": "aws-external-anthropic.amazonaws.com"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "AnthropicLimitedGetToken"
+      },
+      {
+        "Action": [
+          "sts:TagGetWebIdentityToken"
         ],
         "Effect": "Allow",
         "Resource": "*",
-        "Sid": "AnthropicInferenceResourceless"
+        "Sid": "AnthropicLimitedTagToken"
       }
     ],
     "Version": "2012-10-17"
@@ -296,22 +315,32 @@
       "resource_exposure": false
     },
     {
-      "access_level": "Read",
-      "action": "aws-external-anthropic:GetAccountStatus",
-      "condition": null,
+      "access_level": "Write",
+      "action": "sts:GetWebIdentityToken",
+      "condition": {
+        "ForAnyValue:StringEquals": {
+          "sts:IdentityTokenAudience": [
+            "https://api.anthropic.com",
+            "https://platform.claude.com"
+          ]
+        },
+        "StringEquals": {
+          "aws:CalledViaLast": "aws-external-anthropic.amazonaws.com"
+        }
+      },
       "credentials_exposure": false,
       "data_access": false,
-      "effective_action": "aws-external-anthropic:GetAccountStatus",
+      "effective_action": "sts:GetWebIdentityToken",
       "privesc": false,
       "resource_exposure": false
     },
     {
-      "access_level": "List",
-      "action": "aws-external-anthropic:CallWithBearerToken",
+      "access_level": "Tagging",
+      "action": "sts:TagGetWebIdentityToken",
       "condition": null,
       "credentials_exposure": false,
       "data_access": false,
-      "effective_action": "aws-external-anthropic:CallWithBearerToken",
+      "effective_action": "sts:TagGetWebIdentityToken",
       "privesc": false,
       "resource_exposure": false
     }
@@ -323,6 +352,6 @@
   "resource_exposure": false,
   "undocumented_actions": false,
   "unknown_actions": [],
-  "updatedate": "2026-04-01T04:57:18+00:00",
-  "version": "v1"
+  "updatedate": "2026-04-01T22:42:15+00:00",
+  "version": "v3"
 }
