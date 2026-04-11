@@ -5,7 +5,7 @@
     "Write"
   ],
   "arn": "arn:aws:iam::aws:policy/service-role/ROSAControlPlaneOperatorPolicy",
-  "createdate": "2026-02-12T17:59:10+00:00",
+  "createdate": "2026-04-10T16:12:18+00:00",
   "credentials_exposure": false,
   "data_access": false,
   "deprecated": false,
@@ -161,7 +161,8 @@
         },
         "Effect": "Allow",
         "Resource": [
-          "arn:aws:ec2:*:*:vpc-endpoint/*"
+          "arn:aws:ec2:*:*:vpc-endpoint/*",
+          "arn:aws:ec2:*:*:security-group/*"
         ],
         "Sid": "ManageVPCEndpointWithCondition"
       },
@@ -173,7 +174,7 @@
         "Resource": [
           "arn:aws:ec2:*:*:subnet/*"
         ],
-        "Sid": "ModifyVPCEndpoingNoCondition"
+        "Sid": "ModifyVPCEndpointNoCondition"
       },
       {
         "Action": [
@@ -193,6 +194,19 @@
           "arn:aws:ec2:*:*:security-group/*"
         ],
         "Sid": "CreateTagsRestrictedActions"
+      },
+      {
+        "Action": [
+          "ec2:CreateTags"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceTag/red-hat-managed": "true"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:ec2:*:*:security-group/*",
+        "Sid": "AddTagsToRedHatManagedSecurityGroups"
       }
     ],
     "Version": "2012-10-17"
@@ -450,6 +464,20 @@
       "effective_action": "ec2:CreateTags",
       "privesc": false,
       "resource_exposure": false
+    },
+    {
+      "access_level": "Tagging",
+      "action": "ec2:CreateTags",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/red-hat-managed": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:CreateTags",
+      "privesc": false,
+      "resource_exposure": false
     }
   ],
   "grantless": false,
@@ -459,6 +487,6 @@
   "resource_exposure": false,
   "undocumented_actions": false,
   "unknown_actions": [],
-  "updatedate": "2026-02-12T17:59:10+00:00",
-  "version": "v5"
+  "updatedate": "2026-04-10T16:12:18+00:00",
+  "version": "v6"
 }

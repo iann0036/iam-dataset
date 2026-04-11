@@ -6,7 +6,7 @@
     "Write"
   ],
   "arn": "arn:aws:iam::aws:policy/service-role/ROSAKubeControllerPolicy",
-  "createdate": "2026-02-12T18:00:33+00:00",
+  "createdate": "2026-04-10T16:12:08+00:00",
   "credentials_exposure": false,
   "data_access": false,
   "deprecated": false,
@@ -24,6 +24,7 @@
           "elasticloadbalancing:DescribeLoadBalancerAttributes",
           "elasticloadbalancing:DescribeListeners",
           "elasticloadbalancing:DescribeTargetGroups",
+          "elasticloadbalancing:DescribeTargetGroupAttributes",
           "elasticloadbalancing:DescribeTargetHealth",
           "elasticloadbalancing:DescribeLoadBalancerPolicies"
         ],
@@ -192,6 +193,22 @@
           "arn:aws:ec2:*:*:security-group/*"
         ],
         "Sid": "CreateTagsSecurityGroups"
+      },
+      {
+        "Action": [
+          "elasticloadbalancing:ModifyTargetGroupAttributes",
+          "elasticloadbalancing:DeregisterTargets"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceTag/red-hat-managed": "true"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:elasticloadbalancing:*:*:targetgroup/*"
+        ],
+        "Sid": "ManageTargetGroup"
       }
     ],
     "Version": "2012-10-17"
@@ -294,6 +311,16 @@
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "elasticloadbalancing:DescribeTargetGroups",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "elasticloadbalancing:DescribeTargetGroupAttributes",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "elasticloadbalancing:DescribeTargetGroupAttributes",
       "privesc": false,
       "resource_exposure": false
     },
@@ -687,6 +714,34 @@
       "effective_action": "ec2:CreateTags",
       "privesc": false,
       "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "elasticloadbalancing:ModifyTargetGroupAttributes",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/red-hat-managed": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "elasticloadbalancing:ModifyTargetGroupAttributes",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "elasticloadbalancing:DeregisterTargets",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/red-hat-managed": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "elasticloadbalancing:DeregisterTargets",
+      "privesc": false,
+      "resource_exposure": false
     }
   ],
   "grantless": false,
@@ -696,6 +751,6 @@
   "resource_exposure": false,
   "undocumented_actions": false,
   "unknown_actions": [],
-  "updatedate": "2026-02-12T18:00:33+00:00",
-  "version": "v6"
+  "updatedate": "2026-04-10T16:12:08+00:00",
+  "version": "v7"
 }
