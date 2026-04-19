@@ -26,7 +26,7 @@
             </div>
         
             <div id="methodmappingarea"></div>
-            <br /><br /><button id="submitbutton" onclick="submitMapping()">Submit Mapping [`]</button>&nbsp;&nbsp;<button id="skipbutton" onclick="nextMethod()">Skip Mapping [\]</button>
+            <br /><br /><button id="submitbutton" onclick="submitMapping()">Submit Mapping [`]</button>&nbsp;&nbsp;<button id="skipbutton" onclick="nextMethod()">Skip Mapping [\]</button>&nbsp;&nbsp;<button id="autobutton" onclick="autoProcess()">Auto</button>
         
             <br /><br /><br /><h4>Output</h4>
             <textarea id="output" cols="80" rows="20"></textarea>
@@ -244,7 +244,7 @@
 
             window.localStorage.setItem("lastOutput", JSON.stringify(updated_map));
 
-            nextMethod();
+            await nextMethod();
         }
 
         function resolveService(service) {
@@ -280,7 +280,7 @@
 
             if (["WAFV2.CheckCapacity", "WAFV2.CreateRuleGroup", "WAFV2.CreateWebACL", "WAFV2.UpdateRuleGroup", "WAFV2.UpdateWebACL"].includes(call)) { // recursive awfulness
                 delete map['sdk_method_iam_mappings'][call];
-                nextMethod();
+                await nextMethod();
                 return;
             }
 
@@ -288,7 +288,7 @@
 
             if (!existingmappings) {
                 delete map['sdk_method_iam_mappings'][call];
-                nextMethod();
+                await nextMethod();
                 return;
             }
 
@@ -311,7 +311,7 @@
             } catch(e) {
                 if (map['sdk_method_iam_mappings'][call] && map['sdk_method_iam_mappings'][call].length == 1 && map['sdk_method_iam_mappings'][call][0]['undocumented']) { // known undocumented
                     delete map['sdk_method_iam_mappings'][call];
-                    nextMethod();
+                    await nextMethod();
                     return;
                 } else {
                     console.debug("Not a known undocumented: " + call);
@@ -321,7 +321,7 @@
                 document.getElementById("skipped").innerHTML += call + " {1}\n";
                 console.log(e);
                 console.log(call);
-                nextMethod();
+                await nextMethod();
                 return;
             }
 
@@ -423,6 +423,88 @@
             });
 
             delete map['sdk_method_iam_mappings'][call];
+        }
+
+        function tryAutoResolve() {
+            var actionblocks = document.getElementById('methodmappingarea').querySelectorAll('.actionblock');
+            var allResolved = true;
+
+            var splitcall = call.split(".");
+            var currentSdkData = sdkopmap[splitcall[0]];
+            var rootMembers = [];
+
+            if (currentSdkData && currentSdkData['operations'][splitcall[1]] &&
+                currentSdkData['operations'][splitcall[1]]['input'] &&
+                currentSdkData['operations'][splitcall[1]]['input']['members']) {
+                rootMembers = Object.keys(currentSdkData['operations'][splitcall[1]]['input']['members']);
+            }
+
+            actionblocks.forEach(actionblock => {
+                var resourceblocks = actionblock.querySelectorAll('.resourceblock');
+
+                // 1a: no resourceblocks means resolved
+                if (resourceblocks.length == 0) return;
+
+                resourceblocks.forEach(resourceblock => {
+                    var mappinginputs = resourceblock.querySelectorAll('.mappinginput');
+
+                    // 1b: only fullarn field, no variable inputs
+                    if (mappinginputs.length == 0) return;
+
+                    var action = actionblock.dataset.action;
+                    var methodName = action.split(":")[1];
+
+                    mappinginputs.forEach(mappinginput => {
+                        if (mappinginput.value != "") return;
+
+                        var varmatch = mappinginput.dataset.varmatch;
+
+                        // 1c: variable ends with "Id" and action is "Create" + name without "Id"
+                        if (varmatch.endsWith("Id")) {
+                            var nameWithoutId = varmatch.slice(0, -2);
+                            if (methodName.toLowerCase() === "create" + nameWithoutId.toLowerCase()) {
+                                mappinginput.value = "*";
+                                return;
+                            }
+                        }
+
+                        // 1d: root level SDK input member matches variable name
+                        if (rootMembers.map(x => x.toLowerCase()).includes(varmatch.toLowerCase())) {
+                            // case-insensitive match
+                            var actualRootMember = rootMembers.find(x => x.toLowerCase() === varmatch.toLowerCase());
+                            mappinginput.value = "${" + actualRootMember + "}";
+                            return;
+                        }
+
+                        // Unresolved
+                        allResolved = false;
+                    });
+                });
+            });
+
+            return allResolved;
+        }
+
+        async function autoProcess() {
+            document.getElementById('autobutton').disabled = true;
+
+            while (true) {
+                await new Promise(resolve => setTimeout(resolve, 10));
+
+                if (document.getElementById('submitbutton').textContent.includes("no more mappings remaining")) {
+                    break;
+                }
+
+                var resolved = tryAutoResolve();
+
+                if (resolved) {
+                    await submitMapping();
+                } else {
+                    await nextMethod();
+                }
+            }
+
+            document.getElementById('autobutton').disabled = false;
         }
 
         window.onload = async () => {
