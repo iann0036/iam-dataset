@@ -2,10 +2,11 @@
   "access_levels": [
     "List",
     "Read",
-    "Write"
+    "Write",
+    "Permissions management"
   ],
   "arn": "arn:aws:iam::aws:policy/aws-service-role/AWSSecurityHubServiceRolePolicy",
-  "createdate": "2023-11-27T03:46:47+00:00",
+  "createdate": "2026-04-29T14:27:11+00:00",
   "credentials_exposure": false,
   "data_access": false,
   "deprecated": false,
@@ -87,6 +88,32 @@
         "Effect": "Allow",
         "Resource": "*",
         "Sid": "SecurityHubServiceRoleOrganizationsPermissions"
+      },
+      {
+        "Action": [
+          "config:PutServiceLinkedConfigurationRecorder",
+          "config:DeleteServiceLinkedConfigurationRecorder",
+          "config:DescribeConfigurationRecorders",
+          "config:DescribeConfigurationRecorderStatus"
+        ],
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:config:*:*:configuration-recorder/*ConfigurationRecorderForSecurityHubCSPM*"
+        ],
+        "Sid": "SecurityHubCSPMServiceRoleConfig"
+      },
+      {
+        "Action": [
+          "iam:CreateServiceLinkedRole"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "iam:AWSServiceName": "config.amazonaws.com"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:iam::*:role/aws-service-role/config.amazonaws.com/AWSServiceRoleForConfig",
+        "Sid": "SecurityHubCSPMServiceRoleIamPermissions"
       }
     ],
     "Version": "2012-10-17"
@@ -587,15 +614,69 @@
       "effective_action": "organizations:ListDelegatedAdministrators",
       "privesc": false,
       "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "config:PutServiceLinkedConfigurationRecorder",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "config:PutServiceLinkedConfigurationRecorder",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "config:DeleteServiceLinkedConfigurationRecorder",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "config:DeleteServiceLinkedConfigurationRecorder",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "config:DescribeConfigurationRecorders",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "config:DescribeConfigurationRecorders",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "config:DescribeConfigurationRecorderStatus",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "config:DescribeConfigurationRecorderStatus",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Permissions management",
+      "action": "iam:CreateServiceLinkedRole",
+      "condition": {
+        "StringEquals": {
+          "iam:AWSServiceName": "config.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "iam:CreateServiceLinkedRole",
+      "privesc": true,
+      "resource_exposure": true
     }
   ],
   "grantless": false,
   "malformed": false,
   "name": "AWSSecurityHubServiceRolePolicy",
-  "privesc": false,
-  "resource_exposure": false,
+  "privesc": true,
+  "resource_exposure": true,
   "undocumented_actions": false,
   "unknown_actions": [],
   "updatedate": "2023-11-27T03:46:47+00:00",
-  "version": "v14"
+  "version": "v15"
 }
