@@ -7,7 +7,7 @@
     "Permissions management"
   ],
   "arn": "arn:aws:iam::aws:policy/aws-service-role/AWSObservabilityAdminTelemetryEnablementServiceRolePolicy",
-  "createdate": "2026-04-16T17:42:10+00:00",
+  "createdate": "2026-04-29T21:12:11+00:00",
   "credentials_exposure": false,
   "data_access": false,
   "deprecated": false,
@@ -213,7 +213,7 @@
           }
         },
         "Effect": "Allow",
-        "Resource": "arn:aws:wafv2:*:*:regional/webacl/*",
+        "Resource": "arn:aws:wafv2:*:*:*/webacl/*",
         "Sid": "TelemetryOperationsForWafLoggingConfigurations"
       },
       {
@@ -462,6 +462,84 @@
           "*"
         ],
         "Sid": "ReadOperationsForServiceLinkedRecorder"
+      },
+      {
+        "Action": [
+          "kafka:UpdateMonitoring",
+          "kafka:DescribeCluster"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "TelemetryOperationsForKafka"
+      },
+      {
+        "Action": [
+          "observabilityadmin:GetTelemetryEnrichmentStatus",
+          "observabilityadmin:StartTelemetryEnrichment",
+          "observabilityadmin:StopTelemetryEnrichment"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "TelemetryOperationsForOTelEnrichmentSimba"
+      },
+      {
+        "Action": [
+          "resource-explorer-2:CreateIndex",
+          "resource-explorer-2:CreateManagedView",
+          "resource-explorer-2:CreateStreamingAccessForService",
+          "resource-explorer-2:DeleteStreamingAccessForService"
+        ],
+        "Condition": {
+          "Bool": {
+            "aws:ViaAWSService": "true"
+          },
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "TelemetryOperationsForOTelEnrichmentResourceExplorer"
+      },
+      {
+        "Action": [
+          "cloudwatch:GetOTelEnrichment",
+          "cloudwatch:StartOTelEnrichment"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "TelemetryOperationsForOTelEnrichmentCloudWatch"
+      },
+      {
+        "Action": [
+          "iam:CreateServiceLinkedRole"
+        ],
+        "Condition": {
+          "Bool": {
+            "aws:ViaAWSService": "true"
+          },
+          "StringEquals": {
+            "iam:AWSServiceName": "resource-explorer-2.amazonaws.com"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:iam::*:role/aws-service-role/resource-explorer-2.amazonaws.com/*",
+        "Sid": "TelemetryOperationsForOTelEnrichmentSLR"
       }
     ],
     "Version": "2012-10-17"
@@ -1284,6 +1362,189 @@
       "effective_action": "config:DescribeConfigurationRecorders",
       "privesc": false,
       "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "kafka:UpdateMonitoring",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "kafka:UpdateMonitoring",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "kafka:DescribeCluster",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "kafka:DescribeCluster",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "observabilityadmin:GetTelemetryEnrichmentStatus",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "observabilityadmin:GetTelemetryEnrichmentStatus",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "observabilityadmin:StartTelemetryEnrichment",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "observabilityadmin:StartTelemetryEnrichment",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "observabilityadmin:StopTelemetryEnrichment",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "observabilityadmin:StopTelemetryEnrichment",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "resource-explorer-2:CreateIndex",
+      "condition": {
+        "Bool": {
+          "aws:ViaAWSService": "true"
+        },
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "resource-explorer-2:CreateIndex",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "resource-explorer-2:CreateManagedView",
+      "condition": {
+        "Bool": {
+          "aws:ViaAWSService": "true"
+        },
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "resource-explorer-2:CreateManagedView",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "resource-explorer-2:CreateStreamingAccessForService",
+      "condition": {
+        "Bool": {
+          "aws:ViaAWSService": "true"
+        },
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "resource-explorer-2:CreateStreamingAccessForService",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "resource-explorer-2:DeleteStreamingAccessForService",
+      "condition": {
+        "Bool": {
+          "aws:ViaAWSService": "true"
+        },
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "resource-explorer-2:DeleteStreamingAccessForService",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "cloudwatch:GetOTelEnrichment",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudwatch:GetOTelEnrichment",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "cloudwatch:StartOTelEnrichment",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudwatch:StartOTelEnrichment",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Permissions management",
+      "action": "iam:CreateServiceLinkedRole",
+      "condition": {
+        "Bool": {
+          "aws:ViaAWSService": "true"
+        },
+        "StringEquals": {
+          "iam:AWSServiceName": "resource-explorer-2.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "iam:CreateServiceLinkedRole",
+      "privesc": true,
+      "resource_exposure": true
     }
   ],
   "grantless": false,
@@ -1293,6 +1554,6 @@
   "resource_exposure": true,
   "undocumented_actions": false,
   "unknown_actions": [],
-  "updatedate": "2026-04-16T17:42:10+00:00",
-  "version": "v9"
+  "updatedate": "2026-04-29T21:12:11+00:00",
+  "version": "v10"
 }
