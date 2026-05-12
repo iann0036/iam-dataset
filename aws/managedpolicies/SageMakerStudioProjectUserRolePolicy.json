@@ -8,7 +8,7 @@
     "Unknown"
   ],
   "arn": "arn:aws:iam::aws:policy/SageMakerStudioProjectUserRolePolicy",
-  "createdate": "2026-04-23T22:12:13+00:00",
+  "createdate": "2026-05-11T20:42:10+00:00",
   "credentials_exposure": true,
   "data_access": true,
   "deprecated": false,
@@ -338,14 +338,10 @@
           "glue:DeleteDataQualityRuleset",
           "glue:GetDataQualityModel",
           "glue:GetDataQualityModelResult",
-          "glue:GetDataQualityResult",
           "glue:GetDataQualityRuleRecommendationRun",
           "glue:GetDataQualityRuleset",
           "glue:GetDataQualityRulesetEvaluationRun",
-          "glue:ListDataQualityResults",
-          "glue:ListDataQualityRuleRecommendationRuns",
-          "glue:ListDataQualityRulesetEvaluationRuns",
-          "glue:ListDataQualityRulesets",
+          "glue:GetDataQualityResult",
           "glue:PublishDataQuality",
           "glue:PutDataQualityProfileAnnotation",
           "glue:PutDataQualityStatisticAnnotation",
@@ -376,6 +372,35 @@
       },
       {
         "Action": [
+          "glue:ListDataQuality*"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:PrincipalTag/EnableGlueWorkloadsPermissions": "true"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "GlueDQ"
+      },
+      {
+        "Action": [
+          "glue:GetDataQualityResult",
+          "glue:PublishDataQuality"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:PrincipalTag/EnableGlueWorkloadsPermissions": "true"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:glue:*:*:dataQualityRuleset/dq_etl_ruleset_${aws:PrincipalTag/AmazonDataZoneProject}_*"
+        ],
+        "Sid": "GlueDQVetl"
+      },
+      {
+        "Action": [
           "glue:ListJobs"
         ],
         "Condition": {
@@ -386,7 +411,7 @@
         },
         "Effect": "Allow",
         "Resource": "*",
-        "Sid": "GlueListJobsPermissions"
+        "Sid": "GlueListJobs"
       },
       {
         "Action": [
@@ -394,7 +419,7 @@
         ],
         "Effect": "Allow",
         "Resource": "*",
-        "Sid": "GlueVisualETLPermissions"
+        "Sid": "GlueVisualETL"
       },
       {
         "Action": [
@@ -406,7 +431,7 @@
           "arn:aws:glue:*:*:completion/*",
           "arn:aws:glue:*:*:job/*"
         ],
-        "Sid": "GlueCompletionsPermissions"
+        "Sid": "GlueCompletions"
       },
       {
         "Action": [
@@ -416,7 +441,7 @@
         ],
         "Effect": "Allow",
         "Resource": "arn:aws:logs:*:*:log-group:/aws-glue/*",
-        "Sid": "GlueJobRunnerSessionLogPermissions"
+        "Sid": "GlueJobRunnerSessionLog"
       },
       {
         "Action": [
@@ -441,7 +466,7 @@
         "Resource": [
           "arn:aws:ec2:*:*:network-interface/*"
         ],
-        "Sid": "EC2TagsPermissionsForGlue"
+        "Sid": "EC2TagsForGlue"
       },
       {
         "Action": [
@@ -472,21 +497,12 @@
           "emr-serverless:AccessLivyEndpoints",
           "emr-serverless:GetApplication",
           "emr-serverless:StartApplication",
-          "emr-serverless:StopApplication"
-        ],
-        "Condition": {
-          "StringEquals": {
-            "aws:ResourceTag/AmazonDataZoneProject": "${aws:PrincipalTag/AmazonDataZoneProject}"
-          }
-        },
-        "Effect": "Allow",
-        "Resource": "arn:aws:emr-serverless:*:*:/applications/*",
-        "Sid": "EmrServerlessInteractivePermissions"
-      },
-      {
-        "Action": [
+          "emr-serverless:StopApplication",
           "emr-serverless:GetDashboardForJobRun",
-          "emr-serverless:GetJobRun"
+          "emr-serverless:GetJobRun",
+          "emr-serverless:*Session*",
+          "emr-serverless:GetResourceDashboard",
+          "emr-serverless:TagResource"
         ],
         "Condition": {
           "StringEquals": {
@@ -494,10 +510,8 @@
           }
         },
         "Effect": "Allow",
-        "Resource": [
-          "arn:aws:emr-serverless:*:*:/applications/*/jobruns/*"
-        ],
-        "Sid": "EmrServerlessJobAccessPermissions"
+        "Resource": "*",
+        "Sid": "EMRS"
       },
       {
         "Action": [
@@ -536,6 +550,7 @@
         "Action": [
           "logs:CreateLogStream",
           "logs:CreateLogGroup",
+          "logs:DescribeLogStreams",
           "logs:PutLogEvents",
           "logs:GetLogEvents",
           "logs:GetLogRecord",
@@ -569,7 +584,8 @@
           "StringLike": {
             "cloudwatch:namespace": [
               "Glue",
-              "AWS/Glue"
+              "AWS/Glue",
+              "Glue Data Quality"
             ]
           }
         },
@@ -878,12 +894,9 @@
         ],
         "Effect": "Allow",
         "Resource": [
-          "arn:aws:logs:*:*:log-group:${aws:PrincipalTag/LogGroupName}/output",
-          "arn:aws:logs:*:*:log-group:${aws:PrincipalTag/LogGroupName}/error",
-          "arn:aws:logs:*:*:log-group:${aws:PrincipalTag/LogGroupName}/output:log-stream:*",
-          "arn:aws:logs:*:*:log-group:${aws:PrincipalTag/LogGroupName}/error:log-stream:*"
+          "arn:aws:logs:*:*:log-group:${aws:PrincipalTag/LogGroupName}/*"
         ],
-        "Sid": "GlueJobLogGroupPermissions"
+        "Sid": "GlueJobLogGroup"
       },
       {
         "Action": [
@@ -902,7 +915,7 @@
           "arn:aws:logs:*:*:log-group:${aws:PrincipalTag/LogGroupName}",
           "arn:aws:logs:*:*:log-group:${aws:PrincipalTag/LogGroupName}:log-stream:*"
         ],
-        "Sid": "ProjectLogGroupPermissions"
+        "Sid": "ProjectLogGroup"
       },
       {
         "Action": [
@@ -4714,22 +4727,6 @@
     },
     {
       "access_level": "Read",
-      "action": "glue:GetDataQualityResult",
-      "condition": {
-        "StringEquals": {
-          "aws:PrincipalTag/EnableGlueWorkloadsPermissions": "true",
-          "aws:ResourceAccount": "${aws:PrincipalAccount}",
-          "aws:ResourceTag/AmazonDataZoneProject": "${aws:PrincipalTag/AmazonDataZoneProject}"
-        }
-      },
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "glue:GetDataQualityResult",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Read",
       "action": "glue:GetDataQualityRuleRecommendationRun",
       "condition": {
         "StringEquals": {
@@ -4777,8 +4774,8 @@
       "resource_exposure": false
     },
     {
-      "access_level": "List",
-      "action": "glue:ListDataQualityResults",
+      "access_level": "Read",
+      "action": "glue:GetDataQualityResult",
       "condition": {
         "StringEquals": {
           "aws:PrincipalTag/EnableGlueWorkloadsPermissions": "true",
@@ -4788,55 +4785,7 @@
       },
       "credentials_exposure": false,
       "data_access": false,
-      "effective_action": "glue:ListDataQualityResults",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "glue:ListDataQualityRuleRecommendationRuns",
-      "condition": {
-        "StringEquals": {
-          "aws:PrincipalTag/EnableGlueWorkloadsPermissions": "true",
-          "aws:ResourceAccount": "${aws:PrincipalAccount}",
-          "aws:ResourceTag/AmazonDataZoneProject": "${aws:PrincipalTag/AmazonDataZoneProject}"
-        }
-      },
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "glue:ListDataQualityRuleRecommendationRuns",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "glue:ListDataQualityRulesetEvaluationRuns",
-      "condition": {
-        "StringEquals": {
-          "aws:PrincipalTag/EnableGlueWorkloadsPermissions": "true",
-          "aws:ResourceAccount": "${aws:PrincipalAccount}",
-          "aws:ResourceTag/AmazonDataZoneProject": "${aws:PrincipalTag/AmazonDataZoneProject}"
-        }
-      },
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "glue:ListDataQualityRulesetEvaluationRuns",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "glue:ListDataQualityRulesets",
-      "condition": {
-        "StringEquals": {
-          "aws:PrincipalTag/EnableGlueWorkloadsPermissions": "true",
-          "aws:ResourceAccount": "${aws:PrincipalAccount}",
-          "aws:ResourceTag/AmazonDataZoneProject": "${aws:PrincipalTag/AmazonDataZoneProject}"
-        }
-      },
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "glue:ListDataQualityRulesets",
+      "effective_action": "glue:GetDataQualityResult",
       "privesc": false,
       "resource_exposure": false
     },
@@ -4997,6 +4946,90 @@
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "glue:GetJob",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "glue:ListDataQuality*",
+      "condition": {
+        "StringEquals": {
+          "aws:PrincipalTag/EnableGlueWorkloadsPermissions": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "glue:ListDataQualityResults",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "glue:ListDataQuality*",
+      "condition": {
+        "StringEquals": {
+          "aws:PrincipalTag/EnableGlueWorkloadsPermissions": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "glue:ListDataQualityRuleRecommendationRuns",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "glue:ListDataQuality*",
+      "condition": {
+        "StringEquals": {
+          "aws:PrincipalTag/EnableGlueWorkloadsPermissions": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "glue:ListDataQualityRulesetEvaluationRuns",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "glue:ListDataQuality*",
+      "condition": {
+        "StringEquals": {
+          "aws:PrincipalTag/EnableGlueWorkloadsPermissions": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "glue:ListDataQualityRulesets",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "glue:GetDataQualityResult",
+      "condition": {
+        "StringEquals": {
+          "aws:PrincipalTag/EnableGlueWorkloadsPermissions": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "glue:GetDataQualityResult",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "glue:PublishDataQuality",
+      "condition": {
+        "StringEquals": {
+          "aws:PrincipalTag/EnableGlueWorkloadsPermissions": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "glue:PublishDataQuality",
       "privesc": false,
       "resource_exposure": false
     },
@@ -5278,6 +5311,104 @@
     },
     {
       "access_level": "Read",
+      "action": "emr-serverless:*Session*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/AmazonDataZoneProject": "${aws:PrincipalTag/AmazonDataZoneProject}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "emr-serverless:GetSession",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "emr-serverless:*Session*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/AmazonDataZoneProject": "${aws:PrincipalTag/AmazonDataZoneProject}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "emr-serverless:GetSessionEndpoint",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "emr-serverless:*Session*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/AmazonDataZoneProject": "${aws:PrincipalTag/AmazonDataZoneProject}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "emr-serverless:ListSessions",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "emr-serverless:*Session*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/AmazonDataZoneProject": "${aws:PrincipalTag/AmazonDataZoneProject}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "emr-serverless:StartSession",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "emr-serverless:*Session*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/AmazonDataZoneProject": "${aws:PrincipalTag/AmazonDataZoneProject}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "emr-serverless:TerminateSession",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "emr-serverless:GetResourceDashboard",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/AmazonDataZoneProject": "${aws:PrincipalTag/AmazonDataZoneProject}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "emr-serverless:GetResourceDashboard",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Tagging",
+      "action": "emr-serverless:TagResource",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/AmazonDataZoneProject": "${aws:PrincipalTag/AmazonDataZoneProject}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "emr-serverless:TagResource",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
       "action": "airflow:GetEnvironment",
       "condition": {
         "StringEquals": {
@@ -5355,6 +5486,16 @@
       "resource_exposure": false
     },
     {
+      "access_level": "List",
+      "action": "logs:DescribeLogStreams",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "logs:DescribeLogStreams",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
       "access_level": "Write",
       "action": "logs:PutLogEvents",
       "condition": null,
@@ -5425,7 +5566,8 @@
         "StringLike": {
           "cloudwatch:namespace": [
             "Glue",
-            "AWS/Glue"
+            "AWS/Glue",
+            "Glue Data Quality"
           ]
         }
       },
@@ -13742,6 +13884,6 @@
   "resource_exposure": true,
   "undocumented_actions": true,
   "unknown_actions": [],
-  "updatedate": "2026-04-23T22:12:13+00:00",
-  "version": "v66"
+  "updatedate": "2026-05-11T20:42:10+00:00",
+  "version": "v67"
 }

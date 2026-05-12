@@ -8,7 +8,7 @@
     "Unknown"
   ],
   "arn": "arn:aws:iam::aws:policy/SageMakerStudioUserIAMDefaultExecutionPolicy",
-  "createdate": "2026-03-27T17:27:15+00:00",
+  "createdate": "2026-05-11T20:42:23+00:00",
   "credentials_exposure": true,
   "data_access": true,
   "deprecated": false,
@@ -52,9 +52,7 @@
           "datazone:UpdateEnvironment",
           "datazone:UpdateProject",
           "datazone:UpdateSubscriptionRequest",
-          "datazone:CreateNotebook",
-          "datazone:UpdateNotebook",
-          "datazone:DeleteNotebook",
+          "datazone:*Notebook*",
           "datazone:CreateCell",
           "datazone:UpdateCell",
           "datazone:DeleteCell",
@@ -64,13 +62,10 @@
           "datazone:DeleteCellRun",
           "datazone:BatchGetCellRun",
           "datazone:PutCellRunResult",
-          "datazone:StartNotebookCompute",
-          "datazone:StopNotebookCompute",
           "datazone:StartConversation",
           "datazone:GenerateCode",
           "datazone:SendMessage",
-          "datazone:StartNotebookImport",
-          "datazone:StartNotebookExport"
+          "datazone:CancelMessage"
         ],
         "Effect": "Allow",
         "Resource": "*",
@@ -326,10 +321,10 @@
           "glue:StartCompletion",
           "glue:StopSession",
           "glue:UseGlueStudio",
-          "glue:TagResource",
-          "glue:UntagResource",
+          "glue:*Resource",
           "glue:*Job*",
-          "glue:TestConnection"
+          "glue:TestConnection",
+          "glue:*DataQuality*"
         ],
         "Effect": "Allow",
         "Resource": "*",
@@ -337,14 +332,22 @@
       },
       {
         "Action": [
+          "athena:GetResourceDashboard",
+          "athena:GetSession",
+          "athena:GetSessionEndpoint",
+          "athena:GetSessionStatus",
+          "athena:StartSession",
+          "athena:TerminateSession",
+          "emr-serverless:*Session*",
+          "emr-serverless:*Dashboard*",
           "glue:CancelStatement",
           "glue:CreateSession",
           "glue:DeleteSession",
+          "glue:GetDashboardUrl",
           "glue:GetSession",
           "glue:GetStatement",
           "glue:RunStatement",
-          "glue:StopSession",
-          "glue:GetDashboardUrl"
+          "glue:StopSession"
         ],
         "Condition": {
           "StringNotEquals": {
@@ -354,12 +357,17 @@
         },
         "Effect": "Deny",
         "Resource": [
+          "arn:aws:athena:*:*:workgroup/*/session/*",
+          "arn:aws:emr-serverless:*:*:/applications/*/sessions/*",
           "arn:aws:glue:*:*:session/*"
         ],
-        "Sid": "GlueSessionIsolation"
+        "Sid": "DenyForeignSessionAccess"
       },
       {
         "Action": [
+          "athena:TagResource",
+          "athena:UntagResource",
+          "emr-serverless:*Resource",
           "glue:TagResource",
           "glue:UntagResource"
         ],
@@ -369,7 +377,11 @@
           }
         },
         "Effect": "Deny",
-        "Resource": "arn:aws:glue:*:*:session/*",
+        "Resource": [
+          "arn:aws:athena:*:*:workgroup/*/session/*",
+          "arn:aws:emr-serverless:*:*:/applications/*/sessions/*",
+          "arn:aws:glue:*:*:session/*"
+        ],
         "Sid": "DenyTaggingUntaggingForeignSessions"
       },
       {
@@ -501,6 +513,17 @@
       },
       {
         "Action": [
+          "airflow:GetEnvironment",
+          "airflow:ListEnvironments",
+          "airflow:CreateWebLoginToken",
+          "airflow:InvokeRestApi"
+        ],
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "AirflowMWAA"
+      },
+      {
+        "Action": [
           "s3:GetBucketAcl",
           "s3:List*"
         ],
@@ -519,7 +542,7 @@
         },
         "Effect": "Allow",
         "Resource": "*",
-        "Sid": "S3CrossAccount"
+        "Sid": "CrossAccount"
       },
       {
         "Action": [
@@ -575,41 +598,6 @@
         "Effect": "Allow",
         "Resource": "*",
         "Sid": "Athena"
-      },
-      {
-        "Action": [
-          "athena:StartSession",
-          "athena:GetSession",
-          "athena:TerminateSession",
-          "athena:GetSessionStatus",
-          "athena:GetSessionEndpoint",
-          "athena:GetResourceDashboard"
-        ],
-        "Condition": {
-          "StringNotEquals": {
-            "aws:RequestTag/AmazonDataZoneSessionOwner": "${aws:SourceIdentity}",
-            "aws:ResourceTag/AmazonDataZoneSessionOwner": "${aws:SourceIdentity}"
-          }
-        },
-        "Effect": "Deny",
-        "Resource": [
-          "arn:aws:athena:*:*:workgroup/*/session/*"
-        ],
-        "Sid": "AthenaSessionIsolation"
-      },
-      {
-        "Action": [
-          "athena:TagResource",
-          "athena:UntagResource"
-        ],
-        "Condition": {
-          "StringNotEquals": {
-            "aws:ResourceTag/AmazonDataZoneSessionOwner": "${aws:SourceIdentity}"
-          }
-        },
-        "Effect": "Deny",
-        "Resource": "arn:aws:athena:*:*:workgroup/*/session/*",
-        "Sid": "DenyTaggingUntaggingForeignAthenaSessions"
       },
       {
         "Action": [
@@ -953,16 +941,12 @@
       },
       {
         "Action": [
-          "emr-serverless:ListApplications",
-          "emr-serverless:GetApplication",
-          "emr-serverless:GetDashboardForJobRun",
-          "emr-serverless:GetJobRun",
-          "emr-serverless:ListJobRunAttempts",
-          "emr-serverless:ListJobRuns",
-          "emr-serverless:ListTagsForResource",
-          "emr-serverless:StartApplication",
-          "emr-serverless:StartJobRun",
-          "emr-serverless:AccessLivyEndpoints"
+          "emr-serverless:Get*",
+          "emr-serverless:List*",
+          "emr-serverless:Start*",
+          "emr-serverless:Access*Endpoints",
+          "emr-serverless:Terminate*",
+          "emr-serverless:*Resource"
         ],
         "Effect": "Allow",
         "Resource": "*",
@@ -2254,7 +2238,7 @@
     },
     {
       "access_level": "Write",
-      "action": "datazone:CreateNotebook",
+      "action": "datazone:*Notebook*",
       "condition": null,
       "credentials_exposure": false,
       "data_access": false,
@@ -2264,21 +2248,101 @@
     },
     {
       "access_level": "Write",
-      "action": "datazone:UpdateNotebook",
+      "action": "datazone:*Notebook*",
       "condition": null,
       "credentials_exposure": false,
       "data_access": false,
-      "effective_action": "datazone:UpdateNotebook",
+      "effective_action": "datazone:DeleteNotebook",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "datazone:*Notebook*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "datazone:GetNotebook",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "datazone:*Notebook*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "datazone:GetNotebookCompute",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "datazone:*Notebook*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "datazone:GetNotebookExport",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "datazone:*Notebook*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "datazone:ListNotebooks",
       "privesc": false,
       "resource_exposure": false
     },
     {
       "access_level": "Write",
-      "action": "datazone:DeleteNotebook",
+      "action": "datazone:*Notebook*",
       "condition": null,
       "credentials_exposure": false,
       "data_access": false,
-      "effective_action": "datazone:DeleteNotebook",
+      "effective_action": "datazone:StartNotebookCompute",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "datazone:*Notebook*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "datazone:StartNotebookExport",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "datazone:*Notebook*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "datazone:StartNotebookImport",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "datazone:*Notebook*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "datazone:StopNotebookCompute",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "datazone:*Notebook*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "datazone:UpdateNotebook",
       "privesc": false,
       "resource_exposure": false
     },
@@ -2374,26 +2438,6 @@
     },
     {
       "access_level": "Write",
-      "action": "datazone:StartNotebookCompute",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "datazone:StartNotebookCompute",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Write",
-      "action": "datazone:StopNotebookCompute",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "datazone:StopNotebookCompute",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Write",
       "action": "datazone:StartConversation",
       "condition": null,
       "credentials_exposure": false,
@@ -2424,21 +2468,11 @@
     },
     {
       "access_level": "Write",
-      "action": "datazone:StartNotebookImport",
+      "action": "datazone:CancelMessage",
       "condition": null,
       "credentials_exposure": false,
       "data_access": false,
-      "effective_action": "datazone:StartNotebookImport",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Write",
-      "action": "datazone:StartNotebookExport",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "datazone:StartNotebookExport",
+      "effective_action": "datazone:CancelMessage",
       "privesc": false,
       "resource_exposure": false
     },
@@ -10035,7 +10069,7 @@
     },
     {
       "access_level": "Tagging",
-      "action": "glue:TagResource",
+      "action": "glue:*Resource",
       "condition": null,
       "credentials_exposure": false,
       "data_access": false,
@@ -10045,7 +10079,7 @@
     },
     {
       "access_level": "Tagging",
-      "action": "glue:UntagResource",
+      "action": "glue:*Resource",
       "condition": null,
       "credentials_exposure": false,
       "data_access": false,
@@ -10260,6 +10294,206 @@
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "glue:TestConnection",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "glue:*DataQuality*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "glue:CancelDataQualityRuleRecommendationRun",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "glue:*DataQuality*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "glue:CancelDataQualityRulesetEvaluationRun",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "glue:*DataQuality*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "glue:CreateDataQualityRuleset",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "glue:*DataQuality*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "glue:DeleteDataQualityRuleset",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "glue:*DataQuality*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "glue:GetDataQualityModel",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "glue:*DataQuality*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "glue:GetDataQualityModelResult",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "glue:*DataQuality*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "glue:GetDataQualityResult",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "glue:*DataQuality*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "glue:GetDataQualityRuleRecommendationRun",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "glue:*DataQuality*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "glue:GetDataQualityRuleset",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "glue:*DataQuality*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "glue:GetDataQualityRulesetEvaluationRun",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "glue:*DataQuality*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "glue:ListDataQualityResults",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "glue:*DataQuality*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "glue:ListDataQualityRuleRecommendationRuns",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "glue:*DataQuality*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "glue:ListDataQualityRulesetEvaluationRuns",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "glue:*DataQuality*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "glue:ListDataQualityRulesets",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "glue:*DataQuality*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "glue:PublishDataQuality",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "glue:*DataQuality*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "glue:PutDataQualityProfileAnnotation",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "glue:*DataQuality*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "glue:PutDataQualityStatisticAnnotation",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "glue:*DataQuality*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "glue:StartDataQualityRuleRecommendationRun",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "glue:*DataQuality*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "glue:StartDataQualityRulesetEvaluationRun",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "glue:*DataQuality*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "glue:UpdateDataQualityRuleset",
       "privesc": false,
       "resource_exposure": false
     },
@@ -21935,6 +22169,46 @@
     },
     {
       "access_level": "Read",
+      "action": "airflow:GetEnvironment",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "airflow:GetEnvironment",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "airflow:ListEnvironments",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "airflow:ListEnvironments",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "airflow:CreateWebLoginToken",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "airflow:CreateWebLoginToken",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "airflow:InvokeRestApi",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "airflow:InvokeRestApi",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
       "action": "s3:GetBucketAcl",
       "condition": null,
       "credentials_exposure": false,
@@ -26537,18 +26811,8 @@
       "resource_exposure": false
     },
     {
-      "access_level": "List",
-      "action": "emr-serverless:ListApplications",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "emr-serverless:ListApplications",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
       "access_level": "Read",
-      "action": "emr-serverless:GetApplication",
+      "action": "emr-serverless:Get*",
       "condition": null,
       "credentials_exposure": false,
       "data_access": false,
@@ -26558,7 +26822,7 @@
     },
     {
       "access_level": "Read",
-      "action": "emr-serverless:GetDashboardForJobRun",
+      "action": "emr-serverless:Get*",
       "condition": null,
       "credentials_exposure": false,
       "data_access": false,
@@ -26568,7 +26832,7 @@
     },
     {
       "access_level": "Read",
-      "action": "emr-serverless:GetJobRun",
+      "action": "emr-serverless:Get*",
       "condition": null,
       "credentials_exposure": false,
       "data_access": false,
@@ -26577,8 +26841,48 @@
       "resource_exposure": false
     },
     {
+      "access_level": "Read",
+      "action": "emr-serverless:Get*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "emr-serverless:GetResourceDashboard",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "emr-serverless:Get*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "emr-serverless:GetSession",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "emr-serverless:Get*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "emr-serverless:GetSessionEndpoint",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
       "access_level": "List",
-      "action": "emr-serverless:ListJobRunAttempts",
+      "action": "emr-serverless:List*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "emr-serverless:ListApplications",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "emr-serverless:List*",
       "condition": null,
       "credentials_exposure": false,
       "data_access": false,
@@ -26588,7 +26892,7 @@
     },
     {
       "access_level": "List",
-      "action": "emr-serverless:ListJobRuns",
+      "action": "emr-serverless:List*",
       "condition": null,
       "credentials_exposure": false,
       "data_access": false,
@@ -26597,8 +26901,18 @@
       "resource_exposure": false
     },
     {
+      "access_level": "List",
+      "action": "emr-serverless:List*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "emr-serverless:ListSessions",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
       "access_level": "Read",
-      "action": "emr-serverless:ListTagsForResource",
+      "action": "emr-serverless:List*",
       "condition": null,
       "credentials_exposure": false,
       "data_access": false,
@@ -26608,7 +26922,7 @@
     },
     {
       "access_level": "Write",
-      "action": "emr-serverless:StartApplication",
+      "action": "emr-serverless:Start*",
       "condition": null,
       "credentials_exposure": false,
       "data_access": false,
@@ -26618,7 +26932,7 @@
     },
     {
       "access_level": "Write",
-      "action": "emr-serverless:StartJobRun",
+      "action": "emr-serverless:Start*",
       "condition": null,
       "credentials_exposure": false,
       "data_access": false,
@@ -26628,11 +26942,71 @@
     },
     {
       "access_level": "Write",
-      "action": "emr-serverless:AccessLivyEndpoints",
+      "action": "emr-serverless:Start*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "emr-serverless:StartSession",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "emr-serverless:Access*Endpoints",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "emr-serverless:AccessInteractiveEndpoints",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "emr-serverless:Access*Endpoints",
       "condition": null,
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "emr-serverless:AccessLivyEndpoints",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "emr-serverless:Terminate*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "emr-serverless:TerminateSession",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "emr-serverless:*Resource",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "emr-serverless:ListTagsForResource",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Tagging",
+      "action": "emr-serverless:*Resource",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "emr-serverless:TagResource",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Tagging",
+      "action": "emr-serverless:*Resource",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "emr-serverless:UntagResource",
       "privesc": false,
       "resource_exposure": false
     }
@@ -26644,6 +27018,6 @@
   "resource_exposure": true,
   "undocumented_actions": true,
   "unknown_actions": [],
-  "updatedate": "2026-03-27T17:27:15+00:00",
-  "version": "v23"
+  "updatedate": "2026-05-11T20:42:23+00:00",
+  "version": "v24"
 }

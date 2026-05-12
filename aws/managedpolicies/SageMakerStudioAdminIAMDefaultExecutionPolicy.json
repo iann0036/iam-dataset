@@ -8,7 +8,7 @@
     "Unknown"
   ],
   "arn": "arn:aws:iam::aws:policy/SageMakerStudioAdminIAMDefaultExecutionPolicy",
-  "createdate": "2026-03-27T17:27:16+00:00",
+  "createdate": "2026-05-11T20:42:19+00:00",
   "credentials_exposure": true,
   "data_access": true,
   "deprecated": false,
@@ -276,7 +276,7 @@
         },
         "Effect": "Allow",
         "Resource": "*",
-        "Sid": "S3CrossAccount"
+        "Sid": "CrossAccount"
       },
       {
         "Action": [
@@ -374,11 +374,11 @@
           "glue:RunStatement",
           "glue:StartCompletion",
           "glue:StopSession",
-          "glue:TagResource",
-          "glue:UntagResource",
+          "glue:*Resource",
           "glue:UseGlueStudio",
           "glue:*Job*",
-          "glue:TestConnection"
+          "glue:TestConnection",
+          "glue:*DataQuality*"
         ],
         "Effect": "Allow",
         "Resource": "*",
@@ -386,14 +386,22 @@
       },
       {
         "Action": [
+          "athena:GetResourceDashboard",
+          "athena:GetSession",
+          "athena:GetSessionEndpoint",
+          "athena:GetSessionStatus",
+          "athena:StartSession",
+          "athena:TerminateSession",
+          "emr-serverless:*Session*",
+          "emr-serverless:*Dashboard*",
           "glue:CancelStatement",
           "glue:CreateSession",
           "glue:DeleteSession",
+          "glue:GetDashboardUrl",
           "glue:GetSession",
           "glue:GetStatement",
           "glue:RunStatement",
-          "glue:StopSession",
-          "glue:GetDashboardUrl"
+          "glue:StopSession"
         ],
         "Condition": {
           "StringNotEquals": {
@@ -403,12 +411,17 @@
         },
         "Effect": "Deny",
         "Resource": [
+          "arn:aws:athena:*:*:workgroup/*/session/*",
+          "arn:aws:emr-serverless:*:*:/applications/*/sessions/*",
           "arn:aws:glue:*:*:session/*"
         ],
-        "Sid": "GlueSessionIsolation"
+        "Sid": "DenyForeignSessionAccess"
       },
       {
         "Action": [
+          "athena:TagResource",
+          "athena:UntagResource",
+          "emr-serverless:*Resource",
           "glue:TagResource",
           "glue:UntagResource"
         ],
@@ -418,7 +431,11 @@
           }
         },
         "Effect": "Deny",
-        "Resource": "arn:aws:glue:*:*:session/*",
+        "Resource": [
+          "arn:aws:athena:*:*:workgroup/*/session/*",
+          "arn:aws:emr-serverless:*:*:/applications/*/sessions/*",
+          "arn:aws:glue:*:*:session/*"
+        ],
         "Sid": "DenyTaggingUntaggingForeignSessions"
       },
       {
@@ -491,41 +508,6 @@
       },
       {
         "Action": [
-          "athena:StartSession",
-          "athena:GetSession",
-          "athena:TerminateSession",
-          "athena:GetSessionStatus",
-          "athena:GetSessionEndpoint",
-          "athena:GetResourceDashboard"
-        ],
-        "Condition": {
-          "StringNotEquals": {
-            "aws:RequestTag/AmazonDataZoneSessionOwner": "${aws:SourceIdentity}",
-            "aws:ResourceTag/AmazonDataZoneSessionOwner": "${aws:SourceIdentity}"
-          }
-        },
-        "Effect": "Deny",
-        "Resource": [
-          "arn:aws:athena:*:*:workgroup/*/session/*"
-        ],
-        "Sid": "AthenaSessionIsolation"
-      },
-      {
-        "Action": [
-          "athena:TagResource",
-          "athena:UntagResource"
-        ],
-        "Condition": {
-          "StringNotEquals": {
-            "aws:ResourceTag/AmazonDataZoneSessionOwner": "${aws:SourceIdentity}"
-          }
-        },
-        "Effect": "Deny",
-        "Resource": "arn:aws:athena:*:*:workgroup/*/session/*",
-        "Sid": "DenyTaggingUntaggingForeignAthenaSessions"
-      },
-      {
-        "Action": [
           "airflow-serverless:List*",
           "airflow-serverless:Get*",
           "airflow-serverless:CreateWorkflow",
@@ -539,6 +521,17 @@
         "Effect": "Allow",
         "Resource": "*",
         "Sid": "AirflowServerless"
+      },
+      {
+        "Action": [
+          "airflow:GetEnvironment",
+          "airflow:ListEnvironments",
+          "airflow:CreateWebLoginToken",
+          "airflow:InvokeRestApi"
+        ],
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "AirflowMWAA"
       },
       {
         "Action": [
@@ -935,16 +928,12 @@
       },
       {
         "Action": [
-          "emr-serverless:ListApplications",
-          "emr-serverless:GetApplication",
-          "emr-serverless:GetDashboardForJobRun",
-          "emr-serverless:GetJobRun",
-          "emr-serverless:ListJobRunAttempts",
-          "emr-serverless:ListJobRuns",
-          "emr-serverless:ListTagsForResource",
-          "emr-serverless:StartApplication",
-          "emr-serverless:StartJobRun",
-          "emr-serverless:AccessLivyEndpoints"
+          "emr-serverless:Get*",
+          "emr-serverless:List*",
+          "emr-serverless:Start*",
+          "emr-serverless:Access*",
+          "emr-serverless:Terminate*",
+          "emr-serverless:*Resource"
         ],
         "Effect": "Allow",
         "Resource": "*",
@@ -994,6 +983,79 @@
         "Effect": "Allow",
         "Resource": "*",
         "Sid": "SSOKMSPermissions"
+      },
+      {
+        "Action": [
+          "kms:Decrypt"
+        ],
+        "Condition": {
+          "Null": {
+            "kms:EncryptionContext:aws:identitystore:identitystore-arn": "false"
+          },
+          "StringLike": {
+            "kms:ViaService": "identitystore.*.amazonaws.com"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "IdentityStoreKMSPermissions"
+      },
+      {
+        "Action": [
+          "ram:Get*",
+          "ram:List*"
+        ],
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "RAMReadOnlyPermissions"
+      },
+      {
+        "Action": [
+          "ram:CreateResourceShare"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "ram:RequestedResourceType": "datazone:Domain"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "RAMCreateResourcePermission"
+      },
+      {
+        "Action": [
+          "ram:AssociateResourceShare",
+          "ram:DisassociateResourceShare",
+          "ram:DeleteResourceShare"
+        ],
+        "Condition": {
+          "StringLike": {
+            "ram:ResourceShareName": [
+              "DataZone*"
+            ]
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "RAMResourceSharePermissions"
+      },
+      {
+        "Action": [
+          "ram:AssociateResourceSharePermission"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "ram:PermissionArn": [
+              "arn:aws:ram::aws:permission/AWSRAMDefaultPermissionAmazonDataZoneDomain",
+              "arn:aws:ram::aws:permission/AWSRAMPermissionAmazonDataZoneDomainFullAccessWithPortalAccess",
+              "arn:aws:ram::aws:permission/AWSRAMPermissionsAmazonDatazoneDomainExtendedServiceAccess",
+              "arn:aws:ram::aws:permission/AWSRAMPermissionsAmazonDatazoneDomainExtendedServiceWithPortalAccess"
+            ]
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "RAMAssociateResourceSharePermission"
       }
     ],
     "Version": "2012-10-17"
@@ -24264,7 +24326,7 @@
     },
     {
       "access_level": "Tagging",
-      "action": "glue:TagResource",
+      "action": "glue:*Resource",
       "condition": null,
       "credentials_exposure": false,
       "data_access": false,
@@ -24274,7 +24336,7 @@
     },
     {
       "access_level": "Tagging",
-      "action": "glue:UntagResource",
+      "action": "glue:*Resource",
       "condition": null,
       "credentials_exposure": false,
       "data_access": false,
@@ -24499,6 +24561,206 @@
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "glue:TestConnection",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "glue:*DataQuality*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "glue:CancelDataQualityRuleRecommendationRun",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "glue:*DataQuality*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "glue:CancelDataQualityRulesetEvaluationRun",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "glue:*DataQuality*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "glue:CreateDataQualityRuleset",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "glue:*DataQuality*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "glue:DeleteDataQualityRuleset",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "glue:*DataQuality*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "glue:GetDataQualityModel",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "glue:*DataQuality*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "glue:GetDataQualityModelResult",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "glue:*DataQuality*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "glue:GetDataQualityResult",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "glue:*DataQuality*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "glue:GetDataQualityRuleRecommendationRun",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "glue:*DataQuality*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "glue:GetDataQualityRuleset",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "glue:*DataQuality*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "glue:GetDataQualityRulesetEvaluationRun",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "glue:*DataQuality*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "glue:ListDataQualityResults",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "glue:*DataQuality*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "glue:ListDataQualityRuleRecommendationRuns",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "glue:*DataQuality*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "glue:ListDataQualityRulesetEvaluationRuns",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "glue:*DataQuality*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "glue:ListDataQualityRulesets",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "glue:*DataQuality*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "glue:PublishDataQuality",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "glue:*DataQuality*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "glue:PutDataQualityProfileAnnotation",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "glue:*DataQuality*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "glue:PutDataQualityStatisticAnnotation",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "glue:*DataQuality*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "glue:StartDataQualityRuleRecommendationRun",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "glue:*DataQuality*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "glue:StartDataQualityRulesetEvaluationRun",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "glue:*DataQuality*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "glue:UpdateDataQualityRuleset",
       "privesc": false,
       "resource_exposure": false
     },
@@ -29887,6 +30149,46 @@
       "resource_exposure": false
     },
     {
+      "access_level": "Read",
+      "action": "airflow:GetEnvironment",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "airflow:GetEnvironment",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "airflow:ListEnvironments",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "airflow:ListEnvironments",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "airflow:CreateWebLoginToken",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "airflow:CreateWebLoginToken",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "airflow:InvokeRestApi",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "airflow:InvokeRestApi",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
       "access_level": "Write",
       "action": "secretsmanager:CreateSecret",
       "condition": {
@@ -33701,18 +34003,8 @@
       "resource_exposure": false
     },
     {
-      "access_level": "List",
-      "action": "emr-serverless:ListApplications",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "emr-serverless:ListApplications",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
       "access_level": "Read",
-      "action": "emr-serverless:GetApplication",
+      "action": "emr-serverless:Get*",
       "condition": null,
       "credentials_exposure": false,
       "data_access": false,
@@ -33722,7 +34014,7 @@
     },
     {
       "access_level": "Read",
-      "action": "emr-serverless:GetDashboardForJobRun",
+      "action": "emr-serverless:Get*",
       "condition": null,
       "credentials_exposure": false,
       "data_access": false,
@@ -33732,7 +34024,7 @@
     },
     {
       "access_level": "Read",
-      "action": "emr-serverless:GetJobRun",
+      "action": "emr-serverless:Get*",
       "condition": null,
       "credentials_exposure": false,
       "data_access": false,
@@ -33741,8 +34033,48 @@
       "resource_exposure": false
     },
     {
+      "access_level": "Read",
+      "action": "emr-serverless:Get*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "emr-serverless:GetResourceDashboard",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "emr-serverless:Get*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "emr-serverless:GetSession",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "emr-serverless:Get*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "emr-serverless:GetSessionEndpoint",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
       "access_level": "List",
-      "action": "emr-serverless:ListJobRunAttempts",
+      "action": "emr-serverless:List*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "emr-serverless:ListApplications",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "emr-serverless:List*",
       "condition": null,
       "credentials_exposure": false,
       "data_access": false,
@@ -33752,7 +34084,7 @@
     },
     {
       "access_level": "List",
-      "action": "emr-serverless:ListJobRuns",
+      "action": "emr-serverless:List*",
       "condition": null,
       "credentials_exposure": false,
       "data_access": false,
@@ -33761,8 +34093,18 @@
       "resource_exposure": false
     },
     {
+      "access_level": "List",
+      "action": "emr-serverless:List*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "emr-serverless:ListSessions",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
       "access_level": "Read",
-      "action": "emr-serverless:ListTagsForResource",
+      "action": "emr-serverless:List*",
       "condition": null,
       "credentials_exposure": false,
       "data_access": false,
@@ -33772,7 +34114,7 @@
     },
     {
       "access_level": "Write",
-      "action": "emr-serverless:StartApplication",
+      "action": "emr-serverless:Start*",
       "condition": null,
       "credentials_exposure": false,
       "data_access": false,
@@ -33782,7 +34124,7 @@
     },
     {
       "access_level": "Write",
-      "action": "emr-serverless:StartJobRun",
+      "action": "emr-serverless:Start*",
       "condition": null,
       "credentials_exposure": false,
       "data_access": false,
@@ -33792,11 +34134,81 @@
     },
     {
       "access_level": "Write",
-      "action": "emr-serverless:AccessLivyEndpoints",
+      "action": "emr-serverless:Start*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "emr-serverless:StartSession",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "emr-serverless:Access*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "emr-serverless:AccessInteractiveEndpoints",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "emr-serverless:Access*",
       "condition": null,
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "emr-serverless:AccessLivyEndpoints",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "emr-serverless:Access*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "emr-serverless:AccessSystemProfileLogs",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "emr-serverless:Terminate*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "emr-serverless:TerminateSession",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "emr-serverless:*Resource",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "emr-serverless:ListTagsForResource",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Tagging",
+      "action": "emr-serverless:*Resource",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "emr-serverless:TagResource",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Tagging",
+      "action": "emr-serverless:*Resource",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "emr-serverless:UntagResource",
       "privesc": false,
       "resource_exposure": false
     },
@@ -33948,6 +34360,254 @@
       "effective_action": "kms:Decrypt",
       "privesc": false,
       "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "kms:Decrypt",
+      "condition": {
+        "Null": {
+          "kms:EncryptionContext:aws:identitystore:identitystore-arn": "false"
+        },
+        "StringLike": {
+          "kms:ViaService": "identitystore.*.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "kms:Decrypt",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "ram:Get*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ram:GetPermission",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "ram:Get*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ram:GetResourcePolicies",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "ram:Get*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ram:GetResourceShareAssociations",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "ram:Get*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ram:GetResourceShareInvitations",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "ram:Get*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ram:GetResourceShares",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "ram:List*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ram:ListPendingInvitationResources",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "ram:List*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ram:ListPermissionAssociations",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "ram:List*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ram:ListPermissionVersions",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "ram:List*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ram:ListPermissions",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "ram:List*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ram:ListPrincipals",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "ram:List*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ram:ListReplacePermissionAssociationsWork",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "ram:List*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ram:ListResourceSharePermissions",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "ram:List*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ram:ListResourceTypes",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "ram:List*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ram:ListResources",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "ram:List*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ram:ListSourceAssociations",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Permissions management",
+      "action": "ram:CreateResourceShare",
+      "condition": {
+        "StringEquals": {
+          "ram:RequestedResourceType": "datazone:Domain"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ram:CreateResourceShare",
+      "privesc": false,
+      "resource_exposure": true
+    },
+    {
+      "access_level": "Permissions management",
+      "action": "ram:AssociateResourceShare",
+      "condition": {
+        "StringLike": {
+          "ram:ResourceShareName": [
+            "DataZone*"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ram:AssociateResourceShare",
+      "privesc": false,
+      "resource_exposure": true
+    },
+    {
+      "access_level": "Permissions management",
+      "action": "ram:DisassociateResourceShare",
+      "condition": {
+        "StringLike": {
+          "ram:ResourceShareName": [
+            "DataZone*"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ram:DisassociateResourceShare",
+      "privesc": false,
+      "resource_exposure": true
+    },
+    {
+      "access_level": "Permissions management",
+      "action": "ram:DeleteResourceShare",
+      "condition": {
+        "StringLike": {
+          "ram:ResourceShareName": [
+            "DataZone*"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ram:DeleteResourceShare",
+      "privesc": false,
+      "resource_exposure": true
+    },
+    {
+      "access_level": "Write",
+      "action": "ram:AssociateResourceSharePermission",
+      "condition": {
+        "StringEquals": {
+          "ram:PermissionArn": [
+            "arn:aws:ram::aws:permission/AWSRAMDefaultPermissionAmazonDataZoneDomain",
+            "arn:aws:ram::aws:permission/AWSRAMPermissionAmazonDataZoneDomainFullAccessWithPortalAccess",
+            "arn:aws:ram::aws:permission/AWSRAMPermissionsAmazonDatazoneDomainExtendedServiceAccess",
+            "arn:aws:ram::aws:permission/AWSRAMPermissionsAmazonDatazoneDomainExtendedServiceWithPortalAccess"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ram:AssociateResourceSharePermission",
+      "privesc": false,
+      "resource_exposure": false
     }
   ],
   "grantless": false,
@@ -33957,6 +34617,6 @@
   "resource_exposure": true,
   "undocumented_actions": true,
   "unknown_actions": [],
-  "updatedate": "2026-03-27T17:27:16+00:00",
-  "version": "v20"
+  "updatedate": "2026-05-11T20:42:19+00:00",
+  "version": "v21"
 }

@@ -8,7 +8,7 @@
     "Unknown"
   ],
   "arn": "arn:aws:iam::aws:policy/SageMakerStudioUserIAMPermissiveExecutionPolicy",
-  "createdate": "2026-03-27T17:27:10+00:00",
+  "createdate": "2026-05-11T21:42:12+00:00",
   "credentials_exposure": true,
   "data_access": true,
   "deprecated": false,
@@ -49,14 +49,22 @@
       },
       {
         "Action": [
+          "athena:GetResourceDashboard",
+          "athena:GetSession",
+          "athena:GetSessionEndpoint",
+          "athena:GetSessionStatus",
+          "athena:StartSession",
+          "athena:TerminateSession",
+          "emr-serverless:*Session*",
+          "emr-serverless:*Dashboard*",
           "glue:CancelStatement",
           "glue:CreateSession",
           "glue:DeleteSession",
+          "glue:GetDashboardUrl",
           "glue:GetSession",
           "glue:GetStatement",
           "glue:RunStatement",
-          "glue:StopSession",
-          "glue:GetDashboardUrl"
+          "glue:StopSession"
         ],
         "Condition": {
           "StringNotEquals": {
@@ -66,12 +74,17 @@
         },
         "Effect": "Deny",
         "Resource": [
+          "arn:aws:athena:*:*:workgroup/*/session/*",
+          "arn:aws:emr-serverless:*:*:/applications/*/sessions/*",
           "arn:aws:glue:*:*:session/*"
         ],
-        "Sid": "GlueSessionIsolation"
+        "Sid": "DenyForeignSessionAccess"
       },
       {
         "Action": [
+          "athena:TagResource",
+          "athena:UntagResource",
+          "emr-serverless:*Resource",
           "glue:TagResource",
           "glue:UntagResource"
         ],
@@ -81,7 +94,11 @@
           }
         },
         "Effect": "Deny",
-        "Resource": "arn:aws:glue:*:*:session/*",
+        "Resource": [
+          "arn:aws:athena:*:*:workgroup/*/session/*",
+          "arn:aws:emr-serverless:*:*:/applications/*/sessions/*",
+          "arn:aws:glue:*:*:session/*"
+        ],
         "Sid": "DenyTaggingUntaggingForeignSessions"
       },
       {
@@ -597,41 +614,6 @@
           "arn:aws:ec2:*:*:network-interface/*"
         ],
         "Sid": "EC2TagAccessForVpc"
-      },
-      {
-        "Action": [
-          "athena:StartSession",
-          "athena:GetSession",
-          "athena:TerminateSession",
-          "athena:GetSessionStatus",
-          "athena:GetSessionEndpoint",
-          "athena:GetResourceDashboard"
-        ],
-        "Condition": {
-          "StringNotEquals": {
-            "aws:RequestTag/AmazonDataZoneSessionOwner": "${aws:SourceIdentity}",
-            "aws:ResourceTag/AmazonDataZoneSessionOwner": "${aws:SourceIdentity}"
-          }
-        },
-        "Effect": "Deny",
-        "Resource": [
-          "arn:aws:athena:*:*:workgroup/*/session/*"
-        ],
-        "Sid": "AthenaSessionIsolation"
-      },
-      {
-        "Action": [
-          "athena:TagResource",
-          "athena:UntagResource"
-        ],
-        "Condition": {
-          "StringNotEquals": {
-            "aws:ResourceTag/AmazonDataZoneSessionOwner": "${aws:SourceIdentity}"
-          }
-        },
-        "Effect": "Deny",
-        "Resource": "arn:aws:athena:*:*:workgroup/*/session/*",
-        "Sid": "DenyTaggingUntaggingForeignAthenaSessions"
       }
     ],
     "Version": "2012-10-17"
@@ -26288,6 +26270,6 @@
   "resource_exposure": true,
   "undocumented_actions": true,
   "unknown_actions": [],
-  "updatedate": "2026-03-27T17:27:10+00:00",
-  "version": "v17"
+  "updatedate": "2026-05-11T21:42:12+00:00",
+  "version": "v18"
 }

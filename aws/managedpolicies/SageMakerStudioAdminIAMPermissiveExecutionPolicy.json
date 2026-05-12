@@ -8,7 +8,7 @@
     "Unknown"
   ],
   "arn": "arn:aws:iam::aws:policy/SageMakerStudioAdminIAMPermissiveExecutionPolicy",
-  "createdate": "2026-03-27T17:27:08+00:00",
+  "createdate": "2026-05-11T20:42:23+00:00",
   "credentials_exposure": true,
   "data_access": true,
   "deprecated": false,
@@ -42,7 +42,8 @@
           "scheduler:*",
           "sqlworkbench:*",
           "emr-serverless:*",
-          "airflow-serverless:*"
+          "airflow-serverless:*",
+          "airflow:*"
         ],
         "Effect": "Allow",
         "Resource": "*",
@@ -69,14 +70,22 @@
       },
       {
         "Action": [
+          "athena:GetResourceDashboard",
+          "athena:GetSession",
+          "athena:GetSessionEndpoint",
+          "athena:GetSessionStatus",
+          "athena:StartSession",
+          "athena:TerminateSession",
+          "emr-serverless:*Session*",
+          "emr-serverless:*Dashboard*",
           "glue:CancelStatement",
           "glue:CreateSession",
           "glue:DeleteSession",
+          "glue:GetDashboardUrl",
           "glue:GetSession",
           "glue:GetStatement",
           "glue:RunStatement",
-          "glue:StopSession",
-          "glue:GetDashboardUrl"
+          "glue:StopSession"
         ],
         "Condition": {
           "StringNotEquals": {
@@ -86,12 +95,17 @@
         },
         "Effect": "Deny",
         "Resource": [
+          "arn:aws:athena:*:*:workgroup/*/session/*",
+          "arn:aws:emr-serverless:*:*:/applications/*/sessions/*",
           "arn:aws:glue:*:*:session/*"
         ],
-        "Sid": "GlueSessionIsolation"
+        "Sid": "DenyForeignSessionAccess"
       },
       {
         "Action": [
+          "athena:TagResource",
+          "athena:UntagResource",
+          "emr-serverless:*Resource",
           "glue:TagResource",
           "glue:UntagResource"
         ],
@@ -101,7 +115,11 @@
           }
         },
         "Effect": "Deny",
-        "Resource": "arn:aws:glue:*:*:session/*",
+        "Resource": [
+          "arn:aws:athena:*:*:workgroup/*/session/*",
+          "arn:aws:emr-serverless:*:*:/applications/*/sessions/*",
+          "arn:aws:glue:*:*:session/*"
+        ],
         "Sid": "DenyTaggingUntaggingForeignSessions"
       },
       {
@@ -667,41 +685,6 @@
       },
       {
         "Action": [
-          "athena:StartSession",
-          "athena:GetSession",
-          "athena:TerminateSession",
-          "athena:GetSessionStatus",
-          "athena:GetSessionEndpoint",
-          "athena:GetResourceDashboard"
-        ],
-        "Condition": {
-          "StringNotEquals": {
-            "aws:RequestTag/AmazonDataZoneSessionOwner": "${aws:SourceIdentity}",
-            "aws:ResourceTag/AmazonDataZoneSessionOwner": "${aws:SourceIdentity}"
-          }
-        },
-        "Effect": "Deny",
-        "Resource": [
-          "arn:aws:athena:*:*:workgroup/*/session/*"
-        ],
-        "Sid": "AthenaSessionIsolation"
-      },
-      {
-        "Action": [
-          "athena:TagResource",
-          "athena:UntagResource"
-        ],
-        "Condition": {
-          "StringNotEquals": {
-            "aws:ResourceTag/AmazonDataZoneSessionOwner": "${aws:SourceIdentity}"
-          }
-        },
-        "Effect": "Deny",
-        "Resource": "arn:aws:athena:*:*:workgroup/*/session/*",
-        "Sid": "DenyTaggingUntaggingForeignAthenaSessions"
-      },
-      {
-        "Action": [
           "sso:CreateApplication",
           "sso:PutApplicationGrant",
           "sso:PutApplicationAssignmentConfiguration",
@@ -744,6 +727,79 @@
         "Effect": "Allow",
         "Resource": "*",
         "Sid": "SSOKMSPermissions"
+      },
+      {
+        "Action": [
+          "kms:Decrypt"
+        ],
+        "Condition": {
+          "Null": {
+            "kms:EncryptionContext:aws:identitystore:identitystore-arn": "false"
+          },
+          "StringLike": {
+            "kms:ViaService": "identitystore.*.amazonaws.com"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "IdentityStoreKMSPermissions"
+      },
+      {
+        "Action": [
+          "ram:Get*",
+          "ram:List*"
+        ],
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "RAMReadOnlyPermissions"
+      },
+      {
+        "Action": [
+          "ram:CreateResourceShare"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "ram:RequestedResourceType": "datazone:Domain"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "RAMCreateResourcePermission"
+      },
+      {
+        "Action": [
+          "ram:AssociateResourceShare",
+          "ram:DisassociateResourceShare",
+          "ram:DeleteResourceShare"
+        ],
+        "Condition": {
+          "StringLike": {
+            "ram:ResourceShareName": [
+              "DataZone*"
+            ]
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "RAMResourceSharePermissions"
+      },
+      {
+        "Action": [
+          "ram:AssociateResourceSharePermission"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "ram:PermissionArn": [
+              "arn:aws:ram::aws:permission/AWSRAMDefaultPermissionAmazonDataZoneDomain",
+              "arn:aws:ram::aws:permission/AWSRAMPermissionAmazonDataZoneDomainFullAccessWithPortalAccess",
+              "arn:aws:ram::aws:permission/AWSRAMPermissionsAmazonDatazoneDomainExtendedServiceAccess",
+              "arn:aws:ram::aws:permission/AWSRAMPermissionsAmazonDatazoneDomainExtendedServiceWithPortalAccess"
+            ]
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "RAMAssociateResourceSharePermission"
       }
     ],
     "Version": "2012-10-17"
@@ -22871,6 +22927,126 @@
     },
     {
       "access_level": "Write",
+      "action": "airflow:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "airflow:CreateCliToken",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "airflow:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "airflow:CreateEnvironment",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "airflow:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "airflow:CreateWebLoginToken",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "airflow:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "airflow:DeleteEnvironment",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "airflow:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "airflow:GetEnvironment",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "airflow:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "airflow:InvokeRestApi",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "airflow:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "airflow:ListEnvironments",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "airflow:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "airflow:ListTagsForResource",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "airflow:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "airflow:PublishMetrics",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Tagging",
+      "action": "airflow:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "airflow:TagResource",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Tagging",
+      "action": "airflow:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "airflow:UntagResource",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "airflow:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "airflow:UpdateEnvironment",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
       "action": "cloudformation:*",
       "condition": null,
       "credentials_exposure": false,
@@ -28459,6 +28635,254 @@
       "effective_action": "kms:Decrypt",
       "privesc": false,
       "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "kms:Decrypt",
+      "condition": {
+        "Null": {
+          "kms:EncryptionContext:aws:identitystore:identitystore-arn": "false"
+        },
+        "StringLike": {
+          "kms:ViaService": "identitystore.*.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "kms:Decrypt",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "ram:Get*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ram:GetPermission",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "ram:Get*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ram:GetResourcePolicies",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "ram:Get*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ram:GetResourceShareAssociations",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "ram:Get*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ram:GetResourceShareInvitations",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "ram:Get*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ram:GetResourceShares",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "ram:List*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ram:ListPendingInvitationResources",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "ram:List*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ram:ListPermissionAssociations",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "ram:List*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ram:ListPermissionVersions",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "ram:List*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ram:ListPermissions",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "ram:List*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ram:ListPrincipals",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "ram:List*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ram:ListReplacePermissionAssociationsWork",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "ram:List*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ram:ListResourceSharePermissions",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "ram:List*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ram:ListResourceTypes",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "ram:List*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ram:ListResources",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "ram:List*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ram:ListSourceAssociations",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Permissions management",
+      "action": "ram:CreateResourceShare",
+      "condition": {
+        "StringEquals": {
+          "ram:RequestedResourceType": "datazone:Domain"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ram:CreateResourceShare",
+      "privesc": false,
+      "resource_exposure": true
+    },
+    {
+      "access_level": "Permissions management",
+      "action": "ram:AssociateResourceShare",
+      "condition": {
+        "StringLike": {
+          "ram:ResourceShareName": [
+            "DataZone*"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ram:AssociateResourceShare",
+      "privesc": false,
+      "resource_exposure": true
+    },
+    {
+      "access_level": "Permissions management",
+      "action": "ram:DisassociateResourceShare",
+      "condition": {
+        "StringLike": {
+          "ram:ResourceShareName": [
+            "DataZone*"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ram:DisassociateResourceShare",
+      "privesc": false,
+      "resource_exposure": true
+    },
+    {
+      "access_level": "Permissions management",
+      "action": "ram:DeleteResourceShare",
+      "condition": {
+        "StringLike": {
+          "ram:ResourceShareName": [
+            "DataZone*"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ram:DeleteResourceShare",
+      "privesc": false,
+      "resource_exposure": true
+    },
+    {
+      "access_level": "Write",
+      "action": "ram:AssociateResourceSharePermission",
+      "condition": {
+        "StringEquals": {
+          "ram:PermissionArn": [
+            "arn:aws:ram::aws:permission/AWSRAMDefaultPermissionAmazonDataZoneDomain",
+            "arn:aws:ram::aws:permission/AWSRAMPermissionAmazonDataZoneDomainFullAccessWithPortalAccess",
+            "arn:aws:ram::aws:permission/AWSRAMPermissionsAmazonDatazoneDomainExtendedServiceAccess",
+            "arn:aws:ram::aws:permission/AWSRAMPermissionsAmazonDatazoneDomainExtendedServiceWithPortalAccess"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ram:AssociateResourceSharePermission",
+      "privesc": false,
+      "resource_exposure": false
     }
   ],
   "grantless": false,
@@ -28468,6 +28892,6 @@
   "resource_exposure": true,
   "undocumented_actions": true,
   "unknown_actions": [],
-  "updatedate": "2026-03-27T17:27:08+00:00",
-  "version": "v17"
+  "updatedate": "2026-05-11T20:42:23+00:00",
+  "version": "v18"
 }
