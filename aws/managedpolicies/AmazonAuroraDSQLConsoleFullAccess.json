@@ -7,7 +7,7 @@
     "Permissions management"
   ],
   "arn": "arn:aws:iam::aws:policy/AmazonAuroraDSQLConsoleFullAccess",
-  "createdate": "2026-02-12T18:00:39+00:00",
+  "createdate": "2026-05-13T18:57:14+00:00",
   "credentials_exposure": false,
   "data_access": false,
   "deprecated": false,
@@ -39,7 +39,12 @@
           "dsql:StartRestoreJob",
           "dsql:GetRestoreJob",
           "dsql:StopRestoreJob",
-          "dsql:InjectError"
+          "dsql:InjectError",
+          "dsql:CreateStream",
+          "dsql:DeleteStream",
+          "dsql:GetStream",
+          "dsql:ListStreams",
+          "dsql:UpdateStream"
         ],
         "Effect": "Allow",
         "Resource": "*",
@@ -53,7 +58,10 @@
           "cloudwatch:GetMetricData",
           "ec2:DescribeVpcEndpoints",
           "kms:ListAliases",
-          "kms:DescribeKey"
+          "kms:DescribeKey",
+          "cloudwatch:ListMetrics",
+          "kinesis:DescribeStreamSummary",
+          "kinesis:ListStreams"
         ],
         "Effect": "Allow",
         "Resource": "*",
@@ -93,6 +101,19 @@
         "Effect": "Allow",
         "Resource": "*",
         "Sid": "CreateDsqlServiceLinkedRole"
+      },
+      {
+        "Action": [
+          "iam:PassRole"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "iam:PassedToService": "dsql.amazonaws.com"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "PassRoleForChangeStreams"
       }
     ],
     "Version": "2012-10-17"
@@ -349,6 +370,56 @@
       "resource_exposure": false
     },
     {
+      "access_level": "Write",
+      "action": "dsql:CreateStream",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "dsql:CreateStream",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "dsql:DeleteStream",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "dsql:DeleteStream",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "dsql:GetStream",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "dsql:GetStream",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "dsql:ListStreams",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "dsql:ListStreams",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "dsql:UpdateStream",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "dsql:UpdateStream",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
       "access_level": "Read",
       "action": "access-analyzer:ValidatePolicy",
       "condition": null,
@@ -415,6 +486,36 @@
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "kms:DescribeKey",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "cloudwatch:ListMetrics",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudwatch:ListMetrics",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "kinesis:DescribeStreamSummary",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "kinesis:DescribeStreamSummary",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "kinesis:ListStreams",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "kinesis:ListStreams",
       "privesc": false,
       "resource_exposure": false
     },
@@ -526,6 +627,20 @@
       "effective_action": "iam:CreateServiceLinkedRole",
       "privesc": true,
       "resource_exposure": true
+    },
+    {
+      "access_level": "Permissions management",
+      "action": "iam:PassRole",
+      "condition": {
+        "StringEquals": {
+          "iam:PassedToService": "dsql.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "iam:PassRole",
+      "privesc": true,
+      "resource_exposure": true
     }
   ],
   "grantless": false,
@@ -535,6 +650,6 @@
   "resource_exposure": true,
   "undocumented_actions": false,
   "unknown_actions": [],
-  "updatedate": "2026-02-12T18:00:39+00:00",
-  "version": "v15"
+  "updatedate": "2026-05-13T18:57:14+00:00",
+  "version": "v16"
 }
