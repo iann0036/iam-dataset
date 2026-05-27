@@ -5,7 +5,7 @@
     "Write"
   ],
   "arn": "arn:aws:iam::aws:policy/aws-service-role/AmazonConnectCampaignsServiceLinkedRolePolicy",
-  "createdate": "2024-10-03T20:20:01+00:00",
+  "createdate": "2026-05-27T01:42:13+00:00",
   "credentials_exposure": false,
   "data_access": false,
   "deprecated": false,
@@ -24,11 +24,68 @@
           "connect:BatchPutContact",
           "connect:StopContact",
           "connect:DescribeContactFlow",
-          "connect:SendOutboundEmail"
+          "connect:SendOutboundEmail",
+          "connect:SendOutboundWebNotification"
         ],
         "Effect": "Allow",
         "Resource": "arn:aws:connect:*:*:instance/*",
         "Sid": "ConnectAccess"
+      },
+      {
+        "Action": [
+          "connect:SendOutboundChatMessage"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:connect:*:*:instance/*",
+          "arn:aws:connect:*:*:phone-number/*"
+        ],
+        "Sid": "ConnectChatAccess"
+      },
+      {
+        "Action": [
+          "social-messaging:SendWhatsAppMessage"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}",
+            "aws:ResourceTag/AmazonConnectEnabled": "True"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:social-messaging:*:*:phone-number-id/*",
+        "Sid": "AllowSocialMessagingSendMessageOperations"
+      },
+      {
+        "Action": [
+          "social-messaging:GetWhatsAppMessageTemplate"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:social-messaging:*:*:waba/*",
+        "Sid": "AllowSocialMessagingTemplateOperations"
+      },
+      {
+        "Action": [
+          "sms-voice:SendTextMessage"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:sms-voice:*:*:phone-number/*",
+        "Sid": "AllowSMSVoiceOperationsForConnect"
       },
       {
         "Action": [
@@ -138,6 +195,73 @@
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "connect:SendOutboundEmail",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "connect:SendOutboundWebNotification",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "connect:SendOutboundWebNotification",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "connect:SendOutboundChatMessage",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "connect:SendOutboundChatMessage",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "social-messaging:SendWhatsAppMessage",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}",
+          "aws:ResourceTag/AmazonConnectEnabled": "True"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "social-messaging:SendWhatsAppMessage",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "social-messaging:GetWhatsAppMessageTemplate",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "social-messaging:GetWhatsAppMessageTemplate",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "sms-voice:SendTextMessage",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sms-voice:SendTextMessage",
       "privesc": false,
       "resource_exposure": false
     },
@@ -265,6 +389,6 @@
   "resource_exposure": false,
   "undocumented_actions": false,
   "unknown_actions": [],
-  "updatedate": "2024-10-03T20:20:01+00:00",
-  "version": "v3"
+  "updatedate": "2026-05-27T01:42:13+00:00",
+  "version": "v4"
 }
