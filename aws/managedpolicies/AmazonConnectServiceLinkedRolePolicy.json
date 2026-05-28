@@ -7,7 +7,7 @@
     "Permissions management"
   ],
   "arn": "arn:aws:iam::aws:policy/aws-service-role/AmazonConnectServiceLinkedRolePolicy",
-  "createdate": "2026-05-18T21:12:24+00:00",
+  "createdate": "2026-05-27T21:57:16+00:00",
   "credentials_exposure": true,
   "data_access": true,
   "deprecated": false,
@@ -79,136 +79,52 @@
       },
       {
         "Action": [
-          "profile:SearchProfiles",
-          "profile:CreateProfile",
-          "profile:UpdateProfile",
-          "profile:AddProfileKey",
-          "profile:ListProfileObjectTypes",
-          "profile:ListCalculatedAttributeDefinitions",
-          "profile:ListCalculatedAttributesForProfile",
-          "profile:GetDomain",
-          "profile:ListIntegrations",
-          "profile:GetIntegration",
-          "profile:PutIntegration",
-          "profile:DeleteIntegration",
-          "profile:ListEventTriggers",
-          "profile:ListSegmentDefinitions",
-          "profile:ListProfileAttributeValues",
-          "profile:CreateSegmentEstimate",
-          "profile:GetSegmentEstimate",
-          "profile:BatchGetProfile",
-          "profile:BatchGetCalculatedAttributeForProfile",
-          "profile:GetSegmentMembership",
-          "profile:ListDomainLayouts",
-          "profile:CreateUploadJob",
-          "profile:ListUploadJobs",
-          "profile:DetectProfileObjectType",
-          "profile:GetSimilarProfiles",
-          "profile:GetUploadJob",
-          "profile:GetUploadJobPath",
-          "profile:StartUploadJob",
-          "profile:StopUploadJob",
-          "profile:GetProfileRecommendations",
-          "profile:GetProfileInsights",
-          "profile:ListRecommenders"
+          "profile:*"
         ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          }
+        },
         "Effect": "Allow",
-        "Resource": "arn:aws:profile:*:*:domains/amazon-connect-*",
+        "Resource": [
+          "arn:aws:profile:*:*:domains/amazon-connect-*",
+          "arn:aws:profile:*:*:/domains/amazon-connect-*",
+          "arn:aws:profile:*:*:/templates*"
+        ],
         "Sid": "AllowCustomerProfilesForConnectDomain"
       },
       {
         "Action": [
-          "profile:CreateEventTrigger",
-          "profile:GetEventTrigger",
-          "profile:UpdateEventTrigger",
-          "profile:DeleteEventTrigger"
+          "profile:ListRecommenderRecipes",
+          "profile:ListAccountIntegrations",
+          "profile:ListDomains"
         ],
-        "Effect": "Allow",
-        "Resource": [
-          "arn:aws:profile:*:*:domains/amazon-connect-*/event-triggers/*"
-        ],
-        "Sid": "AllowCustomerProfilesEventTriggerForConnectDomain"
-      },
-      {
-        "Action": [
-          "profile:CreateDomainLayout",
-          "profile:UpdateDomainLayout",
-          "profile:DeleteDomainLayout",
-          "profile:GetDomainLayout"
-        ],
-        "Effect": "Allow",
-        "Resource": [
-          "arn:aws:profile:*:*:domains/amazon-connect-*/layouts/*"
-        ],
-        "Sid": "AllowCustomerProfilesDomainLayoutsForConnectDomain"
-      },
-      {
-        "Action": [
-          "profile:GetUploadJob",
-          "profile:GetUploadJobPath",
-          "profile:StartUploadJob",
-          "profile:StopUploadJob"
-        ],
-        "Effect": "Allow",
-        "Resource": [
-          "arn:aws:profile:*:*:domains/amazon-connect-*/upload-jobs/*"
-        ],
-        "Sid": "AllowCustomerProfilesSegmentationImportForConnectDomain"
-      },
-      {
-        "Action": [
-          "profile:ListProfileObjects",
-          "profile:GetProfileObjectType",
-          "profile:ListObjectTypeAttributes",
-          "profile:ListObjectTypeAttributeValues"
-        ],
-        "Effect": "Allow",
-        "Resource": [
-          "arn:aws:profile:*:*:domains/amazon-connect-*/object-types/*"
-        ],
-        "Sid": "AllowReadPermissionForCustomerProfileObjects"
-      },
-      {
-        "Action": [
-          "profile:GetRecommender",
-          "profile:CreateRecommender",
-          "profile:UpdateRecommender",
-          "profile:DeleteRecommender",
-          "profile:StopRecommender",
-          "profile:StartRecommender"
-        ],
-        "Effect": "Allow",
-        "Resource": [
-          "arn:aws:profile:*:*:domains/amazon-connect-*/recommenders/*"
-        ],
-        "Sid": "AllowReadPermissionForCustomerProfilePredictiveInsights"
-      },
-      {
-        "Action": [
-          "profile:ListRecommenderRecipes"
-        ],
-        "Effect": "Allow",
-        "Resource": [
-          "arn:aws:profile:*:*:*"
-        ],
-        "Sid": "AllowReadPermissionForCustomerProfilesPersonalizeForRecommenderRecipes"
-      },
-      {
-        "Action": [
-          "profile:ListAccountIntegrations"
-        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          }
+        },
         "Effect": "Allow",
         "Resource": "*",
-        "Sid": "AllowListIntegrationForCustomerProfile"
+        "Sid": "AllowCustomerProfilesListOperations"
       },
       {
         "Action": [
-          "profile:ListProfileObjectTypeTemplates",
-          "profile:GetProfileObjectTypeTemplate"
+          "profile:CreateDomain",
+          "profile:UpdateDomain",
+          "profile:DeleteDomain",
+          "profile:CreateEventStream",
+          "profile:DeleteEventStream",
+          "profile:DeleteWorkflow",
+          "profile:DeleteProfileKey",
+          "profile:UntagResource",
+          "profile:TagResource",
+          "profile:CreateIntegrationWorkflow"
         ],
-        "Effect": "Allow",
-        "Resource": "arn:aws:profile:*:*:/templates*",
-        "Sid": "AllowReadForCustomerProfileObjectTemplates"
+        "Effect": "Deny",
+        "Resource": "arn:aws:profile:*:*:domains/*",
+        "Sid": "DenyCustomerProfilesForConnectDomain"
       },
       {
         "Action": [
@@ -269,31 +185,16 @@
       },
       {
         "Action": [
-          "profile:GetCalculatedAttributeForProfile",
-          "profile:CreateCalculatedAttributeDefinition",
-          "profile:DeleteCalculatedAttributeDefinition",
-          "profile:GetCalculatedAttributeDefinition",
-          "profile:UpdateCalculatedAttributeDefinition"
+          "kms:ListRetirableGrants"
         ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          }
+        },
         "Effect": "Allow",
-        "Resource": [
-          "arn:aws:profile:*:*:domains/amazon-connect-*/calculated-attributes/*"
-        ],
-        "Sid": "AllowCustomerProfilesCalculatedAttributesForConnectDomain"
-      },
-      {
-        "Action": [
-          "profile:CreateSegmentDefinition",
-          "profile:GetSegmentDefinition",
-          "profile:DeleteSegmentDefinition",
-          "profile:CreateSegmentSnapshot",
-          "profile:GetSegmentSnapshot"
-        ],
-        "Effect": "Allow",
-        "Resource": [
-          "arn:aws:profile:*:*:domains/amazon-connect-*/segment-definitions/*"
-        ],
-        "Sid": "AllowCustomerProfilesSegmentationForConnectDomain"
+        "Resource": "*",
+        "Sid": "AllowKMSListRetirableGrants"
       },
       {
         "Action": [
@@ -335,16 +236,6 @@
         "Effect": "Allow",
         "Resource": "arn:aws:cognito-idp:*:*:userpool/*",
         "Sid": "AllowCognitoForConnectEnabledTaggedResources"
-      },
-      {
-        "Action": [
-          "profile:PutProfileObject"
-        ],
-        "Effect": "Allow",
-        "Resource": [
-          "arn:aws:profile:*:*:domains/amazon-connect-*/object-types/*"
-        ],
-        "Sid": "AllowWritePermissionForCustomerProfileObjects"
       },
       {
         "Action": [
@@ -4263,39 +4154,13 @@
       "resource_exposure": false
     },
     {
-      "access_level": "Read",
-      "action": "profile:SearchProfiles",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "profile:SearchProfiles",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
       "access_level": "Write",
-      "action": "profile:CreateProfile",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "profile:CreateProfile",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Write",
-      "action": "profile:UpdateProfile",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "profile:UpdateProfile",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Write",
-      "action": "profile:AddProfileKey",
-      "condition": null,
+      "action": "profile:*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "profile:AddProfileKey",
@@ -4303,149 +4168,13 @@
       "resource_exposure": false
     },
     {
-      "access_level": "List",
-      "action": "profile:ListProfileObjectTypes",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "profile:ListProfileObjectTypes",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "profile:ListCalculatedAttributeDefinitions",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "profile:ListCalculatedAttributeDefinitions",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "profile:ListCalculatedAttributesForProfile",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "profile:ListCalculatedAttributesForProfile",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
       "access_level": "Read",
-      "action": "profile:GetDomain",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "profile:GetDomain",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "profile:ListIntegrations",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "profile:ListIntegrations",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Read",
-      "action": "profile:GetIntegration",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "profile:GetIntegration",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Write",
-      "action": "profile:PutIntegration",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "profile:PutIntegration",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Write",
-      "action": "profile:DeleteIntegration",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "profile:DeleteIntegration",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "profile:ListEventTriggers",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "profile:ListEventTriggers",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "profile:ListSegmentDefinitions",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "profile:ListSegmentDefinitions",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "profile:ListProfileAttributeValues",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "profile:ListProfileAttributeValues",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Write",
-      "action": "profile:CreateSegmentEstimate",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "profile:CreateSegmentEstimate",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Read",
-      "action": "profile:GetSegmentEstimate",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "profile:GetSegmentEstimate",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Read",
-      "action": "profile:BatchGetProfile",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "profile:BatchGetProfile",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Read",
-      "action": "profile:BatchGetCalculatedAttributeForProfile",
-      "condition": null,
+      "action": "profile:*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "profile:BatchGetCalculatedAttributeForProfile",
@@ -4454,178 +4183,54 @@
     },
     {
       "access_level": "Read",
-      "action": "profile:GetSegmentMembership",
-      "condition": null,
+      "action": "profile:*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
       "credentials_exposure": false,
       "data_access": false,
-      "effective_action": "profile:GetSegmentMembership",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "profile:ListDomainLayouts",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "profile:ListDomainLayouts",
+      "effective_action": "profile:BatchGetProfile",
       "privesc": false,
       "resource_exposure": false
     },
     {
       "access_level": "Write",
-      "action": "profile:CreateUploadJob",
-      "condition": null,
+      "action": "profile:*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
       "credentials_exposure": false,
       "data_access": false,
-      "effective_action": "profile:CreateUploadJob",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "profile:ListUploadJobs",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "profile:ListUploadJobs",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Read",
-      "action": "profile:DetectProfileObjectType",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "profile:DetectProfileObjectType",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "profile:GetSimilarProfiles",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "profile:GetSimilarProfiles",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Read",
-      "action": "profile:GetUploadJob",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "profile:GetUploadJob",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Read",
-      "action": "profile:GetUploadJobPath",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "profile:GetUploadJobPath",
+      "effective_action": "profile:CreateCalculatedAttributeDefinition",
       "privesc": false,
       "resource_exposure": false
     },
     {
       "access_level": "Write",
-      "action": "profile:StartUploadJob",
-      "condition": null,
+      "action": "profile:*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
       "credentials_exposure": false,
       "data_access": false,
-      "effective_action": "profile:StartUploadJob",
+      "effective_action": "profile:CreateDomain",
       "privesc": false,
       "resource_exposure": false
     },
     {
       "access_level": "Write",
-      "action": "profile:StopUploadJob",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "profile:StopUploadJob",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Read",
-      "action": "profile:GetProfileRecommendations",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "profile:GetProfileRecommendations",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Read",
-      "action": "profile:GetProfileInsights",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "profile:GetProfileInsights",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "profile:ListRecommenders",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "profile:ListRecommenders",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Write",
-      "action": "profile:CreateEventTrigger",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "profile:CreateEventTrigger",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Read",
-      "action": "profile:GetEventTrigger",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "profile:GetEventTrigger",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Write",
-      "action": "profile:UpdateEventTrigger",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "profile:UpdateEventTrigger",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Write",
-      "action": "profile:DeleteEventTrigger",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "profile:DeleteEventTrigger",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Write",
-      "action": "profile:CreateDomainLayout",
-      "condition": null,
+      "action": "profile:*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "profile:CreateDomainLayout",
@@ -4634,128 +4239,68 @@
     },
     {
       "access_level": "Write",
-      "action": "profile:UpdateDomainLayout",
-      "condition": null,
+      "action": "profile:*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
       "credentials_exposure": false,
       "data_access": false,
-      "effective_action": "profile:UpdateDomainLayout",
+      "effective_action": "profile:CreateEventStream",
       "privesc": false,
       "resource_exposure": false
     },
     {
       "access_level": "Write",
-      "action": "profile:DeleteDomainLayout",
-      "condition": null,
+      "action": "profile:*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
       "credentials_exposure": false,
       "data_access": false,
-      "effective_action": "profile:DeleteDomainLayout",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Read",
-      "action": "profile:GetDomainLayout",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "profile:GetDomainLayout",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Read",
-      "action": "profile:GetUploadJob",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "profile:GetUploadJob",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Read",
-      "action": "profile:GetUploadJobPath",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "profile:GetUploadJobPath",
+      "effective_action": "profile:CreateEventTrigger",
       "privesc": false,
       "resource_exposure": false
     },
     {
       "access_level": "Write",
-      "action": "profile:StartUploadJob",
-      "condition": null,
+      "action": "profile:*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
       "credentials_exposure": false,
       "data_access": false,
-      "effective_action": "profile:StartUploadJob",
+      "effective_action": "profile:CreateIntegrationWorkflow",
       "privesc": false,
       "resource_exposure": false
     },
     {
       "access_level": "Write",
-      "action": "profile:StopUploadJob",
-      "condition": null,
+      "action": "profile:*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
       "credentials_exposure": false,
       "data_access": false,
-      "effective_action": "profile:StopUploadJob",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "profile:ListProfileObjects",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "profile:ListProfileObjects",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Read",
-      "action": "profile:GetProfileObjectType",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "profile:GetProfileObjectType",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "profile:ListObjectTypeAttributes",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "profile:ListObjectTypeAttributes",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "profile:ListObjectTypeAttributeValues",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "profile:ListObjectTypeAttributeValues",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Read",
-      "action": "profile:GetRecommender",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "profile:GetRecommender",
+      "effective_action": "profile:CreateProfile",
       "privesc": false,
       "resource_exposure": false
     },
     {
       "access_level": "Write",
-      "action": "profile:CreateRecommender",
-      "condition": null,
+      "action": "profile:*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "profile:CreateRecommender",
@@ -4764,18 +4309,264 @@
     },
     {
       "access_level": "Write",
-      "action": "profile:UpdateRecommender",
-      "condition": null,
+      "action": "profile:*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
       "credentials_exposure": false,
       "data_access": false,
-      "effective_action": "profile:UpdateRecommender",
+      "effective_action": "profile:CreateRecommenderFilter",
       "privesc": false,
       "resource_exposure": false
     },
     {
       "access_level": "Write",
-      "action": "profile:DeleteRecommender",
-      "condition": null,
+      "action": "profile:*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "profile:CreateRecommenderSchema",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "profile:*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "profile:CreateSegmentDefinition",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "profile:*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "profile:CreateSegmentEstimate",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "profile:*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "profile:CreateSegmentSnapshot",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "profile:*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "profile:CreateSnapshot",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "profile:*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "profile:CreateUploadJob",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "profile:*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "profile:DeleteCalculatedAttributeDefinition",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "profile:*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "profile:DeleteDomain",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "profile:*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "profile:DeleteDomainLayout",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "profile:*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "profile:DeleteDomainObjectType",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "profile:*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "profile:DeleteEventStream",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "profile:*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "profile:DeleteEventTrigger",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "profile:*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "profile:DeleteIntegration",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "profile:*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "profile:DeleteProfile",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "profile:*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "profile:DeleteProfileKey",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "profile:*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "profile:DeleteProfileObject",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "profile:*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "profile:DeleteProfileObjectType",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "profile:*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "profile:DeleteRecommender",
@@ -4784,8 +4575,992 @@
     },
     {
       "access_level": "Write",
-      "action": "profile:StopRecommender",
-      "condition": null,
+      "action": "profile:*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "profile:DeleteRecommenderFilter",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "profile:*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "profile:DeleteRecommenderSchema",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "profile:*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "profile:DeleteSegmentDefinition",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "profile:*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "profile:DeleteWorkflow",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "profile:*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "profile:DetectProfileObjectType",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "profile:*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "profile:GetAutoMergingPreview",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "profile:*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "profile:GetCalculatedAttributeDefinition",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "profile:*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "profile:GetCalculatedAttributeForProfile",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "profile:*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "profile:GetDomain",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "profile:*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "profile:GetDomainLayout",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "profile:*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "profile:GetDomainObjectType",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "profile:*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "profile:GetEventStream",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "profile:*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "profile:GetEventTrigger",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "profile:*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "profile:GetIdentityResolutionJob",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "profile:*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "profile:GetIntegration",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "profile:*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "profile:GetMatches",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "profile:*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "profile:GetObjectTypeAttributeStatistics",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "profile:*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "profile:GetProfileHistoryRecord",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "profile:*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "profile:GetProfileInsights",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "profile:*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "profile:GetProfileObjectType",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "profile:*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "profile:GetProfileObjectTypeTemplate",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "profile:*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "profile:GetProfileRecommendations",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "profile:*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "profile:GetRecommender",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "profile:*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "profile:GetRecommenderFilter",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "profile:*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "profile:GetRecommenderSchema",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "profile:*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "profile:GetSegmentDefinition",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "profile:*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "profile:GetSegmentEstimate",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "profile:*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "profile:GetSegmentMembership",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "profile:*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "profile:GetSegmentSnapshot",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "profile:*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "profile:GetSimilarProfiles",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "profile:*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "profile:GetSnapshot",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "profile:*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "profile:GetUploadJob",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "profile:*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "profile:GetUploadJobPath",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "profile:*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "profile:GetWorkflow",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "profile:*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "profile:GetWorkflowSteps",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "profile:*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "profile:ListAccountIntegrations",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "profile:*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "profile:ListCalculatedAttributeDefinitions",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "profile:*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "profile:ListCalculatedAttributesForProfile",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "profile:*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "profile:ListDomainLayouts",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "profile:*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "profile:ListDomainObjectTypes",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "profile:*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "profile:ListDomainObjects",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "profile:*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "profile:ListDomains",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "profile:*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "profile:ListEventStreams",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "profile:*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "profile:ListEventTriggers",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "profile:*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "profile:ListIdentityResolutionJobs",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "profile:*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "profile:ListIntegrations",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "profile:*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "profile:ListObjectTypeAttributeValues",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "profile:*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "profile:ListObjectTypeAttributes",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "profile:*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "profile:ListProfileAttributeValues",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "profile:*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "profile:ListProfileHistoryRecords",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "profile:*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "profile:ListProfileObjectTypeTemplates",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "profile:*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "profile:ListProfileObjectTypes",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "profile:*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "profile:ListProfileObjects",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "profile:*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "profile:ListRecommenderFilters",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "profile:*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "profile:ListRecommenderRecipes",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "profile:*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "profile:ListRecommenderSchemas",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "profile:*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "profile:ListRecommenders",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "profile:*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "profile:ListRuleBasedMatches",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "profile:*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "profile:ListSegmentDefinitions",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "profile:*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "profile:ListTagsForResource",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "profile:*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "profile:ListUploadJobs",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "profile:*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "profile:ListWorkflows",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "profile:*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "profile:MergeProfiles",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "profile:*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "profile:PutDomainObjectType",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "profile:*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "profile:PutIntegration",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "profile:*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "profile:PutProfileObject",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "profile:*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "profile:PutProfileObjectType",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "profile:*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "profile:SearchProfiles",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "profile:*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "profile:StartRecommender",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "profile:*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "profile:StartUploadJob",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "profile:*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "profile:StopRecommender",
@@ -4794,18 +5569,138 @@
     },
     {
       "access_level": "Write",
-      "action": "profile:StartRecommender",
-      "condition": null,
+      "action": "profile:*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
       "credentials_exposure": false,
       "data_access": false,
-      "effective_action": "profile:StartRecommender",
+      "effective_action": "profile:StopUploadJob",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Tagging",
+      "action": "profile:*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "profile:TagResource",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Tagging",
+      "action": "profile:*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "profile:UntagResource",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "profile:*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "profile:UpdateCalculatedAttributeDefinition",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "profile:*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "profile:UpdateDomain",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "profile:*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "profile:UpdateDomainLayout",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "profile:*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "profile:UpdateEventTrigger",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "profile:*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "profile:UpdateProfile",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "profile:*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "profile:UpdateRecommender",
       "privesc": false,
       "resource_exposure": false
     },
     {
       "access_level": "List",
       "action": "profile:ListRecommenderRecipes",
-      "condition": null,
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "profile:ListRecommenderRecipes",
@@ -4815,7 +5710,11 @@
     {
       "access_level": "List",
       "action": "profile:ListAccountIntegrations",
-      "condition": null,
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "profile:ListAccountIntegrations",
@@ -4824,21 +5723,15 @@
     },
     {
       "access_level": "List",
-      "action": "profile:ListProfileObjectTypeTemplates",
-      "condition": null,
+      "action": "profile:ListDomains",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
       "credentials_exposure": false,
       "data_access": false,
-      "effective_action": "profile:ListProfileObjectTypeTemplates",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Read",
-      "action": "profile:GetProfileObjectTypeTemplate",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "profile:GetProfileObjectTypeTemplate",
+      "effective_action": "profile:ListDomains",
       "privesc": false,
       "resource_exposure": false
     },
@@ -6319,102 +7212,16 @@
       "resource_exposure": false
     },
     {
-      "access_level": "Read",
-      "action": "profile:GetCalculatedAttributeForProfile",
-      "condition": null,
+      "access_level": "List",
+      "action": "kms:ListRetirableGrants",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
       "credentials_exposure": false,
       "data_access": false,
-      "effective_action": "profile:GetCalculatedAttributeForProfile",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Write",
-      "action": "profile:CreateCalculatedAttributeDefinition",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "profile:CreateCalculatedAttributeDefinition",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Write",
-      "action": "profile:DeleteCalculatedAttributeDefinition",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "profile:DeleteCalculatedAttributeDefinition",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Read",
-      "action": "profile:GetCalculatedAttributeDefinition",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "profile:GetCalculatedAttributeDefinition",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Write",
-      "action": "profile:UpdateCalculatedAttributeDefinition",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "profile:UpdateCalculatedAttributeDefinition",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Write",
-      "action": "profile:CreateSegmentDefinition",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "profile:CreateSegmentDefinition",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Read",
-      "action": "profile:GetSegmentDefinition",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "profile:GetSegmentDefinition",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Write",
-      "action": "profile:DeleteSegmentDefinition",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "profile:DeleteSegmentDefinition",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Write",
-      "action": "profile:CreateSegmentSnapshot",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "profile:CreateSegmentSnapshot",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Read",
-      "action": "profile:GetSegmentSnapshot",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "profile:GetSegmentSnapshot",
+      "effective_action": "kms:ListRetirableGrants",
       "privesc": false,
       "resource_exposure": false
     },
@@ -6485,16 +7292,6 @@
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "cognito-idp:ListUserPoolClients",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Write",
-      "action": "profile:PutProfileObject",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "profile:PutProfileObject",
       "privesc": false,
       "resource_exposure": false
     },
@@ -6753,6 +7550,6 @@
   "resource_exposure": true,
   "undocumented_actions": false,
   "unknown_actions": [],
-  "updatedate": "2026-05-18T21:12:24+00:00",
-  "version": "v54"
+  "updatedate": "2026-05-27T21:57:16+00:00",
+  "version": "v55"
 }
