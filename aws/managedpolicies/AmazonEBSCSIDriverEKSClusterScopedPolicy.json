@@ -5,7 +5,7 @@
     "Write"
   ],
   "arn": "arn:aws:iam::aws:policy/AmazonEBSCSIDriverEKSClusterScopedPolicy",
-  "createdate": "2026-04-16T17:27:16+00:00",
+  "createdate": "2026-05-28T17:27:10+00:00",
   "credentials_exposure": false,
   "data_access": false,
   "deprecated": false,
@@ -121,6 +121,20 @@
         "Effect": "Allow",
         "Resource": "arn:aws:ec2:*:*:instance/*",
         "Sid": "AttachDetachVolumesToClusterInstance"
+      },
+      {
+        "Action": [
+          "ec2:AttachVolume",
+          "ec2:DetachVolume"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "ec2:ResourceTag/eks:eks-cluster-name": "${aws:PrincipalTag/eks-cluster-name}"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:ec2:*:*:instance/*",
+        "Sid": "AttachDetachVolumesToEKSStandardTaggedInstance"
       },
       {
         "Action": [
@@ -455,6 +469,34 @@
       "action": "ec2:AttachVolume",
       "condition": {
         "StringEquals": {
+          "ec2:ResourceTag/eks:eks-cluster-name": "${aws:PrincipalTag/eks-cluster-name}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:AttachVolume",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:DetachVolume",
+      "condition": {
+        "StringEquals": {
+          "ec2:ResourceTag/eks:eks-cluster-name": "${aws:PrincipalTag/eks-cluster-name}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:DetachVolume",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:AttachVolume",
+      "condition": {
+        "StringEquals": {
           "ec2:ResourceTag/ebs.csi.aws.com/cluster-name": "${aws:PrincipalTag/eks-cluster-name}"
         }
       },
@@ -580,6 +622,6 @@
   "resource_exposure": false,
   "undocumented_actions": false,
   "unknown_actions": [],
-  "updatedate": "2026-04-16T17:27:16+00:00",
-  "version": "v1"
+  "updatedate": "2026-05-28T17:27:10+00:00",
+  "version": "v2"
 }
