@@ -7,7 +7,7 @@
     "Permissions management"
   ],
   "arn": "arn:aws:iam::aws:policy/AWSQuickSetupManagedInstanceProfileExecutionPolicy",
-  "createdate": "2026-02-12T18:01:22+00:00",
+  "createdate": "2026-06-03T14:12:12+00:00",
   "credentials_exposure": false,
   "data_access": false,
   "deprecated": false,
@@ -74,13 +74,14 @@
         "Condition": {
           "StringEquals": {
             "iam:PassedToService": [
-              "ec2.amazonaws.com"
+              "ec2.amazonaws.com",
+              "ssm.amazonaws.com"
             ]
           }
         },
         "Effect": "Allow",
         "Resource": "arn:aws:iam::*:role/AmazonSSMRoleForInstancesQuickSetup",
-        "Sid": "DefaultInstanceRolePassToEC2Permissions"
+        "Sid": "DefaultInstanceRolePassToEC2AndSSMPermissions"
       },
       {
         "Action": [
@@ -109,6 +110,37 @@
         "Effect": "Allow",
         "Resource": "*",
         "Sid": "InstanceProfileAssociationEc2Permissions"
+      },
+      {
+        "Action": [
+          "ssm:DescribeInstanceInformation",
+          "ssm:UpdateManagedInstanceRole"
+        ],
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "SSMInstanceManagement"
+      },
+      {
+        "Action": [
+          "iam:TagRole"
+        ],
+        "Condition": {
+          "ForAllValues:StringLike": {
+            "aws:TagKeys": "QSConfigId-*"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:iam::*:role/*",
+        "Sid": "TagRoles"
+      },
+      {
+        "Action": [
+          "iam:TagRole",
+          "iam:AttachRolePolicy"
+        ],
+        "Effect": "Deny",
+        "Resource": "arn:aws:iam::*:role/AWS-QuickSetup-AutomationRole-*",
+        "Sid": "DenyModifyQuickSetupAutomationRoles"
       },
       {
         "Action": [
@@ -280,7 +312,8 @@
       "condition": {
         "StringEquals": {
           "iam:PassedToService": [
-            "ec2.amazonaws.com"
+            "ec2.amazonaws.com",
+            "ssm.amazonaws.com"
           ]
         }
       },
@@ -327,6 +360,40 @@
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "ec2:DescribeInstances",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "ssm:DescribeInstanceInformation",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ssm:DescribeInstanceInformation",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ssm:UpdateManagedInstanceRole",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ssm:UpdateManagedInstanceRole",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Tagging",
+      "action": "iam:TagRole",
+      "condition": {
+        "ForAllValues:StringLike": {
+          "aws:TagKeys": "QSConfigId-*"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "iam:TagRole",
       "privesc": false,
       "resource_exposure": false
     },
@@ -435,6 +502,6 @@
   "resource_exposure": true,
   "undocumented_actions": false,
   "unknown_actions": [],
-  "updatedate": "2026-02-12T18:01:22+00:00",
-  "version": "v7"
+  "updatedate": "2026-06-03T14:12:12+00:00",
+  "version": "v8"
 }
