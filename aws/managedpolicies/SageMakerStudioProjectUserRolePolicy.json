@@ -8,7 +8,7 @@
     "Unknown"
   ],
   "arn": "arn:aws:iam::aws:policy/SageMakerStudioProjectUserRolePolicy",
-  "createdate": "2026-05-28T16:27:24+00:00",
+  "createdate": "2026-06-04T21:27:16+00:00",
   "credentials_exposure": true,
   "data_access": true,
   "deprecated": false,
@@ -311,13 +311,8 @@
       },
       {
         "Action": [
-          "glue:CancelStatement",
-          "glue:GetSession",
-          "glue:ListStatements",
-          "glue:DeleteSession",
-          "glue:RunStatement",
-          "glue:GetStatement",
-          "glue:StopSession",
+          "glue:*Session*",
+          "glue:*Statement*",
           "glue:GetDashboardUrl",
           "glue:NotifyEvent",
           "glue:StartBlueprintRun",
@@ -1383,6 +1378,7 @@
               "glue.amazonaws.com",
               "airflow.amazonaws.com",
               "emr-serverless.amazonaws.com",
+              "elasticmapreduce.amazonaws.com",
               "scheduler.amazonaws.com",
               "access-grants.s3.amazonaws.com"
             ]
@@ -1657,7 +1653,9 @@
           "elasticmapreduce:ListInstanceGroups",
           "elasticmapreduce:ListBootstrapActions",
           "elasticmapreduce:GetManagedScalingPolicy",
-          "elasticmapreduce:GetOnClusterAppUIPresignedURL"
+          "elasticmapreduce:GetOnClusterAppUIPresignedURL",
+          "elasticmapreduce:*Session*",
+          "elasticmapreduce:AddTags"
         ],
         "Condition": {
           "StringEquals": {
@@ -4296,7 +4294,7 @@
     },
     {
       "access_level": "Write",
-      "action": "glue:CancelStatement",
+      "action": "glue:*Session*",
       "condition": {
         "StringEquals": {
           "aws:PrincipalTag/EnableGlueWorkloadsPermissions": "true",
@@ -4306,45 +4304,13 @@
       },
       "credentials_exposure": false,
       "data_access": false,
-      "effective_action": "glue:CancelStatement",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Read",
-      "action": "glue:GetSession",
-      "condition": {
-        "StringEquals": {
-          "aws:PrincipalTag/EnableGlueWorkloadsPermissions": "true",
-          "aws:ResourceAccount": "${aws:PrincipalAccount}",
-          "aws:ResourceTag/AmazonDataZoneProject": "${aws:PrincipalTag/AmazonDataZoneProject}"
-        }
-      },
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "glue:GetSession",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "glue:ListStatements",
-      "condition": {
-        "StringEquals": {
-          "aws:PrincipalTag/EnableGlueWorkloadsPermissions": "true",
-          "aws:ResourceAccount": "${aws:PrincipalAccount}",
-          "aws:ResourceTag/AmazonDataZoneProject": "${aws:PrincipalTag/AmazonDataZoneProject}"
-        }
-      },
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "glue:ListStatements",
+      "effective_action": "glue:CreateSession",
       "privesc": false,
       "resource_exposure": false
     },
     {
       "access_level": "Write",
-      "action": "glue:DeleteSession",
+      "action": "glue:*Session*",
       "condition": {
         "StringEquals": {
           "aws:PrincipalTag/EnableGlueWorkloadsPermissions": "true",
@@ -4359,8 +4325,8 @@
       "resource_exposure": false
     },
     {
-      "access_level": "Write",
-      "action": "glue:RunStatement",
+      "access_level": "Read",
+      "action": "glue:*Session*",
       "condition": {
         "StringEquals": {
           "aws:PrincipalTag/EnableGlueWorkloadsPermissions": "true",
@@ -4370,13 +4336,93 @@
       },
       "credentials_exposure": false,
       "data_access": false,
-      "effective_action": "glue:RunStatement",
+      "effective_action": "glue:GetSession",
       "privesc": false,
       "resource_exposure": false
     },
     {
       "access_level": "Read",
-      "action": "glue:GetStatement",
+      "action": "glue:*Session*",
+      "condition": {
+        "StringEquals": {
+          "aws:PrincipalTag/EnableGlueWorkloadsPermissions": "true",
+          "aws:ResourceAccount": "${aws:PrincipalAccount}",
+          "aws:ResourceTag/AmazonDataZoneProject": "${aws:PrincipalTag/AmazonDataZoneProject}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "glue:GetSessionEndpoint",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "glue:*Session*",
+      "condition": {
+        "StringEquals": {
+          "aws:PrincipalTag/EnableGlueWorkloadsPermissions": "true",
+          "aws:ResourceAccount": "${aws:PrincipalAccount}",
+          "aws:ResourceTag/AmazonDataZoneProject": "${aws:PrincipalTag/AmazonDataZoneProject}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "glue:ListSessions",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "glue:*Session*",
+      "condition": {
+        "StringEquals": {
+          "aws:PrincipalTag/EnableGlueWorkloadsPermissions": "true",
+          "aws:ResourceAccount": "${aws:PrincipalAccount}",
+          "aws:ResourceTag/AmazonDataZoneProject": "${aws:PrincipalTag/AmazonDataZoneProject}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "glue:StopSession",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "glue:*Statement*",
+      "condition": {
+        "StringEquals": {
+          "aws:PrincipalTag/EnableGlueWorkloadsPermissions": "true",
+          "aws:ResourceAccount": "${aws:PrincipalAccount}",
+          "aws:ResourceTag/AmazonDataZoneProject": "${aws:PrincipalTag/AmazonDataZoneProject}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "glue:CancelStatement",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Permissions management",
+      "action": "glue:*Statement*",
+      "condition": {
+        "StringEquals": {
+          "aws:PrincipalTag/EnableGlueWorkloadsPermissions": "true",
+          "aws:ResourceAccount": "${aws:PrincipalAccount}",
+          "aws:ResourceTag/AmazonDataZoneProject": "${aws:PrincipalTag/AmazonDataZoneProject}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "glue:GetDataPreviewStatement",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "glue:*Statement*",
       "condition": {
         "StringEquals": {
           "aws:PrincipalTag/EnableGlueWorkloadsPermissions": "true",
@@ -4391,8 +4437,8 @@
       "resource_exposure": false
     },
     {
-      "access_level": "Write",
-      "action": "glue:StopSession",
+      "access_level": "List",
+      "action": "glue:*Statement*",
       "condition": {
         "StringEquals": {
           "aws:PrincipalTag/EnableGlueWorkloadsPermissions": "true",
@@ -4402,7 +4448,39 @@
       },
       "credentials_exposure": false,
       "data_access": false,
-      "effective_action": "glue:StopSession",
+      "effective_action": "glue:ListStatements",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Permissions management",
+      "action": "glue:*Statement*",
+      "condition": {
+        "StringEquals": {
+          "aws:PrincipalTag/EnableGlueWorkloadsPermissions": "true",
+          "aws:ResourceAccount": "${aws:PrincipalAccount}",
+          "aws:ResourceTag/AmazonDataZoneProject": "${aws:PrincipalTag/AmazonDataZoneProject}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "glue:RunDataPreviewStatement",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "glue:*Statement*",
+      "condition": {
+        "StringEquals": {
+          "aws:PrincipalTag/EnableGlueWorkloadsPermissions": "true",
+          "aws:ResourceAccount": "${aws:PrincipalAccount}",
+          "aws:ResourceTag/AmazonDataZoneProject": "${aws:PrincipalTag/AmazonDataZoneProject}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "glue:RunStatement",
       "privesc": false,
       "resource_exposure": false
     },
@@ -9304,6 +9382,7 @@
             "glue.amazonaws.com",
             "airflow.amazonaws.com",
             "emr-serverless.amazonaws.com",
+            "elasticmapreduce.amazonaws.com",
             "scheduler.amazonaws.com",
             "access-grants.s3.amazonaws.com"
           ]
@@ -10525,6 +10604,104 @@
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "elasticmapreduce:GetOnClusterAppUIPresignedURL",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "elasticmapreduce:*Session*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/AmazonDataZoneProject": "${aws:PrincipalTag/AmazonDataZoneProject}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "elasticmapreduce:CreateStudioSessionMapping",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "elasticmapreduce:*Session*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/AmazonDataZoneProject": "${aws:PrincipalTag/AmazonDataZoneProject}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "elasticmapreduce:DeleteStudioSessionMapping",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "elasticmapreduce:*Session*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/AmazonDataZoneProject": "${aws:PrincipalTag/AmazonDataZoneProject}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "elasticmapreduce:GetClusterSessionCredentials",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "elasticmapreduce:*Session*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/AmazonDataZoneProject": "${aws:PrincipalTag/AmazonDataZoneProject}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "elasticmapreduce:GetStudioSessionMapping",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "elasticmapreduce:*Session*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/AmazonDataZoneProject": "${aws:PrincipalTag/AmazonDataZoneProject}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "elasticmapreduce:ListStudioSessionMappings",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "elasticmapreduce:*Session*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/AmazonDataZoneProject": "${aws:PrincipalTag/AmazonDataZoneProject}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "elasticmapreduce:UpdateStudioSessionMapping",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Tagging",
+      "action": "elasticmapreduce:AddTags",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/AmazonDataZoneProject": "${aws:PrincipalTag/AmazonDataZoneProject}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "elasticmapreduce:AddTags",
       "privesc": false,
       "resource_exposure": false
     },
@@ -13895,6 +14072,6 @@
   "resource_exposure": true,
   "undocumented_actions": true,
   "unknown_actions": [],
-  "updatedate": "2026-05-28T16:27:24+00:00",
-  "version": "v68"
+  "updatedate": "2026-06-04T21:27:16+00:00",
+  "version": "v69"
 }

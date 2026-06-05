@@ -3,7 +3,7 @@
     "Write"
   ],
   "arn": "arn:aws:iam::aws:policy/CloudWatchAPIKeyAccess",
-  "createdate": "2026-05-08T08:57:08+00:00",
+  "createdate": "2026-06-04T20:42:29+00:00",
   "credentials_exposure": false,
   "data_access": false,
   "deprecated": false,
@@ -15,7 +15,22 @@
           "cloudwatch:PutMetricData"
         ],
         "Effect": "Allow",
-        "Resource": "*"
+        "Resource": "*",
+        "Sid": "CloudWatchMetricsAPIs"
+      },
+      {
+        "Action": [
+          "kms:Decrypt"
+        ],
+        "Condition": {
+          "StringLike": {
+            "kms:EncryptionContext:aws:cloudwatch:arn": "arn:aws:cloudwatch:*:*:dataset/*",
+            "kms:ViaService": "cloudwatch.*.amazonaws.com"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:kms:*:*:key/*",
+        "Sid": "KMSDecryptForCMKDatasets"
       }
     ],
     "Version": "2012-10-17"
@@ -40,6 +55,21 @@
       "effective_action": "cloudwatch:PutMetricData",
       "privesc": false,
       "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "kms:Decrypt",
+      "condition": {
+        "StringLike": {
+          "kms:EncryptionContext:aws:cloudwatch:arn": "arn:aws:cloudwatch:*:*:dataset/*",
+          "kms:ViaService": "cloudwatch.*.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "kms:Decrypt",
+      "privesc": false,
+      "resource_exposure": false
     }
   ],
   "grantless": false,
@@ -49,6 +79,6 @@
   "resource_exposure": false,
   "undocumented_actions": false,
   "unknown_actions": [],
-  "updatedate": "2026-05-08T08:57:08+00:00",
-  "version": "v1"
+  "updatedate": "2026-06-04T20:42:29+00:00",
+  "version": "v2"
 }
