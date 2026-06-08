@@ -7,7 +7,7 @@
     "Permissions management"
   ],
   "arn": "arn:aws:iam::aws:policy/CloudWatchFullAccessV2",
-  "createdate": "2026-02-12T18:00:06+00:00",
+  "createdate": "2026-06-08T13:27:16+00:00",
   "credentials_exposure": false,
   "data_access": true,
   "deprecated": false,
@@ -234,6 +234,38 @@
         ],
         "Effect": "Allow",
         "Resource": "arn:aws:s3tables:*:*:bucket/aws-cloudwatch"
+      },
+      {
+        "Action": [
+          "iam:PassRole"
+        ],
+        "Condition": {
+          "ArnLike": {
+            "iam:AssociatedResourceArn": "arn:aws:logs:*:*:scheduled-query:*"
+          },
+          "StringEquals": {
+            "iam:PassedToService": "logs.amazonaws.com"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "LogAlarmScheduledQueryPassRolePermissions"
+      },
+      {
+        "Action": [
+          "iam:PassRole"
+        ],
+        "Condition": {
+          "ArnLike": {
+            "iam:AssociatedResourceArn": "arn:aws:cloudwatch:*:*:alarm:*"
+          },
+          "StringEquals": {
+            "iam:PassedToService": "cloudwatch.amazonaws.com"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "LogAlarmLogLinesPassRolePermissions"
       }
     ],
     "Version": "2012-10-17"
@@ -3957,6 +3989,40 @@
       "effective_action": "s3tables:PutTableBucketPolicy",
       "privesc": false,
       "resource_exposure": false
+    },
+    {
+      "access_level": "Permissions management",
+      "action": "iam:PassRole",
+      "condition": {
+        "ArnLike": {
+          "iam:AssociatedResourceArn": "arn:aws:logs:*:*:scheduled-query:*"
+        },
+        "StringEquals": {
+          "iam:PassedToService": "logs.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "iam:PassRole",
+      "privesc": true,
+      "resource_exposure": true
+    },
+    {
+      "access_level": "Permissions management",
+      "action": "iam:PassRole",
+      "condition": {
+        "ArnLike": {
+          "iam:AssociatedResourceArn": "arn:aws:cloudwatch:*:*:alarm:*"
+        },
+        "StringEquals": {
+          "iam:PassedToService": "cloudwatch.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "iam:PassRole",
+      "privesc": true,
+      "resource_exposure": true
     }
   ],
   "grantless": false,
@@ -3967,5 +4033,5 @@
   "undocumented_actions": false,
   "unknown_actions": [],
   "updatedate": "2026-02-12T18:00:06+00:00",
-  "version": "v15"
+  "version": "v16"
 }
