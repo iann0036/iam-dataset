@@ -3,10 +3,11 @@
     "List",
     "Read",
     "Tagging",
-    "Write"
+    "Write",
+    "Permissions management"
   ],
   "arn": "arn:aws:iam::aws:policy/aws-service-role/AmazonEMRContainersServiceRolePolicy",
-  "createdate": "2025-02-06T21:07:07+00:00",
+  "createdate": "2026-06-19T16:27:19+00:00",
   "credentials_exposure": false,
   "data_access": false,
   "deprecated": false,
@@ -25,7 +26,9 @@
           "elasticloadbalancing:DescribeTargetGroups",
           "elasticloadbalancing:DescribeTargetHealth",
           "eks:ListPodIdentityAssociations",
-          "eks:DescribePodIdentityAssociation"
+          "eks:DescribePodIdentityAssociation",
+          "ec2:DescribeVpcEndpointServiceConfigurations",
+          "ec2:DescribeVpcEndpointServicePermissions"
         ],
         "Effect": "Allow",
         "Resource": "*"
@@ -54,6 +57,46 @@
         },
         "Effect": "Allow",
         "Resource": "*"
+      },
+      {
+        "Action": [
+          "ec2:CreateVpcEndpointServiceConfiguration"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:RequestTag/emr-containers:managed-endpoint-resource": "true"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:ec2:*:*:vpc-endpoint-service/*",
+        "Sid": "VPCEndpointServiceCreate"
+      },
+      {
+        "Action": [
+          "ec2:DeleteVpcEndpointServiceConfigurations",
+          "ec2:ModifyVpcEndpointServicePermissions"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceTag/emr-containers:managed-endpoint-resource": "true"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:ec2:*:*:vpc-endpoint-service/*",
+        "Sid": "VPCEndpointServiceManage"
+      },
+      {
+        "Action": [
+          "ec2:CreateTags"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "ec2:CreateAction": "CreateVpcEndpointServiceConfiguration"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:ec2:*:*:vpc-endpoint-service/*",
+        "Sid": "VPCEndpointServiceTagOnCreate"
       }
     ],
     "Version": "2012-10-17"
@@ -180,6 +223,26 @@
       "resource_exposure": false
     },
     {
+      "access_level": "List",
+      "action": "ec2:DescribeVpcEndpointServiceConfigurations",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:DescribeVpcEndpointServiceConfigurations",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "ec2:DescribeVpcEndpointServicePermissions",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:DescribeVpcEndpointServicePermissions",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
       "access_level": "Write",
       "action": "acm:ImportCertificate",
       "condition": {
@@ -220,15 +283,71 @@
       "effective_action": "acm:DeleteCertificate",
       "privesc": false,
       "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:CreateVpcEndpointServiceConfiguration",
+      "condition": {
+        "StringEquals": {
+          "aws:RequestTag/emr-containers:managed-endpoint-resource": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:CreateVpcEndpointServiceConfiguration",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:DeleteVpcEndpointServiceConfigurations",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/emr-containers:managed-endpoint-resource": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:DeleteVpcEndpointServiceConfigurations",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Permissions management",
+      "action": "ec2:ModifyVpcEndpointServicePermissions",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/emr-containers:managed-endpoint-resource": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:ModifyVpcEndpointServicePermissions",
+      "privesc": false,
+      "resource_exposure": true
+    },
+    {
+      "access_level": "Tagging",
+      "action": "ec2:CreateTags",
+      "condition": {
+        "StringEquals": {
+          "ec2:CreateAction": "CreateVpcEndpointServiceConfiguration"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:CreateTags",
+      "privesc": false,
+      "resource_exposure": false
     }
   ],
   "grantless": false,
   "malformed": false,
   "name": "AmazonEMRContainersServiceRolePolicy",
   "privesc": false,
-  "resource_exposure": false,
+  "resource_exposure": true,
   "undocumented_actions": false,
   "unknown_actions": [],
-  "updatedate": "2025-02-06T21:07:07+00:00",
-  "version": "v4"
+  "updatedate": "2026-06-19T16:27:19+00:00",
+  "version": "v5"
 }
