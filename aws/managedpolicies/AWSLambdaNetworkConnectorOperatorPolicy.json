@@ -1,0 +1,125 @@
+{
+  "access_levels": [
+    "Tagging",
+    "Write"
+  ],
+  "arn": null,
+  "createdate": "2026-06-22T15:27:20+00:00",
+  "credentials_exposure": false,
+  "data_access": false,
+  "deprecated": false,
+  "document": {
+    "Statement": [
+      {
+        "Action": [
+          "ec2:CreateNetworkInterface"
+        ],
+        "Effect": "Allow",
+        "Resource": "arn:aws:ec2:*:*:subnet/*",
+        "Sid": "AllowCreateEniInAnySubnet"
+      },
+      {
+        "Action": [
+          "ec2:CreateNetworkInterface"
+        ],
+        "Effect": "Allow",
+        "Resource": "arn:aws:ec2:*:*:security-group/*",
+        "Sid": "AllowCreateEniWithSecurityGroups"
+      },
+      {
+        "Action": [
+          "ec2:CreateNetworkInterface"
+        ],
+        "Condition": {
+          "ForAllValues:StringEquals": {
+            "aws:TagKeys": [
+              "aws:lambda:networkConnectorName",
+              "aws:lambda:networkConnectorId"
+            ]
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:ec2:*:*:network-interface/*",
+        "Sid": "AllowCreateEniWithLambdaTagKeys"
+      },
+      {
+        "Action": [
+          "ec2:CreateTags"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "ec2:CreateAction": "CreateNetworkInterface",
+            "ec2:ManagedResourceOperator": "network-connectors.lambda.amazonaws.com"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:ec2:*:*:network-interface/*",
+        "Sid": "TagENIOnCreate"
+      }
+    ],
+    "Version": "2012-10-17"
+  },
+  "effective_actions": [
+    {
+      "access_level": "Write",
+      "action": "ec2:CreateNetworkInterface",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:CreateNetworkInterface",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:CreateNetworkInterface",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:CreateNetworkInterface",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:CreateNetworkInterface",
+      "condition": {
+        "ForAllValues:StringEquals": {
+          "aws:TagKeys": [
+            "aws:lambda:networkConnectorName",
+            "aws:lambda:networkConnectorId"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:CreateNetworkInterface",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Tagging",
+      "action": "ec2:CreateTags",
+      "condition": {
+        "StringEquals": {
+          "ec2:CreateAction": "CreateNetworkInterface",
+          "ec2:ManagedResourceOperator": "network-connectors.lambda.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:CreateTags",
+      "privesc": false,
+      "resource_exposure": false
+    }
+  ],
+  "grantless": false,
+  "malformed": false,
+  "name": "AWSLambdaNetworkConnectorOperatorPolicy",
+  "privesc": false,
+  "resource_exposure": false,
+  "undocumented_actions": false,
+  "unknown_actions": [],
+  "updatedate": null,
+  "version": "v1"
+}
