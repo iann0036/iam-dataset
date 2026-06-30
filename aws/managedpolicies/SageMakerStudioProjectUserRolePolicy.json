@@ -8,7 +8,7 @@
     "Unknown"
   ],
   "arn": "arn:aws:iam::aws:policy/SageMakerStudioProjectUserRolePolicy",
-  "createdate": "2026-06-04T21:27:16+00:00",
+  "createdate": "2026-06-29T20:27:23+00:00",
   "credentials_exposure": true,
   "data_access": true,
   "deprecated": false,
@@ -328,21 +328,7 @@
           "glue:BatchStopJobRun",
           "glue:StopWorkflowRun",
           "glue:StartJobRun",
-          "glue:CancelDataQualityRuleRecommendationRun",
-          "glue:CancelDataQualityRulesetEvaluationRun",
-          "glue:DeleteDataQualityRuleset",
-          "glue:GetDataQualityModel",
-          "glue:GetDataQualityModelResult",
-          "glue:GetDataQualityRuleRecommendationRun",
-          "glue:GetDataQualityRuleset",
-          "glue:GetDataQualityRulesetEvaluationRun",
-          "glue:GetDataQualityResult",
-          "glue:PublishDataQuality",
-          "glue:PutDataQualityProfileAnnotation",
-          "glue:PutDataQualityStatisticAnnotation",
-          "glue:StartDataQualityRuleRecommendationRun",
-          "glue:StartDataQualityRulesetEvaluationRun",
-          "glue:UpdateDataQualityRuleset",
+          "glue:*DataQuality*",
           "glue:GetJobRun",
           "glue:GetJobRuns",
           "glue:BatchGetJobs",
@@ -380,8 +366,7 @@
       },
       {
         "Action": [
-          "glue:GetDataQualityResult",
-          "glue:PublishDataQuality"
+          "glue:*DataQuality*"
         ],
         "Condition": {
           "StringEquals": {
@@ -698,7 +683,7 @@
         },
         "Effect": "Allow",
         "Resource": "*",
-        "Sid": "DataLakeCrossAccountDecryptKMSPermissions"
+        "Sid": "XAcctKmsDecrypt"
       },
       {
         "Action": [
@@ -796,7 +781,7 @@
         },
         "Effect": "Allow",
         "Resource": "arn:aws:s3:::${aws:PrincipalTag/DomainBucketName}",
-        "Sid": "AccessLevelControlS3BucketPermissions"
+        "Sid": "S3BucketAcl"
       },
       {
         "Action": [
@@ -827,7 +812,7 @@
         },
         "Effect": "Allow",
         "Resource": "arn:aws:s3:::${aws:PrincipalTag/DomainBucketName}/${aws:PrincipalTag/AmazonDataZoneDomain}/${aws:PrincipalTag/AmazonDataZoneProject}/genAI/assets/evaluations/*",
-        "Sid": "TagS3ObjectPermissionsForBedrockEvaluation"
+        "Sid": "BREvalS3Tag"
       },
       {
         "Action": [
@@ -1012,11 +997,28 @@
           "datazone:ListEnvironmentBlueprints",
           "datazone:ListProjects",
           "datazone:UpdateConnection",
-          "datazone:PostLineageEvent"
+          "datazone:PostLineageEvent",
+          "datazone:*Compute*"
         ],
         "Effect": "Allow",
         "Resource": "arn:aws:datazone:*:*:domain/${aws:PrincipalTag/AmazonDataZoneDomain}",
         "Sid": "DataZoneUserPermissions"
+      },
+      {
+        "Action": [
+          "codeconnections:GetConnection",
+          "codeconnections:UseConnection",
+          "codestar-connections:GetConnection",
+          "codestar-connections:UseConnection"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceTag/for-use-with-all-datazone-projects": "true"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "CodeConnectionsUser"
       },
       {
         "Action": [
@@ -1450,7 +1452,7 @@
         },
         "Effect": "Allow",
         "Resource": "*",
-        "Sid": "RedshiftDataActionsIAMSessionRestriction"
+        "Sid": "RSDataIAMSession"
       },
       {
         "Action": [
@@ -1521,7 +1523,7 @@
         },
         "Effect": "Allow",
         "Resource": "*",
-        "Sid": "RedshiftServerlessWorkgroupWithResourceType"
+        "Sid": "RSWgTagged"
       },
       {
         "Action": [
@@ -1534,7 +1536,7 @@
         },
         "Effect": "Allow",
         "Resource": "arn:aws:redshift:*:*:dbname:*/*",
-        "Sid": "RedshiftExistingComputeConnectToCatalog"
+        "Sid": "RSExistCatalog"
       },
       {
         "Action": [
@@ -1579,7 +1581,7 @@
         },
         "Effect": "Allow",
         "Resource": "*",
-        "Sid": "RedshiftDataActionsForManagedWorkgroup"
+        "Sid": "RSDataMWg"
       },
       {
         "Action": [
@@ -1970,7 +1972,7 @@
         },
         "Effect": "Allow",
         "Resource": "arn:aws:bedrock:*:*:application-inference-profile/*",
-        "Sid": "BedrockInvokeModelAppInferenceProfilePermissions"
+        "Sid": "BRInvokeAppProfile"
       },
       {
         "Action": [
@@ -2070,7 +2072,7 @@
           "arn:aws:bedrock:*::foundation-model/*",
           "arn:aws:bedrock:*:*:custom-model/*"
         ],
-        "Sid": "CreateEvaluationJobForFoundationModelPermissions"
+        "Sid": "BREvalFM"
       },
       {
         "Action": [
@@ -2086,7 +2088,7 @@
           "arn:aws:bedrock:*:*:custom-model/*",
           "arn:aws:bedrock:*::foundation-model/*"
         ],
-        "Sid": "BedrockCreateEvaluationJobPermissions"
+        "Sid": "BRCreateEval"
       },
       {
         "Action": [
@@ -2148,7 +2150,7 @@
         },
         "Effect": "Allow",
         "Resource": "*",
-        "Sid": "BedrockRetrieveAndGeneratePermissions"
+        "Sid": "BRRAG"
       },
       {
         "Action": [
@@ -2375,7 +2377,7 @@
         },
         "Effect": "Allow",
         "Resource": "arn:aws:kms:*:*:key/${aws:PrincipalTag/KmsKeyId}",
-        "Sid": "KmsViaSecretsManagerPermissionsForBedrock"
+        "Sid": "BRKmsSM"
       },
       {
         "Action": [
@@ -2420,7 +2422,7 @@
         },
         "Effect": "Allow",
         "Resource": "arn:aws:cloudformation:*:*:stack/DataZone-Env-*",
-        "Sid": "GetDataZoneEnvironmentCFNStackPermissions"
+        "Sid": "DZEnvCfn"
       },
       {
         "Action": [
@@ -2500,11 +2502,17 @@
         "Action": [
           "dynamodb:ListTables",
           "glue:ManagedConnector",
-          "glue:TestConnection"
+          "glue:TestConnection",
+          "codeconnections:GetHost",
+          "codeconnections:ListConnections",
+          "codeconnections:ListTagsForResource",
+          "codestar-connections:GetHost",
+          "codestar-connections:ListConnections",
+          "codestar-connections:ListTagsForResource"
         ],
         "Effect": "Allow",
         "Resource": "*",
-        "Sid": "UnrestrictedDataConnectionPermissions"
+        "Sid": "DataConnOpen"
       },
       {
         "Action": [
@@ -2655,7 +2663,7 @@
         },
         "Effect": "Allow",
         "Resource": "*",
-        "Sid": "CrossAccountLakeFormationResourceSharingPermissions"
+        "Sid": "XAcctLFCreate"
       },
       {
         "Action": [
@@ -2676,7 +2684,7 @@
           "arn:aws:glue:*:*:database/*",
           "arn:aws:glue:*:*:table/*"
         ],
-        "Sid": "CrossAccountRAMResourceSharingPermissions"
+        "Sid": "XAcctRAMGlue"
       },
       {
         "Action": [
@@ -2700,7 +2708,7 @@
         },
         "Effect": "Allow",
         "Resource": "*",
-        "Sid": "CrossAccountRAMResourceSharingViaLakeFormationPermissions"
+        "Sid": "XAcctRAMLF"
       },
       {
         "Action": [
@@ -2731,7 +2739,7 @@
         },
         "Effect": "Allow",
         "Resource": "arn:aws:ram:*:*:resource-share-invitation/*",
-        "Sid": "CrossAccountRAMResourceShareInvitationPermission"
+        "Sid": "XAcctRAMInvite"
       },
       {
         "Action": [
@@ -2749,7 +2757,7 @@
         },
         "Effect": "Allow",
         "Resource": "*",
-        "Sid": "CrossAccountRAMResourceSharingViaLakeFormationHybrid"
+        "Sid": "XAcctRAMLFHybrid"
       },
       {
         "Action": [
@@ -2801,7 +2809,7 @@
           "arn:aws:quicksight:*:*:folder/*",
           "arn:aws:quicksight:*:*:datasource/*"
         ],
-        "Sid": "ManageQuickSightFolderAndDataSourceResources"
+        "Sid": "QSFolderDS"
       },
       {
         "Action": [
@@ -2867,16 +2875,6 @@
         "Effect": "Allow",
         "Resource": "arn:aws:quicksight:*:*:folder/sagemaker-*-assets",
         "Sid": "CreateFolderMembership"
-      },
-      {
-        "Action": [
-          "sagemaker-unified-studio-mcp:InvokeMcp",
-          "sagemaker-unified-studio-mcp:CallReadOnlyTool",
-          "sagemaker-unified-studio-mcp:CallPrivilegedTool"
-        ],
-        "Effect": "Allow",
-        "Resource": "*",
-        "Sid": "SageMakerUnifiedStudioMcp"
       }
     ],
     "Version": "2012-10-17"
@@ -4726,7 +4724,7 @@
     },
     {
       "access_level": "Write",
-      "action": "glue:CancelDataQualityRuleRecommendationRun",
+      "action": "glue:*DataQuality*",
       "condition": {
         "StringEquals": {
           "aws:PrincipalTag/EnableGlueWorkloadsPermissions": "true",
@@ -4742,7 +4740,7 @@
     },
     {
       "access_level": "Write",
-      "action": "glue:CancelDataQualityRulesetEvaluationRun",
+      "action": "glue:*DataQuality*",
       "condition": {
         "StringEquals": {
           "aws:PrincipalTag/EnableGlueWorkloadsPermissions": "true",
@@ -4758,7 +4756,23 @@
     },
     {
       "access_level": "Write",
-      "action": "glue:DeleteDataQualityRuleset",
+      "action": "glue:*DataQuality*",
+      "condition": {
+        "StringEquals": {
+          "aws:PrincipalTag/EnableGlueWorkloadsPermissions": "true",
+          "aws:ResourceAccount": "${aws:PrincipalAccount}",
+          "aws:ResourceTag/AmazonDataZoneProject": "${aws:PrincipalTag/AmazonDataZoneProject}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "glue:CreateDataQualityRuleset",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "glue:*DataQuality*",
       "condition": {
         "StringEquals": {
           "aws:PrincipalTag/EnableGlueWorkloadsPermissions": "true",
@@ -4774,7 +4788,7 @@
     },
     {
       "access_level": "Read",
-      "action": "glue:GetDataQualityModel",
+      "action": "glue:*DataQuality*",
       "condition": {
         "StringEquals": {
           "aws:PrincipalTag/EnableGlueWorkloadsPermissions": "true",
@@ -4790,7 +4804,7 @@
     },
     {
       "access_level": "Read",
-      "action": "glue:GetDataQualityModelResult",
+      "action": "glue:*DataQuality*",
       "condition": {
         "StringEquals": {
           "aws:PrincipalTag/EnableGlueWorkloadsPermissions": "true",
@@ -4806,7 +4820,23 @@
     },
     {
       "access_level": "Read",
-      "action": "glue:GetDataQualityRuleRecommendationRun",
+      "action": "glue:*DataQuality*",
+      "condition": {
+        "StringEquals": {
+          "aws:PrincipalTag/EnableGlueWorkloadsPermissions": "true",
+          "aws:ResourceAccount": "${aws:PrincipalAccount}",
+          "aws:ResourceTag/AmazonDataZoneProject": "${aws:PrincipalTag/AmazonDataZoneProject}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "glue:GetDataQualityResult",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "glue:*DataQuality*",
       "condition": {
         "StringEquals": {
           "aws:PrincipalTag/EnableGlueWorkloadsPermissions": "true",
@@ -4822,7 +4852,7 @@
     },
     {
       "access_level": "Read",
-      "action": "glue:GetDataQualityRuleset",
+      "action": "glue:*DataQuality*",
       "condition": {
         "StringEquals": {
           "aws:PrincipalTag/EnableGlueWorkloadsPermissions": "true",
@@ -4838,7 +4868,7 @@
     },
     {
       "access_level": "Read",
-      "action": "glue:GetDataQualityRulesetEvaluationRun",
+      "action": "glue:*DataQuality*",
       "condition": {
         "StringEquals": {
           "aws:PrincipalTag/EnableGlueWorkloadsPermissions": "true",
@@ -4853,8 +4883,8 @@
       "resource_exposure": false
     },
     {
-      "access_level": "Read",
-      "action": "glue:GetDataQualityResult",
+      "access_level": "List",
+      "action": "glue:*DataQuality*",
       "condition": {
         "StringEquals": {
           "aws:PrincipalTag/EnableGlueWorkloadsPermissions": "true",
@@ -4864,13 +4894,61 @@
       },
       "credentials_exposure": false,
       "data_access": false,
-      "effective_action": "glue:GetDataQualityResult",
+      "effective_action": "glue:ListDataQualityResults",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "glue:*DataQuality*",
+      "condition": {
+        "StringEquals": {
+          "aws:PrincipalTag/EnableGlueWorkloadsPermissions": "true",
+          "aws:ResourceAccount": "${aws:PrincipalAccount}",
+          "aws:ResourceTag/AmazonDataZoneProject": "${aws:PrincipalTag/AmazonDataZoneProject}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "glue:ListDataQualityRuleRecommendationRuns",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "glue:*DataQuality*",
+      "condition": {
+        "StringEquals": {
+          "aws:PrincipalTag/EnableGlueWorkloadsPermissions": "true",
+          "aws:ResourceAccount": "${aws:PrincipalAccount}",
+          "aws:ResourceTag/AmazonDataZoneProject": "${aws:PrincipalTag/AmazonDataZoneProject}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "glue:ListDataQualityRulesetEvaluationRuns",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "glue:*DataQuality*",
+      "condition": {
+        "StringEquals": {
+          "aws:PrincipalTag/EnableGlueWorkloadsPermissions": "true",
+          "aws:ResourceAccount": "${aws:PrincipalAccount}",
+          "aws:ResourceTag/AmazonDataZoneProject": "${aws:PrincipalTag/AmazonDataZoneProject}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "glue:ListDataQualityRulesets",
       "privesc": false,
       "resource_exposure": false
     },
     {
       "access_level": "Write",
-      "action": "glue:PublishDataQuality",
+      "action": "glue:*DataQuality*",
       "condition": {
         "StringEquals": {
           "aws:PrincipalTag/EnableGlueWorkloadsPermissions": "true",
@@ -4886,7 +4964,7 @@
     },
     {
       "access_level": "Write",
-      "action": "glue:PutDataQualityProfileAnnotation",
+      "action": "glue:*DataQuality*",
       "condition": {
         "StringEquals": {
           "aws:PrincipalTag/EnableGlueWorkloadsPermissions": "true",
@@ -4902,7 +4980,7 @@
     },
     {
       "access_level": "Write",
-      "action": "glue:PutDataQualityStatisticAnnotation",
+      "action": "glue:*DataQuality*",
       "condition": {
         "StringEquals": {
           "aws:PrincipalTag/EnableGlueWorkloadsPermissions": "true",
@@ -4918,7 +4996,7 @@
     },
     {
       "access_level": "Write",
-      "action": "glue:StartDataQualityRuleRecommendationRun",
+      "action": "glue:*DataQuality*",
       "condition": {
         "StringEquals": {
           "aws:PrincipalTag/EnableGlueWorkloadsPermissions": "true",
@@ -4934,7 +5012,7 @@
     },
     {
       "access_level": "Write",
-      "action": "glue:StartDataQualityRulesetEvaluationRun",
+      "action": "glue:*DataQuality*",
       "condition": {
         "StringEquals": {
           "aws:PrincipalTag/EnableGlueWorkloadsPermissions": "true",
@@ -4950,7 +5028,7 @@
     },
     {
       "access_level": "Write",
-      "action": "glue:UpdateDataQualityRuleset",
+      "action": "glue:*DataQuality*",
       "condition": {
         "StringEquals": {
           "aws:PrincipalTag/EnableGlueWorkloadsPermissions": "true",
@@ -5085,8 +5163,92 @@
       "resource_exposure": false
     },
     {
+      "access_level": "Write",
+      "action": "glue:*DataQuality*",
+      "condition": {
+        "StringEquals": {
+          "aws:PrincipalTag/EnableGlueWorkloadsPermissions": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "glue:CancelDataQualityRuleRecommendationRun",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "glue:*DataQuality*",
+      "condition": {
+        "StringEquals": {
+          "aws:PrincipalTag/EnableGlueWorkloadsPermissions": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "glue:CancelDataQualityRulesetEvaluationRun",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "glue:*DataQuality*",
+      "condition": {
+        "StringEquals": {
+          "aws:PrincipalTag/EnableGlueWorkloadsPermissions": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "glue:CreateDataQualityRuleset",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "glue:*DataQuality*",
+      "condition": {
+        "StringEquals": {
+          "aws:PrincipalTag/EnableGlueWorkloadsPermissions": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "glue:DeleteDataQualityRuleset",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
       "access_level": "Read",
-      "action": "glue:GetDataQualityResult",
+      "action": "glue:*DataQuality*",
+      "condition": {
+        "StringEquals": {
+          "aws:PrincipalTag/EnableGlueWorkloadsPermissions": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "glue:GetDataQualityModel",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "glue:*DataQuality*",
+      "condition": {
+        "StringEquals": {
+          "aws:PrincipalTag/EnableGlueWorkloadsPermissions": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "glue:GetDataQualityModelResult",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "glue:*DataQuality*",
       "condition": {
         "StringEquals": {
           "aws:PrincipalTag/EnableGlueWorkloadsPermissions": "true"
@@ -5099,8 +5261,106 @@
       "resource_exposure": false
     },
     {
+      "access_level": "Read",
+      "action": "glue:*DataQuality*",
+      "condition": {
+        "StringEquals": {
+          "aws:PrincipalTag/EnableGlueWorkloadsPermissions": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "glue:GetDataQualityRuleRecommendationRun",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "glue:*DataQuality*",
+      "condition": {
+        "StringEquals": {
+          "aws:PrincipalTag/EnableGlueWorkloadsPermissions": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "glue:GetDataQualityRuleset",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "glue:*DataQuality*",
+      "condition": {
+        "StringEquals": {
+          "aws:PrincipalTag/EnableGlueWorkloadsPermissions": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "glue:GetDataQualityRulesetEvaluationRun",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "glue:*DataQuality*",
+      "condition": {
+        "StringEquals": {
+          "aws:PrincipalTag/EnableGlueWorkloadsPermissions": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "glue:ListDataQualityResults",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "glue:*DataQuality*",
+      "condition": {
+        "StringEquals": {
+          "aws:PrincipalTag/EnableGlueWorkloadsPermissions": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "glue:ListDataQualityRuleRecommendationRuns",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "glue:*DataQuality*",
+      "condition": {
+        "StringEquals": {
+          "aws:PrincipalTag/EnableGlueWorkloadsPermissions": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "glue:ListDataQualityRulesetEvaluationRuns",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "glue:*DataQuality*",
+      "condition": {
+        "StringEquals": {
+          "aws:PrincipalTag/EnableGlueWorkloadsPermissions": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "glue:ListDataQualityRulesets",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
       "access_level": "Write",
-      "action": "glue:PublishDataQuality",
+      "action": "glue:*DataQuality*",
       "condition": {
         "StringEquals": {
           "aws:PrincipalTag/EnableGlueWorkloadsPermissions": "true"
@@ -5109,6 +5369,76 @@
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "glue:PublishDataQuality",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "glue:*DataQuality*",
+      "condition": {
+        "StringEquals": {
+          "aws:PrincipalTag/EnableGlueWorkloadsPermissions": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "glue:PutDataQualityProfileAnnotation",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "glue:*DataQuality*",
+      "condition": {
+        "StringEquals": {
+          "aws:PrincipalTag/EnableGlueWorkloadsPermissions": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "glue:PutDataQualityStatisticAnnotation",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "glue:*DataQuality*",
+      "condition": {
+        "StringEquals": {
+          "aws:PrincipalTag/EnableGlueWorkloadsPermissions": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "glue:StartDataQualityRuleRecommendationRun",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "glue:*DataQuality*",
+      "condition": {
+        "StringEquals": {
+          "aws:PrincipalTag/EnableGlueWorkloadsPermissions": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "glue:StartDataQualityRulesetEvaluationRun",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "glue:*DataQuality*",
+      "condition": {
+        "StringEquals": {
+          "aws:PrincipalTag/EnableGlueWorkloadsPermissions": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "glue:UpdateDataQualityRuleset",
       "privesc": false,
       "resource_exposure": false
     },
@@ -7762,6 +8092,122 @@
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "datazone:PostLineageEvent",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "datazone:*Compute*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "datazone:GetCompute",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "datazone:*Compute*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "datazone:GetNotebookCompute",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "datazone:*Compute*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "datazone:StartCompute",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "datazone:*Compute*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "datazone:StartNotebookCompute",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "datazone:*Compute*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "datazone:StopCompute",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "datazone:*Compute*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "datazone:StopNotebookCompute",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "codeconnections:GetConnection",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/for-use-with-all-datazone-projects": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "codeconnections:GetConnection",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "codeconnections:UseConnection",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/for-use-with-all-datazone-projects": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "codeconnections:UseConnection",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "codestar-connections:GetConnection",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/for-use-with-all-datazone-projects": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "codestar-connections:GetConnection",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "codestar-connections:UseConnection",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/for-use-with-all-datazone-projects": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "codestar-connections:UseConnection",
       "privesc": false,
       "resource_exposure": false
     },
@@ -13305,6 +13751,66 @@
       "resource_exposure": false
     },
     {
+      "access_level": "Read",
+      "action": "codeconnections:GetHost",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "codeconnections:GetHost",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "codeconnections:ListConnections",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "codeconnections:ListConnections",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "codeconnections:ListTagsForResource",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "codeconnections:ListTagsForResource",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "codestar-connections:GetHost",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "codestar-connections:GetHost",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "codestar-connections:ListConnections",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "codestar-connections:ListConnections",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "codestar-connections:ListTagsForResource",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "codestar-connections:ListTagsForResource",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
       "access_level": "Write",
       "action": "ec2:CreateNetworkInterface",
       "condition": {
@@ -14132,36 +14638,6 @@
       "effective_action": "quicksight:CreateFolderMembership",
       "privesc": false,
       "resource_exposure": false
-    },
-    {
-      "access_level": "Read",
-      "action": "sagemaker-unified-studio-mcp:InvokeMcp",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "sagemaker-unified-studio-mcp:InvokeMcp",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Read",
-      "action": "sagemaker-unified-studio-mcp:CallReadOnlyTool",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "sagemaker-unified-studio-mcp:CallReadOnlyTool",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Write",
-      "action": "sagemaker-unified-studio-mcp:CallPrivilegedTool",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "sagemaker-unified-studio-mcp:CallPrivilegedTool",
-      "privesc": false,
-      "resource_exposure": false
     }
   ],
   "grantless": false,
@@ -14171,6 +14647,6 @@
   "resource_exposure": true,
   "undocumented_actions": true,
   "unknown_actions": [],
-  "updatedate": "2026-06-04T21:27:16+00:00",
-  "version": "v69"
+  "updatedate": "2026-06-29T20:27:23+00:00",
+  "version": "v71"
 }

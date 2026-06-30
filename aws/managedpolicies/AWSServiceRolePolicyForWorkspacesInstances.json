@@ -5,7 +5,7 @@
     "Write"
   ],
   "arn": "arn:aws:iam::aws:policy/aws-service-role/AWSServiceRolePolicyForWorkspacesInstances",
-  "createdate": "2026-04-07T17:27:17+00:00",
+  "createdate": "2026-06-29T23:42:20+00:00",
   "credentials_exposure": false,
   "data_access": false,
   "deprecated": false,
@@ -13,13 +13,55 @@
     "Statement": [
       {
         "Action": [
+          "ec2:DescribeCapacityReservations",
           "ec2:DescribeInstances",
           "ec2:DescribeInstanceStatus",
           "ec2:DescribeTags",
           "ec2:DescribeVolumes"
         ],
         "Effect": "Allow",
-        "Resource": "*"
+        "Resource": "*",
+        "Sid": "DescribeResources"
+      },
+      {
+        "Action": [
+          "ec2:CreateCapacityReservation"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:RequestTag/ManagedBy": "workspaces-instances"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "CreateCapacityReservation"
+      },
+      {
+        "Action": [
+          "ec2:ModifyCapacityReservation",
+          "ec2:CancelCapacityReservation"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceTag/ManagedBy": "workspaces-instances"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "ManageTaggedCapacityReservations"
+      },
+      {
+        "Action": [
+          "ec2:CreateTags"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:RequestTag/ManagedBy": "workspaces-instances"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:ec2:*:*:capacity-reservation/*",
+        "Sid": "TagRemediation"
       },
       {
         "Action": [
@@ -35,12 +77,23 @@
           }
         },
         "Effect": "Allow",
-        "Resource": "*"
+        "Resource": "*",
+        "Sid": "ManagedInstanceOperations"
       }
     ],
     "Version": "2012-10-17"
   },
   "effective_actions": [
+    {
+      "access_level": "List",
+      "action": "ec2:DescribeCapacityReservations",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:DescribeCapacityReservations",
+      "privesc": false,
+      "resource_exposure": false
+    },
     {
       "access_level": "List",
       "action": "ec2:DescribeInstances",
@@ -78,6 +131,62 @@
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "ec2:DescribeVolumes",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:CreateCapacityReservation",
+      "condition": {
+        "StringEquals": {
+          "aws:RequestTag/ManagedBy": "workspaces-instances"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:CreateCapacityReservation",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:ModifyCapacityReservation",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/ManagedBy": "workspaces-instances"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:ModifyCapacityReservation",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:CancelCapacityReservation",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/ManagedBy": "workspaces-instances"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:CancelCapacityReservation",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Tagging",
+      "action": "ec2:CreateTags",
+      "condition": {
+        "StringEquals": {
+          "aws:RequestTag/ManagedBy": "workspaces-instances"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:CreateTags",
       "privesc": false,
       "resource_exposure": false
     },
@@ -159,6 +268,6 @@
   "resource_exposure": false,
   "undocumented_actions": false,
   "unknown_actions": [],
-  "updatedate": "2026-04-07T17:27:17+00:00",
-  "version": "v2"
+  "updatedate": "2026-06-29T23:42:20+00:00",
+  "version": "v3"
 }

@@ -8,7 +8,7 @@
     "Unknown"
   ],
   "arn": "arn:aws:iam::aws:policy/SageMakerStudioUserIAMDefaultExecutionPolicy",
-  "createdate": "2026-06-04T21:27:14+00:00",
+  "createdate": "2026-06-29T16:12:28+00:00",
   "credentials_exposure": true,
   "data_access": true,
   "deprecated": false,
@@ -66,7 +66,9 @@
           "datazone:GenerateCode",
           "datazone:SendMessage",
           "datazone:CancelMessage",
-          "datazone:QueryGraph"
+          "datazone:QueryGraph",
+          "datazone:StartCompute",
+          "datazone:StopCompute"
         ],
         "Effect": "Allow",
         "Resource": "*",
@@ -89,16 +91,6 @@
         "Effect": "Allow",
         "Resource": "*",
         "Sid": "ValidateCfn"
-      },
-      {
-        "Action": [
-          "sagemaker-unified-studio-mcp:InvokeMcp",
-          "sagemaker-unified-studio-mcp:CallReadOnlyTool",
-          "sagemaker-unified-studio-mcp:CallPrivilegedTool"
-        ],
-        "Effect": "Allow",
-        "Resource": "*",
-        "Sid": "SageMakerUnifiedStudioMcp"
       },
       {
         "Action": [
@@ -185,7 +177,8 @@
         "Action": [
           "sagemaker:CreatePresignedDomainUrl",
           "sagemaker:CreateUserProfile",
-          "sagemaker:DeleteUserProfile"
+          "sagemaker:DeleteUserProfile",
+          "sagemaker:UpdateUserProfile"
         ],
         "Condition": {
           "StringEquals": {
@@ -218,6 +211,25 @@
           "arn:aws:sagemaker:*:*:app/*"
         ],
         "Sid": "SageMakerPrivateSpace"
+      },
+      {
+        "Action": [
+          "sagemaker:CreateApp",
+          "sagemaker:DeleteApp",
+          "sagemaker:CreateSpace",
+          "sagemaker:DeleteSpace"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceTag/AmazonDataZoneUser": "${aws:PrincipalTag/datazone:userId}"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:sagemaker:*:*:app/*/Canvas/*",
+          "arn:aws:sagemaker:*:*:space/*/CanvasManagedSpace*"
+        ],
+        "Sid": "CanvasUserProfileApp"
       },
       {
         "Action": [
@@ -297,6 +309,9 @@
         "Action": [
           "cloudwatch:PutMetricData",
           "cloudwatch:GetMetricData",
+          "cloudwatch:DescribeAlarms",
+          "cloudwatch:PutMetricAlarm",
+          "cloudwatch:DeleteAlarms",
           "logs:CreateLogGroup",
           "logs:CreateLogStream",
           "logs:Describe*",
@@ -495,7 +510,8 @@
               "emr-serverless.amazonaws.com",
               "elasticmapreduce.amazonaws.com",
               "redshift.amazonaws.com",
-              "airflow-serverless.amazonaws.com"
+              "airflow-serverless.amazonaws.com",
+              "events.amazonaws.com"
             ]
           }
         },
@@ -614,7 +630,8 @@
           "secretsmanager:DescribeSecret",
           "secretsmanager:GetSecretValue",
           "secretsmanager:UpdateSecret",
-          "secretsmanager:PutResourcePolicy"
+          "secretsmanager:PutResourcePolicy",
+          "secretsmanager:PutSecretValue"
         ],
         "Condition": {
           "StringEquals": {
@@ -630,7 +647,8 @@
           "secretsmanager:CreateSecret",
           "secretsmanager:DescribeSecret",
           "secretsmanager:GetSecretValue",
-          "secretsmanager:UpdateSecret"
+          "secretsmanager:UpdateSecret",
+          "secretsmanager:PutSecretValue"
         ],
         "Condition": {
           "StringEquals": {
@@ -663,20 +681,32 @@
       },
       {
         "Action": [
-          "codeconnections:UseConnection",
-          "codeconnections:ListConnections",
           "codeconnections:GetConnection",
-          "codeconnections:GetHost",
-          "codeconnections:ListTagsForResource",
-          "codestar-connections:UseConnection",
-          "codestar-connections:ListConnections",
+          "codeconnections:UseConnection",
           "codestar-connections:GetConnection",
+          "codestar-connections:UseConnection"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceTag/for-use-with-all-datazone-projects": "true"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "CodeConnectionsUser"
+      },
+      {
+        "Action": [
+          "codeconnections:GetHost",
+          "codeconnections:ListConnections",
+          "codeconnections:ListTagsForResource",
           "codestar-connections:GetHost",
+          "codestar-connections:ListConnections",
           "codestar-connections:ListTagsForResource"
         ],
         "Effect": "Allow",
         "Resource": "*",
-        "Sid": "CodeConnectionsUser"
+        "Sid": "CodeConnectionsUserList"
       },
       {
         "Action": [
@@ -909,7 +939,8 @@
           "ec2:CreateNetworkInterface",
           "ec2:DeleteNetworkInterface",
           "ec2:CreateNetworkInterfacePermission",
-          "ec2:DeleteNetworkInterfacePermission"
+          "ec2:DeleteNetworkInterfacePermission",
+          "ec2:CreateVpcEndpoint"
         ],
         "Effect": "Allow",
         "Resource": "*",
@@ -966,6 +997,78 @@
         "Effect": "Allow",
         "Resource": "*",
         "Sid": "EMR"
+      },
+      {
+        "Action": [
+          "comprehend:BatchDetect*",
+          "comprehend:Detect*",
+          "textract:Analyze*",
+          "textract:Start*",
+          "textract:Get*",
+          "rekognition:Detect*",
+          "sagemaker-data-science-assistant:*",
+          "rds:DescribeDBInstances",
+          "application-autoscaling:PutScalingPolicy",
+          "application-autoscaling:RegisterScalableTarget",
+          "application-autoscaling:DescribeScalingActivities",
+          "quicksight:ListNamespaces",
+          "events:ListTagsForResource"
+        ],
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "CanvasGeneralPermissions"
+      },
+      {
+        "Action": [
+          "redshift:GetClusterCredentials"
+        ],
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:redshift:*:*:dbuser:*/sagemaker_access*",
+          "arn:aws:redshift:*:*:dbname:*"
+        ],
+        "Sid": "CanvasRedshiftAccess"
+      },
+      {
+        "Action": [
+          "events:PutRule"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:RequestTag/sagemaker:is-canvas-data-prep-job": "true"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:events:*:*:rule/*",
+        "Sid": "CanvasEventBridgePutOperation"
+      },
+      {
+        "Action": [
+          "events:DescribeRule",
+          "events:PutTargets"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceTag/sagemaker:is-canvas-data-prep-job": "true"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:events:*:*:rule/*",
+        "Sid": "CanvasEventBridgeOperations"
+      },
+      {
+        "Action": [
+          "events:TagResource"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:RequestTag/sagemaker:is-canvas-data-prep-job": "true",
+            "aws:ResourceTag/sagemaker:is-canvas-data-prep-job": "true"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:events:*:*:rule/*",
+        "Sid": "CanvasEventBridgeTagBasedOperations"
       }
     ],
     "Version": "2012-10-17"
@@ -2523,6 +2626,26 @@
     },
     {
       "access_level": "Write",
+      "action": "datazone:StartCompute",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "datazone:StartCompute",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "datazone:StopCompute",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "datazone:StopCompute",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
       "action": "cloudformation:*",
       "condition": null,
       "credentials_exposure": false,
@@ -3553,36 +3676,6 @@
     },
     {
       "access_level": "Read",
-      "action": "sagemaker-unified-studio-mcp:InvokeMcp",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "sagemaker-unified-studio-mcp:InvokeMcp",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Read",
-      "action": "sagemaker-unified-studio-mcp:CallReadOnlyTool",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "sagemaker-unified-studio-mcp:CallReadOnlyTool",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Write",
-      "action": "sagemaker-unified-studio-mcp:CallPrivilegedTool",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "sagemaker-unified-studio-mcp:CallPrivilegedTool",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Read",
       "action": "iam:GetRole",
       "condition": null,
       "credentials_exposure": false,
@@ -3935,6 +4028,20 @@
     },
     {
       "access_level": "Write",
+      "action": "sagemaker:UpdateUserProfile",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/AmazonDataZoneUser": "${aws:PrincipalTag/datazone:userId}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sagemaker:UpdateUserProfile",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
       "action": "sagemaker:CreateApp",
       "condition": {
         "StringEquals": {
@@ -4015,6 +4122,62 @@
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "sagemaker:UpdateSpace",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "sagemaker:CreateApp",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/AmazonDataZoneUser": "${aws:PrincipalTag/datazone:userId}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sagemaker:CreateApp",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "sagemaker:DeleteApp",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/AmazonDataZoneUser": "${aws:PrincipalTag/datazone:userId}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sagemaker:DeleteApp",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "sagemaker:CreateSpace",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/AmazonDataZoneUser": "${aws:PrincipalTag/datazone:userId}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sagemaker:CreateSpace",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "sagemaker:DeleteSpace",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/AmazonDataZoneUser": "${aws:PrincipalTag/datazone:userId}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sagemaker:DeleteSpace",
       "privesc": false,
       "resource_exposure": false
     },
@@ -8479,6 +8642,36 @@
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "cloudwatch:GetMetricData",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "cloudwatch:DescribeAlarms",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudwatch:DescribeAlarms",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "cloudwatch:PutMetricAlarm",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudwatch:PutMetricAlarm",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "cloudwatch:DeleteAlarms",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudwatch:DeleteAlarms",
       "privesc": false,
       "resource_exposure": false
     },
@@ -22307,7 +22500,8 @@
             "emr-serverless.amazonaws.com",
             "elasticmapreduce.amazonaws.com",
             "redshift.amazonaws.com",
-            "airflow-serverless.amazonaws.com"
+            "airflow-serverless.amazonaws.com",
+            "events.amazonaws.com"
           ]
         }
       },
@@ -24047,6 +24241,20 @@
     },
     {
       "access_level": "Write",
+      "action": "secretsmanager:PutSecretValue",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/AmazonDataZoneProject": "${datazone:projectId}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "secretsmanager:PutSecretValue",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
       "action": "secretsmanager:CreateSecret",
       "condition": {
         "StringEquals": {
@@ -24098,6 +24306,20 @@
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "secretsmanager:UpdateSecret",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "secretsmanager:PutSecretValue",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/for-use-with-all-datazone-projects": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "secretsmanager:PutSecretValue",
       "privesc": false,
       "resource_exposure": false
     },
@@ -24163,8 +24385,26 @@
     },
     {
       "access_level": "Read",
+      "action": "codeconnections:GetConnection",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/for-use-with-all-datazone-projects": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "codeconnections:GetConnection",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
       "action": "codeconnections:UseConnection",
-      "condition": null,
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/for-use-with-all-datazone-projects": "true"
+        }
+      },
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "codeconnections:UseConnection",
@@ -24172,22 +24412,30 @@
       "resource_exposure": false
     },
     {
-      "access_level": "List",
-      "action": "codeconnections:ListConnections",
-      "condition": null,
+      "access_level": "Read",
+      "action": "codestar-connections:GetConnection",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/for-use-with-all-datazone-projects": "true"
+        }
+      },
       "credentials_exposure": false,
       "data_access": false,
-      "effective_action": "codeconnections:ListConnections",
+      "effective_action": "codestar-connections:GetConnection",
       "privesc": false,
       "resource_exposure": false
     },
     {
       "access_level": "Read",
-      "action": "codeconnections:GetConnection",
-      "condition": null,
+      "action": "codestar-connections:UseConnection",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/for-use-with-all-datazone-projects": "true"
+        }
+      },
       "credentials_exposure": false,
       "data_access": false,
-      "effective_action": "codeconnections:GetConnection",
+      "effective_action": "codestar-connections:UseConnection",
       "privesc": false,
       "resource_exposure": false
     },
@@ -24203,6 +24451,16 @@
     },
     {
       "access_level": "List",
+      "action": "codeconnections:ListConnections",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "codeconnections:ListConnections",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
       "action": "codeconnections:ListTagsForResource",
       "condition": null,
       "credentials_exposure": false,
@@ -24213,11 +24471,11 @@
     },
     {
       "access_level": "Read",
-      "action": "codestar-connections:UseConnection",
+      "action": "codestar-connections:GetHost",
       "condition": null,
       "credentials_exposure": false,
       "data_access": false,
-      "effective_action": "codestar-connections:UseConnection",
+      "effective_action": "codestar-connections:GetHost",
       "privesc": false,
       "resource_exposure": false
     },
@@ -24228,26 +24486,6 @@
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "codestar-connections:ListConnections",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Read",
-      "action": "codestar-connections:GetConnection",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "codestar-connections:GetConnection",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Read",
-      "action": "codestar-connections:GetHost",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "codestar-connections:GetHost",
       "privesc": false,
       "resource_exposure": false
     },
@@ -26781,6 +27019,16 @@
       "resource_exposure": true
     },
     {
+      "access_level": "Write",
+      "action": "ec2:CreateVpcEndpoint",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:CreateVpcEndpoint",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
       "access_level": "Tagging",
       "action": "ec2:CreateTags",
       "condition": null,
@@ -27889,6 +28137,483 @@
       "effective_action": "elasticmapreduce:RemoveTags",
       "privesc": false,
       "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "comprehend:BatchDetect*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "comprehend:BatchDetectDominantLanguage",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "comprehend:BatchDetect*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "comprehend:BatchDetectEntities",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "comprehend:BatchDetect*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "comprehend:BatchDetectKeyPhrases",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "comprehend:BatchDetect*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "comprehend:BatchDetectSentiment",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "comprehend:BatchDetect*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "comprehend:BatchDetectSyntax",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "comprehend:BatchDetect*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "comprehend:BatchDetectTargetedSentiment",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "comprehend:Detect*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "comprehend:DetectDominantLanguage",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "comprehend:Detect*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "comprehend:DetectEntities",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "comprehend:Detect*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "comprehend:DetectKeyPhrases",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "comprehend:Detect*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "comprehend:DetectPiiEntities",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "comprehend:Detect*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "comprehend:DetectSentiment",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "comprehend:Detect*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "comprehend:DetectSyntax",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "comprehend:Detect*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "comprehend:DetectTargetedSentiment",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "comprehend:Detect*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "comprehend:DetectToxicContent",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "textract:Analyze*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "textract:AnalyzeDocument",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "textract:Analyze*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "textract:AnalyzeExpense",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "textract:Analyze*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "textract:AnalyzeID",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "textract:Start*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "textract:StartDocumentAnalysis",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "textract:Start*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "textract:StartDocumentTextDetection",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "textract:Start*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "textract:StartExpenseAnalysis",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "textract:Start*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "textract:StartLendingAnalysis",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "textract:Get*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "textract:GetAdapter",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "textract:Get*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "textract:GetAdapterVersion",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "textract:Get*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "textract:GetDocumentAnalysis",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "textract:Get*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "textract:GetDocumentTextDetection",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "textract:Get*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "textract:GetExpenseAnalysis",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "textract:Get*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "textract:GetLendingAnalysis",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "textract:Get*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "textract:GetLendingAnalysisSummary",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "rekognition:Detect*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "rekognition:DetectCustomLabels",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "rekognition:Detect*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "rekognition:DetectFaces",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "rekognition:Detect*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "rekognition:DetectLabels",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "rekognition:Detect*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "rekognition:DetectModerationLabels",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "rekognition:Detect*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "rekognition:DetectProtectiveEquipment",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "rekognition:Detect*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "rekognition:DetectText",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "sagemaker-data-science-assistant:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sagemaker-data-science-assistant:SendConversation",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "rds:DescribeDBInstances",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "rds:DescribeDBInstances",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "application-autoscaling:PutScalingPolicy",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "application-autoscaling:PutScalingPolicy",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "application-autoscaling:RegisterScalableTarget",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "application-autoscaling:RegisterScalableTarget",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "application-autoscaling:DescribeScalingActivities",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "application-autoscaling:DescribeScalingActivities",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "quicksight:ListNamespaces",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "quicksight:ListNamespaces",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "events:ListTagsForResource",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "events:ListTagsForResource",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "redshift:GetClusterCredentials",
+      "condition": null,
+      "credentials_exposure": true,
+      "data_access": false,
+      "effective_action": "redshift:GetClusterCredentials",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "events:PutRule",
+      "condition": {
+        "StringEquals": {
+          "aws:RequestTag/sagemaker:is-canvas-data-prep-job": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "events:PutRule",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "events:DescribeRule",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/sagemaker:is-canvas-data-prep-job": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "events:DescribeRule",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "events:PutTargets",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/sagemaker:is-canvas-data-prep-job": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "events:PutTargets",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Tagging",
+      "action": "events:TagResource",
+      "condition": {
+        "StringEquals": {
+          "aws:RequestTag/sagemaker:is-canvas-data-prep-job": "true",
+          "aws:ResourceTag/sagemaker:is-canvas-data-prep-job": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "events:TagResource",
+      "privesc": false,
+      "resource_exposure": false
     }
   ],
   "grantless": false,
@@ -27898,6 +28623,6 @@
   "resource_exposure": true,
   "undocumented_actions": true,
   "unknown_actions": [],
-  "updatedate": "2026-06-04T21:27:14+00:00",
-  "version": "v26"
+  "updatedate": "2026-06-29T16:12:28+00:00",
+  "version": "v27"
 }

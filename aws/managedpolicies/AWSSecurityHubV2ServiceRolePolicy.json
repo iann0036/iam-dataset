@@ -6,7 +6,7 @@
     "Permissions management"
   ],
   "arn": "arn:aws:iam::aws:policy/aws-service-role/AWSSecurityHubV2ServiceRolePolicy",
-  "createdate": "2026-05-05T20:57:18+00:00",
+  "createdate": "2026-06-27T00:42:11+00:00",
   "credentials_exposure": false,
   "data_access": false,
   "deprecated": false,
@@ -17,14 +17,21 @@
           "config:DeleteServiceLinkedConfigurationRecorder",
           "config:DescribeConfigurationRecorders",
           "config:DescribeConfigurationRecorderStatus",
-          "config:PutServiceLinkedConfigurationRecorder"
+          "config:PutServiceLinkedConfigurationRecorder",
+          "config:PutThirdPartyServiceLinkedConfigurationRecorder"
         ],
         "Effect": "Allow",
-        "Resource": [
-          "arn:aws:config:*:*:configuration-recorder/AWSConfigurationRecorderForSecurityHubAssets/*",
-          "arn:aws:config:*:*:configuration-recorder/AWSConfigurationRecorderForSecurityHubAssetsGlobal/*"
-        ],
+        "Resource": "arn:aws:config:*:*:configuration-recorder/*ConfigurationRecorderForSecurityHubAssets*",
         "Sid": "SecurityHubV2ServiceRoleAssetsConfig"
+      },
+      {
+        "Action": [
+          "config:ListConfigurationRecorders",
+          "config:GetConnector"
+        ],
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "SecurityHubV2ServiceRoleAssetsConfigListAndGet"
       },
       {
         "Action": [
@@ -43,7 +50,9 @@
         "Action": [
           "securityhub:DisableSecurityHubV2",
           "securityhub:EnableSecurityHubV2",
-          "securityhub:DescribeSecurityHubV2"
+          "securityhub:DescribeSecurityHubV2",
+          "securityhub:EnableSecurityHubFeatureV2",
+          "securityhub:DisableSecurityHubFeatureV2"
         ],
         "Condition": {
           "StringEquals": {
@@ -112,7 +121,7 @@
         ],
         "Effect": "Allow",
         "Resource": "*",
-        "Sid": "SecurityHubV2ServiceRoleLambdaMetricPermissions"
+        "Sid": "SecurityHubV2ServiceRoleLambdaAndConfigMetricPermissions"
       },
       {
         "Action": [
@@ -188,6 +197,67 @@
           "arn:aws:iam::*:user/*"
         ],
         "Sid": "SecurityHubV2ServiceRoleAPIPolicyPermissions"
+      },
+      {
+        "Action": [
+          "securityhub:CreateConnector",
+          "securityhub:UpdateConnector",
+          "securityhub:DeleteConnector"
+        ],
+        "Condition": {
+          "StringLikeIfExists": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:securityhub:*:*:connector/*",
+        "Sid": "SecurityHubConnectorPermissions"
+      },
+      {
+        "Action": [
+          "inspector2:CreateConnector",
+          "inspector2:DeleteConnector",
+          "inspector2:ListConnectors",
+          "inspector2:ListConnectorScanConfigurations",
+          "inspector2:UpdateConnector",
+          "inspector2:UpdateConnectorScanConfiguration"
+        ],
+        "Condition": {
+          "StringLikeIfExists": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "SecurityHubV2ServiceRoleInspectorConnectorPermissions"
+      },
+      {
+        "Action": [
+          "iam:CreateServiceLinkedRole"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "iam:AWSServiceName": "thirdparty.inspector2.amazonaws.com"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:iam::*:role/aws-service-role/thirdparty.inspector2.amazonaws.com/*",
+        "Sid": "SecurityHubV2ServiceRoleInspectorIamPermissions"
+      },
+      {
+        "Action": [
+          "sts:GetWebIdentityToken"
+        ],
+        "Condition": {
+          "ForAnyValue:StringLike": {
+            "sts:IdentityTokenAudience": [
+              "api://AzureADTokenExchange"
+            ]
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "SecurityHubV2ServiceRoleOutboundIdentityFederationPermission"
       }
     ],
     "Version": "2012-10-17"
@@ -230,6 +300,36 @@
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "config:PutServiceLinkedConfigurationRecorder",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "config:PutThirdPartyServiceLinkedConfigurationRecorder",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "config:PutThirdPartyServiceLinkedConfigurationRecorder",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "config:ListConfigurationRecorders",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "config:ListConfigurationRecorders",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "config:GetConnector",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "config:GetConnector",
       "privesc": false,
       "resource_exposure": false
     },
@@ -286,6 +386,34 @@
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "securityhub:DescribeSecurityHubV2",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "securityhub:EnableSecurityHubFeatureV2",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "securityhub:EnableSecurityHubFeatureV2",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "securityhub:DisableSecurityHubFeatureV2",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "securityhub:DisableSecurityHubFeatureV2",
       "privesc": false,
       "resource_exposure": false
     },
@@ -540,6 +668,162 @@
       "effective_action": "iam:GetUserPolicy",
       "privesc": false,
       "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "securityhub:CreateConnector",
+      "condition": {
+        "StringLikeIfExists": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "securityhub:CreateConnector",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "securityhub:UpdateConnector",
+      "condition": {
+        "StringLikeIfExists": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "securityhub:UpdateConnector",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "securityhub:DeleteConnector",
+      "condition": {
+        "StringLikeIfExists": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "securityhub:DeleteConnector",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "inspector2:CreateConnector",
+      "condition": {
+        "StringLikeIfExists": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "inspector2:CreateConnector",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "inspector2:DeleteConnector",
+      "condition": {
+        "StringLikeIfExists": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "inspector2:DeleteConnector",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "inspector2:ListConnectors",
+      "condition": {
+        "StringLikeIfExists": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "inspector2:ListConnectors",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "inspector2:ListConnectorScanConfigurations",
+      "condition": {
+        "StringLikeIfExists": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "inspector2:ListConnectorScanConfigurations",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "inspector2:UpdateConnector",
+      "condition": {
+        "StringLikeIfExists": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "inspector2:UpdateConnector",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "inspector2:UpdateConnectorScanConfiguration",
+      "condition": {
+        "StringLikeIfExists": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "inspector2:UpdateConnectorScanConfiguration",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Permissions management",
+      "action": "iam:CreateServiceLinkedRole",
+      "condition": {
+        "StringEquals": {
+          "iam:AWSServiceName": "thirdparty.inspector2.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "iam:CreateServiceLinkedRole",
+      "privesc": true,
+      "resource_exposure": true
+    },
+    {
+      "access_level": "Write",
+      "action": "sts:GetWebIdentityToken",
+      "condition": {
+        "ForAnyValue:StringLike": {
+          "sts:IdentityTokenAudience": [
+            "api://AzureADTokenExchange"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sts:GetWebIdentityToken",
+      "privesc": false,
+      "resource_exposure": false
     }
   ],
   "grantless": false,
@@ -550,5 +834,5 @@
   "undocumented_actions": false,
   "unknown_actions": [],
   "updatedate": "2026-06-27T00:42:11+00:00",
-  "version": "v7"
+  "version": "v8"
 }
