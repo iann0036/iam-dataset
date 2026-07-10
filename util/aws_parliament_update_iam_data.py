@@ -115,6 +115,97 @@ def header_matches(string, table):
     return True
 
 
+def column_index(substring, table):
+    """Return the index of the first header column whose text contains substring
+    (case-insensitive), or None if no header matches. Used to map the actions
+    table columns by name, since AWS reorders/adds/removes columns over time."""
+    headers = [chomp(x.text).lower() for x in table.find_all("th")]
+    for idx, header in enumerate(headers):
+        if substring in header:
+            return idx
+    return None
+
+
+def is_operations_table(table):
+    """The "API operations defined by <service>" table maps each API operation to
+    the IAM actions it authorizes (columns: Operation | IAM action | Condition key
+    | Possible value(s) | Access level)."""
+    return (
+        column_index("operation", table) is not None
+        and column_index("iam action", table) is not None
+    )
+
+
+def parse_dependent_actions(table, prefix):
+    """Reconstruct per-privilege dependent actions from the "API operations
+    defined by" table.
+
+    AWS used to publish a "Dependent actions" column in the actions table; that
+    column is gone. The operations table now lists, for each API operation, every
+    IAM action it authorizes. The operation's primary action is ``prefix:Operation``
+    and the remaining actions in its group are treated as that action's dependent
+    actions. Returns ``{privilege_name: [dependent action strings]}``.
+    """
+    operation_col = column_index("operation", table)
+    iam_action_col = column_index("iam action", table)
+    if operation_col is None or iam_action_col is None:
+        return {}
+
+    num_columns = len(table.find_all("th"))
+    # Every column except the Operation column repeats on continuation rows.
+    per_row_columns = sorted(col for col in range(num_columns) if col != operation_col)
+
+    # operation name -> ordered list of IAM action strings it authorizes
+    operations = {}
+    rows = table.find_all("tr")
+    row_number = 0
+    while row_number < len(rows):
+        cells = rows[row_number].find_all("td")
+        if len(cells) == 0:
+            # Skip the header row, which has th, not td cells
+            row_number += 1
+            continue
+        if len(cells) != num_columns:
+            break
+
+        rowspan = 1
+        if "rowspan" in cells[operation_col].attrs:
+            rowspan = int(cells[operation_col].attrs["rowspan"])
+        operation_name = chomp(cells[operation_col].text)
+        actions = operations.setdefault(operation_name, [])
+
+        is_operation_row = True
+        while rowspan > 0:
+            if is_operation_row:
+                action_cell = cells[iam_action_col]
+            else:
+                action_cell = dict(zip(per_row_columns, cells)).get(iam_action_col)
+
+            if action_cell is not None:
+                action = chomp(action_cell.text)
+                if action and action not in actions:
+                    actions.append(action)
+
+            rowspan -= 1
+            if rowspan > 0:
+                row_number += 1
+                cells = rows[row_number].find_all("td")
+                is_operation_row = False
+        row_number += 1
+
+    dependent_actions_by_privilege = {}
+    for operation_name, actions in operations.items():
+        primary_action = "{}:{}".format(prefix, operation_name)
+        if primary_action not in actions:
+            # Can't confidently identify the operation's primary action, so we
+            # don't attribute its dependents to any privilege.
+            continue
+        dependents = [action for action in actions if action != primary_action]
+        if dependents:
+            dependent_actions_by_privilege[operation_name] = dependents
+    return dependent_actions_by_privilege
+
+
 # Create the docs directory
 Path("docs").mkdir(parents=True, exist_ok=True)
 
@@ -158,13 +249,55 @@ for filename in [f for f in listdir(mypath) if isfile(join(mypath, f))]:
 
         tables = main_content.find_all("div", class_="table-contents")
 
+        # AWS removed the "Dependent actions" column from the actions table; the
+        # equivalent data now lives in the "API operations defined by" table, which
+        # we parse first so we can reattach dependent actions to each privilege.
+        dependent_actions_by_privilege = {}
         for table in tables:
-            # There can be 3 tables, the actions table, an ARN table, and a condition key table
-            # Example: https://docs.aws.amazon.com/IAM/latest/UserGuide/list_awssecuritytokenservice.html
+            if is_operations_table(table):
+                dependent_actions_by_privilege = parse_dependent_actions(table, prefix)
+                break
+
+        for table in tables:
+            # AWS now publishes actions across two tables that share the same
+            # column layout: "Actions defined by <service>" and, where present,
+            # "Permission-only actions for <service>". Both are matched here (and
+            # neither the API operations, resource types, nor condition key tables
+            # collide, since they lack an "actions"+"description" header pair).
+            # Example: https://docs.aws.amazon.com/service-authorization/latest/reference/list_fis.html
             if not header_matches("actions", table) or not header_matches(
                 "description", table
             ):
                 continue
+
+            # Map columns by header name rather than fixed positions. The current
+            # layout is: Actions | Description | Resource types | Condition keys |
+            # Access level (the older layout put Access level before Resource
+            # types and had a trailing Dependent actions column, now removed).
+            actions_col = column_index("actions", table)
+            description_col = column_index("description", table)
+            access_col = column_index("access level", table)
+            resource_col = column_index("resource types", table)
+            condition_col = column_index("condition keys", table)
+            dependent_col = column_index("dependent actions", table)
+
+            num_columns = len(table.find_all("th"))
+
+            # The per-resource columns repeat on each continuation row (the
+            # Actions/Description/Access level columns are spanned via rowspan).
+            per_row_columns = sorted(
+                col
+                for col in (resource_col, condition_col, dependent_col)
+                if col is not None
+            )
+
+            def cell_texts(element):
+                """Split a table cell into its list of <p> values, ignoring empty cells."""
+                values = []
+                if element is not None and element.text.strip() != "":
+                    for paragraph in element.find_all("p"):
+                        values.append(chomp(paragraph.text))
+                return values
 
             rows = table.find_all("tr")
             row_number = 0
@@ -177,70 +310,73 @@ for filename in [f for f in listdir(mypath) if isfile(join(mypath, f))]:
                     row_number += 1
                     continue
 
-                if len(cells) != 6:
+                if len(cells) != num_columns:
                     # Sometimes the privilege contains Scenarios, and I don't know how to handle this
                     break
                     # raise Exception("Unexpected format in {}: {}".format(prefix, row))
 
                 # See if this cell spans multiple rows
                 rowspan = 1
-                if "rowspan" in cells[0].attrs:
-                    rowspan = int(cells[0].attrs["rowspan"])
+                if "rowspan" in cells[actions_col].attrs:
+                    rowspan = int(cells[actions_col].attrs["rowspan"])
 
                 priv = ""
                 # Get the privilege
-                for link in cells[0].find_all("a"):
+                for link in cells[actions_col].find_all("a"):
                     if "href" not in link.attrs:
                         # Skip the <a id='...'> tags
                         continue
                     priv = chomp(link.text)
                 if priv == "":
-                    priv = chomp(cells[0].text)
+                    priv = chomp(cells[actions_col].text)
 
-                description = chomp(cells[1].text)
-                access_level = chomp(cells[2].text)
+                description = chomp(cells[description_col].text)
+                access_level = chomp(cells[access_col].text)
 
                 resource_types = []
-                resource_cell = 3
+                is_action_row = True
 
                 while rowspan > 0:
-                    if len(cells) == 3 or len(cells) == 6:
-                        # ec2:RunInstances contains a few "scenarios" which start in the
-                        # description field, len(cells) is 5.
-                        # I'm ignoring these as I don't know how to handle them.
-                        # These include things like "EC2-Classic-InstanceStore" and
-                        # "EC2-VPC-InstanceStore-Subnet"
+                    if is_action_row:
+                        # The action row holds every column, so index by header.
+                        column_cell = lambda col: cells[col] if col is not None else None
+                    else:
+                        # Continuation rows only contain the per-resource columns,
+                        # in their original left-to-right (header) order.
+                        row_cells = dict(zip(per_row_columns, cells))
+                        column_cell = lambda col: row_cells.get(col)
 
-                        resource_type = chomp(cells[resource_cell].text)
-                        condition_keys_element = cells[resource_cell + 1]
-                        condition_keys = []
-                        if condition_keys_element.text != "":
-                            for key_element in condition_keys_element.find_all("p"):
-                                condition_keys.append(chomp(key_element.text))
+                    resource_type = ""
+                    resource_cell = column_cell(resource_col)
+                    if resource_cell is not None:
+                        resource_type = chomp(resource_cell.text)
 
-                        dependent_actions_element = cells[resource_cell + 2]
-                        dependent_actions = []
-                        if dependent_actions_element.text != "":
-                            for action_element in dependent_actions_element.find_all(
-                                "p"
-                            ):
-                                dependent_actions.append(chomp(action_element.text))
-                        resource_types.append(
-                            {
-                                "resource_type": resource_type,
-                                "condition_keys": condition_keys,
-                                "dependent_actions": dependent_actions,
-                            }
-                        )
+                    resource_types.append(
+                        {
+                            "resource_type": resource_type,
+                            "condition_keys": cell_texts(column_cell(condition_col)),
+                            "dependent_actions": cell_texts(column_cell(dependent_col)),
+                        }
+                    )
+
                     rowspan -= 1
                     if rowspan > 0:
                         row_number += 1
-                        resource_cell = 0
                         row = rows[row_number]
                         cells = row.find_all("td")
+                        is_action_row = False
 
                 if "[permission only]" in priv:
                     priv = priv.split(" ")[0]
+
+                # Reattach dependent actions recovered from the operations table.
+                # AWS no longer breaks these down per resource type, so we place
+                # them on the first resource type entry; every known consumer reads
+                # dependent actions unioned across all of a privilege's resource
+                # types, so the exact placement does not matter.
+                dependents = dependent_actions_by_privilege.get(priv, [])
+                if dependents and resource_types:
+                    resource_types[0]["dependent_actions"] = dependents
 
                 privilege_schema = {
                     "privilege": priv,
