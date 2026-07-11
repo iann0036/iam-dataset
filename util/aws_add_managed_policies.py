@@ -95,7 +95,8 @@ for policyname in os.listdir("MAMIP/policies/"):
                 action_pattern = get_action_pattern(action)
                 for potentialaction in allactions.keys():
                     if action_pattern.search(potentialaction.lower()):
-                        access_levels.append(allactions[potentialaction])
+                        for level_part in allactions[potentialaction].split(", "):
+                            access_levels.append(level_part.strip())
                         foundmatch = True
 
                         condition = None
@@ -155,7 +156,8 @@ for policyname in os.listdir("MAMIP/policies/"):
                 if matched:
                     continue
 
-                access_levels.append(allactions[potentialaction])
+                for level_part in allactions[potentialaction].split(", "):
+                    access_levels.append(level_part.strip())
 
                 condition = None
                 if 'Condition' in statement:
@@ -197,7 +199,7 @@ for policyname in os.listdir("MAMIP/policies/"):
         "Unknown": 6
     }
     access_levels = list(set(access_levels))
-    access_levels.sort(key=lambda x: access_level_order[x])
+    access_levels.sort(key=lambda x: access_level_order.get(x, 6))
 
     effective_action_names = [a['effective_action'] for a in effective_actions]
 
