@@ -8,7 +8,7 @@
     "Unknown"
   ],
   "arn": "arn:aws:iam::aws:policy/SageMakerStudioProjectUserRolePolicy",
-  "createdate": "2026-06-29T20:27:23+00:00",
+  "createdate": "2026-07-14T19:12:29+00:00",
   "credentials_exposure": true,
   "data_access": true,
   "deprecated": false,
@@ -1382,7 +1382,8 @@
               "emr-serverless.amazonaws.com",
               "elasticmapreduce.amazonaws.com",
               "scheduler.amazonaws.com",
-              "access-grants.s3.amazonaws.com"
+              "access-grants.s3.amazonaws.com",
+              "pods.eks.amazonaws.com"
             ]
           }
         },
@@ -1548,10 +1549,10 @@
       },
       {
         "Action": [
-          "emr-containers:DescribeManagedEndpoint",
+          "emr-containers:*ManagedEndpoint*",
+          "emr-containers:TagResource",
           "emr-containers:DescribeSecurityConfiguration",
           "emr-containers:DescribeVirtualCluster",
-          "emr-containers:GetManagedEndpointSessionCredentials",
           "redshift-serverless:GetCredentials",
           "redshift:GetClusterCredentialsWithIAM"
         ],
@@ -9959,7 +9960,8 @@
             "emr-serverless.amazonaws.com",
             "elasticmapreduce.amazonaws.com",
             "scheduler.amazonaws.com",
-            "access-grants.s3.amazonaws.com"
+            "access-grants.s3.amazonaws.com",
+            "pods.eks.amazonaws.com"
           ]
         }
       },
@@ -10814,8 +10816,36 @@
       "resource_exposure": false
     },
     {
+      "access_level": "Write",
+      "action": "emr-containers:*ManagedEndpoint*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/AmazonDataZoneProject": "${aws:PrincipalTag/AmazonDataZoneProject}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "emr-containers:CreateManagedEndpoint",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "emr-containers:*ManagedEndpoint*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/AmazonDataZoneProject": "${aws:PrincipalTag/AmazonDataZoneProject}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "emr-containers:DeleteManagedEndpoint",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
       "access_level": "Read",
-      "action": "emr-containers:DescribeManagedEndpoint",
+      "action": "emr-containers:*ManagedEndpoint*",
       "condition": {
         "StringEquals": {
           "aws:ResourceTag/AmazonDataZoneProject": "${aws:PrincipalTag/AmazonDataZoneProject}"
@@ -10824,6 +10854,48 @@
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "emr-containers:DescribeManagedEndpoint",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "emr-containers:*ManagedEndpoint*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/AmazonDataZoneProject": "${aws:PrincipalTag/AmazonDataZoneProject}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "emr-containers:GetManagedEndpointSessionCredentials",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "emr-containers:*ManagedEndpoint*",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/AmazonDataZoneProject": "${aws:PrincipalTag/AmazonDataZoneProject}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "emr-containers:ListManagedEndpoints",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Tagging, Write",
+      "action": "emr-containers:TagResource",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/AmazonDataZoneProject": "${aws:PrincipalTag/AmazonDataZoneProject}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "emr-containers:TagResource",
       "privesc": false,
       "resource_exposure": false
     },
@@ -10852,20 +10924,6 @@
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "emr-containers:DescribeVirtualCluster",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Write",
-      "action": "emr-containers:GetManagedEndpointSessionCredentials",
-      "condition": {
-        "StringEquals": {
-          "aws:ResourceTag/AmazonDataZoneProject": "${aws:PrincipalTag/AmazonDataZoneProject}"
-        }
-      },
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "emr-containers:GetManagedEndpointSessionCredentials",
       "privesc": false,
       "resource_exposure": false
     },
@@ -14677,6 +14735,6 @@
   "resource_exposure": true,
   "undocumented_actions": true,
   "unknown_actions": [],
-  "updatedate": "2026-06-29T20:27:23+00:00",
-  "version": "v71"
+  "updatedate": "2026-07-14T19:12:29+00:00",
+  "version": "v72"
 }
