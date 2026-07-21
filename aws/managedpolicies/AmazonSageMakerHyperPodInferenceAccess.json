@@ -7,7 +7,7 @@
     "Permissions management"
   ],
   "arn": "arn:aws:iam::aws:policy/AmazonSageMakerHyperPodInferenceAccess",
-  "createdate": "2026-02-12T18:01:18+00:00",
+  "createdate": "2026-07-20T20:57:13+00:00",
   "credentials_exposure": true,
   "data_access": true,
   "deprecated": false,
@@ -63,6 +63,54 @@
       },
       {
         "Action": [
+          "s3:PutObject"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:s3:::hyperpod-tls*/data-capture/*"
+        ],
+        "Sid": "DataCaptureS3"
+      },
+      {
+        "Action": [
+          "s3:ListBucket"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:s3:::hyperpod-tls*"
+        ],
+        "Sid": "S3ListBucketAccess"
+      },
+      {
+        "Action": [
+          "kms:Decrypt",
+          "kms:GenerateDataKey"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          },
+          "StringLike": {
+            "kms:EncryptionContext:aws:s3:arn": "arn:aws:s3:::hyperpod-tls*",
+            "kms:ViaService": "s3.*.amazonaws.com"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:kms:*:*:key/*",
+        "Sid": "DataCaptureKMS"
+      },
+      {
+        "Action": [
           "ecr:GetAuthorizationToken"
         ],
         "Effect": "Allow",
@@ -99,7 +147,8 @@
       {
         "Action": [
           "ec2:CreateNetworkInterface",
-          "ec2:CreateNetworkInterfacePermission"
+          "ec2:CreateNetworkInterfacePermission",
+          "ec2:DeleteNetworkInterface"
         ],
         "Condition": {
           "StringEquals": {
@@ -141,6 +190,19 @@
         "Effect": "Allow",
         "Resource": "arn:aws:eks:*:*:access-entry/*",
         "Sid": "EKSAccessEntryPolicyAssociation"
+      },
+      {
+        "Action": [
+          "eks:ListAssociatedAccessPolicies"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:eks:*:*:access-entry/*",
+        "Sid": "EKSAccessEntryListPolicies"
       },
       {
         "Action": [
@@ -394,6 +456,70 @@
       "resource_exposure": false
     },
     {
+      "access_level": "Write",
+      "action": "s3:PutObject",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3:PutObject",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "s3:ListBucket",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3:ListBucket",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "kms:Decrypt",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        },
+        "StringLike": {
+          "kms:EncryptionContext:aws:s3:arn": "arn:aws:s3:::hyperpod-tls*",
+          "kms:ViaService": "s3.*.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "kms:Decrypt",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "kms:GenerateDataKey",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        },
+        "StringLike": {
+          "kms:EncryptionContext:aws:s3:arn": "arn:aws:s3:::hyperpod-tls*",
+          "kms:ViaService": "s3.*.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "kms:GenerateDataKey",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
       "access_level": "Read",
       "action": "ecr:GetAuthorizationToken",
       "condition": null,
@@ -536,6 +662,20 @@
       "resource_exposure": true
     },
     {
+      "access_level": "Write",
+      "action": "ec2:DeleteNetworkInterface",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:DeleteNetworkInterface",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
       "access_level": "Read",
       "action": "eks:DescribeCluster",
       "condition": {
@@ -588,6 +728,20 @@
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "eks:DisassociateAccessPolicy",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "eks:ListAssociatedAccessPolicies",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "eks:ListAssociatedAccessPolicies",
       "privesc": false,
       "resource_exposure": false
     },
@@ -964,6 +1118,6 @@
   "resource_exposure": true,
   "undocumented_actions": false,
   "unknown_actions": [],
-  "updatedate": "2026-02-12T18:01:18+00:00",
-  "version": "v3"
+  "updatedate": "2026-07-20T20:57:13+00:00",
+  "version": "v4"
 }

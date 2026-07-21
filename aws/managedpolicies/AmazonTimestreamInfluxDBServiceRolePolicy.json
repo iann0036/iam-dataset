@@ -1,12 +1,13 @@
 {
   "access_levels": [
     "List",
+    "Read",
     "Tagging",
     "Write",
     "Permissions management"
   ],
   "arn": "arn:aws:iam::aws:policy/aws-service-role/AmazonTimestreamInfluxDBServiceRolePolicy",
-  "createdate": "2024-03-14T18:53:21+00:00",
+  "createdate": "2026-07-20T18:27:24+00:00",
   "credentials_exposure": false,
   "data_access": false,
   "deprecated": false,
@@ -111,6 +112,38 @@
           "arn:aws:secretsmanager:*:*:secret:READONLY-InfluxDB-auth-parameters-*"
         ],
         "Sid": "ManageSecretStatement"
+      },
+      {
+        "Action": [
+          "secretsmanager:GetSecretValue"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:secretsmanager:*:*:secret:InfluxDB-RepoToken-*"
+        ],
+        "Sid": "RetrievePluginSecretStatement"
+      },
+      {
+        "Action": [
+          "kms:Decrypt"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          },
+          "StringLike": {
+            "kms:EncryptionContext:SecretARN": "arn:*:secretsmanager:*:*:secret:InfluxDB-RepoToken-*",
+            "kms:ViaService": "secretsmanager.*.amazonaws.com"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:*:kms:*:${aws:PrincipalAccount}:key/*",
+        "Sid": "DecryptPluginSecretStatement"
       }
     ],
     "Version": "2012-10-17"
@@ -261,6 +294,38 @@
       "effective_action": "secretsmanager:DeleteSecret",
       "privesc": false,
       "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "secretsmanager:GetSecretValue",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "secretsmanager:GetSecretValue",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "kms:Decrypt",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        },
+        "StringLike": {
+          "kms:EncryptionContext:SecretARN": "arn:*:secretsmanager:*:*:secret:InfluxDB-RepoToken-*",
+          "kms:ViaService": "secretsmanager.*.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "kms:Decrypt",
+      "privesc": false,
+      "resource_exposure": false
     }
   ],
   "grantless": false,
@@ -270,6 +335,6 @@
   "resource_exposure": true,
   "undocumented_actions": false,
   "unknown_actions": [],
-  "updatedate": "2024-03-14T18:53:21+00:00",
-  "version": "v1"
+  "updatedate": "2026-07-20T18:27:24+00:00",
+  "version": "v2"
 }
