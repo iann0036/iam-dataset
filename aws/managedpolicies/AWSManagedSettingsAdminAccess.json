@@ -7,12 +7,25 @@
     "Permissions management"
   ],
   "arn": "arn:aws:iam::aws:policy/AWSManagedSettingsAdminAccess",
-  "createdate": "2026-07-22T01:27:25+00:00",
+  "createdate": "2026-07-23T00:42:22+00:00",
   "credentials_exposure": true,
   "data_access": true,
   "deprecated": false,
   "document": {
     "Statement": [
+      {
+        "Action": [
+          "account:PutAccountName"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:CalledViaLast": "account.amazonaws.com"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "ActivateAdvancedUpdateAccountName"
+      },
       {
         "Action": [
           "account:GetAccountInformation",
@@ -59,7 +72,8 @@
           "budgets:CreateBudget",
           "budgets:DeleteBudget",
           "budgets:DescribeBudgets",
-          "budgets:DescribeBudget"
+          "budgets:DescribeBudget",
+          "budgets:DescribeBudgetActionHistories"
         ],
         "Effect": "Allow",
         "Resource": "*",
@@ -111,7 +125,6 @@
           "identitystore:DescribeUser",
           "identitystore:GetGroupId",
           "identitystore:GetUserId",
-          "sso:UpdateInstance",
           "identitystore:ListGroupMemberships",
           "identitystore:UpdateIdentityStore",
           "identitystore:ListGroupMembershipsForMember",
@@ -152,7 +165,8 @@
           "organizations:ListRoots",
           "organizations:CreateBuilderIdOwnedAccount",
           "organizations:DescribeCreateAccountStatus",
-          "organizations:DescribeAccount"
+          "organizations:DescribeAccount",
+          "organizations:InviteAccountToOrganization"
         ],
         "Effect": "Allow",
         "Resource": "*",
@@ -223,7 +237,8 @@
           "sso:ListApplicationAssignments",
           "sso:CreateApplicationAssignment",
           "sso:DescribeApplication",
-          "sso:ListApplications"
+          "sso:ListApplications",
+          "sso:UpdateInstance"
         ],
         "Effect": "Allow",
         "Resource": "*",
@@ -275,7 +290,7 @@
         },
         "Effect": "Allow",
         "Resource": "*",
-        "Sid": "TransitionProvisioningAccess"
+        "Sid": "ActivateAdvancedProvisioningAccess"
       },
       {
         "Action": [
@@ -290,7 +305,7 @@
         },
         "Effect": "Allow",
         "Resource": "*",
-        "Sid": "TransitionDelegatedAdminAccess"
+        "Sid": "ActivateAdvancedDelegatedAdminAccess"
       },
       {
         "Action": [
@@ -311,9 +326,10 @@
         "Effect": "Allow",
         "Resource": [
           "arn:aws:iam::*:role/managed/*",
-          "arn:aws:iam::*:role/ManagedAccountAdmin"
+          "arn:aws:iam::*:role/ManagedAccountAdmin",
+          "arn:aws:iam::*:role/AccountFullAccessRole"
         ],
-        "Sid": "TransitionManagedRoleAccess"
+        "Sid": "ActivateAdvancedManagedRoleAccess"
       },
       {
         "Action": [
@@ -325,8 +341,8 @@
           }
         },
         "Effect": "Allow",
-        "Resource": "arn:aws:iam::*:role/OrganizationAccountAccessRole",
-        "Sid": "TransitionMemberAccountAssume"
+        "Resource": "arn:aws:iam::*:role/managed/AWSManagedAdvancedFeaturesActivationRole",
+        "Sid": "ActivateAdvancedMemberAccountAssume"
       },
       {
         "Action": [
@@ -339,7 +355,7 @@
         },
         "Effect": "Allow",
         "Resource": "arn:aws:budgets::*:budget/sla-*",
-        "Sid": "TransitionBudgetsAccess"
+        "Sid": "ActivateAdvancedBudgetsAccess"
       },
       {
         "Action": [
@@ -355,12 +371,26 @@
         },
         "Effect": "Allow",
         "Resource": "*",
-        "Sid": "TransitionSCPCleanupAccess"
+        "Sid": "ActivateAdvancedSCPCleanupAccess"
       }
     ],
     "Version": "2012-10-17"
   },
   "effective_actions": [
+    {
+      "access_level": "Write",
+      "action": "account:PutAccountName",
+      "condition": {
+        "StringEquals": {
+          "aws:CalledViaLast": "account.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "account:PutAccountName",
+      "privesc": false,
+      "resource_exposure": false
+    },
     {
       "access_level": "Read",
       "action": "account:GetAccountInformation",
@@ -538,6 +568,16 @@
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "budgets:ViewBudget",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "budgets:DescribeBudgetActionHistories",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "budgets:DescribeBudgetActionHistories",
       "privesc": false,
       "resource_exposure": false
     },
@@ -722,16 +762,6 @@
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "identitystore:GetUserId",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Write",
-      "action": "sso:UpdateInstance",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "sso:UpdateInstance",
       "privesc": false,
       "resource_exposure": false
     },
@@ -952,6 +982,16 @@
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "organizations:DescribeAccount",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "organizations:InviteAccountToOrganization",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "organizations:InviteAccountToOrganization",
       "privesc": false,
       "resource_exposure": false
     },
@@ -1188,6 +1228,16 @@
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "sso:ListApplications",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "sso:UpdateInstance",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sso:UpdateInstance",
       "privesc": false,
       "resource_exposure": false
     },
@@ -1770,6 +1820,6 @@
       }
     }
   ],
-  "updatedate": "2026-07-22T01:27:25+00:00",
-  "version": "v1"
+  "updatedate": "2026-07-23T00:42:22+00:00",
+  "version": "v2"
 }

@@ -1,11 +1,12 @@
 {
   "access_levels": [
+    "List",
     "Read",
     "Write",
     "Permissions management"
   ],
   "arn": "arn:aws:iam::aws:policy/aws-service-role/CloudFormationStackSetsOrgMemberServiceRolePolicy",
-  "createdate": "2019-12-09T23:52:37+00:00",
+  "createdate": "2026-07-22T20:12:14+00:00",
   "credentials_exposure": false,
   "data_access": false,
   "deprecated": false,
@@ -13,10 +14,36 @@
     "Statement": [
       {
         "Action": [
+          "cloudformation:CreateStack",
+          "cloudformation:DescribeStackEvents",
+          "cloudformation:UpdateStack",
+          "cloudformation:DeleteStack",
+          "cloudformation:DescribeStacks"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:cloudformation:*:*:stack/stacksets-exec-role-stack-*"
+        ]
+      },
+      {
+        "Action": [
           "iam:CreateRole",
           "iam:DeleteRole",
-          "iam:GetRole"
+          "iam:GetRole",
+          "iam:GetRolePolicy",
+          "iam:DeleteRolePolicy",
+          "iam:PutRolePolicy"
         ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          }
+        },
         "Effect": "Allow",
         "Resource": [
           "arn:aws:iam::*:role/stacksets-exec-*"
@@ -42,9 +69,83 @@
   },
   "effective_actions": [
     {
+      "access_level": "Write",
+      "action": "cloudformation:CreateStack",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudformation:CreateStack",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "cloudformation:DescribeStackEvents",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudformation:DescribeStackEvents",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "cloudformation:UpdateStack",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudformation:UpdateStack",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "cloudformation:DeleteStack",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudformation:DeleteStack",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "cloudformation:DescribeStacks",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudformation:DescribeStacks",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
       "access_level": "Permissions management",
       "action": "iam:CreateRole",
-      "condition": null,
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "iam:CreateRole",
@@ -54,7 +155,11 @@
     {
       "access_level": "Permissions management",
       "action": "iam:DeleteRole",
-      "condition": null,
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "iam:DeleteRole",
@@ -64,12 +169,58 @@
     {
       "access_level": "Read",
       "action": "iam:GetRole",
-      "condition": null,
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "iam:GetRole",
       "privesc": false,
       "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "iam:GetRolePolicy",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "iam:GetRolePolicy",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Permissions management, Write",
+      "action": "iam:DeleteRolePolicy",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "iam:DeleteRolePolicy",
+      "privesc": false,
+      "resource_exposure": true
+    },
+    {
+      "access_level": "Permissions management, Write",
+      "action": "iam:PutRolePolicy",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "iam:PutRolePolicy",
+      "privesc": true,
+      "resource_exposure": true
     },
     {
       "access_level": "Permissions management, Write",
@@ -107,6 +258,6 @@
   "resource_exposure": true,
   "undocumented_actions": false,
   "unknown_actions": [],
-  "updatedate": "2019-12-09T23:52:37+00:00",
-  "version": "v1"
+  "updatedate": "2026-07-22T20:12:14+00:00",
+  "version": "v2"
 }
