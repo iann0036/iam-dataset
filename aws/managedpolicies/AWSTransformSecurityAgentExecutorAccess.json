@@ -6,7 +6,7 @@
     "Permissions management"
   ],
   "arn": "arn:aws:iam::aws:policy/AWSTransformSecurityAgentExecutorAccess",
-  "createdate": "2026-06-30T21:27:39+00:00",
+  "createdate": "2026-07-28T15:42:11+00:00",
   "credentials_exposure": false,
   "data_access": true,
   "deprecated": false,
@@ -43,8 +43,8 @@
         },
         "Effect": "Allow",
         "Resource": [
-          "arn:aws:s3:::kct-security-agent-*",
-          "arn:aws:s3:::kct-security-agent-*/*"
+          "arn:aws:s3:::atx-security-agent-*",
+          "arn:aws:s3:::atx-security-agent-*/*"
         ],
         "Sid": "S3SecurityAgentBucketRead"
       },
@@ -58,7 +58,7 @@
           }
         },
         "Effect": "Allow",
-        "Resource": "arn:aws:s3:::kct-security-agent-*/security-scans/*",
+        "Resource": "arn:aws:s3:::atx-security-agent-*/security-scans/*",
         "Sid": "S3SecurityAgentUpload"
       },
       {
@@ -74,6 +74,32 @@
         "Effect": "Allow",
         "Resource": "arn:aws:iam::*:role/security-agent-*",
         "Sid": "IAMPassSecurityAgentRole"
+      },
+      {
+        "Action": [
+          "cloudformation:ListStacks"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "CFNDiscoverSecurityAgentStack"
+      },
+      {
+        "Action": [
+          "cloudformation:DescribeStacks"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:cloudformation:*:*:stack/AtxSecurityAgentStack-*/*",
+        "Sid": "CFNDescribeSecurityAgentStack"
       }
     ],
     "Version": "2012-10-17"
@@ -233,6 +259,34 @@
       "effective_action": "iam:PassRole",
       "privesc": true,
       "resource_exposure": true
+    },
+    {
+      "access_level": "List",
+      "action": "cloudformation:ListStacks",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudformation:ListStacks",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "cloudformation:DescribeStacks",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudformation:DescribeStacks",
+      "privesc": false,
+      "resource_exposure": false
     }
   ],
   "grantless": false,
@@ -243,5 +297,5 @@
   "undocumented_actions": false,
   "unknown_actions": [],
   "updatedate": "2026-06-30T21:27:39+00:00",
-  "version": "v1"
+  "version": "v2"
 }

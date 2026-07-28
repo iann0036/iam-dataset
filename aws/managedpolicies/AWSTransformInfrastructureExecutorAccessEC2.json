@@ -6,7 +6,7 @@
     "Permissions management"
   ],
   "arn": "arn:aws:iam::aws:policy/AWSTransformInfrastructureExecutorAccessEC2",
-  "createdate": "2026-07-20T20:12:18+00:00",
+  "createdate": "2026-07-28T15:42:16+00:00",
   "credentials_exposure": false,
   "data_access": true,
   "deprecated": false,
@@ -20,7 +20,10 @@
           "cloudformation:DescribeStackDriftDetectionStatus"
         ],
         "Effect": "Allow",
-        "Resource": "arn:aws:cloudformation:*:*:stack/atx-*/*",
+        "Resource": [
+          "arn:aws:cloudformation:*:*:stack/atx-*/*",
+          "arn:aws:cloudformation:*:*:stack/AtxSecurityAgentStack-*/*"
+        ],
         "Sid": "CFNRead"
       },
       {
@@ -133,8 +136,11 @@
           "kms:GenerateDataKey"
         ],
         "Condition": {
-          "ForAnyValue:StringEquals": {
-            "kms:ResourceAliases": "alias/atx-encryption-key"
+          "ForAnyValue:StringLike": {
+            "kms:ResourceAliases": [
+              "alias/atx-encryption-key",
+              "alias/atx-encryption-key-*"
+            ]
           },
           "StringEquals": {
             "aws:ResourceAccount": "${aws:PrincipalAccount}"
@@ -184,7 +190,10 @@
           }
         },
         "Effect": "Allow",
-        "Resource": "arn:aws:scheduler:*:*:schedule/atx-ct/*",
+        "Resource": [
+          "arn:aws:scheduler:*:*:schedule/atx-ct/*",
+          "arn:aws:scheduler:*:*:schedule/atx-ct-*/*"
+        ],
         "Sid": "SchedLifecycle"
       },
       {
@@ -197,7 +206,10 @@
           }
         },
         "Effect": "Allow",
-        "Resource": "arn:aws:scheduler:*:*:schedule-group/atx-ct",
+        "Resource": [
+          "arn:aws:scheduler:*:*:schedule-group/atx-ct",
+          "arn:aws:scheduler:*:*:schedule-group/atx-ct-*"
+        ],
         "Sid": "SchedGroupRead"
       },
       {
@@ -225,7 +237,10 @@
           }
         },
         "Effect": "Allow",
-        "Resource": "arn:aws:iam::*:role/atx-transform-role*",
+        "Resource": [
+          "arn:aws:iam::*:role/atx-transform-role",
+          "arn:aws:iam::*:role/atx-transform-role-*"
+        ],
         "Sid": "IAMPassEC2InstanceRole"
       },
       {
@@ -239,7 +254,10 @@
           }
         },
         "Effect": "Allow",
-        "Resource": "arn:aws:iam::*:role/AtxSchedulerInvocationRole",
+        "Resource": [
+          "arn:aws:iam::*:role/AtxSchedulerInvocationRole",
+          "arn:aws:iam::*:role/AtxSchedulerInvocationRole-*"
+        ],
         "Sid": "IAMPassSchedulerRole"
       },
       {
@@ -681,8 +699,11 @@
       "access_level": "Write",
       "action": "kms:Encrypt",
       "condition": {
-        "ForAnyValue:StringEquals": {
-          "kms:ResourceAliases": "alias/atx-encryption-key"
+        "ForAnyValue:StringLike": {
+          "kms:ResourceAliases": [
+            "alias/atx-encryption-key",
+            "alias/atx-encryption-key-*"
+          ]
         },
         "StringEquals": {
           "aws:ResourceAccount": "${aws:PrincipalAccount}"
@@ -698,8 +719,11 @@
       "access_level": "Write",
       "action": "kms:Decrypt",
       "condition": {
-        "ForAnyValue:StringEquals": {
-          "kms:ResourceAliases": "alias/atx-encryption-key"
+        "ForAnyValue:StringLike": {
+          "kms:ResourceAliases": [
+            "alias/atx-encryption-key",
+            "alias/atx-encryption-key-*"
+          ]
         },
         "StringEquals": {
           "aws:ResourceAccount": "${aws:PrincipalAccount}"
@@ -715,8 +739,11 @@
       "access_level": "Write",
       "action": "kms:GenerateDataKey",
       "condition": {
-        "ForAnyValue:StringEquals": {
-          "kms:ResourceAliases": "alias/atx-encryption-key"
+        "ForAnyValue:StringLike": {
+          "kms:ResourceAliases": [
+            "alias/atx-encryption-key",
+            "alias/atx-encryption-key-*"
+          ]
         },
         "StringEquals": {
           "aws:ResourceAccount": "${aws:PrincipalAccount}"
@@ -1005,5 +1032,5 @@
   "undocumented_actions": false,
   "unknown_actions": [],
   "updatedate": "2026-07-20T20:12:18+00:00",
-  "version": "v1"
+  "version": "v2"
 }

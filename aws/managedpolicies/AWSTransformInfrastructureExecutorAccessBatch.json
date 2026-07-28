@@ -6,7 +6,7 @@
     "Permissions management"
   ],
   "arn": "arn:aws:iam::aws:policy/AWSTransformInfrastructureExecutorAccessBatch",
-  "createdate": "2026-07-20T20:12:13+00:00",
+  "createdate": "2026-07-28T15:42:28+00:00",
   "credentials_exposure": false,
   "data_access": true,
   "deprecated": false,
@@ -23,7 +23,14 @@
           }
         },
         "Effect": "Allow",
-        "Resource": "arn:aws:lambda:*:*:function:atx-*",
+        "Resource": [
+          "arn:aws:lambda:*:*:function:atx-trigger-job-*",
+          "arn:aws:lambda:*:*:function:atx-trigger-batch-jobs-*",
+          "arn:aws:lambda:*:*:function:atx-get-job-status-*",
+          "arn:aws:lambda:*:*:function:atx-get-batch-status-*",
+          "arn:aws:lambda:*:*:function:atx-list-jobs-*",
+          "arn:aws:lambda:*:*:function:atx-list-batches-*"
+        ],
         "Sid": "LambdaInvokeATXFunctions"
       },
       {
@@ -66,13 +73,32 @@
       },
       {
         "Action": [
+          "s3:PutObject",
+          "s3:AbortMultipartUpload"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:s3:::atx-custom-output-*/*"
+        ],
+        "Sid": "S3WriteBatchSidecar"
+      },
+      {
+        "Action": [
           "kms:Encrypt",
           "kms:Decrypt",
           "kms:GenerateDataKey"
         ],
         "Condition": {
-          "ForAnyValue:StringEquals": {
-            "kms:ResourceAliases": "alias/atx-encryption-key"
+          "ForAnyValue:StringLike": {
+            "kms:ResourceAliases": [
+              "alias/atx-encryption-key",
+              "alias/atx-encryption-key-*"
+            ]
           },
           "StringEquals": {
             "aws:ResourceAccount": "${aws:PrincipalAccount}"
@@ -113,7 +139,10 @@
           }
         },
         "Effect": "Allow",
-        "Resource": "arn:aws:cloudwatch::*:dashboard/ATX-Transform-CLI-Dashboard",
+        "Resource": [
+          "arn:aws:cloudwatch::*:dashboard/ATX-Transform-CLI-Dashboard",
+          "arn:aws:cloudwatch::*:dashboard/ATX-Transform-CLI-Dashboard-*"
+        ],
         "Sid": "CloudWatchDashboard"
       },
       {
@@ -143,7 +172,13 @@
           }
         },
         "Effect": "Allow",
-        "Resource": "arn:aws:cloudformation:*:*:stack/AtxInfrastructureStack/*",
+        "Resource": [
+          "arn:aws:cloudformation:*:*:stack/AtxInfrastructureStack/*",
+          "arn:aws:cloudformation:*:*:stack/AtxInfrastructureStack-*/*",
+          "arn:aws:cloudformation:*:*:stack/atx-*",
+          "arn:aws:cloudformation:*:*:stack/atx-*/*",
+          "arn:aws:cloudformation:*:*:stack/AtxSecurityAgentStack-*/*"
+        ],
         "Sid": "CheckInfrastructureStatus"
       },
       {
@@ -177,7 +212,9 @@
         "Effect": "Allow",
         "Resource": [
           "arn:aws:scheduler:*:*:schedule-group/atx-ct",
-          "arn:aws:scheduler:*:*:schedule/atx-ct/*"
+          "arn:aws:scheduler:*:*:schedule-group/atx-ct-*",
+          "arn:aws:scheduler:*:*:schedule/atx-ct/*",
+          "arn:aws:scheduler:*:*:schedule/atx-ct-*/*"
         ],
         "Sid": "SchedulerManage"
       },
@@ -192,7 +229,10 @@
           }
         },
         "Effect": "Allow",
-        "Resource": "arn:aws:iam::*:role/AtxSchedulerInvocationRole",
+        "Resource": [
+          "arn:aws:iam::*:role/AtxSchedulerInvocationRole",
+          "arn:aws:iam::*:role/AtxSchedulerInvocationRole-*"
+        ],
         "Sid": "PassSchedulerRole"
       },
       {
@@ -374,10 +414,41 @@
     },
     {
       "access_level": "Write",
+      "action": "s3:PutObject",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3:PutObject",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "s3:AbortMultipartUpload",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3:AbortMultipartUpload",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
       "action": "kms:Encrypt",
       "condition": {
-        "ForAnyValue:StringEquals": {
-          "kms:ResourceAliases": "alias/atx-encryption-key"
+        "ForAnyValue:StringLike": {
+          "kms:ResourceAliases": [
+            "alias/atx-encryption-key",
+            "alias/atx-encryption-key-*"
+          ]
         },
         "StringEquals": {
           "aws:ResourceAccount": "${aws:PrincipalAccount}"
@@ -393,8 +464,11 @@
       "access_level": "Write",
       "action": "kms:Decrypt",
       "condition": {
-        "ForAnyValue:StringEquals": {
-          "kms:ResourceAliases": "alias/atx-encryption-key"
+        "ForAnyValue:StringLike": {
+          "kms:ResourceAliases": [
+            "alias/atx-encryption-key",
+            "alias/atx-encryption-key-*"
+          ]
         },
         "StringEquals": {
           "aws:ResourceAccount": "${aws:PrincipalAccount}"
@@ -410,8 +484,11 @@
       "access_level": "Write",
       "action": "kms:GenerateDataKey",
       "condition": {
-        "ForAnyValue:StringEquals": {
-          "kms:ResourceAliases": "alias/atx-encryption-key"
+        "ForAnyValue:StringLike": {
+          "kms:ResourceAliases": [
+            "alias/atx-encryption-key",
+            "alias/atx-encryption-key-*"
+          ]
         },
         "StringEquals": {
           "aws:ResourceAccount": "${aws:PrincipalAccount}"
@@ -853,5 +930,5 @@
   "undocumented_actions": false,
   "unknown_actions": [],
   "updatedate": "2026-07-20T20:12:13+00:00",
-  "version": "v1"
+  "version": "v2"
 }
