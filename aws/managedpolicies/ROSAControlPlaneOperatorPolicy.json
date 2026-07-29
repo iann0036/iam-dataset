@@ -5,7 +5,7 @@
     "Write"
   ],
   "arn": "arn:aws:iam::aws:policy/service-role/ROSAControlPlaneOperatorPolicy",
-  "createdate": "2026-04-10T16:12:18+00:00",
+  "createdate": "2026-07-28T23:12:18+00:00",
   "credentials_exposure": false,
   "data_access": false,
   "deprecated": false,
@@ -16,6 +16,7 @@
           "ec2:DescribeVpcEndpoints",
           "ec2:DescribeVpcs",
           "ec2:DescribeSecurityGroups",
+          "ec2:DescribeSubnets",
           "route53:ListHostedZones"
         ],
         "Effect": "Allow",
@@ -197,16 +198,27 @@
       },
       {
         "Action": [
-          "ec2:CreateTags"
+          "ec2:CreateTags",
+          "ec2:DeleteTags"
         ],
         "Condition": {
+          "ForAllValues:StringNotEquals": {
+            "aws:TagKeys": [
+              "red-hat-managed"
+            ]
+          },
+          "Null": {
+            "aws:TagKeys": "false"
+          },
           "StringEquals": {
             "aws:ResourceTag/red-hat-managed": "true"
           }
         },
         "Effect": "Allow",
-        "Resource": "arn:aws:ec2:*:*:security-group/*",
-        "Sid": "AddTagsToRedHatManagedSecurityGroups"
+        "Resource": [
+          "arn:aws:ec2:*:*:security-group/*"
+        ],
+        "Sid": "AddDeleteTagsRedHatManagedSecurityGroups"
       }
     ],
     "Version": "2012-10-17"
@@ -239,6 +251,16 @@
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "ec2:DescribeSecurityGroups",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "ec2:DescribeSubnets",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:DescribeSubnets",
       "privesc": false,
       "resource_exposure": false
     },
@@ -469,6 +491,14 @@
       "access_level": "Tagging, Write",
       "action": "ec2:CreateTags",
       "condition": {
+        "ForAllValues:StringNotEquals": {
+          "aws:TagKeys": [
+            "red-hat-managed"
+          ]
+        },
+        "Null": {
+          "aws:TagKeys": "false"
+        },
         "StringEquals": {
           "aws:ResourceTag/red-hat-managed": "true"
         }
@@ -476,6 +506,28 @@
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "ec2:CreateTags",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Tagging, Write",
+      "action": "ec2:DeleteTags",
+      "condition": {
+        "ForAllValues:StringNotEquals": {
+          "aws:TagKeys": [
+            "red-hat-managed"
+          ]
+        },
+        "Null": {
+          "aws:TagKeys": "false"
+        },
+        "StringEquals": {
+          "aws:ResourceTag/red-hat-managed": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:DeleteTags",
       "privesc": false,
       "resource_exposure": false
     }
@@ -487,6 +539,6 @@
   "resource_exposure": false,
   "undocumented_actions": false,
   "unknown_actions": [],
-  "updatedate": "2026-04-10T16:12:18+00:00",
-  "version": "v6"
+  "updatedate": "2026-07-28T23:12:18+00:00",
+  "version": "v7"
 }

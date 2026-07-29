@@ -7,7 +7,7 @@
     "Permissions management"
   ],
   "arn": "arn:aws:iam::aws:policy/BedrockAgentCoreFullAccess",
-  "createdate": "2026-04-21T17:42:20+00:00",
+  "createdate": "2026-07-28T16:57:19+00:00",
   "credentials_exposure": false,
   "data_access": true,
   "deprecated": false,
@@ -425,6 +425,27 @@
         "Effect": "Allow",
         "Resource": "arn:aws:lambda:*:*:function:*",
         "Sid": "AgentCoreEvaluationLambdaAccess"
+      },
+      {
+        "Action": [
+          "bedrock-mantle:CreateInference"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:bedrock-mantle:*:*:project/*",
+        "Sid": "AgentCoreEvaluationBedrockMantleInference"
+      },
+      {
+        "Action": [
+          "bedrock-mantle:CallWithBearerToken"
+        ],
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "AgentCoreEvaluationBedrockMantleCallWithBearerToken"
       }
     ],
     "Version": "2012-10-17"
@@ -5159,6 +5180,30 @@
       "effective_action": "lambda:GetFunction",
       "privesc": false,
       "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "bedrock-mantle:CreateInference",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "bedrock-mantle:CreateInference",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "bedrock-mantle:CallWithBearerToken",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "bedrock-mantle:CallWithBearerToken",
+      "privesc": false,
+      "resource_exposure": false
     }
   ],
   "grantless": false,
@@ -5168,6 +5213,6 @@
   "resource_exposure": true,
   "undocumented_actions": false,
   "unknown_actions": [],
-  "updatedate": "2026-04-21T17:42:20+00:00",
-  "version": "v17"
+  "updatedate": "2026-07-28T16:57:19+00:00",
+  "version": "v18"
 }
