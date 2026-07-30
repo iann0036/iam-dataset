@@ -7,7 +7,7 @@
     "Permissions management"
   ],
   "arn": "arn:aws:iam::aws:policy/AWSApplicationMigrationNetworkMigrationMultiAccount",
-  "createdate": "2026-06-29T08:57:29+00:00",
+  "createdate": "2026-07-30T07:42:10+00:00",
   "credentials_exposure": false,
   "data_access": true,
   "deprecated": false,
@@ -162,6 +162,23 @@
         "Effect": "Allow",
         "Resource": "arn:aws:cloudformation:*:*:stack/Nmd*",
         "Sid": "CFNCreate"
+      },
+      {
+        "Action": [
+          "cloudformation:TagResource",
+          "cloudformation:UntagResource"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "cloudformation:CreateAction": [
+              "CreateStack",
+              "UpdateStack"
+            ]
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:cloudformation:*:*:stack/Nmd*",
+        "Sid": "CFNTagOnCreate"
       },
       {
         "Action": [
@@ -665,10 +682,8 @@
       {
         "Action": [
           "ssm:DeleteParameter",
-          "ssm:PutResourcePolicy",
           "ssm:DeleteResourcePolicy",
-          "ssm:ListTagsForResource",
-          "ssm:GetResourcePolicies"
+          "ssm:ListTagsForResource"
         ],
         "Condition": {
           "ForAnyValue:StringEquals": {
@@ -688,6 +703,24 @@
       },
       {
         "Action": [
+          "ssm:PutResourcePolicy",
+          "ssm:GetResourcePolicies"
+        ],
+        "Condition": {
+          "ForAnyValue:StringEquals": {
+            "aws:CalledVia": [
+              "cloudformation.amazonaws.com"
+            ]
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:ssm:*:*:parameter/network-migration/*"
+        ],
+        "Sid": "ramResourceSharing"
+      },
+      {
+        "Action": [
           "ram:TagResource"
         ],
         "Condition": {
@@ -703,7 +736,7 @@
         },
         "Effect": "Allow",
         "Resource": "arn:aws:ram:*:*:resource-share/*",
-        "Sid": "ramTAgReource"
+        "Sid": "ramTagResource"
       },
       {
         "Action": [
@@ -1892,6 +1925,40 @@
       "resource_exposure": false
     },
     {
+      "access_level": "Tagging, Write",
+      "action": "cloudformation:TagResource",
+      "condition": {
+        "StringEquals": {
+          "cloudformation:CreateAction": [
+            "CreateStack",
+            "UpdateStack"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudformation:TagResource",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Tagging, Write",
+      "action": "cloudformation:UntagResource",
+      "condition": {
+        "StringEquals": {
+          "cloudformation:CreateAction": [
+            "CreateStack",
+            "UpdateStack"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudformation:UntagResource",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
       "access_level": "Write",
       "action": "cloudformation:DeleteStack",
       "condition": {
@@ -2770,25 +2837,6 @@
     },
     {
       "access_level": "Permissions management, Write",
-      "action": "ssm:PutResourcePolicy",
-      "condition": {
-        "ForAnyValue:StringEquals": {
-          "aws:CalledVia": [
-            "cloudformation.amazonaws.com"
-          ]
-        },
-        "StringEquals": {
-          "aws:ResourceTag/CreatedBy": "AWSApplicationMigrationService"
-        }
-      },
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ssm:PutResourcePolicy",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Permissions management, Write",
       "action": "ssm:DeleteResourcePolicy",
       "condition": {
         "ForAnyValue:StringEquals": {
@@ -2826,6 +2874,22 @@
       "resource_exposure": false
     },
     {
+      "access_level": "Permissions management, Write",
+      "action": "ssm:PutResourcePolicy",
+      "condition": {
+        "ForAnyValue:StringEquals": {
+          "aws:CalledVia": [
+            "cloudformation.amazonaws.com"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ssm:PutResourcePolicy",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
       "access_level": "List",
       "action": "ssm:GetResourcePolicies",
       "condition": {
@@ -2833,9 +2897,6 @@
           "aws:CalledVia": [
             "cloudformation.amazonaws.com"
           ]
-        },
-        "StringEquals": {
-          "aws:ResourceTag/CreatedBy": "AWSApplicationMigrationService"
         }
       },
       "credentials_exposure": false,
@@ -4434,6 +4495,6 @@
   "resource_exposure": true,
   "undocumented_actions": false,
   "unknown_actions": [],
-  "updatedate": "2026-06-29T08:57:29+00:00",
-  "version": "v5"
+  "updatedate": "2026-07-30T07:42:10+00:00",
+  "version": "v6"
 }

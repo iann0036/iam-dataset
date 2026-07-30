@@ -7,7 +7,7 @@
     "Permissions management"
   ],
   "arn": "arn:aws:iam::aws:policy/service-role/ROSANodePoolManagementPolicy",
-  "createdate": "2026-02-12T17:59:26+00:00",
+  "createdate": "2026-07-29T16:57:30+00:00",
   "credentials_exposure": false,
   "data_access": true,
   "deprecated": false,
@@ -18,6 +18,7 @@
           "ec2:DescribeDhcpOptions",
           "ec2:DescribeImages",
           "ec2:DescribeInstances",
+          "ec2:DescribeInstanceTypes",
           "ec2:DescribeInternetGateways",
           "ec2:DescribeNetworkInterfaces",
           "ec2:DescribeNetworkInterfaceAttribute",
@@ -235,6 +236,22 @@
       },
       {
         "Action": [
+          "sqs:DeleteMessage",
+          "sqs:ReceiveMessage"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceTag/red-hat": "true"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:sqs:*:*:*"
+        ],
+        "Sid": "NodePoolSQSActions"
+      },
+      {
+        "Action": [
           "kms:DescribeKey",
           "kms:GenerateDataKeyWithoutPlaintext"
         ],
@@ -297,6 +314,16 @@
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "ec2:DescribeInstances",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "ec2:DescribeInstanceTypes",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:DescribeInstanceTypes",
       "privesc": false,
       "resource_exposure": false
     },
@@ -552,6 +579,34 @@
       "resource_exposure": false
     },
     {
+      "access_level": "Write",
+      "action": "sqs:DeleteMessage",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/red-hat": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sqs:DeleteMessage",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "sqs:ReceiveMessage",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/red-hat": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": true,
+      "effective_action": "sqs:ReceiveMessage",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
       "access_level": "Read",
       "action": "kms:DescribeKey",
       "condition": {
@@ -607,6 +662,6 @@
   "resource_exposure": true,
   "undocumented_actions": false,
   "unknown_actions": [],
-  "updatedate": "2026-02-12T17:59:26+00:00",
-  "version": "v8"
+  "updatedate": "2026-07-29T16:57:30+00:00",
+  "version": "v9"
 }
