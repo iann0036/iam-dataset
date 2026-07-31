@@ -1,0 +1,442 @@
+{
+  "access_levels": [
+    "List",
+    "Read",
+    "Write"
+  ],
+  "arn": "arn:aws:iam::aws:policy/aws-service-role/AmazonInspector2AmiScanServiceRolePolicy",
+  "createdate": "2026-07-30T17:57:10+00:00",
+  "credentials_exposure": false,
+  "data_access": false,
+  "deprecated": false,
+  "document": {
+    "Statement": [
+      {
+        "Action": [
+          "events:DeleteRule",
+          "events:DescribeRule",
+          "events:ListTargetsByRule",
+          "events:PutRule",
+          "events:PutTargets",
+          "events:RemoveTargets"
+        ],
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:events:*:*:rule/DO-NOT-DELETE-AmazonInspector*ManagedRule"
+        ],
+        "Sid": "ManagedRules"
+      },
+      {
+        "Action": [
+          "inspector2:AssociateMember",
+          "inspector2:Disable",
+          "inspector2:Enable",
+          "inspector2:EnableDelegatedAdminAccount"
+        ],
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "AllowInspectorEnablementForAwsOrgPolicy"
+      },
+      {
+        "Action": [
+          "organizations:DescribeAccount",
+          "organizations:DescribeOrganization",
+          "organizations:ListAccounts"
+        ],
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "AllowInspectorServiceGetAwsOrg"
+      },
+      {
+        "Action": [
+          "organizations:ListDelegatedAdministrators"
+        ],
+        "Condition": {
+          "StringLikeIfExists": {
+            "organizations:ServicePrincipal": [
+              "ami.inspector2.amazonaws.com",
+              "inspector2.amazonaws.com"
+            ]
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "AllowInspectorServiceDelegatedAdminFromAwsOrg"
+      },
+      {
+        "Action": [
+          "ec2:DescribeImages",
+          "ec2:DescribeSnapshots",
+          "ec2:DescribeVolumes"
+        ],
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "AmiIdentification"
+      },
+      {
+        "Action": [
+          "ebs:GetSnapshotBlock",
+          "ebs:ListSnapshotBlocks"
+        ],
+        "Effect": "Allow",
+        "Resource": "arn:aws:ec2:*:*:snapshot/*",
+        "Sid": "GetSnapshotData"
+      },
+      {
+        "Action": [
+          "ebs:GetSnapshotBlock",
+          "ebs:ListSnapshotBlocks"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceTag/InspectorEc2Exclusion": "true"
+          }
+        },
+        "Effect": "Deny",
+        "Resource": "arn:aws:ec2:*:*:snapshot/*",
+        "Sid": "DenyGetSnapshotDataOnExcludedSnapshots"
+      },
+      {
+        "Action": "kms:Decrypt",
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceTag/InspectorEc2Exclusion": "true"
+          }
+        },
+        "Effect": "Deny",
+        "Resource": "arn:aws:kms:*:*:key/*",
+        "Sid": "DenyKmsDecryptForExcludedKeys"
+      },
+      {
+        "Action": [
+          "kms:Decrypt"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          },
+          "StringLike": {
+            "kms:EncryptionContext:aws:ebs:id": "vol-*",
+            "kms:ViaService": "ec2.*.amazonaws.com"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:kms:*:*:key/*",
+        "Sid": "DecryptSnapshotBlocksVolContext"
+      },
+      {
+        "Action": [
+          "kms:Decrypt"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          },
+          "StringLike": {
+            "kms:EncryptionContext:aws:ebs:id": "snap-*",
+            "kms:ViaService": "ec2.*.amazonaws.com"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:kms:*:*:key/*",
+        "Sid": "DecryptSnapshotBlocksSnapContext"
+      },
+      {
+        "Action": [
+          "kms:DescribeKey"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          },
+          "StringLike": {
+            "kms:ViaService": "ec2.*.amazonaws.com"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:kms:*:*:key/*",
+        "Sid": "DescribeKeysForEbsOperations"
+      },
+      {
+        "Action": [
+          "kms:ListResourceTags"
+        ],
+        "Effect": "Allow",
+        "Resource": "arn:aws:kms:*:*:key/*",
+        "Sid": "ListKeyResourceTags"
+      }
+    ],
+    "Version": "2012-10-17"
+  },
+  "effective_actions": [
+    {
+      "access_level": "Write",
+      "action": "events:DeleteRule",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "events:DeleteRule",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "events:DescribeRule",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "events:DescribeRule",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "events:ListTargetsByRule",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "events:ListTargetsByRule",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "events:PutRule",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "events:PutRule",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "events:PutTargets",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "events:PutTargets",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "events:RemoveTargets",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "events:RemoveTargets",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "inspector2:AssociateMember",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "inspector2:AssociateMember",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "inspector2:Disable",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "inspector2:Disable",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "inspector2:Enable",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "inspector2:Enable",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "inspector2:EnableDelegatedAdminAccount",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "inspector2:EnableDelegatedAdminAccount",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "organizations:DescribeAccount",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "organizations:DescribeAccount",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "organizations:DescribeOrganization",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "organizations:DescribeOrganization",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "organizations:ListAccounts",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "organizations:ListAccounts",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "organizations:ListDelegatedAdministrators",
+      "condition": {
+        "StringLikeIfExists": {
+          "organizations:ServicePrincipal": [
+            "ami.inspector2.amazonaws.com",
+            "inspector2.amazonaws.com"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "organizations:ListDelegatedAdministrators",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "ec2:DescribeImages",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:DescribeImages",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "ec2:DescribeSnapshots",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:DescribeSnapshots",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "ec2:DescribeVolumes",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:DescribeVolumes",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "ebs:GetSnapshotBlock",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ebs:GetSnapshotBlock",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "ebs:ListSnapshotBlocks",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ebs:ListSnapshotBlocks",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "kms:Decrypt",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        },
+        "StringLike": {
+          "kms:EncryptionContext:aws:ebs:id": "vol-*",
+          "kms:ViaService": "ec2.*.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "kms:Decrypt",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "kms:Decrypt",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        },
+        "StringLike": {
+          "kms:EncryptionContext:aws:ebs:id": "snap-*",
+          "kms:ViaService": "ec2.*.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "kms:Decrypt",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "kms:DescribeKey",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        },
+        "StringLike": {
+          "kms:ViaService": "ec2.*.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "kms:DescribeKey",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "kms:ListResourceTags",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "kms:ListResourceTags",
+      "privesc": false,
+      "resource_exposure": false
+    }
+  ],
+  "grantless": false,
+  "malformed": false,
+  "name": "AmazonInspector2AmiScanServiceRolePolicy",
+  "privesc": false,
+  "resource_exposure": false,
+  "undocumented_actions": false,
+  "unknown_actions": [],
+  "updatedate": "2026-07-30T17:57:10+00:00",
+  "version": "v1"
+}
