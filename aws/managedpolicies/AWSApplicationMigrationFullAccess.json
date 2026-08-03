@@ -7,7 +7,7 @@
     "Permissions management"
   ],
   "arn": "arn:aws:iam::aws:policy/AWSApplicationMigrationFullAccess",
-  "createdate": "2026-07-23T07:27:10+00:00",
+  "createdate": "2026-08-03T10:57:21+00:00",
   "credentials_exposure": false,
   "data_access": true,
   "deprecated": false,
@@ -300,6 +300,83 @@
         "Effect": "Allow",
         "Resource": "arn:aws:fsx:*:*:storage-virtual-machine/*",
         "Sid": "AllowTagSVMWithMapKeys"
+      },
+      {
+        "Action": [
+          "fsx:DescribeVolumes",
+          "fsx:DescribeSnapshots"
+        ],
+        "Condition": {
+          "ForAnyValue:StringEquals": {
+            "aws:CalledVia": [
+              "mgn.amazonaws.com"
+            ]
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "FSxDescribeOperations"
+      },
+      {
+        "Action": [
+          "fsx:CreateVolume"
+        ],
+        "Condition": {
+          "ForAnyValue:StringEquals": {
+            "aws:CalledVia": [
+              "mgn.amazonaws.com"
+            ]
+          },
+          "Null": {
+            "aws:RequestTag/AWSApplicationMigrationServiceManaged": "false"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:fsx:*:*:volume/*/*",
+          "arn:aws:fsx:*:*:storage-virtual-machine/*/*"
+        ],
+        "Sid": "FSxCreateVolume"
+      },
+      {
+        "Action": [
+          "fsx:DeleteVolume",
+          "fsx:TagResource"
+        ],
+        "Condition": {
+          "ForAnyValue:StringEquals": {
+            "aws:CalledVia": [
+              "mgn.amazonaws.com"
+            ]
+          },
+          "Null": {
+            "aws:ResourceTag/AWSApplicationMigrationServiceManaged": "false"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:fsx:*:*:volume/*/*",
+        "Sid": "FSxDeleteVolumeAndTag"
+      },
+      {
+        "Action": [
+          "fsx:CreateSnapshot"
+        ],
+        "Condition": {
+          "ForAnyValue:StringEquals": {
+            "aws:CalledVia": [
+              "mgn.amazonaws.com"
+            ]
+          },
+          "Null": {
+            "aws:RequestTag/AWSApplicationMigrationServiceManaged": "false"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:fsx:*:*:snapshot/*/*",
+          "arn:aws:fsx:*:*:volume/*/*"
+        ],
+        "Sid": "FSxCreateSnapshot"
       }
     ],
     "Version": "2012-10-17"
@@ -2166,6 +2243,114 @@
       "effective_action": "fsx:TagResource",
       "privesc": false,
       "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "fsx:DescribeVolumes",
+      "condition": {
+        "ForAnyValue:StringEquals": {
+          "aws:CalledVia": [
+            "mgn.amazonaws.com"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "fsx:DescribeVolumes",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "fsx:DescribeSnapshots",
+      "condition": {
+        "ForAnyValue:StringEquals": {
+          "aws:CalledVia": [
+            "mgn.amazonaws.com"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "fsx:DescribeSnapshots",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "fsx:CreateVolume",
+      "condition": {
+        "ForAnyValue:StringEquals": {
+          "aws:CalledVia": [
+            "mgn.amazonaws.com"
+          ]
+        },
+        "Null": {
+          "aws:RequestTag/AWSApplicationMigrationServiceManaged": "false"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "fsx:CreateVolume",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "fsx:DeleteVolume",
+      "condition": {
+        "ForAnyValue:StringEquals": {
+          "aws:CalledVia": [
+            "mgn.amazonaws.com"
+          ]
+        },
+        "Null": {
+          "aws:ResourceTag/AWSApplicationMigrationServiceManaged": "false"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "fsx:DeleteVolume",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Tagging, Write",
+      "action": "fsx:TagResource",
+      "condition": {
+        "ForAnyValue:StringEquals": {
+          "aws:CalledVia": [
+            "mgn.amazonaws.com"
+          ]
+        },
+        "Null": {
+          "aws:ResourceTag/AWSApplicationMigrationServiceManaged": "false"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "fsx:TagResource",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "fsx:CreateSnapshot",
+      "condition": {
+        "ForAnyValue:StringEquals": {
+          "aws:CalledVia": [
+            "mgn.amazonaws.com"
+          ]
+        },
+        "Null": {
+          "aws:RequestTag/AWSApplicationMigrationServiceManaged": "false"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "fsx:CreateSnapshot",
+      "privesc": false,
+      "resource_exposure": false
     }
   ],
   "grantless": false,
@@ -2176,5 +2361,5 @@
   "undocumented_actions": false,
   "unknown_actions": [],
   "updatedate": "2026-07-23T07:27:10+00:00",
-  "version": "v13"
+  "version": "v14"
 }
