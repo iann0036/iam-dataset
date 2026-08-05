@@ -7,7 +7,7 @@
     "Permissions management"
   ],
   "arn": "arn:aws:iam::aws:policy/EC2FastLaunchFullAccess",
-  "createdate": "2026-02-12T18:01:13+00:00",
+  "createdate": "2026-08-04T20:27:26+00:00",
   "credentials_exposure": false,
   "data_access": false,
   "deprecated": false,
@@ -195,6 +195,24 @@
           "arn:aws:cloudformation:*:*:stack/EC2FastLaunch*/*"
         ],
         "Sid": "CloudFormation"
+      },
+      {
+        "Action": [
+          "cloudformation:TagResource"
+        ],
+        "Condition": {
+          "ForAnyValue:StringLike": {
+            "aws:CalledVia": "ec2fastlaunch.amazonaws.com"
+          },
+          "StringEquals": {
+            "cloudformation:CreateAction": "CreateStack"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:cloudformation:*:*:stack/EC2FastLaunch*/*"
+        ],
+        "Sid": "CloudFormationTagOnCreate"
       },
       {
         "Action": [
@@ -794,6 +812,23 @@
       "resource_exposure": false
     },
     {
+      "access_level": "Tagging, Write",
+      "action": "cloudformation:TagResource",
+      "condition": {
+        "ForAnyValue:StringLike": {
+          "aws:CalledVia": "ec2fastlaunch.amazonaws.com"
+        },
+        "StringEquals": {
+          "cloudformation:CreateAction": "CreateStack"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudformation:TagResource",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
       "access_level": "Write",
       "action": "ec2:ModifyLaunchTemplate",
       "condition": {
@@ -938,6 +973,6 @@
   "resource_exposure": true,
   "undocumented_actions": false,
   "unknown_actions": [],
-  "updatedate": "2026-02-12T18:01:13+00:00",
-  "version": "v4"
+  "updatedate": "2026-08-04T20:27:26+00:00",
+  "version": "v5"
 }

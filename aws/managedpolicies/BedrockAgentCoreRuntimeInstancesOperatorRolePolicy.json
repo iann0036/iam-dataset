@@ -1,0 +1,846 @@
+{
+  "access_levels": [
+    "List",
+    "Read",
+    "Tagging",
+    "Write",
+    "Permissions management"
+  ],
+  "arn": null,
+  "createdate": "2026-08-05T11:27:19+00:00",
+  "credentials_exposure": false,
+  "data_access": false,
+  "deprecated": false,
+  "document": {
+    "Statement": [
+      {
+        "Action": [
+          "ec2:DescribeAvailabilityZones",
+          "ec2:DescribeCapacityReservations",
+          "ec2:DescribeInstances",
+          "ec2:DescribeInstanceStatus",
+          "ec2:DescribeInstanceTypeOfferings",
+          "ec2:DescribeInstanceTypes",
+          "ec2:DescribeSecurityGroups",
+          "ec2:DescribeSubnets",
+          "ec2:DescribeVolumes",
+          "ec2:DescribeLaunchTemplateVersions",
+          "ec2:DescribeNetworkInterfaces",
+          "autoscaling:DescribeAutoScalingInstances",
+          "autoscaling:DescribeAutoScalingGroups"
+        ],
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "DescribeComputeResources"
+      },
+      {
+        "Action": [
+          "events:DescribeRule"
+        ],
+        "Effect": "Allow",
+        "Resource": "arn:*:events:*:*:rule/agentcore-lifecycle-events-*",
+        "Sid": "DescribeEventBridgeRule"
+      },
+      {
+        "Action": [
+          "ec2:CreateVolume"
+        ],
+        "Condition": {
+          "Null": {
+            "aws:RequestTag/bedrock-agentcore:capacity-provider-id": "false"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:ec2:*:*:volume/*"
+        ],
+        "Sid": "CreateVolumeForManagedInstances"
+      },
+      {
+        "Action": [
+          "ec2:AttachVolume"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "ec2:ManagedResourceOperator": "bedrock-agentcore.amazonaws.com"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:ec2:*:*:volume/*",
+          "arn:aws:ec2:*:*:instance/*"
+        ],
+        "Sid": "AttachVolumeForManagedInstances"
+      },
+      {
+        "Action": [
+          "ec2:CreateLaunchTemplate"
+        ],
+        "Condition": {
+          "Null": {
+            "aws:RequestTag/bedrock-agentcore:capacity-provider-id": "false"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:ec2:*:*:launch-template/*"
+        ],
+        "Sid": "CreateLaunchTemplateForManagedInstances"
+      },
+      {
+        "Action": [
+          "ec2:CreateLaunchTemplateVersion",
+          "ec2:ModifyLaunchTemplate"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "ec2:ManagedResourceOperator": "bedrock-agentcore.amazonaws.com"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:ec2:*:*:launch-template/*"
+        ],
+        "Sid": "ModifyLaunchTemplateForManagedInstances"
+      },
+      {
+        "Action": [
+          "autoscaling:CreateAutoScalingGroup"
+        ],
+        "Condition": {
+          "Null": {
+            "aws:RequestTag/bedrock-agentcore:capacity-provider-id": "false"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:*:autoscaling:*:*:autoScalingGroup:*:autoScalingGroupName/agentcore-managed-instances-*",
+        "Sid": "CreateAutoScalingForManagedInstances"
+      },
+      {
+        "Action": [
+          "autoscaling:UpdateAutoScalingGroup",
+          "autoscaling:PutLifecycleHook",
+          "autoscaling:CompleteLifecycleAction",
+          "autoscaling:LaunchInstances"
+        ],
+        "Condition": {
+          "Null": {
+            "aws:ResourceTag/bedrock-agentcore:capacity-provider-id": "false"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:*:autoscaling:*:*:autoScalingGroup:*:autoScalingGroupName/agentcore-managed-instances-*",
+        "Sid": "UpdateAndLaunchAutoScaling"
+      },
+      {
+        "Action": [
+          "ec2:RunInstances",
+          "ec2:CreateNetworkInterface",
+          "ec2:CreateFleet"
+        ],
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:ec2:*:*:subnet/*",
+          "arn:aws:ec2:*:*:security-group/*"
+        ],
+        "Sid": "NetworkingAccessForManagedInstances"
+      },
+      {
+        "Action": [
+          "ec2:RunInstances",
+          "ec2:CreateFleet"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "ec2:Owner": "amazon"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:ec2:*:*:image/*"
+        ],
+        "Sid": "AmazonAMIsAccessForManagedInstances"
+      },
+      {
+        "Action": [
+          "ec2:CreateFleet"
+        ],
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:ec2:*:*:fleet/*"
+        ],
+        "Sid": "CreateFleetAccess"
+      },
+      {
+        "Action": [
+          "ec2:CreateFleet",
+          "ec2:RunInstances"
+        ],
+        "Condition": {
+          "Null": {
+            "aws:ResourceTag/bedrock-agentcore:capacity-provider-id": "false"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:ec2:*:*:launch-template/*"
+        ],
+        "Sid": "LaunchWithManagedLaunchTemplate"
+      },
+      {
+        "Action": [
+          "ec2:CreateFleet",
+          "ec2:RunInstances"
+        ],
+        "Condition": {
+          "Null": {
+            "aws:RequestTag/bedrock-agentcore:capacity-provider-id": "false"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:ec2:*:*:instance/*",
+          "arn:aws:ec2:*:*:network-interface/*",
+          "arn:aws:ec2:*:*:volume/*"
+        ],
+        "Sid": "ProvisionEC2InstancesForManagedInstances"
+      },
+      {
+        "Action": [
+          "ec2:CreateTags"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "ec2:CreateAction": [
+              "CreateFleet",
+              "CreateLaunchTemplate",
+              "RunInstances",
+              "CreateVolume",
+              "CreateNetworkInterface"
+            ]
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:ec2:*:*:fleet/*",
+          "arn:aws:ec2:*:*:instance/*",
+          "arn:aws:ec2:*:*:network-interface/*",
+          "arn:aws:ec2:*:*:volume/*",
+          "arn:aws:ec2:*:*:launch-template/*"
+        ],
+        "Sid": "TagOnCreateManagedResources"
+      },
+      {
+        "Action": [
+          "ec2:CreateTags"
+        ],
+        "Condition": {
+          "ForAllValues:StringLike": {
+            "aws:TagKeys": "bedrock-agentcore:*"
+          },
+          "StringEquals": {
+            "ec2:ManagedResourceOperator": "bedrock-agentcore.amazonaws.com"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:ec2:*:*:fleet/*",
+          "arn:aws:ec2:*:*:instance/*",
+          "arn:aws:ec2:*:*:network-interface/*",
+          "arn:aws:ec2:*:*:volume/*",
+          "arn:aws:ec2:*:*:launch-template/*"
+        ],
+        "Sid": "TagAfterCreateManagedResources"
+      },
+      {
+        "Action": [
+          "ec2:AttachNetworkInterface"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "ec2:ManagedResourceOperator": "bedrock-agentcore.amazonaws.com"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:ec2:*:*:instance/*",
+          "arn:aws:ec2:*:*:network-interface/*"
+        ],
+        "Sid": "AttachNetworkInterfaceToManagedInstance"
+      },
+      {
+        "Action": [
+          "events:PutRule",
+          "events:PutTargets",
+          "events:RemoveTargets"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "events:ManagedBy": "bedrock-agentcore.amazonaws.com"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:*:events:*:*:rule/agentcore-lifecycle-events-*",
+        "Sid": "EventBridgeAccessForManagedRule"
+      },
+      {
+        "Action": [
+          "iam:CreateServiceLinkedRole"
+        ],
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:iam::*:role/aws-service-role/autoscaling.amazonaws.com/AWSServiceRoleForAutoScaling"
+        ],
+        "Sid": "ServiceLinkedRoleAccessForAutoScaling"
+      },
+      {
+        "Action": [
+          "iam:PassRole"
+        ],
+        "Condition": {
+          "StringLike": {
+            "iam:PassedToService": "ec2.*"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:iam::*:role/AmazonBedrockAgentCoreCapacityProviderDefaultInstanceRole*"
+        ],
+        "Sid": "PassRoleToManagedInstances"
+      }
+    ],
+    "Version": "2012-10-17"
+  },
+  "effective_actions": [
+    {
+      "access_level": "List",
+      "action": "ec2:DescribeAvailabilityZones",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:DescribeAvailabilityZones",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "ec2:DescribeCapacityReservations",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:DescribeCapacityReservations",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "ec2:DescribeInstances",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:DescribeInstances",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "ec2:DescribeInstanceStatus",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:DescribeInstanceStatus",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "ec2:DescribeInstanceTypeOfferings",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:DescribeInstanceTypeOfferings",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "ec2:DescribeInstanceTypes",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:DescribeInstanceTypes",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "ec2:DescribeSecurityGroups",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:DescribeSecurityGroups",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "ec2:DescribeSubnets",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:DescribeSubnets",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "ec2:DescribeVolumes",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:DescribeVolumes",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "ec2:DescribeLaunchTemplateVersions",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:DescribeLaunchTemplateVersions",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "ec2:DescribeNetworkInterfaces",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:DescribeNetworkInterfaces",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "autoscaling:DescribeAutoScalingInstances",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "autoscaling:DescribeAutoScalingInstances",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "autoscaling:DescribeAutoScalingGroups",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "autoscaling:DescribeAutoScalingGroups",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "events:DescribeRule",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "events:DescribeRule",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:CreateVolume",
+      "condition": {
+        "Null": {
+          "aws:RequestTag/bedrock-agentcore:capacity-provider-id": "false"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:CreateVolume",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:AttachVolume",
+      "condition": {
+        "StringEquals": {
+          "ec2:ManagedResourceOperator": "bedrock-agentcore.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:AttachVolume",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:CreateLaunchTemplate",
+      "condition": {
+        "Null": {
+          "aws:RequestTag/bedrock-agentcore:capacity-provider-id": "false"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:CreateLaunchTemplate",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:CreateLaunchTemplateVersion",
+      "condition": {
+        "StringEquals": {
+          "ec2:ManagedResourceOperator": "bedrock-agentcore.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:CreateLaunchTemplateVersion",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:ModifyLaunchTemplate",
+      "condition": {
+        "StringEquals": {
+          "ec2:ManagedResourceOperator": "bedrock-agentcore.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:ModifyLaunchTemplate",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "autoscaling:CreateAutoScalingGroup",
+      "condition": {
+        "Null": {
+          "aws:RequestTag/bedrock-agentcore:capacity-provider-id": "false"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "autoscaling:CreateAutoScalingGroup",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "autoscaling:UpdateAutoScalingGroup",
+      "condition": {
+        "Null": {
+          "aws:ResourceTag/bedrock-agentcore:capacity-provider-id": "false"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "autoscaling:UpdateAutoScalingGroup",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "autoscaling:PutLifecycleHook",
+      "condition": {
+        "Null": {
+          "aws:ResourceTag/bedrock-agentcore:capacity-provider-id": "false"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "autoscaling:PutLifecycleHook",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "autoscaling:CompleteLifecycleAction",
+      "condition": {
+        "Null": {
+          "aws:ResourceTag/bedrock-agentcore:capacity-provider-id": "false"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "autoscaling:CompleteLifecycleAction",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "autoscaling:LaunchInstances",
+      "condition": {
+        "Null": {
+          "aws:ResourceTag/bedrock-agentcore:capacity-provider-id": "false"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "autoscaling:LaunchInstances",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:RunInstances",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:RunInstances",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:CreateNetworkInterface",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:CreateNetworkInterface",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:CreateFleet",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:CreateFleet",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:RunInstances",
+      "condition": {
+        "StringEquals": {
+          "ec2:Owner": "amazon"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:RunInstances",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:CreateFleet",
+      "condition": {
+        "StringEquals": {
+          "ec2:Owner": "amazon"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:CreateFleet",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:CreateFleet",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:CreateFleet",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:CreateFleet",
+      "condition": {
+        "Null": {
+          "aws:ResourceTag/bedrock-agentcore:capacity-provider-id": "false"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:CreateFleet",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:RunInstances",
+      "condition": {
+        "Null": {
+          "aws:ResourceTag/bedrock-agentcore:capacity-provider-id": "false"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:RunInstances",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:CreateFleet",
+      "condition": {
+        "Null": {
+          "aws:RequestTag/bedrock-agentcore:capacity-provider-id": "false"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:CreateFleet",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:RunInstances",
+      "condition": {
+        "Null": {
+          "aws:RequestTag/bedrock-agentcore:capacity-provider-id": "false"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:RunInstances",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Tagging, Write",
+      "action": "ec2:CreateTags",
+      "condition": {
+        "StringEquals": {
+          "ec2:CreateAction": [
+            "CreateFleet",
+            "CreateLaunchTemplate",
+            "RunInstances",
+            "CreateVolume",
+            "CreateNetworkInterface"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:CreateTags",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Tagging, Write",
+      "action": "ec2:CreateTags",
+      "condition": {
+        "ForAllValues:StringLike": {
+          "aws:TagKeys": "bedrock-agentcore:*"
+        },
+        "StringEquals": {
+          "ec2:ManagedResourceOperator": "bedrock-agentcore.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:CreateTags",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:AttachNetworkInterface",
+      "condition": {
+        "StringEquals": {
+          "ec2:ManagedResourceOperator": "bedrock-agentcore.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:AttachNetworkInterface",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "events:PutRule",
+      "condition": {
+        "StringEquals": {
+          "events:ManagedBy": "bedrock-agentcore.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "events:PutRule",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "events:PutTargets",
+      "condition": {
+        "StringEquals": {
+          "events:ManagedBy": "bedrock-agentcore.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "events:PutTargets",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "events:RemoveTargets",
+      "condition": {
+        "StringEquals": {
+          "events:ManagedBy": "bedrock-agentcore.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "events:RemoveTargets",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Permissions management",
+      "action": "iam:CreateServiceLinkedRole",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "iam:CreateServiceLinkedRole",
+      "privesc": true,
+      "resource_exposure": true
+    },
+    {
+      "access_level": "Permissions management",
+      "action": "iam:PassRole",
+      "condition": {
+        "StringLike": {
+          "iam:PassedToService": "ec2.*"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "iam:PassRole",
+      "privesc": true,
+      "resource_exposure": true
+    }
+  ],
+  "grantless": false,
+  "malformed": false,
+  "name": "BedrockAgentCoreRuntimeInstancesOperatorRolePolicy",
+  "privesc": true,
+  "resource_exposure": true,
+  "undocumented_actions": false,
+  "unknown_actions": [],
+  "updatedate": null,
+  "version": "v1"
+}
