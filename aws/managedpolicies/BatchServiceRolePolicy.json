@@ -7,7 +7,7 @@
     "Permissions management"
   ],
   "arn": "arn:aws:iam::aws:policy/aws-service-role/BatchServiceRolePolicy",
-  "createdate": "2023-12-05T22:52:40+00:00",
+  "createdate": "2026-08-05T17:12:14+00:00",
   "credentials_exposure": false,
   "data_access": false,
   "deprecated": false,
@@ -38,6 +38,7 @@
           "autoscaling:DescribeAutoScalingInstances",
           "autoscaling:DescribeScalingActivities",
           "eks:DescribeCluster",
+          "ecs:DescribeCapacityProviders",
           "ecs:DescribeClusters",
           "ecs:DescribeContainerInstances",
           "ecs:DescribeTaskDefinition",
@@ -97,6 +98,7 @@
             "iam:PassedToService": [
               "ec2.amazonaws.com",
               "ec2.amazonaws.com.cn",
+              "ecs.amazonaws.com",
               "ecs-tasks.amazonaws.com"
             ]
           }
@@ -117,7 +119,8 @@
               "spot.amazonaws.com",
               "spotfleet.amazonaws.com",
               "autoscaling.amazonaws.com",
-              "ecs.amazonaws.com"
+              "ecs.amazonaws.com",
+              "ecs-compute.amazonaws.com"
             ]
           }
         },
@@ -181,9 +184,11 @@
         "Action": [
           "ecs:DeleteCluster",
           "ecs:DeregisterContainerInstance",
+          "ecs:PutClusterCapacityProviders",
           "ecs:RunTask",
           "ecs:StartTask",
-          "ecs:StopTask"
+          "ecs:StopTask",
+          "ecs:UpdateCluster"
         ],
         "Effect": "Allow",
         "Resource": "arn:aws:ecs:*:*:cluster/AWSBatch*",
@@ -274,6 +279,27 @@
           "*"
         ],
         "Sid": "AWSBatchPolicyStatement17"
+      },
+      {
+        "Action": [
+          "ecs:CreateCapacityProvider",
+          "ecs:UpdateCapacityProvider",
+          "ecs:DeleteCapacityProvider"
+        ],
+        "Effect": "Allow",
+        "Resource": "arn:aws:ecs:*:*:capacity-provider/AWSBatch*",
+        "Sid": "AWSBatchPolicyStatement18"
+      },
+      {
+        "Action": [
+          "ecs:TagResource",
+          "ecs:UntagResource"
+        ],
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:ecs:*:*:capacity-provider/AWSBatch*"
+        ],
+        "Sid": "AWSBatchPolicyStatement19"
       }
     ],
     "Version": "2012-10-17"
@@ -511,6 +537,16 @@
     },
     {
       "access_level": "Read",
+      "action": "ecs:DescribeCapacityProviders",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ecs:DescribeCapacityProviders",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
       "action": "ecs:DescribeClusters",
       "condition": null,
       "credentials_exposure": false,
@@ -711,6 +747,7 @@
           "iam:PassedToService": [
             "ec2.amazonaws.com",
             "ec2.amazonaws.com.cn",
+            "ecs.amazonaws.com",
             "ecs-tasks.amazonaws.com"
           ]
         }
@@ -730,7 +767,8 @@
             "spot.amazonaws.com",
             "spotfleet.amazonaws.com",
             "autoscaling.amazonaws.com",
-            "ecs.amazonaws.com"
+            "ecs.amazonaws.com",
+            "ecs-compute.amazonaws.com"
           ]
         }
       },
@@ -922,6 +960,16 @@
     },
     {
       "access_level": "Write",
+      "action": "ecs:PutClusterCapacityProviders",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ecs:PutClusterCapacityProviders",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
       "action": "ecs:RunTask",
       "condition": null,
       "credentials_exposure": false,
@@ -947,6 +995,16 @@
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "ecs:StopTask",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ecs:UpdateCluster",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ecs:UpdateCluster",
       "privesc": false,
       "resource_exposure": false
     },
@@ -1059,6 +1117,56 @@
       "effective_action": "ec2:CreateTags",
       "privesc": false,
       "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ecs:CreateCapacityProvider",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ecs:CreateCapacityProvider",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ecs:UpdateCapacityProvider",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ecs:UpdateCapacityProvider",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ecs:DeleteCapacityProvider",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ecs:DeleteCapacityProvider",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Tagging, Write",
+      "action": "ecs:TagResource",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ecs:TagResource",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Tagging, Write",
+      "action": "ecs:UntagResource",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ecs:UntagResource",
+      "privesc": false,
+      "resource_exposure": false
     }
   ],
   "grantless": false,
@@ -1068,6 +1176,6 @@
   "resource_exposure": true,
   "undocumented_actions": false,
   "unknown_actions": [],
-  "updatedate": "2023-12-05T22:52:40+00:00",
-  "version": "v7"
+  "updatedate": "2026-08-05T17:12:14+00:00",
+  "version": "v8"
 }

@@ -1,0 +1,1219 @@
+{
+  "access_levels": [
+    "List",
+    "Read",
+    "Tagging",
+    "Write",
+    "Permissions management"
+  ],
+  "arn": null,
+  "createdate": "2026-08-06T15:12:26+00:00",
+  "credentials_exposure": false,
+  "data_access": true,
+  "deprecated": false,
+  "document": {
+    "Statement": [
+      {
+        "Action": [
+          "s3:AbortMultipartUpload",
+          "s3:CreateBucket",
+          "s3:DeleteObject",
+          "s3:GetBucketLocation",
+          "s3:GetBucketPublicAccessBlock",
+          "s3:GetBucketTagging",
+          "s3:GetObject",
+          "s3:GetObjectAttributes",
+          "s3:GetObjectVersion",
+          "s3:ListBucket",
+          "s3:ListBucketMultipartUploads",
+          "s3:ListMultipartUploadParts",
+          "s3:PutBucketTagging",
+          "s3:PutEncryptionConfiguration",
+          "s3:PutObject"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:s3:::transform-vmware-landing-zone-*",
+        "Sid": "S3LandingZoneBucketAndObjectOperations"
+      },
+      {
+        "Action": [
+          "cloudformation:CreateStack",
+          "cloudformation:TagResource"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:RequestTag/CreatedBy": "AWSTransform",
+            "aws:RequestedRegion": "${aws:PrincipalTag/TargetRegion}",
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:cloudformation:*:*:stack/AtxLz*",
+        "Sid": "CfnLandingZoneStackCreate"
+      },
+      {
+        "Action": [
+          "cloudformation:UpdateStack"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:RequestTag/CreatedBy": "AWSTransform",
+            "aws:RequestedRegion": "${aws:PrincipalTag/TargetRegion}",
+            "aws:ResourceAccount": "${aws:PrincipalAccount}",
+            "aws:ResourceTag/CreatedBy": "AWSTransform"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:cloudformation:*:*:stack/AtxLz*",
+        "Sid": "CfnLandingZoneStackUpdate"
+      },
+      {
+        "Action": [
+          "cloudformation:CreateChangeSet",
+          "cloudformation:DescribeChangeSet",
+          "cloudformation:DescribeStackEvents",
+          "cloudformation:DescribeStacks",
+          "cloudformation:ExecuteChangeSet",
+          "cloudformation:GetTemplate",
+          "cloudformation:ListChangeSets"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:RequestedRegion": "${aws:PrincipalTag/TargetRegion}",
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:cloudformation:*:*:stack/AtxLz*",
+        "Sid": "CfnLandingZoneStackOperationsAndChangeSets"
+      },
+      {
+        "Action": [
+          "controltower:GetBaselineOperation",
+          "controltower:GetControlOperation",
+          "controltower:ListBaselines",
+          "controltower:ListEnabledBaselines",
+          "controltower:ListEnabledControls",
+          "controltower:ListLandingZones",
+          "organizations:DescribeCreateAccountStatus",
+          "organizations:DescribeOrganization",
+          "organizations:ListPolicies",
+          "organizations:ListRoots"
+        ],
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "ControlTowerAndOrganizationsOperationsReadOnly"
+      },
+      {
+        "Action": [
+          "controltower:GetEnabledBaseline",
+          "controltower:GetEnabledControl",
+          "controltower:GetLandingZone",
+          "controltower:ListTagsForResource"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:RequestedRegion": "${aws:PrincipalTag/TargetRegion}",
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:controltower:*:*:enabledbaseline/*",
+          "arn:aws:controltower:*:*:enabledcontrol/*",
+          "arn:aws:controltower:*:*:landingzone/*"
+        ],
+        "Sid": "ControlTowerResourceOperationsReadOnly"
+      },
+      {
+        "Action": [
+          "controltower:GetBaseline"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:RequestedRegion": "${aws:PrincipalTag/TargetRegion}"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:controltower:*::baseline/*",
+        "Sid": "ControlTowerBaselineOperationsReadOnly"
+      },
+      {
+        "Action": [
+          "controltower:EnableControl"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:RequestTag/ATWorkspace": "${aws:PrincipalTag/WorkspaceId}",
+            "aws:RequestTag/CreatedBy": "AWSTransform",
+            "aws:RequestedRegion": "${aws:PrincipalTag/TargetRegion}",
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:controltower:*:*:enabledcontrol/*",
+        "Sid": "ControlTowerEnableControlWithRequestTag"
+      },
+      {
+        "Action": [
+          "controltower:EnableBaseline",
+          "controltower:TagResource",
+          "organizations:CreateAccount"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:RequestTag/ATWorkspace": "${aws:PrincipalTag/WorkspaceId}",
+            "aws:RequestTag/CreatedBy": "AWSTransform"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "ControlTowerEnableBaselineAndOrganizationsAccountCreate"
+      },
+      {
+        "Action": [
+          "organizations:CreateOrganizationalUnit",
+          "organizations:TagResource"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:RequestTag/ATWorkspace": "${aws:PrincipalTag/WorkspaceId}",
+            "aws:RequestTag/CreatedBy": "AWSTransform",
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:organizations::*:account/o-*/*",
+          "arn:aws:organizations::*:ou/o-*/*",
+          "arn:aws:organizations::*:policy/o-*/*",
+          "arn:aws:organizations::*:root/o-*/*"
+        ],
+        "Sid": "OrganizationsTagAndCreateOrganizationalUnit"
+      },
+      {
+        "Action": [
+          "organizations:DescribeAccount",
+          "organizations:DescribeOrganizationalUnit",
+          "organizations:DescribePolicy"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:organizations::*:account/*",
+          "arn:aws:organizations::*:ou/*",
+          "arn:aws:organizations::*:policy/*"
+        ],
+        "Sid": "OrganizationsResourceDescribeReadOnly"
+      },
+      {
+        "Action": [
+          "organizations:UpdatePolicy"
+        ],
+        "Condition": {
+          "ForAnyValue:StringEquals": {
+            "aws:CalledVia": "controltower.amazonaws.com"
+          },
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}",
+            "organizations:PolicyType": "SERVICE_CONTROL_POLICY"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:organizations::*:policy/*",
+        "Sid": "OrganizationsPolicyUpdateViaControlTower"
+      },
+      {
+        "Action": [
+          "organizations:ListAccountsForParent",
+          "organizations:ListOrganizationalUnitsForParent",
+          "organizations:ListParents"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:organizations::*:account/*",
+          "arn:aws:organizations::*:ou/*",
+          "arn:aws:organizations::*:root/*"
+        ],
+        "Sid": "OrganizationsHierarchyOperationsReadOnly"
+      },
+      {
+        "Action": [
+          "organizations:MoveAccount"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}",
+            "aws:ResourceTag/ATWorkspace": "${aws:PrincipalTag/WorkspaceId}",
+            "aws:ResourceTag/CreatedBy": "AWSTransform"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:organizations::*:account/*",
+          "arn:aws:organizations::*:ou/*",
+          "arn:aws:organizations::*:root/*"
+        ],
+        "Sid": "OrganizationsMoveAccountWithResourceTag"
+      },
+      {
+        "Action": [
+          "organizations:ListTagsForResource"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:organizations::*:account/o-*/*",
+          "arn:aws:organizations::*:ou/o-*/*",
+          "arn:aws:organizations::*:policy/o-*/*",
+          "arn:aws:organizations::*:root/o-*/*"
+        ],
+        "Sid": "OrganizationsListTagsForResource"
+      },
+      {
+        "Action": [
+          "organizations:CreatePolicy"
+        ],
+        "Condition": {
+          "ForAnyValue:StringEquals": {
+            "aws:CalledVia": "controltower.amazonaws.com"
+          },
+          "StringEquals": {
+            "organizations:PolicyType": "SERVICE_CONTROL_POLICY"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "OrganizationsServiceControlPolicyCreateViaControlTower"
+      },
+      {
+        "Action": [
+          "organizations:AttachPolicy"
+        ],
+        "Condition": {
+          "ForAnyValue:StringEquals": {
+            "aws:CalledVia": "controltower.amazonaws.com"
+          },
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}",
+            "organizations:PolicyType": "SERVICE_CONTROL_POLICY"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:organizations::*:account/o-*/*",
+          "arn:aws:organizations::*:ou/o-*/*",
+          "arn:aws:organizations::*:policy/o-*/*",
+          "arn:aws:organizations::*:root/o-*/*"
+        ],
+        "Sid": "OrganizationsServiceControlPolicyAttachViaControlTower"
+      },
+      {
+        "Action": [
+          "servicecatalog:CreateProvisioningArtifact",
+          "servicecatalog:DeleteProvisioningArtifact",
+          "servicecatalog:ListProvisioningArtifacts",
+          "servicecatalog:UpdateProvisioningArtifact"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:RequestedRegion": "${aws:PrincipalTag/TargetRegion}",
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:catalog:*:*:product/*",
+        "Sid": "ServiceCatalogProvisioningArtifactOperations"
+      }
+    ],
+    "Version": "2012-10-17"
+  },
+  "effective_actions": [
+    {
+      "access_level": "Write",
+      "action": "s3:AbortMultipartUpload",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3:AbortMultipartUpload",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "s3:CreateBucket",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3:CreateBucket",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "s3:DeleteObject",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3:DeleteObject",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "s3:GetBucketLocation",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3:GetBucketLocation",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "s3:GetBucketPublicAccessBlock",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3:GetBucketPublicAccessBlock",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "s3:GetBucketTagging",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3:GetBucketTagging",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "s3:GetObject",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": true,
+      "effective_action": "s3:GetObject",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "s3:GetObjectAttributes",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3:GetObjectAttributes",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "s3:GetObjectVersion",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": true,
+      "effective_action": "s3:GetObjectVersion",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "s3:ListBucket",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3:ListBucket",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "s3:ListBucketMultipartUploads",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3:ListBucketMultipartUploads",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "s3:ListMultipartUploadParts",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3:ListMultipartUploadParts",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Tagging, Write",
+      "action": "s3:PutBucketTagging",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3:PutBucketTagging",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "s3:PutEncryptionConfiguration",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3:PutEncryptionConfiguration",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "s3:PutObject",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3:PutObject",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "cloudformation:CreateStack",
+      "condition": {
+        "StringEquals": {
+          "aws:RequestTag/CreatedBy": "AWSTransform",
+          "aws:RequestedRegion": "${aws:PrincipalTag/TargetRegion}",
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudformation:CreateStack",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Tagging, Write",
+      "action": "cloudformation:TagResource",
+      "condition": {
+        "StringEquals": {
+          "aws:RequestTag/CreatedBy": "AWSTransform",
+          "aws:RequestedRegion": "${aws:PrincipalTag/TargetRegion}",
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudformation:TagResource",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "cloudformation:UpdateStack",
+      "condition": {
+        "StringEquals": {
+          "aws:RequestTag/CreatedBy": "AWSTransform",
+          "aws:RequestedRegion": "${aws:PrincipalTag/TargetRegion}",
+          "aws:ResourceAccount": "${aws:PrincipalAccount}",
+          "aws:ResourceTag/CreatedBy": "AWSTransform"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudformation:UpdateStack",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "cloudformation:CreateChangeSet",
+      "condition": {
+        "StringEquals": {
+          "aws:RequestedRegion": "${aws:PrincipalTag/TargetRegion}",
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudformation:CreateChangeSet",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "cloudformation:DescribeChangeSet",
+      "condition": {
+        "StringEquals": {
+          "aws:RequestedRegion": "${aws:PrincipalTag/TargetRegion}",
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudformation:DescribeChangeSet",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "cloudformation:DescribeStackEvents",
+      "condition": {
+        "StringEquals": {
+          "aws:RequestedRegion": "${aws:PrincipalTag/TargetRegion}",
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudformation:DescribeStackEvents",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "cloudformation:DescribeStacks",
+      "condition": {
+        "StringEquals": {
+          "aws:RequestedRegion": "${aws:PrincipalTag/TargetRegion}",
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudformation:DescribeStacks",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "cloudformation:ExecuteChangeSet",
+      "condition": {
+        "StringEquals": {
+          "aws:RequestedRegion": "${aws:PrincipalTag/TargetRegion}",
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudformation:ExecuteChangeSet",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "cloudformation:GetTemplate",
+      "condition": {
+        "StringEquals": {
+          "aws:RequestedRegion": "${aws:PrincipalTag/TargetRegion}",
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": true,
+      "effective_action": "cloudformation:GetTemplate",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "cloudformation:ListChangeSets",
+      "condition": {
+        "StringEquals": {
+          "aws:RequestedRegion": "${aws:PrincipalTag/TargetRegion}",
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudformation:ListChangeSets",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "controltower:GetBaselineOperation",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "controltower:GetBaselineOperation",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "controltower:GetControlOperation",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "controltower:GetControlOperation",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "controltower:ListBaselines",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "controltower:ListBaselines",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "controltower:ListEnabledBaselines",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "controltower:ListEnabledBaselines",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "controltower:ListEnabledControls",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "controltower:ListEnabledControls",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "controltower:ListLandingZones",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "controltower:ListLandingZones",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "organizations:DescribeCreateAccountStatus",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "organizations:DescribeCreateAccountStatus",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "organizations:DescribeOrganization",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "organizations:DescribeOrganization",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "organizations:ListPolicies",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "organizations:ListPolicies",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "organizations:ListRoots",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "organizations:ListRoots",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "controltower:GetEnabledBaseline",
+      "condition": {
+        "StringEquals": {
+          "aws:RequestedRegion": "${aws:PrincipalTag/TargetRegion}",
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "controltower:GetEnabledBaseline",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "controltower:GetEnabledControl",
+      "condition": {
+        "StringEquals": {
+          "aws:RequestedRegion": "${aws:PrincipalTag/TargetRegion}",
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "controltower:GetEnabledControl",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "controltower:GetLandingZone",
+      "condition": {
+        "StringEquals": {
+          "aws:RequestedRegion": "${aws:PrincipalTag/TargetRegion}",
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "controltower:GetLandingZone",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "controltower:ListTagsForResource",
+      "condition": {
+        "StringEquals": {
+          "aws:RequestedRegion": "${aws:PrincipalTag/TargetRegion}",
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "controltower:ListTagsForResource",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "controltower:GetBaseline",
+      "condition": {
+        "StringEquals": {
+          "aws:RequestedRegion": "${aws:PrincipalTag/TargetRegion}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "controltower:GetBaseline",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "controltower:EnableControl",
+      "condition": {
+        "StringEquals": {
+          "aws:RequestTag/ATWorkspace": "${aws:PrincipalTag/WorkspaceId}",
+          "aws:RequestTag/CreatedBy": "AWSTransform",
+          "aws:RequestedRegion": "${aws:PrincipalTag/TargetRegion}",
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "controltower:EnableControl",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "controltower:EnableBaseline",
+      "condition": {
+        "StringEquals": {
+          "aws:RequestTag/ATWorkspace": "${aws:PrincipalTag/WorkspaceId}",
+          "aws:RequestTag/CreatedBy": "AWSTransform"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "controltower:EnableBaseline",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Tagging, Write",
+      "action": "controltower:TagResource",
+      "condition": {
+        "StringEquals": {
+          "aws:RequestTag/ATWorkspace": "${aws:PrincipalTag/WorkspaceId}",
+          "aws:RequestTag/CreatedBy": "AWSTransform"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "controltower:TagResource",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "organizations:CreateAccount",
+      "condition": {
+        "StringEquals": {
+          "aws:RequestTag/ATWorkspace": "${aws:PrincipalTag/WorkspaceId}",
+          "aws:RequestTag/CreatedBy": "AWSTransform"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "organizations:CreateAccount",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "organizations:CreateOrganizationalUnit",
+      "condition": {
+        "StringEquals": {
+          "aws:RequestTag/ATWorkspace": "${aws:PrincipalTag/WorkspaceId}",
+          "aws:RequestTag/CreatedBy": "AWSTransform",
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "organizations:CreateOrganizationalUnit",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Tagging, Write",
+      "action": "organizations:TagResource",
+      "condition": {
+        "StringEquals": {
+          "aws:RequestTag/ATWorkspace": "${aws:PrincipalTag/WorkspaceId}",
+          "aws:RequestTag/CreatedBy": "AWSTransform",
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "organizations:TagResource",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "organizations:DescribeAccount",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "organizations:DescribeAccount",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "organizations:DescribeOrganizationalUnit",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "organizations:DescribeOrganizationalUnit",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "organizations:DescribePolicy",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "organizations:DescribePolicy",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Permissions management, Write",
+      "action": "organizations:UpdatePolicy",
+      "condition": {
+        "ForAnyValue:StringEquals": {
+          "aws:CalledVia": "controltower.amazonaws.com"
+        },
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}",
+          "organizations:PolicyType": "SERVICE_CONTROL_POLICY"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "organizations:UpdatePolicy",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "organizations:ListAccountsForParent",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "organizations:ListAccountsForParent",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "organizations:ListOrganizationalUnitsForParent",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "organizations:ListOrganizationalUnitsForParent",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "organizations:ListParents",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "organizations:ListParents",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "organizations:MoveAccount",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}",
+          "aws:ResourceTag/ATWorkspace": "${aws:PrincipalTag/WorkspaceId}",
+          "aws:ResourceTag/CreatedBy": "AWSTransform"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "organizations:MoveAccount",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "organizations:ListTagsForResource",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "organizations:ListTagsForResource",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "organizations:CreatePolicy",
+      "condition": {
+        "ForAnyValue:StringEquals": {
+          "aws:CalledVia": "controltower.amazonaws.com"
+        },
+        "StringEquals": {
+          "organizations:PolicyType": "SERVICE_CONTROL_POLICY"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "organizations:CreatePolicy",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Permissions management, Write",
+      "action": "organizations:AttachPolicy",
+      "condition": {
+        "ForAnyValue:StringEquals": {
+          "aws:CalledVia": "controltower.amazonaws.com"
+        },
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}",
+          "organizations:PolicyType": "SERVICE_CONTROL_POLICY"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "organizations:AttachPolicy",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "servicecatalog:CreateProvisioningArtifact",
+      "condition": {
+        "StringEquals": {
+          "aws:RequestedRegion": "${aws:PrincipalTag/TargetRegion}",
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "servicecatalog:CreateProvisioningArtifact",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "servicecatalog:DeleteProvisioningArtifact",
+      "condition": {
+        "StringEquals": {
+          "aws:RequestedRegion": "${aws:PrincipalTag/TargetRegion}",
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "servicecatalog:DeleteProvisioningArtifact",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "servicecatalog:ListProvisioningArtifacts",
+      "condition": {
+        "StringEquals": {
+          "aws:RequestedRegion": "${aws:PrincipalTag/TargetRegion}",
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "servicecatalog:ListProvisioningArtifacts",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "servicecatalog:UpdateProvisioningArtifact",
+      "condition": {
+        "StringEquals": {
+          "aws:RequestedRegion": "${aws:PrincipalTag/TargetRegion}",
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "servicecatalog:UpdateProvisioningArtifact",
+      "privesc": false,
+      "resource_exposure": false
+    }
+  ],
+  "grantless": false,
+  "malformed": false,
+  "name": "AWSTransformLandingZoneAgentPolicy",
+  "privesc": false,
+  "resource_exposure": false,
+  "undocumented_actions": false,
+  "unknown_actions": [],
+  "updatedate": null,
+  "version": "v1"
+}
