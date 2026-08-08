@@ -4,7 +4,7 @@
     "Write"
   ],
   "arn": "arn:aws:iam::aws:policy/AmazonSageMakerJobRuntimeAccess",
-  "createdate": "2026-06-03T02:42:10+00:00",
+  "createdate": "2026-08-07T18:42:15+00:00",
   "credentials_exposure": false,
   "data_access": false,
   "deprecated": false,
@@ -38,6 +38,23 @@
         "Effect": "Allow",
         "Resource": "*",
         "Sid": "BearerTokenPermissions"
+      },
+      {
+        "Action": [
+          "kms:Decrypt",
+          "kms:GenerateDataKey"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          },
+          "StringLike": {
+            "kms:ViaService": "sagemaker.*.amazonaws.com"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:kms:*:*:key/*",
+        "Sid": "KMSPermissionsForMTRLRuntime"
       }
     ],
     "Version": "2012-10-17"
@@ -112,6 +129,40 @@
       "effective_action": "sagemaker:CallWithBearerToken",
       "privesc": false,
       "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "kms:Decrypt",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        },
+        "StringLike": {
+          "kms:ViaService": "sagemaker.*.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "kms:Decrypt",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "kms:GenerateDataKey",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        },
+        "StringLike": {
+          "kms:ViaService": "sagemaker.*.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "kms:GenerateDataKey",
+      "privesc": false,
+      "resource_exposure": false
     }
   ],
   "grantless": false,
@@ -121,6 +172,6 @@
   "resource_exposure": false,
   "undocumented_actions": false,
   "unknown_actions": [],
-  "updatedate": "2026-06-03T02:42:10+00:00",
-  "version": "v1"
+  "updatedate": "2026-08-07T18:42:15+00:00",
+  "version": "v2"
 }
