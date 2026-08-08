@@ -21,6 +21,18 @@ def get_action_pattern(action):
         action_pattern_cache[action_lower] = re.compile(match_expression.lower())
     return action_pattern_cache[action_lower]
 
+
+def deduplicate_actions(actions):
+    """Keep one entry per permission name in each generated role."""
+    deduplicated_actions = []
+    seen_action_names = set()
+    for action in actions:
+        action_name = action['name'].lower()
+        if action_name not in seen_action_names:
+            seen_action_names.add(action_name)
+            deduplicated_actions.append(action)
+    return deduplicated_actions
+
 for raw_role in raw_roles:
     if raw_role['roleType'] != "BuiltInRole":
         continue
@@ -129,6 +141,9 @@ for raw_role in raw_roles:
                 has_external = True
             if not matched:
                 has_unknown = True
+
+    permitted_actions = deduplicate_actions(permitted_actions)
+    permitted_data_actions = deduplicate_actions(permitted_data_actions)
 
     result['roles'].append({
         'name': raw_role['roleName'],
