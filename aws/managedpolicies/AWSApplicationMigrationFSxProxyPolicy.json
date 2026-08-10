@@ -5,7 +5,7 @@
     "Write"
   ],
   "arn": "arn:aws:iam::aws:policy/service-role/AWSApplicationMigrationFSxProxyPolicy",
-  "createdate": "2026-05-31T13:12:14+00:00",
+  "createdate": "2026-08-09T12:17:24+00:00",
   "credentials_exposure": false,
   "data_access": false,
   "deprecated": false,
@@ -27,7 +27,8 @@
       {
         "Action": [
           "fsx:DescribeVolumes",
-          "fsx:DescribeStorageVirtualMachines"
+          "fsx:DescribeStorageVirtualMachines",
+          "fsx:DescribeSnapshots"
         ],
         "Effect": "Allow",
         "Resource": "*",
@@ -81,6 +82,58 @@
         "Effect": "Allow",
         "Resource": "arn:aws:fsx:*:*:volume/*/*",
         "Sid": "FSxUpdateAndDeleteVolume"
+      },
+      {
+        "Action": [
+          "fsx:CreateSnapshot"
+        ],
+        "Condition": {
+          "Null": {
+            "aws:RequestTag/AWSApplicationMigrationServiceManaged": "false"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:fsx:*:*:snapshot/*/*",
+        "Sid": "FSxCreateSnapshot"
+      },
+      {
+        "Action": [
+          "fsx:CreateSnapshot"
+        ],
+        "Condition": {
+          "Null": {
+            "aws:ResourceTag/AWSApplicationMigrationServiceManaged": "false"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:fsx:*:*:volume/*/*",
+        "Sid": "FSxCreateSnapshotVolume"
+      },
+      {
+        "Action": [
+          "fsx:DeleteSnapshot"
+        ],
+        "Condition": {
+          "Null": {
+            "aws:ResourceTag/AWSApplicationMigrationServiceManaged": "false"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:fsx:*:*:snapshot/*/*",
+        "Sid": "FSxDeleteSnapshot"
+      },
+      {
+        "Action": [
+          "fsx:TagResource"
+        ],
+        "Condition": {
+          "Null": {
+            "aws:RequestTag/AWSApplicationMigrationServiceManaged": "false"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:fsx:*:*:snapshot/*/*",
+        "Sid": "FSxTagSnapshot"
       }
     ],
     "Version": "2012-10-17"
@@ -117,6 +170,16 @@
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "fsx:DescribeStorageVirtualMachines",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "fsx:DescribeSnapshots",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "fsx:DescribeSnapshots",
       "privesc": false,
       "resource_exposure": false
     },
@@ -199,6 +262,62 @@
       "effective_action": "fsx:DeleteVolume",
       "privesc": false,
       "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "fsx:CreateSnapshot",
+      "condition": {
+        "Null": {
+          "aws:RequestTag/AWSApplicationMigrationServiceManaged": "false"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "fsx:CreateSnapshot",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "fsx:CreateSnapshot",
+      "condition": {
+        "Null": {
+          "aws:ResourceTag/AWSApplicationMigrationServiceManaged": "false"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "fsx:CreateSnapshot",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "fsx:DeleteSnapshot",
+      "condition": {
+        "Null": {
+          "aws:ResourceTag/AWSApplicationMigrationServiceManaged": "false"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "fsx:DeleteSnapshot",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Tagging, Write",
+      "action": "fsx:TagResource",
+      "condition": {
+        "Null": {
+          "aws:RequestTag/AWSApplicationMigrationServiceManaged": "false"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "fsx:TagResource",
+      "privesc": false,
+      "resource_exposure": false
     }
   ],
   "grantless": false,
@@ -208,6 +327,6 @@
   "resource_exposure": false,
   "undocumented_actions": false,
   "unknown_actions": [],
-  "updatedate": "2026-05-31T13:12:14+00:00",
-  "version": "v1"
+  "updatedate": "2026-08-09T12:17:24+00:00",
+  "version": "v2"
 }
