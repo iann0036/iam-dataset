@@ -7,7 +7,7 @@
     "Permissions management"
   ],
   "arn": "arn:aws:iam::aws:policy/AWSServiceCatalogAppRegistryFullAccess",
-  "createdate": "2023-12-07T21:50:00+00:00",
+  "createdate": "2026-08-12T10:07:19+00:00",
   "credentials_exposure": false,
   "data_access": false,
   "deprecated": false,
@@ -26,6 +26,25 @@
         "Effect": "Allow",
         "Resource": "*",
         "Sid": "AppRegistryUpdateStackAndResourceGroupTagging"
+      },
+      {
+        "Action": [
+          "cloudformation:TagResource",
+          "cloudformation:UntagResource"
+        ],
+        "Condition": {
+          "ForAnyValue:StringEquals": {
+            "aws:CalledVia": "servicecatalog-appregistry.amazonaws.com"
+          },
+          "StringEquals": {
+            "cloudformation:CreateAction": [
+              "UpdateStack"
+            ]
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "CloudFormationTagOnCreate"
       },
       {
         "Action": [
@@ -129,6 +148,44 @@
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "tag:GetResources",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Tagging, Write",
+      "action": "cloudformation:TagResource",
+      "condition": {
+        "ForAnyValue:StringEquals": {
+          "aws:CalledVia": "servicecatalog-appregistry.amazonaws.com"
+        },
+        "StringEquals": {
+          "cloudformation:CreateAction": [
+            "UpdateStack"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudformation:TagResource",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Tagging, Write",
+      "action": "cloudformation:UntagResource",
+      "condition": {
+        "ForAnyValue:StringEquals": {
+          "aws:CalledVia": "servicecatalog-appregistry.amazonaws.com"
+        },
+        "StringEquals": {
+          "cloudformation:CreateAction": [
+            "UpdateStack"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudformation:UntagResource",
       "privesc": false,
       "resource_exposure": false
     },
@@ -531,5 +588,5 @@
   "undocumented_actions": false,
   "unknown_actions": [],
   "updatedate": "2023-12-07T21:50:00+00:00",
-  "version": "v6"
+  "version": "v7"
 }
