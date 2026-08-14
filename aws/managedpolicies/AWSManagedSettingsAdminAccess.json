@@ -7,7 +7,7 @@
     "Permissions management"
   ],
   "arn": "arn:aws:iam::aws:policy/AWSManagedSettingsAdminAccess",
-  "createdate": "2026-08-07T23:47:14+00:00",
+  "createdate": "2026-08-13T22:37:08+00:00",
   "credentials_exposure": true,
   "data_access": true,
   "deprecated": false,
@@ -215,7 +215,8 @@
           "payments:SearchFinancialRecords",
           "payments:SetPreferredCurrency",
           "payments:UpdatePaymentProfile",
-          "payments:GetAccountBalance"
+          "payments:GetAccountBalance",
+          "payments:GetDefaultPaymentProfile"
         ],
         "Effect": "Allow",
         "Resource": "*",
@@ -378,6 +379,74 @@
         "Effect": "Allow",
         "Resource": "*",
         "Sid": "ActivateAdvancedSCPCleanupAccess"
+      },
+      {
+        "Action": [
+          "organizations:EnableAWSServiceAccess"
+        ],
+        "Condition": {
+          "StringLike": {
+            "organizations:ServicePrincipal": [
+              "cost-optimization-hub.bcm.amazonaws.com",
+              "compute-optimizer.amazonaws.com"
+            ]
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "AllowAWSServiceAccessForCostOptimizationHub"
+      },
+      {
+        "Action": [
+          "iam:CreateServiceLinkedRole"
+        ],
+        "Condition": {
+          "StringLike": {
+            "iam:AWSServiceName": "aco-automation.amazonaws.com"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:iam::*:role/aws-service-role/aco-automation.amazonaws.com/AWSServiceRoleForComputeOptimizerAutomation",
+        "Sid": "AllowCreateServiceLinkedRoleForComputeOptimizerAutomation"
+      },
+      {
+        "Action": [
+          "iam:CreateServiceLinkedRole"
+        ],
+        "Condition": {
+          "StringLike": {
+            "iam:AWSServiceName": "compute-optimizer.amazonaws.com"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:iam::*:role/aws-service-role/compute-optimizer.amazonaws.com/AWSServiceRoleForComputeOptimizer",
+        "Sid": "AllowCreateServiceLinkedRoleForComputeOptimizer"
+      },
+      {
+        "Action": [
+          "iam:CreateServiceLinkedRole"
+        ],
+        "Condition": {
+          "StringLike": {
+            "iam:AWSServiceName": "cost-optimization-hub.bcm.amazonaws.com"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:iam::*:role/aws-service-role/cost-optimization-hub.bcm.amazonaws.com/AWSServiceRoleForCostOptimizationHub",
+        "Sid": "AllowCreateServiceLinkedRoleForCostOptimizationHub"
+      },
+      {
+        "Action": [
+          "aco-automation:GetEnrollmentConfiguration",
+          "aco-automation:UpdateEnrollmentConfiguration",
+          "compute-optimizer:GetEnrollmentStatus",
+          "compute-optimizer:UpdateEnrollmentStatus",
+          "cost-optimization-hub:ListEnrollmentStatuses",
+          "cost-optimization-hub:UpdateEnrollmentStatus"
+        ],
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "GetAndUpdateEnrollmentStatusForACOCOH"
       }
     ],
     "Version": "2012-10-17"
@@ -1764,6 +1833,125 @@
       "effective_action": "organizations:ListRoots",
       "privesc": false,
       "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "organizations:EnableAWSServiceAccess",
+      "condition": {
+        "StringLike": {
+          "organizations:ServicePrincipal": [
+            "cost-optimization-hub.bcm.amazonaws.com",
+            "compute-optimizer.amazonaws.com"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "organizations:EnableAWSServiceAccess",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Permissions management",
+      "action": "iam:CreateServiceLinkedRole",
+      "condition": {
+        "StringLike": {
+          "iam:AWSServiceName": "aco-automation.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "iam:CreateServiceLinkedRole",
+      "privesc": true,
+      "resource_exposure": true
+    },
+    {
+      "access_level": "Permissions management",
+      "action": "iam:CreateServiceLinkedRole",
+      "condition": {
+        "StringLike": {
+          "iam:AWSServiceName": "compute-optimizer.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "iam:CreateServiceLinkedRole",
+      "privesc": true,
+      "resource_exposure": true
+    },
+    {
+      "access_level": "Permissions management",
+      "action": "iam:CreateServiceLinkedRole",
+      "condition": {
+        "StringLike": {
+          "iam:AWSServiceName": "cost-optimization-hub.bcm.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "iam:CreateServiceLinkedRole",
+      "privesc": true,
+      "resource_exposure": true
+    },
+    {
+      "access_level": "Read",
+      "action": "aco-automation:GetEnrollmentConfiguration",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "aco-automation:GetEnrollmentConfiguration",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "aco-automation:UpdateEnrollmentConfiguration",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "aco-automation:UpdateEnrollmentConfiguration",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "compute-optimizer:GetEnrollmentStatus",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "compute-optimizer:GetEnrollmentStatus",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "compute-optimizer:UpdateEnrollmentStatus",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "compute-optimizer:UpdateEnrollmentStatus",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "cost-optimization-hub:ListEnrollmentStatuses",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cost-optimization-hub:ListEnrollmentStatuses",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "cost-optimization-hub:UpdateEnrollmentStatus",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cost-optimization-hub:UpdateEnrollmentStatus",
+      "privesc": false,
+      "resource_exposure": false
     }
   ],
   "grantless": false,
@@ -1878,6 +2066,10 @@
       "condition": null
     },
     {
+      "action": "payments:GetDefaultPaymentProfile",
+      "condition": null
+    },
+    {
       "action": "organizations:CreateBuilderIdOwnedAccount",
       "condition": {
         "StringEquals": {
@@ -1886,6 +2078,6 @@
       }
     }
   ],
-  "updatedate": "2026-08-07T23:47:14+00:00",
-  "version": "v4"
+  "updatedate": "2026-08-13T22:37:08+00:00",
+  "version": "v5"
 }
