@@ -2932,6 +2932,20 @@
       },
       {
         "access_level": "List",
+        "description": "Grants permission to list domain validation methods for a certificate",
+        "privilege": "ListCertificateDomainValidations",
+        "resource_types": [
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}"
+            ],
+            "dependent_actions": [],
+            "resource_type": "certificate*"
+          }
+        ]
+      },
+      {
+        "access_level": "List",
         "description": "Grants permission to retrieve a list of certificates for specific certificate parameters",
         "privilege": "ListCertificates",
         "resource_types": [
@@ -3230,11 +3244,12 @@
       },
       {
         "access_level": "Write",
-        "description": "Grants permission to update a certificate configuration. Use this to specify whether to opt in to or out of certificate transparency logging",
+        "description": "Grants permission to update a certificate configuration. Use this to specify whether to opt in to or out of certificate transparency logging or to update the certificate domain validation method",
         "privilege": "UpdateCertificateOptions",
         "resource_types": [
           {
             "condition_keys": [
+              "acm:ValidationMethod",
               "aws:ResourceTag/${TagKey}"
             ],
             "dependent_actions": [],
@@ -111962,7 +111977,8 @@
               "dms:req-tag/${TagKey}"
             ],
             "dependent_actions": [
-              "dms:AddTagsToResource"
+              "dms:AddTagsToResource",
+              "iam:PassRole"
             ],
             "resource_type": "ReplicationInstance*"
           },
@@ -113160,7 +113176,9 @@
               "aws:ResourceTag/${TagKey}",
               "dms:rep-tag/${TagKey}"
             ],
-            "dependent_actions": [],
+            "dependent_actions": [
+              "iam:PassRole"
+            ],
             "resource_type": "ReplicationInstance*"
           }
         ]
@@ -190185,6 +190203,11 @@
         "type": "String"
       },
       {
+        "condition": "iam:AccountPropertyNamespaces",
+        "description": "Filters access by the account property namespaces being read or modified",
+        "type": "ArrayOfString"
+      },
+      {
         "condition": "iam:AssociatedResourceArn",
         "description": "Filters access by the resource that the role will be used on behalf of",
         "type": "ARN"
@@ -190248,6 +190271,11 @@
         "condition": "iam:ResourceTag/${TagKey}",
         "description": "Filters access by the tags attached to an IAM entity (user or role)",
         "type": "String"
+      },
+      {
+        "condition": "iam:RoleTemplateARN",
+        "description": "Filters access by the role template ARN used in the request",
+        "type": "ARN"
       },
       {
         "condition": "iam:ServiceSpecificCredentialAgeDays",
@@ -190361,7 +190389,8 @@
               "aws:ResourceTag/${TagKey}",
               "iam:PermissionsBoundary",
               "iam:PolicyARN",
-              "iam:ResourceTag/${TagKey}"
+              "iam:ResourceTag/${TagKey}",
+              "iam:RoleTemplateARN"
             ],
             "dependent_actions": [],
             "resource_type": "role*"
@@ -190550,7 +190579,8 @@
               "aws:ResourceTag/${TagKey}",
               "aws:TagKeys",
               "iam:PermissionsBoundary",
-              "iam:ResourceTag/${TagKey}"
+              "iam:ResourceTag/${TagKey}",
+              "iam:RoleTemplateARN"
             ],
             "dependent_actions": [
               "iam:TagRole"
@@ -191278,6 +191308,20 @@
         ]
       },
       {
+        "access_level": "Read",
+        "description": "Grants permission to retrieve account-level properties for IAM features",
+        "privilege": "GetAccountProperties",
+        "resource_types": [
+          {
+            "condition_keys": [
+              "iam:AccountPropertyNamespaces"
+            ],
+            "dependent_actions": [],
+            "resource_type": ""
+          }
+        ]
+      },
+      {
         "access_level": "List",
         "description": "Grants permission to retrieve information about IAM entity usage and IAM quotas in the AWS account",
         "privilege": "GetAccountSummary",
@@ -191524,7 +191568,8 @@
             "condition_keys": [
               "aws:ResourceTag/${TagKey}",
               "iam:PermissionsBoundary",
-              "iam:ResourceTag/${TagKey}"
+              "iam:ResourceTag/${TagKey}",
+              "iam:RoleTemplateARN"
             ],
             "dependent_actions": [],
             "resource_type": "role*"
@@ -191543,6 +191588,18 @@
             ],
             "dependent_actions": [],
             "resource_type": "role*"
+          }
+        ]
+      },
+      {
+        "access_level": "Read",
+        "description": "Grants permission to retrieve information about a specific version of a role template",
+        "privilege": "GetRoleTemplateVersion",
+        "resource_types": [
+          {
+            "condition_keys": [],
+            "dependent_actions": [],
+            "resource_type": "role-template*"
           }
         ]
       },
@@ -192188,6 +192245,22 @@
         ]
       },
       {
+        "access_level": "Write",
+        "description": "Grants permission to set account-level properties for IAM features",
+        "privilege": "PutAccountProperties",
+        "resource_types": [
+          {
+            "condition_keys": [
+              "iam:AccountPropertyNamespaces"
+            ],
+            "dependent_actions": [
+              "iam:CreateServiceLinkedRole"
+            ],
+            "resource_type": ""
+          }
+        ]
+      },
+      {
         "access_level": "Permissions management, Write",
         "description": "Grants permission to create or update an inline policy document that is embedded in the specified IAM group",
         "privilege": "PutGroupPolicy",
@@ -192208,7 +192281,8 @@
             "condition_keys": [
               "aws:ResourceTag/${TagKey}",
               "iam:PermissionsBoundary",
-              "iam:ResourceTag/${TagKey}"
+              "iam:ResourceTag/${TagKey}",
+              "iam:RoleTemplateARN"
             ],
             "dependent_actions": [],
             "resource_type": "role*"
@@ -192224,7 +192298,8 @@
             "condition_keys": [
               "aws:ResourceTag/${TagKey}",
               "iam:PermissionsBoundary",
-              "iam:ResourceTag/${TagKey}"
+              "iam:ResourceTag/${TagKey}",
+              "iam:RoleTemplateARN"
             ],
             "dependent_actions": [],
             "resource_type": "role*"
@@ -192514,7 +192589,8 @@
               "aws:RequestTag/${TagKey}",
               "aws:ResourceTag/${TagKey}",
               "aws:TagKeys",
-              "iam:ResourceTag/${TagKey}"
+              "iam:ResourceTag/${TagKey}",
+              "iam:RoleTemplateARN"
             ],
             "dependent_actions": [],
             "resource_type": "role*"
@@ -193074,6 +193150,11 @@
           "iam:ResourceTag/${TagKey}"
         ],
         "resource": "role"
+      },
+      {
+        "arn": "arn:${Partition}:iam::aws:role-template/${AWSServicePrincipal}/${RoleTemplateName}:${RoleTemplateMajorVersion}",
+        "condition_keys": [],
+        "resource": "role-template"
       },
       {
         "arn": "arn:${Partition}:iam::${Account}:saml-provider/${SamlProviderName}",
@@ -266377,6 +266458,20 @@
       },
       {
         "access_level": "Write",
+        "description": "Grants permission to associate virtual machines to a specified Exadb VM cluster",
+        "privilege": "AssociateVirtualMachinesToExadbVmCluster",
+        "resource_types": [
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}"
+            ],
+            "dependent_actions": [],
+            "resource_type": "exadb-vm-cluster*"
+          }
+        ]
+      },
+      {
+        "access_level": "Write",
         "description": "Grants permission to create an Autonomous Database",
         "privilege": "CreateAutonomousDatabase",
         "resource_types": [
@@ -266499,6 +266594,46 @@
       },
       {
         "access_level": "Write",
+        "description": "Grants permission to create an Exadb VM cluster in the specified Exascale DB storage vault",
+        "privilege": "CreateExadbVmCluster",
+        "resource_types": [
+          {
+            "condition_keys": [
+              "aws:RequestTag/${TagKey}",
+              "aws:ResourceTag/${TagKey}",
+              "aws:TagKeys"
+            ],
+            "dependent_actions": [],
+            "resource_type": "exascale-db-storage-vault*"
+          },
+          {
+            "condition_keys": [
+              "aws:RequestTag/${TagKey}",
+              "aws:ResourceTag/${TagKey}",
+              "aws:TagKeys"
+            ],
+            "dependent_actions": [],
+            "resource_type": "odb-network*"
+          }
+        ]
+      },
+      {
+        "access_level": "Write",
+        "description": "Grants permission to create an Exascale DB storage vault",
+        "privilege": "CreateExascaleDbStorageVault",
+        "resource_types": [
+          {
+            "condition_keys": [
+              "aws:RequestTag/${TagKey}",
+              "aws:TagKeys"
+            ],
+            "dependent_actions": [],
+            "resource_type": ""
+          }
+        ]
+      },
+      {
+        "access_level": "Write",
         "description": "Grants permission to create an ODB network",
         "privilege": "CreateOdbNetwork",
         "resource_types": [
@@ -266606,6 +266741,34 @@
       },
       {
         "access_level": "Write",
+        "description": "Grants permission to delete a specified Exadb VM cluster",
+        "privilege": "DeleteExadbVmCluster",
+        "resource_types": [
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}"
+            ],
+            "dependent_actions": [],
+            "resource_type": "exadb-vm-cluster*"
+          }
+        ]
+      },
+      {
+        "access_level": "Write",
+        "description": "Grants permission to delete a specified Exascale DB storage vault",
+        "privilege": "DeleteExascaleDbStorageVault",
+        "resource_types": [
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}"
+            ],
+            "dependent_actions": [],
+            "resource_type": "exascale-db-storage-vault*"
+          }
+        ]
+      },
+      {
+        "access_level": "Write",
         "description": "Grants permission to delete the specified ODB network",
         "privilege": "DeleteOdbNetwork",
         "resource_types": [
@@ -266650,6 +266813,20 @@
             ],
             "dependent_actions": [],
             "resource_type": "cloud-vm-cluster"
+          }
+        ]
+      },
+      {
+        "access_level": "Write",
+        "description": "Grants permission to disassociate virtual machines from a specified Exadb VM cluster",
+        "privilege": "DisassociateVirtualMachinesFromExadbVmCluster",
+        "resource_types": [
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}"
+            ],
+            "dependent_actions": [],
+            "resource_type": "exadb-vm-cluster*"
           }
         ]
       },
@@ -266797,6 +266974,34 @@
             ],
             "dependent_actions": [],
             "resource_type": "cloud-exadata-infrastructure*"
+          }
+        ]
+      },
+      {
+        "access_level": "Read",
+        "description": "Grants permission to get information about a specified Exadb VM cluster",
+        "privilege": "GetExadbVmCluster",
+        "resource_types": [
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}"
+            ],
+            "dependent_actions": [],
+            "resource_type": "exadb-vm-cluster*"
+          }
+        ]
+      },
+      {
+        "access_level": "Read",
+        "description": "Grants permission to get information about a specified Exascale DB storage vault",
+        "privilege": "GetExascaleDbStorageVault",
+        "resource_types": [
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}"
+            ],
+            "dependent_actions": [],
+            "resource_type": "exascale-db-storage-vault*"
           }
         ]
       },
@@ -267026,8 +267231,46 @@
       },
       {
         "access_level": "List",
+        "description": "Grants permission to list information about the Exadb VM clusters owned by your Amazon Web Services account or only the ones in the specified Exascale DB storage vault",
+        "privilege": "ListExadbVmClusters",
+        "resource_types": [
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}"
+            ],
+            "dependent_actions": [],
+            "resource_type": "exascale-db-storage-vault"
+          }
+        ]
+      },
+      {
+        "access_level": "List",
+        "description": "Grants permission to list information about the Exascale DB storage vaults owned by your Amazon Web Services account",
+        "privilege": "ListExascaleDbStorageVaults",
+        "resource_types": [
+          {
+            "condition_keys": [],
+            "dependent_actions": [],
+            "resource_type": ""
+          }
+        ]
+      },
+      {
+        "access_level": "List",
         "description": "Grants permission to list information about the flex components that are available for a DB system shape",
         "privilege": "ListFlexComponents",
+        "resource_types": [
+          {
+            "condition_keys": [],
+            "dependent_actions": [],
+            "resource_type": ""
+          }
+        ]
+      },
+      {
+        "access_level": "List",
+        "description": "Grants permission to list information about the minor versions of Oracle Grid Infrastructure (GI) software that are available for a VM cluster for the specified GI version and shape",
+        "privilege": "ListGiMinorVersions",
         "resource_types": [
           {
             "condition_keys": [],
@@ -267132,6 +267375,20 @@
             ],
             "dependent_actions": [],
             "resource_type": "db-node"
+          },
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}"
+            ],
+            "dependent_actions": [],
+            "resource_type": "exadb-vm-cluster"
+          },
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}"
+            ],
+            "dependent_actions": [],
+            "resource_type": "exascale-db-storage-vault"
           },
           {
             "condition_keys": [
@@ -267362,6 +267619,24 @@
               "aws:TagKeys"
             ],
             "dependent_actions": [],
+            "resource_type": "exadb-vm-cluster"
+          },
+          {
+            "condition_keys": [
+              "aws:RequestTag/${TagKey}",
+              "aws:ResourceTag/${TagKey}",
+              "aws:TagKeys"
+            ],
+            "dependent_actions": [],
+            "resource_type": "exascale-db-storage-vault"
+          },
+          {
+            "condition_keys": [
+              "aws:RequestTag/${TagKey}",
+              "aws:ResourceTag/${TagKey}",
+              "aws:TagKeys"
+            ],
+            "dependent_actions": [],
             "resource_type": "odb-network"
           },
           {
@@ -267434,6 +267709,22 @@
               "aws:TagKeys"
             ],
             "dependent_actions": [],
+            "resource_type": "exadb-vm-cluster"
+          },
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}",
+              "aws:TagKeys"
+            ],
+            "dependent_actions": [],
+            "resource_type": "exascale-db-storage-vault"
+          },
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}",
+              "aws:TagKeys"
+            ],
+            "dependent_actions": [],
             "resource_type": "odb-network"
           },
           {
@@ -267487,6 +267778,34 @@
             ],
             "dependent_actions": [],
             "resource_type": "cloud-exadata-infrastructure*"
+          }
+        ]
+      },
+      {
+        "access_level": "Write",
+        "description": "Grants permission to update properties of a specified Exadb VM cluster",
+        "privilege": "UpdateExadbVmCluster",
+        "resource_types": [
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}"
+            ],
+            "dependent_actions": [],
+            "resource_type": "exadb-vm-cluster*"
+          }
+        ]
+      },
+      {
+        "access_level": "Write",
+        "description": "Grants permission to update properties of a specified Exascale DB storage vault",
+        "privilege": "UpdateExascaleDbStorageVault",
+        "resource_types": [
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}"
+            ],
+            "dependent_actions": [],
+            "resource_type": "exascale-db-storage-vault*"
           }
         ]
       },
@@ -267608,6 +267927,13 @@
               "aws:ResourceTag/${TagKey}"
             ],
             "dependent_actions": [],
+            "resource_type": "exascale-db-storage-vault*"
+          },
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}"
+            ],
+            "dependent_actions": [],
             "resource_type": "odb-network*"
           }
         ]
@@ -267629,6 +267955,13 @@
               "aws:ResourceTag/${TagKey}"
             ],
             "dependent_actions": [],
+            "resource_type": "exascale-db-storage-vault*"
+          },
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}"
+            ],
+            "dependent_actions": [],
             "resource_type": "odb-network*"
           }
         ]
@@ -267644,6 +267977,13 @@
             ],
             "dependent_actions": [],
             "resource_type": "cloud-exadata-infrastructure*"
+          },
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}"
+            ],
+            "dependent_actions": [],
+            "resource_type": "exascale-db-storage-vault*"
           },
           {
             "condition_keys": [
@@ -267730,6 +268070,20 @@
           "aws:ResourceTag/${TagKey}"
         ],
         "resource": "db-node"
+      },
+      {
+        "arn": "arn:${Partition}:odb:${Region}:${Account}:exadb-vm-cluster/${ExadbVmClusterId}",
+        "condition_keys": [
+          "aws:ResourceTag/${TagKey}"
+        ],
+        "resource": "exadb-vm-cluster"
+      },
+      {
+        "arn": "arn:${Partition}:odb:${Region}:${Account}:exascale-db-storage-vault/${ExascaleDbStorageVaultId}",
+        "condition_keys": [
+          "aws:ResourceTag/${TagKey}"
+        ],
+        "resource": "exascale-db-storage-vault"
       },
       {
         "arn": "arn:${Partition}:odb:${Region}:${Account}:odb-network/${OdbNetworkId}",
@@ -375912,7 +376266,8 @@
             "condition_keys": [],
             "dependent_actions": [
               "trustedadvisor:DescribeCheckItems",
-              "trustedadvisor:ListRecommendationResources"
+              "trustedadvisor:ListRecommendationResources",
+              "trustedadvisor:ListRecommendationsForResource"
             ],
             "resource_type": ""
           }
@@ -379973,7 +380328,9 @@
               "aws:ResourceTag/${TagKey}",
               "aws:TagKeys"
             ],
-            "dependent_actions": [],
+            "dependent_actions": [
+              "timestream-influxdb:TagResource"
+            ],
             "resource_type": "db-backup*"
           }
         ]
