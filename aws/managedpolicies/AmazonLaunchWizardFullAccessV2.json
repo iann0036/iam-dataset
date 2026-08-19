@@ -7,7 +7,7 @@
     "Permissions management"
   ],
   "arn": "arn:aws:iam::aws:policy/AmazonLaunchWizardFullAccessV2",
-  "createdate": "2023-09-01T17:14:56+00:00",
+  "createdate": "2026-08-18T19:27:25+00:00",
   "credentials_exposure": true,
   "data_access": true,
   "deprecated": false,
@@ -92,14 +92,6 @@
           "ec2:AssociateAddress",
           "ec2:CreateDhcpOptions",
           "ec2:CreateEgressOnlyInternetGateway",
-          "ec2:CreateNetworkInterface",
-          "ec2:CreateVolume",
-          "ec2:CreateVpcEndpoint",
-          "ec2:CreateTags",
-          "ec2:DeleteTags",
-          "ec2:RunInstances",
-          "ec2:StartInstances",
-          "ec2:ModifyInstanceAttribute",
           "ec2:ModifySubnetAttribute",
           "ec2:ModifyVolumeAttribute",
           "ec2:ModifyVpcAttribute",
@@ -132,20 +124,13 @@
           "ec2:GetLaunchTemplateData",
           "ec2:ModifyNetworkInterfaceAttribute",
           "ec2:ModifyVolume",
-          "ec2:AuthorizeSecurityGroupEgress",
-          "ec2:GetConsoleOutput",
-          "ec2:GetPasswordData",
           "ec2:ReleaseAddress",
           "ec2:ReplaceRoute",
           "ec2:ReplaceRouteTableAssociation",
-          "ec2:RevokeSecurityGroupEgress",
-          "ec2:RevokeSecurityGroupIngress",
           "ec2:DisassociateIamInstanceProfile",
           "ec2:DisassociateRouteTable",
           "ec2:DisassociateSubnetCidrBlock",
           "ec2:ModifyInstancePlacement",
-          "ec2:DeletePlacementGroup",
-          "ec2:CreatePlacementGroup",
           "elasticfilesystem:DeleteFileSystem",
           "elasticfilesystem:DeleteMountTarget",
           "ds:AddIpRoutes",
@@ -167,6 +152,133 @@
       },
       {
         "Action": [
+          "ec2:StartInstances",
+          "ec2:StopInstances",
+          "ec2:TerminateInstances",
+          "ec2:ModifyInstanceAttribute",
+          "ec2:GetConsoleOutput",
+          "ec2:GetPasswordData"
+        ],
+        "Condition": {
+          "StringLike": {
+            "ec2:ResourceTag/aws:cloudformation:stack-id": "arn:aws:cloudformation:*:*:stack/LaunchWizard-*/*"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:ec2:*:*:instance/*",
+        "Sid": "Ec2InstanceActions0"
+      },
+      {
+        "Action": [
+          "ec2:RunInstances"
+        ],
+        "Condition": {
+          "ForAnyValue:StringEquals": {
+            "aws:CalledVia": "launchwizard.amazonaws.com"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:ec2:*:*:instance/*",
+          "arn:aws:ec2:*:*:image/*",
+          "arn:aws:ec2:*:*:subnet/*",
+          "arn:aws:ec2:*:*:security-group/*",
+          "arn:aws:ec2:*:*:network-interface/*",
+          "arn:aws:ec2:*:*:volume/*",
+          "arn:aws:ec2:*:*:key-pair/*",
+          "arn:aws:ec2:*:*:placement-group/*",
+          "arn:aws:ec2:*:*:launch-template/*"
+        ],
+        "Sid": "Ec2RunInstancesActions0"
+      },
+      {
+        "Action": [
+          "ec2:AuthorizeSecurityGroupEgress",
+          "ec2:RevokeSecurityGroupEgress",
+          "ec2:RevokeSecurityGroupIngress"
+        ],
+        "Condition": {
+          "ForAnyValue:StringEquals": {
+            "aws:CalledVia": "launchwizard.amazonaws.com"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:ec2:*:*:security-group/*",
+        "Sid": "Ec2SecurityGroupActions0"
+      },
+      {
+        "Action": [
+          "ec2:CreateTags",
+          "ec2:DeleteTags"
+        ],
+        "Condition": {
+          "ForAnyValue:StringEquals": {
+            "aws:CalledVia": "launchwizard.amazonaws.com"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:ec2:*:*:instance/*",
+          "arn:aws:ec2:*:*:volume/*",
+          "arn:aws:ec2:*:*:network-interface/*",
+          "arn:aws:ec2:*:*:security-group/*",
+          "arn:aws:ec2:*:*:vpc/*",
+          "arn:aws:ec2:*:*:subnet/*",
+          "arn:aws:ec2:*:*:elastic-ip/*",
+          "arn:aws:ec2:*:*:route-table/*"
+        ],
+        "Sid": "Ec2TagActions0"
+      },
+      {
+        "Action": [
+          "ec2:CreateVolume"
+        ],
+        "Condition": {
+          "ForAnyValue:StringEquals": {
+            "aws:CalledVia": "launchwizard.amazonaws.com"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:ec2:*:*:volume/*",
+        "Sid": "Ec2VolumeActions0"
+      },
+      {
+        "Action": [
+          "ec2:CreateNetworkInterface"
+        ],
+        "Condition": {
+          "ForAnyValue:StringEquals": {
+            "aws:CalledVia": "launchwizard.amazonaws.com"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:ec2:*:*:network-interface/*",
+          "arn:aws:ec2:*:*:subnet/*",
+          "arn:aws:ec2:*:*:security-group/*"
+        ],
+        "Sid": "Ec2NetworkInterfaceActions0"
+      },
+      {
+        "Action": [
+          "ec2:CreateVpcEndpoint"
+        ],
+        "Condition": {
+          "ForAnyValue:StringEquals": {
+            "aws:CalledVia": "launchwizard.amazonaws.com"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:ec2:*:*:vpc-endpoint/*",
+          "arn:aws:ec2:*:*:vpc/*",
+          "arn:aws:ec2:*:*:subnet/*",
+          "arn:aws:ec2:*:*:security-group/*"
+        ],
+        "Sid": "Ec2VpcEndpointActions0"
+      },
+      {
+        "Action": [
           "cloudformation:DescribeStack*",
           "cloudformation:Get*",
           "cloudformation:ListStacks",
@@ -182,17 +294,26 @@
       },
       {
         "Action": [
-          "ec2:StopInstances",
-          "ec2:TerminateInstances"
+          "cloudformation:List*",
+          "cloudformation:Describe*"
+        ],
+        "Effect": "Allow",
+        "Resource": "arn:aws:cloudformation:*:*:stack/LaunchWizard*/",
+        "Sid": "CloudFormationActions1"
+      },
+      {
+        "Action": [
+          "cloudformation:TagResource",
+          "cloudformation:UntagResource"
         ],
         "Condition": {
-          "StringLike": {
-            "ec2:ResourceTag/aws:cloudformation:stack-id": "arn:aws:cloudformation:*:*:stack/LaunchWizard-*/*"
+          "ForAllValues:StringLike": {
+            "aws:TagKeys": "LaunchWizard*"
           }
         },
         "Effect": "Allow",
-        "Resource": "arn:aws:ec2:*:*:instance/*",
-        "Sid": "Ec2Actions2"
+        "Resource": "*",
+        "Sid": "CloudFormationActions2"
       },
       {
         "Action": [
@@ -228,6 +349,33 @@
           "arn:aws:iam::*:instance-profile/LaunchWizard*"
         ],
         "Sid": "IamActions1"
+      },
+      {
+        "Action": [
+          "iam:CreateServiceLinkedRole"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "iam:AWSServiceName": [
+              "autoscaling.amazonaws.com",
+              "application-insights.amazonaws.com",
+              "events.amazonaws.com",
+              "autoscaling.amazonaws.com.cn",
+              "events.amazonaws.com.cn"
+            ]
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "IamActions2"
+      },
+      {
+        "Action": [
+          "launchwizard:*"
+        ],
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "LaunchWizardActions0"
       },
       {
         "Action": [
@@ -309,8 +457,37 @@
           "cloudformation:ValidateTemplate",
           "ds:Describe*",
           "ds:ListAuthorizedApplications",
-          "ec2:Describe*",
-          "ec2:Get*",
+          "ec2:DescribeInstances",
+          "ec2:DescribeInstanceStatus",
+          "ec2:DescribeInstanceAttribute",
+          "ec2:DescribeNetworkInterfaces",
+          "ec2:DescribeNetworkInterfaceAttribute",
+          "ec2:DescribeSecurityGroups",
+          "ec2:DescribeSecurityGroupRules",
+          "ec2:DescribeSubnets",
+          "ec2:DescribeVpcs",
+          "ec2:DescribeVpcAttribute",
+          "ec2:DescribeImages",
+          "ec2:DescribeKeyPairs",
+          "ec2:DescribeVolumes",
+          "ec2:DescribeVolumeStatus",
+          "ec2:DescribeVolumeAttribute",
+          "ec2:DescribeAvailabilityZones",
+          "ec2:DescribeHosts",
+          "ec2:DescribeTags",
+          "ec2:DescribeInstanceTypes",
+          "ec2:DescribeAccountAttributes",
+          "ec2:DescribeDhcpOptions",
+          "ec2:DescribeInternetGateways",
+          "ec2:DescribeNatGateways",
+          "ec2:DescribeRouteTables",
+          "ec2:DescribeAddresses",
+          "ec2:DescribeFlowLogs",
+          "ec2:DescribeLaunchTemplates",
+          "ec2:DescribeLaunchTemplateVersions",
+          "ec2:DescribeStaleSecurityGroups",
+          "ec2:DescribeInstanceTypeOfferings",
+          "ec2:DescribePlacementGroups",
           "iam:GetRole",
           "iam:GetRolePolicy",
           "iam:GetUser",
@@ -335,7 +512,8 @@
           "ssm:ListDocument*",
           "ssm:ListInstanceAssociations",
           "ssm:SendAutomationSignal",
-          "tag:Get*"
+          "tag:Get*",
+          "pricing:GetProducts"
         ],
         "Effect": "Allow",
         "Resource": "*",
@@ -357,39 +535,29 @@
       },
       {
         "Action": [
-          "cloudformation:List*",
-          "cloudformation:Describe*"
+          "ssm:CreateOpsMetadata",
+          "ssm:DeleteOpsMetadata"
         ],
         "Effect": "Allow",
-        "Resource": "arn:aws:cloudformation:*:*:stack/LaunchWizard*/",
-        "Sid": "CloudFormationActions1"
+        "Resource": "arn:aws:ssm:*:*:opsmetadata/aws/ssm/LaunchWizard*",
+        "Sid": "SsmActions6"
       },
       {
         "Action": [
-          "iam:CreateServiceLinkedRole"
+          "ssm:CreateAssociation",
+          "ssm:DeleteAssociation"
         ],
         "Condition": {
-          "StringEquals": {
-            "iam:AWSServiceName": [
-              "autoscaling.amazonaws.com",
-              "application-insights.amazonaws.com",
-              "events.amazonaws.com",
-              "autoscaling.amazonaws.com.cn",
-              "events.amazonaws.com.cn"
-            ]
+          "ForAnyValue:StringEquals": {
+            "aws:CalledVia": "launchwizard.amazonaws.com"
           }
         },
         "Effect": "Allow",
-        "Resource": "*",
-        "Sid": "IamActions2"
-      },
-      {
-        "Action": [
-          "launchwizard:*"
+        "Resource": [
+          "arn:aws:ssm:*:*:document/AWS-ConfigureAWSPackage",
+          "arn:aws:ssm:*:*:association/*"
         ],
-        "Effect": "Allow",
-        "Resource": "*",
-        "Sid": "LaunchWizardActions0"
+        "Sid": "SsmActions7"
       },
       {
         "Action": [
@@ -428,14 +596,41 @@
           "ec2:CreateSecurityGroup",
           "ec2:AuthorizeSecurityGroupIngress",
           "elasticfilesystem:DescribeFileSystems",
-          "elasticfilesystem:CreateFileSystem",
-          "elasticfilesystem:CreateMountTarget",
           "elasticfilesystem:DescribeMountTargets",
-          "elasticfilesystem:DescribeMountTargetSecurityGroups"
+          "elasticfilesystem:DescribeMountTargetSecurityGroups",
+          "backup:ListBackupPlans"
         ],
         "Effect": "Allow",
         "Resource": "*",
         "Sid": "EfsActions0"
+      },
+      {
+        "Action": [
+          "elasticfilesystem:CreateFileSystem",
+          "elasticfilesystem:CreateMountTarget"
+        ],
+        "Condition": {
+          "ForAnyValue:StringEquals": {
+            "aws:CalledVia": "launchwizard.amazonaws.com"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:elasticfilesystem:*:*:file-system/*",
+        "Sid": "EfsCreateActions0"
+      },
+      {
+        "Action": [
+          "elasticfilesystem:UntagResource",
+          "elasticfilesystem:TagResource"
+        ],
+        "Condition": {
+          "ForAnyValue:StringEquals": {
+            "aws:CalledVia": "launchwizard.amazonaws.com"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:elasticfilesystem:*:*:file-system/*",
+        "Sid": "EfsActions1"
       },
       {
         "Action": [
@@ -452,16 +647,72 @@
       },
       {
         "Action": [
-          "cloudformation:TagResource"
+          "elasticloadbalancing:DescribeLoadBalancers",
+          "elasticloadbalancing:DescribeLoadBalancerAttributes",
+          "elasticloadbalancing:DescribeListeners",
+          "elasticloadbalancing:DescribeRules",
+          "elasticloadbalancing:DescribeTargetGroups",
+          "elasticloadbalancing:DescribeTargetGroupAttributes",
+          "elasticloadbalancing:DescribeTargetHealth",
+          "elasticloadbalancing:DescribeTags"
+        ],
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "ElbActions0"
+      },
+      {
+        "Action": [
+          "elasticloadbalancing:CreateLoadBalancer",
+          "elasticloadbalancing:DeleteLoadBalancer",
+          "elasticloadbalancing:ModifyLoadBalancerAttributes",
+          "elasticloadbalancing:CreateListener",
+          "elasticloadbalancing:DeleteListener",
+          "elasticloadbalancing:CreateTargetGroup",
+          "elasticloadbalancing:DeleteTargetGroup",
+          "elasticloadbalancing:ModifyTargetGroup",
+          "elasticloadbalancing:ModifyTargetGroupAttributes",
+          "elasticloadbalancing:RegisterTargets",
+          "elasticloadbalancing:DeregisterTargets",
+          "elasticloadbalancing:AddTags",
+          "elasticloadbalancing:RemoveTags"
         ],
         "Condition": {
-          "ForAllValues:StringLike": {
-            "aws:TagKeys": "LaunchWizard*"
+          "ForAnyValue:StringEquals": {
+            "aws:CalledVia": "launchwizard.amazonaws.com"
           }
         },
         "Effect": "Allow",
         "Resource": "*",
-        "Sid": "CloudFormationActions2"
+        "Sid": "ElbActions1"
+      },
+      {
+        "Action": [
+          "ec2:CreatePlacementGroup",
+          "ec2:DeletePlacementGroup"
+        ],
+        "Condition": {
+          "ForAnyValue:StringEquals": {
+            "aws:CalledVia": "launchwizard.amazonaws.com"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:ec2:*:*:placement-group/*",
+        "Sid": "Ec2PlacementGroupActions0"
+      },
+      {
+        "Action": [
+          "ec2:CreateLaunchTemplate",
+          "ec2:DeleteLaunchTemplate",
+          "ec2:ModifyLaunchTemplate"
+        ],
+        "Condition": {
+          "ForAnyValue:StringEquals": {
+            "aws:CalledVia": "launchwizard.amazonaws.com"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:ec2:*:*:launch-template/*",
+        "Sid": "Ec2LaunchTemplateActions0"
       },
       {
         "Action": [
@@ -472,7 +723,9 @@
           "lambda:DeleteFunction",
           "lambda:GetFunction",
           "lambda:GetFunctionConfiguration",
-          "lambda:InvokeFunction"
+          "lambda:InvokeFunction",
+          "lambda:TagResource",
+          "lambda:UntagResource"
         ],
         "Effect": "Allow",
         "Resource": [
@@ -485,7 +738,9 @@
         "Action": [
           "dynamodb:CreateTable",
           "dynamodb:DescribeTable",
-          "dynamodb:DeleteTable"
+          "dynamodb:DeleteTable",
+          "dynamodb:TagResource",
+          "dynamodb:UntagResource"
         ],
         "Effect": "Allow",
         "Resource": "arn:aws:dynamodb:*:*:table/LaunchWizard*",
@@ -517,22 +772,6 @@
       },
       {
         "Action": [
-          "ssm:CreateOpsMetadata"
-        ],
-        "Effect": "Allow",
-        "Resource": "*",
-        "Sid": "SsmActions5"
-      },
-      {
-        "Action": [
-          "ssm:DeleteOpsMetadata"
-        ],
-        "Effect": "Allow",
-        "Resource": "arn:aws:ssm:*:*:opsmetadata/aws/ssm/LaunchWizard*",
-        "Sid": "SsmActions6"
-      },
-      {
-        "Action": [
           "sns:CreateTopic",
           "sns:DeleteTopic",
           "sns:Subscribe",
@@ -557,6 +796,23 @@
         "Effect": "Allow",
         "Resource": "*",
         "Sid": "FsxActions0"
+      },
+      {
+        "Action": [
+          "fsx:TagResource",
+          "fsx:UntagResource"
+        ],
+        "Condition": {
+          "StringLike": {
+            "aws:ResourceTag/aws:cloudformation:stack-id": "arn:aws:cloudformation:*:*:stack/LaunchWizard-*/*"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:fsx:*:*:storage-virtual-machine/*/*",
+          "arn:aws:fsx:*:*:volume/*/*"
+        ],
+        "Sid": "FsxSvmTagActions0"
       },
       {
         "Action": [
@@ -606,37 +862,6 @@
       },
       {
         "Action": [
-          "ssm:CreateAssociation",
-          "ssm:DeleteAssociation"
-        ],
-        "Condition": {
-          "ForAnyValue:StringEquals": {
-            "aws:CalledVia": "launchwizard.amazonaws.com"
-          }
-        },
-        "Effect": "Allow",
-        "Resource": [
-          "arn:aws:ssm:*:*:document/AWS-ConfigureAWSPackage",
-          "arn:aws:ssm:*:*:association/*"
-        ],
-        "Sid": "SsmActions7"
-      },
-      {
-        "Action": [
-          "elasticfilesystem:UntagResource",
-          "elasticfilesystem:TagResource"
-        ],
-        "Condition": {
-          "ForAnyValue:StringEquals": {
-            "aws:CalledVia": "launchwizard.amazonaws.com"
-          }
-        },
-        "Effect": "Allow",
-        "Resource": "arn:aws:elasticfilesystem:*:*:file-system/*",
-        "Sid": "EfsActions1"
-      },
-      {
-        "Action": [
           "logs:CreateLogStream",
           "logs:DeleteLogGroup",
           "logs:DescribeLogStreams",
@@ -683,9 +908,7 @@
         ],
         "Condition": {
           "ForAnyValue:StringEquals": {
-            "aws:CalledVia": [
-              "launchwizard.amazonaws.com"
-            ]
+            "aws:CalledVia": "launchwizard.amazonaws.com"
           },
           "StringLike": {
             "aws:ResourceTag/aws:cloudformation:stack-id": "arn:aws:cloudformation:*:*:stack/LaunchWizard-*/*"
@@ -702,9 +925,7 @@
         ],
         "Condition": {
           "ForAnyValue:StringEquals": {
-            "aws:CalledVia": [
-              "launchwizard.amazonaws.com"
-            ]
+            "aws:CalledVia": "launchwizard.amazonaws.com"
           }
         },
         "Effect": "Allow",
@@ -718,9 +939,7 @@
         ],
         "Condition": {
           "ForAnyValue:StringEquals": {
-            "aws:CalledVia": [
-              "launchwizard.amazonaws.com"
-            ]
+            "aws:CalledVia": "launchwizard.amazonaws.com"
           },
           "StringLike": {
             "aws:ResourceTag/aws:cloudformation:stack-id": "arn:aws:cloudformation:*:*:stack/LaunchWizard-*/*"
@@ -1664,118 +1883,6 @@
     },
     {
       "access_level": "Write",
-      "action": "ec2:CreateNetworkInterface",
-      "condition": {
-        "ForAnyValue:StringEquals": {
-          "aws:CalledVia": "launchwizard.amazonaws.com"
-        }
-      },
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:CreateNetworkInterface",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Write",
-      "action": "ec2:CreateVolume",
-      "condition": {
-        "ForAnyValue:StringEquals": {
-          "aws:CalledVia": "launchwizard.amazonaws.com"
-        }
-      },
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:CreateVolume",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Write",
-      "action": "ec2:CreateVpcEndpoint",
-      "condition": {
-        "ForAnyValue:StringEquals": {
-          "aws:CalledVia": "launchwizard.amazonaws.com"
-        }
-      },
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:CreateVpcEndpoint",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Tagging, Write",
-      "action": "ec2:CreateTags",
-      "condition": {
-        "ForAnyValue:StringEquals": {
-          "aws:CalledVia": "launchwizard.amazonaws.com"
-        }
-      },
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:CreateTags",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Tagging, Write",
-      "action": "ec2:DeleteTags",
-      "condition": {
-        "ForAnyValue:StringEquals": {
-          "aws:CalledVia": "launchwizard.amazonaws.com"
-        }
-      },
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:DeleteTags",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Write",
-      "action": "ec2:RunInstances",
-      "condition": {
-        "ForAnyValue:StringEquals": {
-          "aws:CalledVia": "launchwizard.amazonaws.com"
-        }
-      },
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:RunInstances",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Write",
-      "action": "ec2:StartInstances",
-      "condition": {
-        "ForAnyValue:StringEquals": {
-          "aws:CalledVia": "launchwizard.amazonaws.com"
-        }
-      },
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:StartInstances",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Write",
-      "action": "ec2:ModifyInstanceAttribute",
-      "condition": {
-        "ForAnyValue:StringEquals": {
-          "aws:CalledVia": "launchwizard.amazonaws.com"
-        }
-      },
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:ModifyInstanceAttribute",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Write",
       "action": "ec2:ModifySubnetAttribute",
       "condition": {
         "ForAnyValue:StringEquals": {
@@ -2224,48 +2331,6 @@
     },
     {
       "access_level": "Write",
-      "action": "ec2:AuthorizeSecurityGroupEgress",
-      "condition": {
-        "ForAnyValue:StringEquals": {
-          "aws:CalledVia": "launchwizard.amazonaws.com"
-        }
-      },
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:AuthorizeSecurityGroupEgress",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Read",
-      "action": "ec2:GetConsoleOutput",
-      "condition": {
-        "ForAnyValue:StringEquals": {
-          "aws:CalledVia": "launchwizard.amazonaws.com"
-        }
-      },
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:GetConsoleOutput",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Read",
-      "action": "ec2:GetPasswordData",
-      "condition": {
-        "ForAnyValue:StringEquals": {
-          "aws:CalledVia": "launchwizard.amazonaws.com"
-        }
-      },
-      "credentials_exposure": true,
-      "data_access": false,
-      "effective_action": "ec2:GetPasswordData",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Write",
       "action": "ec2:ReleaseAddress",
       "condition": {
         "ForAnyValue:StringEquals": {
@@ -2303,34 +2368,6 @@
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "ec2:ReplaceRouteTableAssociation",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Write",
-      "action": "ec2:RevokeSecurityGroupEgress",
-      "condition": {
-        "ForAnyValue:StringEquals": {
-          "aws:CalledVia": "launchwizard.amazonaws.com"
-        }
-      },
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:RevokeSecurityGroupEgress",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Write",
-      "action": "ec2:RevokeSecurityGroupIngress",
-      "condition": {
-        "ForAnyValue:StringEquals": {
-          "aws:CalledVia": "launchwizard.amazonaws.com"
-        }
-      },
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:RevokeSecurityGroupIngress",
       "privesc": false,
       "resource_exposure": false
     },
@@ -2387,34 +2424,6 @@
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "ec2:ModifyInstancePlacement",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Write",
-      "action": "ec2:DeletePlacementGroup",
-      "condition": {
-        "ForAnyValue:StringEquals": {
-          "aws:CalledVia": "launchwizard.amazonaws.com"
-        }
-      },
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:DeletePlacementGroup",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Write",
-      "action": "ec2:CreatePlacementGroup",
-      "condition": {
-        "ForAnyValue:StringEquals": {
-          "aws:CalledVia": "launchwizard.amazonaws.com"
-        }
-      },
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:CreatePlacementGroup",
       "privesc": false,
       "resource_exposure": false
     },
@@ -2541,6 +2550,216 @@
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "sts:GetCallerIdentity",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:StartInstances",
+      "condition": {
+        "StringLike": {
+          "ec2:ResourceTag/aws:cloudformation:stack-id": "arn:aws:cloudformation:*:*:stack/LaunchWizard-*/*"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:StartInstances",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:StopInstances",
+      "condition": {
+        "StringLike": {
+          "ec2:ResourceTag/aws:cloudformation:stack-id": "arn:aws:cloudformation:*:*:stack/LaunchWizard-*/*"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:StopInstances",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:TerminateInstances",
+      "condition": {
+        "StringLike": {
+          "ec2:ResourceTag/aws:cloudformation:stack-id": "arn:aws:cloudformation:*:*:stack/LaunchWizard-*/*"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:TerminateInstances",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:ModifyInstanceAttribute",
+      "condition": {
+        "StringLike": {
+          "ec2:ResourceTag/aws:cloudformation:stack-id": "arn:aws:cloudformation:*:*:stack/LaunchWizard-*/*"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:ModifyInstanceAttribute",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "ec2:GetConsoleOutput",
+      "condition": {
+        "StringLike": {
+          "ec2:ResourceTag/aws:cloudformation:stack-id": "arn:aws:cloudformation:*:*:stack/LaunchWizard-*/*"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:GetConsoleOutput",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "ec2:GetPasswordData",
+      "condition": {
+        "StringLike": {
+          "ec2:ResourceTag/aws:cloudformation:stack-id": "arn:aws:cloudformation:*:*:stack/LaunchWizard-*/*"
+        }
+      },
+      "credentials_exposure": true,
+      "data_access": false,
+      "effective_action": "ec2:GetPasswordData",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:RunInstances",
+      "condition": {
+        "ForAnyValue:StringEquals": {
+          "aws:CalledVia": "launchwizard.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:RunInstances",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:AuthorizeSecurityGroupEgress",
+      "condition": {
+        "ForAnyValue:StringEquals": {
+          "aws:CalledVia": "launchwizard.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:AuthorizeSecurityGroupEgress",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:RevokeSecurityGroupEgress",
+      "condition": {
+        "ForAnyValue:StringEquals": {
+          "aws:CalledVia": "launchwizard.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:RevokeSecurityGroupEgress",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:RevokeSecurityGroupIngress",
+      "condition": {
+        "ForAnyValue:StringEquals": {
+          "aws:CalledVia": "launchwizard.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:RevokeSecurityGroupIngress",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Tagging, Write",
+      "action": "ec2:CreateTags",
+      "condition": {
+        "ForAnyValue:StringEquals": {
+          "aws:CalledVia": "launchwizard.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:CreateTags",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Tagging, Write",
+      "action": "ec2:DeleteTags",
+      "condition": {
+        "ForAnyValue:StringEquals": {
+          "aws:CalledVia": "launchwizard.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:DeleteTags",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:CreateVolume",
+      "condition": {
+        "ForAnyValue:StringEquals": {
+          "aws:CalledVia": "launchwizard.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:CreateVolume",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:CreateNetworkInterface",
+      "condition": {
+        "ForAnyValue:StringEquals": {
+          "aws:CalledVia": "launchwizard.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:CreateNetworkInterface",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:CreateVpcEndpoint",
+      "condition": {
+        "ForAnyValue:StringEquals": {
+          "aws:CalledVia": "launchwizard.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:CreateVpcEndpoint",
       "privesc": false,
       "resource_exposure": false
     },
@@ -2745,30 +2964,470 @@
       "resource_exposure": false
     },
     {
-      "access_level": "Write",
-      "action": "ec2:StopInstances",
-      "condition": {
-        "StringLike": {
-          "ec2:ResourceTag/aws:cloudformation:stack-id": "arn:aws:cloudformation:*:*:stack/LaunchWizard-*/*"
-        }
-      },
+      "access_level": "Read",
+      "action": "cloudformation:List*",
+      "condition": null,
       "credentials_exposure": false,
       "data_access": false,
-      "effective_action": "ec2:StopInstances",
+      "effective_action": "cloudformation:ListResourceRequests",
       "privesc": false,
       "resource_exposure": false
     },
     {
-      "access_level": "Write",
-      "action": "ec2:TerminateInstances",
+      "access_level": "Read",
+      "action": "cloudformation:List*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudformation:ListResources",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "cloudformation:List*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudformation:ListAllHookResults",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "cloudformation:List*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudformation:ListChangeSets",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "cloudformation:List*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudformation:ListExports",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "cloudformation:List*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudformation:ListGeneratedTemplates",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "cloudformation:List*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudformation:ListHookResults",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "cloudformation:List*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudformation:ListImports",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "cloudformation:List*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudformation:ListResourceScanRelatedResources",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "cloudformation:List*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudformation:ListResourceScanResources",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "cloudformation:List*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudformation:ListResourceScans",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "cloudformation:List*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudformation:ListStackInstanceResourceDrifts",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "cloudformation:List*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudformation:ListStackInstances",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "cloudformation:List*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudformation:ListStackRefactorActions",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "cloudformation:List*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudformation:ListStackRefactors",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "cloudformation:List*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudformation:ListStackResources",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "cloudformation:List*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudformation:ListStackSetAutoDeploymentTargets",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "cloudformation:List*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudformation:ListStackSetOperationResults",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "cloudformation:List*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudformation:ListStackSetOperations",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "cloudformation:List*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudformation:ListStackSets",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "cloudformation:List*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudformation:ListStacks",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "cloudformation:List*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudformation:ListTypeRegistrations",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "cloudformation:List*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudformation:ListTypeVersions",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "cloudformation:List*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudformation:ListTypes",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "cloudformation:Describe*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudformation:DescribeAccountLimits",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "cloudformation:Describe*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudformation:DescribeChangeSet",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "cloudformation:Describe*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudformation:DescribeChangeSetHooks",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "cloudformation:Describe*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudformation:DescribeEvents",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "cloudformation:Describe*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudformation:DescribeGeneratedTemplate",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "cloudformation:Describe*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudformation:DescribeOrganizationsAccess",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "cloudformation:Describe*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudformation:DescribePublisher",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "cloudformation:Describe*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudformation:DescribeResourceScan",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "cloudformation:Describe*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudformation:DescribeStackDriftDetectionStatus",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "cloudformation:Describe*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudformation:DescribeStackEvents",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "cloudformation:Describe*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudformation:DescribeStackInstance",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "cloudformation:Describe*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudformation:DescribeStackRefactor",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "cloudformation:Describe*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudformation:DescribeStackResource",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "cloudformation:Describe*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudformation:DescribeStackResourceDrifts",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "cloudformation:Describe*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudformation:DescribeStackResources",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "cloudformation:Describe*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudformation:DescribeStackSet",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "cloudformation:Describe*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudformation:DescribeStackSetOperation",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "cloudformation:Describe*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudformation:DescribeStacks",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "cloudformation:Describe*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudformation:DescribeType",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "cloudformation:Describe*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudformation:DescribeTypeRegistration",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Tagging, Write",
+      "action": "cloudformation:TagResource",
       "condition": {
-        "StringLike": {
-          "ec2:ResourceTag/aws:cloudformation:stack-id": "arn:aws:cloudformation:*:*:stack/LaunchWizard-*/*"
+        "ForAllValues:StringLike": {
+          "aws:TagKeys": "LaunchWizard*"
         }
       },
       "credentials_exposure": false,
       "data_access": false,
-      "effective_action": "ec2:TerminateInstances",
+      "effective_action": "cloudformation:TagResource",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Tagging, Write",
+      "action": "cloudformation:UntagResource",
+      "condition": {
+        "ForAllValues:StringLike": {
+          "aws:TagKeys": "LaunchWizard*"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudformation:UntagResource",
       "privesc": false,
       "resource_exposure": false
     },
@@ -2829,6 +3488,426 @@
       "effective_action": "iam:PassRole",
       "privesc": true,
       "resource_exposure": true
+    },
+    {
+      "access_level": "Permissions management",
+      "action": "iam:CreateServiceLinkedRole",
+      "condition": {
+        "StringEquals": {
+          "iam:AWSServiceName": [
+            "autoscaling.amazonaws.com",
+            "application-insights.amazonaws.com",
+            "events.amazonaws.com",
+            "autoscaling.amazonaws.com.cn",
+            "events.amazonaws.com.cn"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "iam:CreateServiceLinkedRole",
+      "privesc": true,
+      "resource_exposure": true
+    },
+    {
+      "access_level": "Write",
+      "action": "launchwizard:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "launchwizard:CreateDeployment",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "launchwizard:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "launchwizard:DeleteDeployment",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "launchwizard:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "launchwizard:GetDeployment",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "launchwizard:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "launchwizard:GetDeploymentPatternVersion",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "launchwizard:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "launchwizard:GetWorkload",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "launchwizard:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "launchwizard:GetWorkloadDeploymentPattern",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "launchwizard:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "launchwizard:ListDeploymentEvents",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "launchwizard:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "launchwizard:ListDeploymentPatternVersions",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "launchwizard:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "launchwizard:ListDeployments",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "launchwizard:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "launchwizard:ListTagsForResource",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "launchwizard:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "launchwizard:ListWorkloadDeploymentPatterns",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "launchwizard:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "launchwizard:ListWorkloads",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Tagging, Write",
+      "action": "launchwizard:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "launchwizard:TagResource",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Tagging, Write",
+      "action": "launchwizard:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "launchwizard:UntagResource",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "launchwizard:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "launchwizard:UpdateDeployment",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "launchwizard:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "launchwizard:CreateAdditionalNode",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "launchwizard:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "launchwizard:CreateSettingsSet",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "launchwizard:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "launchwizard:DeleteAdditionalNode",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "launchwizard:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "launchwizard:DeleteApp",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "launchwizard:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "launchwizard:DeleteSettingsSet",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "launchwizard:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "launchwizard:DescribeAdditionalNode",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "launchwizard:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "launchwizard:DescribeProvisionedApp",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "launchwizard:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "launchwizard:DescribeProvisioningEvents",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "launchwizard:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "launchwizard:DescribeSettingsSet",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "launchwizard:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "launchwizard:GetInfrastructureSuggestion",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "launchwizard:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "launchwizard:GetIpAddress",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "launchwizard:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "launchwizard:GetResourceCostEstimate",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "launchwizard:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "launchwizard:GetResourceRecommendation",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "launchwizard:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "launchwizard:GetSettingsSet",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "launchwizard:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "launchwizard:GetWorkloadAsset",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "launchwizard:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "launchwizard:GetWorkloadAssets",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "launchwizard:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "launchwizard:ListAdditionalNodes",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "launchwizard:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "launchwizard:ListAllowedResources",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "launchwizard:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "launchwizard:ListProvisionedApps",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "launchwizard:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "launchwizard:ListResourceCostEstimates",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "launchwizard:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "launchwizard:ListSettingsSets",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "launchwizard:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "launchwizard:ListWorkloadDeploymentOptions",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "launchwizard:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "launchwizard:PutSettingsSet",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "launchwizard:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "launchwizard:StartProvisioning",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "launchwizard:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "launchwizard:UpdateSettingsSet",
+      "privesc": false,
+      "resource_exposure": false
     },
     {
       "access_level": "Write",
@@ -3776,697 +4855,7 @@
     },
     {
       "access_level": "List",
-      "action": "ec2:Describe*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:DescribeAccountAttributes",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "ec2:Describe*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:DescribeAddressTransfers",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "ec2:Describe*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:DescribeAddresses",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "ec2:Describe*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:DescribeAddressesAttribute",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "ec2:Describe*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:DescribeAggregateIdFormat",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "ec2:Describe*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:DescribeAvailabilityZones",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "ec2:Describe*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:DescribeAwsNetworkPerformanceMetricSubscriptions",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "ec2:Describe*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:DescribeBundleTasks",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "ec2:Describe*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:DescribeByoipCidrs",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "ec2:Describe*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:DescribeCapacityBlockExtensionHistory",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "ec2:Describe*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:DescribeCapacityBlockExtensionOfferings",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "ec2:Describe*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:DescribeCapacityBlockOfferings",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "ec2:Describe*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:DescribeCapacityBlockStatus",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "ec2:Describe*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:DescribeCapacityBlocks",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "ec2:Describe*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:DescribeCapacityManagerDataExports",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "ec2:Describe*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:DescribeCapacityReservationBillingRequests",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "ec2:Describe*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:DescribeCapacityReservationCancellationQuotes",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "ec2:Describe*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:DescribeCapacityReservationFleets",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "ec2:Describe*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:DescribeCapacityReservationTopology",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "ec2:Describe*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:DescribeCapacityReservations",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "ec2:Describe*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:DescribeCarrierGateways",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "ec2:Describe*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:DescribeClassicLinkInstances",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "ec2:Describe*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:DescribeClientVpnAuthorizationRules",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "ec2:Describe*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:DescribeClientVpnConnections",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "ec2:Describe*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:DescribeClientVpnEndpoints",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "ec2:Describe*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:DescribeClientVpnRoutes",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "ec2:Describe*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:DescribeClientVpnTargetNetworks",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "ec2:Describe*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:DescribeCoipPools",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "ec2:Describe*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:DescribeConversionTasks",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "ec2:Describe*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:DescribeCustomerGateways",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "ec2:Describe*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:DescribeDeclarativePoliciesReports",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "ec2:Describe*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:DescribeDhcpOptions",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "ec2:Describe*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:DescribeEgressOnlyInternetGateways",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "ec2:Describe*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:DescribeElasticGpus",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "ec2:Describe*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:DescribeExportImageTasks",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "ec2:Describe*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:DescribeExportTasks",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "ec2:Describe*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:DescribeFastLaunchImages",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "ec2:Describe*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:DescribeFastSnapshotRestores",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "ec2:Describe*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:DescribeFleetHistory",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "ec2:Describe*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:DescribeFleetInstances",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "ec2:Describe*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:DescribeFleets",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "ec2:Describe*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:DescribeFlowLogs",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "ec2:Describe*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:DescribeFpgaImageAttribute",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "ec2:Describe*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:DescribeFpgaImages",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "ec2:Describe*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:DescribeHostReservationOfferings",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "ec2:Describe*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:DescribeHostReservations",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "ec2:Describe*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:DescribeHosts",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "ec2:Describe*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:DescribeIamInstanceProfileAssociations",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "ec2:Describe*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:DescribeIdFormat",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "ec2:Describe*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:DescribeIdentityIdFormat",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "ec2:Describe*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:DescribeImageAttribute",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "ec2:Describe*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:DescribeImageReferences",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "ec2:Describe*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:DescribeImageUsageReportEntries",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "ec2:Describe*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:DescribeImageUsageReports",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "ec2:Describe*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:DescribeImages",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "ec2:Describe*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:DescribeImportImageTasks",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "ec2:Describe*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:DescribeImportSnapshotTasks",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "ec2:Describe*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:DescribeInstanceAttribute",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "ec2:Describe*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:DescribeInstanceConnectEndpoints",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "ec2:Describe*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:DescribeInstanceCreditSpecifications",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "ec2:Describe*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:DescribeInstanceEventNotificationAttributes",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "ec2:Describe*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:DescribeInstanceEventWindows",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "ec2:Describe*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:DescribeInstanceImageMetadata",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "ec2:Describe*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:DescribeInstanceSqlHaHistoryStates",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "ec2:Describe*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:DescribeInstanceSqlHaStates",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "ec2:Describe*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:DescribeInstanceStatus",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "ec2:Describe*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:DescribeInstanceTopology",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "ec2:Describe*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:DescribeInstanceTypeOfferings",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "ec2:Describe*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:DescribeInstanceTypes",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "ec2:Describe*",
+      "action": "ec2:DescribeInstances",
       "condition": null,
       "credentials_exposure": false,
       "data_access": false,
@@ -4476,357 +4865,27 @@
     },
     {
       "access_level": "List",
-      "action": "ec2:Describe*",
+      "action": "ec2:DescribeInstanceStatus",
       "condition": null,
       "credentials_exposure": false,
       "data_access": false,
-      "effective_action": "ec2:DescribeInternetGateways",
+      "effective_action": "ec2:DescribeInstanceStatus",
       "privesc": false,
       "resource_exposure": false
     },
     {
       "access_level": "List",
-      "action": "ec2:Describe*",
+      "action": "ec2:DescribeInstanceAttribute",
       "condition": null,
       "credentials_exposure": false,
       "data_access": false,
-      "effective_action": "ec2:DescribeIpamByoasn",
+      "effective_action": "ec2:DescribeInstanceAttribute",
       "privesc": false,
       "resource_exposure": false
     },
     {
       "access_level": "List",
-      "action": "ec2:Describe*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:DescribeIpamExternalResourceVerificationTokens",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "ec2:Describe*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:DescribeIpamPolicies",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "ec2:Describe*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:DescribeIpamPoolAllocations",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "ec2:Describe*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:DescribeIpamPools",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "ec2:Describe*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:DescribeIpamPrefixListResolverTargets",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "ec2:Describe*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:DescribeIpamPrefixListResolvers",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "ec2:Describe*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:DescribeIpamResourceDiscoveries",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "ec2:Describe*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:DescribeIpamResourceDiscoveryAssociations",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "ec2:Describe*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:DescribeIpamScopes",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "ec2:Describe*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:DescribeIpams",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "ec2:Describe*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:DescribeIpv6Pools",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "ec2:Describe*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:DescribeKeyPairs",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "ec2:Describe*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:DescribeLaunchTemplateVersions",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "ec2:Describe*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:DescribeLaunchTemplates",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "ec2:Describe*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:DescribeLocalGatewayRouteTableVirtualInterfaceGroupAssociations",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "ec2:Describe*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:DescribeLocalGatewayRouteTableVpcAssociations",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "ec2:Describe*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:DescribeLocalGatewayRouteTables",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "ec2:Describe*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:DescribeLocalGatewayVirtualInterfaceGroups",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "ec2:Describe*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:DescribeLocalGatewayVirtualInterfaces",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "ec2:Describe*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:DescribeLocalGateways",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "ec2:Describe*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:DescribeLockedSnapshots",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "ec2:Describe*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:DescribeMacHosts",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "ec2:Describe*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:DescribeMacModificationTasks",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "ec2:Describe*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:DescribeManagedPrefixLists",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "ec2:Describe*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:DescribeMovingAddresses",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "ec2:Describe*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:DescribeNatGateways",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "ec2:Describe*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:DescribeNetworkAcls",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "ec2:Describe*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:DescribeNetworkInsightsAccessScopeAnalyses",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "ec2:Describe*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:DescribeNetworkInsightsAccessScopes",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "ec2:Describe*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:DescribeNetworkInsightsAnalyses",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "ec2:Describe*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:DescribeNetworkInsightsPaths",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "ec2:Describe*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:DescribeNetworkInterfaceAttribute",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "ec2:Describe*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:DescribeNetworkInterfacePermissions",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "ec2:Describe*",
+      "action": "ec2:DescribeNetworkInterfaces",
       "condition": null,
       "credentials_exposure": false,
       "data_access": false,
@@ -4836,237 +4895,17 @@
     },
     {
       "access_level": "List",
-      "action": "ec2:Describe*",
+      "action": "ec2:DescribeNetworkInterfaceAttribute",
       "condition": null,
       "credentials_exposure": false,
       "data_access": false,
-      "effective_action": "ec2:DescribeOutpostLags",
+      "effective_action": "ec2:DescribeNetworkInterfaceAttribute",
       "privesc": false,
       "resource_exposure": false
     },
     {
       "access_level": "List",
-      "action": "ec2:Describe*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:DescribePlacementGroups",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "ec2:Describe*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:DescribePrefixLists",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "ec2:Describe*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:DescribePrincipalIdFormat",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "ec2:Describe*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:DescribePublicIpv4Pools",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "ec2:Describe*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:DescribeRegions",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "ec2:Describe*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:DescribeReplaceRootVolumeTasks",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "ec2:Describe*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:DescribeReservedInstances",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "ec2:Describe*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:DescribeReservedInstancesListings",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "ec2:Describe*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:DescribeReservedInstancesModifications",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "ec2:Describe*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:DescribeReservedInstancesOfferings",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "ec2:Describe*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:DescribeRouteServerEndpoints",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "ec2:Describe*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:DescribeRouteServerPeers",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "ec2:Describe*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:DescribeRouteServers",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "ec2:Describe*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:DescribeRouteTables",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "ec2:Describe*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:DescribeScheduledInstanceAvailability",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "ec2:Describe*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:DescribeScheduledInstances",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "ec2:Describe*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:DescribeSecondaryInterfaces",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "ec2:Describe*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:DescribeSecondaryNetworks",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "ec2:Describe*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:DescribeSecondarySubnets",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "ec2:Describe*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:DescribeSecurityGroupReferences",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "ec2:Describe*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:DescribeSecurityGroupRules",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "ec2:Describe*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:DescribeSecurityGroupVpcAssociations",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "ec2:Describe*",
+      "action": "ec2:DescribeSecurityGroups",
       "condition": null,
       "credentials_exposure": false,
       "data_access": false,
@@ -5076,127 +4915,17 @@
     },
     {
       "access_level": "List",
-      "action": "ec2:Describe*",
+      "action": "ec2:DescribeSecurityGroupRules",
       "condition": null,
       "credentials_exposure": false,
       "data_access": false,
-      "effective_action": "ec2:DescribeServiceLinkVirtualInterfaces",
+      "effective_action": "ec2:DescribeSecurityGroupRules",
       "privesc": false,
       "resource_exposure": false
     },
     {
       "access_level": "List",
-      "action": "ec2:Describe*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:DescribeSnapshotAttribute",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "ec2:Describe*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:DescribeSnapshotTierStatus",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "ec2:Describe*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:DescribeSnapshots",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "ec2:Describe*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:DescribeSpotDatafeedSubscription",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "ec2:Describe*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:DescribeSpotFleetInstances",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "ec2:Describe*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:DescribeSpotFleetRequestHistory",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "ec2:Describe*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:DescribeSpotFleetRequests",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "ec2:Describe*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:DescribeSpotInstanceRequests",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "ec2:Describe*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:DescribeSpotPriceHistory",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "ec2:Describe*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:DescribeStaleSecurityGroups",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "ec2:Describe*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:DescribeStoreImageTasks",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "ec2:Describe*",
+      "action": "ec2:DescribeSubnets",
       "condition": null,
       "credentials_exposure": false,
       "data_access": false,
@@ -5206,407 +4935,7 @@
     },
     {
       "access_level": "List",
-      "action": "ec2:Describe*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:DescribeTags",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "ec2:Describe*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:DescribeTrafficMirrorFilterRules",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "ec2:Describe*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:DescribeTrafficMirrorFilters",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "ec2:Describe*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:DescribeTrafficMirrorSessions",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "ec2:Describe*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:DescribeTrafficMirrorTargets",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "ec2:Describe*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:DescribeTransitGatewayAttachments",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "ec2:Describe*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:DescribeTransitGatewayConnectPeers",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "ec2:Describe*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:DescribeTransitGatewayConnects",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "ec2:Describe*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:DescribeTransitGatewayMeteringPolicies",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "ec2:Describe*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:DescribeTransitGatewayMulticastDomains",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "ec2:Describe*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:DescribeTransitGatewayPeeringAttachments",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "ec2:Describe*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:DescribeTransitGatewayPolicyTables",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "ec2:Describe*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:DescribeTransitGatewayRouteTableAnnouncements",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "ec2:Describe*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:DescribeTransitGatewayRouteTables",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "ec2:Describe*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:DescribeTransitGatewayVpcAttachments",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "ec2:Describe*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:DescribeTransitGateways",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "ec2:Describe*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:DescribeTrunkInterfaceAssociations",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "ec2:Describe*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:DescribeVerifiedAccessEndpoints",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "ec2:Describe*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:DescribeVerifiedAccessGroups",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "ec2:Describe*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:DescribeVerifiedAccessInstanceLoggingConfigurations",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "ec2:Describe*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:DescribeVerifiedAccessInstances",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "ec2:Describe*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:DescribeVerifiedAccessTrustProviders",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "ec2:Describe*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:DescribeVolumeAttribute",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "ec2:Describe*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:DescribeVolumeStatus",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "ec2:Describe*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:DescribeVolumes",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "ec2:Describe*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:DescribeVolumesModifications",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "ec2:Describe*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:DescribeVpcAttribute",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "ec2:Describe*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:DescribeVpcBlockPublicAccessExclusions",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "ec2:Describe*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:DescribeVpcBlockPublicAccessOptions",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "ec2:Describe*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:DescribeVpcClassicLink",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "ec2:Describe*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:DescribeVpcClassicLinkDnsSupport",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "ec2:Describe*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:DescribeVpcEncryptionControls",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "ec2:Describe*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:DescribeVpcEndpointAssociations",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "ec2:Describe*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:DescribeVpcEndpointConnectionNotifications",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "ec2:Describe*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:DescribeVpcEndpointConnections",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "ec2:Describe*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:DescribeVpcEndpointServiceConfigurations",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "ec2:Describe*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:DescribeVpcEndpointServicePermissions",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "ec2:Describe*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:DescribeVpcEndpointServices",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "ec2:Describe*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:DescribeVpcEndpoints",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "ec2:Describe*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:DescribeVpcPeeringConnections",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "ec2:Describe*",
+      "action": "ec2:DescribeVpcs",
       "condition": null,
       "credentials_exposure": false,
       "data_access": false,
@@ -5616,771 +4945,221 @@
     },
     {
       "access_level": "List",
-      "action": "ec2:Describe*",
+      "action": "ec2:DescribeVpcAttribute",
       "condition": null,
       "credentials_exposure": false,
       "data_access": false,
-      "effective_action": "ec2:DescribeVpnConcentrators",
+      "effective_action": "ec2:DescribeVpcAttribute",
       "privesc": false,
       "resource_exposure": false
     },
     {
       "access_level": "List",
-      "action": "ec2:Describe*",
+      "action": "ec2:DescribeImages",
       "condition": null,
       "credentials_exposure": false,
       "data_access": false,
-      "effective_action": "ec2:DescribeVpnConnections",
+      "effective_action": "ec2:DescribeImages",
       "privesc": false,
       "resource_exposure": false
     },
     {
       "access_level": "List",
-      "action": "ec2:Describe*",
+      "action": "ec2:DescribeKeyPairs",
       "condition": null,
       "credentials_exposure": false,
       "data_access": false,
-      "effective_action": "ec2:DescribeVpnGateways",
+      "effective_action": "ec2:DescribeKeyPairs",
       "privesc": false,
       "resource_exposure": false
     },
     {
       "access_level": "List",
-      "action": "ec2:Describe*",
+      "action": "ec2:DescribeVolumes",
       "condition": null,
       "credentials_exposure": false,
       "data_access": false,
-      "effective_action": "ec2:DescribeLocalGatewayRouteTablePermissions",
+      "effective_action": "ec2:DescribeVolumes",
       "privesc": false,
       "resource_exposure": false
     },
     {
       "access_level": "List",
-      "action": "ec2:Describe*",
+      "action": "ec2:DescribeVolumeStatus",
       "condition": null,
       "credentials_exposure": false,
       "data_access": false,
-      "effective_action": "ec2:DescribeVerifiedAccessInstanceWebAclAssociations",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Read",
-      "action": "ec2:Get*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:GetActiveVpnTunnelStatus",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Read",
-      "action": "ec2:Get*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:GetAllowedImagesSettings",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Read",
-      "action": "ec2:Get*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:GetAssociatedEnclaveCertificateIamRoles",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Read",
-      "action": "ec2:Get*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:GetAssociatedIpv6PoolCidrs",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Read",
-      "action": "ec2:Get*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:GetAwsNetworkPerformanceData",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Read",
-      "action": "ec2:Get*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:GetCapacityManagerAttributes",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Read",
-      "action": "ec2:Get*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:GetCapacityManagerMetricData",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Read",
-      "action": "ec2:Get*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:GetCapacityManagerMetricDimensions",
+      "effective_action": "ec2:DescribeVolumeStatus",
       "privesc": false,
       "resource_exposure": false
     },
     {
       "access_level": "List",
-      "action": "ec2:Get*",
+      "action": "ec2:DescribeVolumeAttribute",
       "condition": null,
       "credentials_exposure": false,
       "data_access": false,
-      "effective_action": "ec2:GetCapacityManagerMonitoredTagKeys",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Read",
-      "action": "ec2:Get*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:GetCapacityReservationUsage",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Read",
-      "action": "ec2:Get*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:GetCoipPoolUsage",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Read",
-      "action": "ec2:Get*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:GetConsoleOutput",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Read",
-      "action": "ec2:Get*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:GetConsoleScreenshot",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Read",
-      "action": "ec2:Get*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:GetDeclarativePoliciesReportSummary",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Read",
-      "action": "ec2:Get*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:GetDefaultCreditSpecification",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Read",
-      "action": "ec2:Get*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:GetEbsDefaultKmsKeyId",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Read",
-      "action": "ec2:Get*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:GetEbsEncryptionByDefault",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Read",
-      "action": "ec2:Get*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:GetEnabledIpamPolicy",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Read",
-      "action": "ec2:Get*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:GetFlowLogsIntegrationTemplate",
+      "effective_action": "ec2:DescribeVolumeAttribute",
       "privesc": false,
       "resource_exposure": false
     },
     {
       "access_level": "List",
-      "action": "ec2:Get*",
+      "action": "ec2:DescribeAvailabilityZones",
       "condition": null,
       "credentials_exposure": false,
       "data_access": false,
-      "effective_action": "ec2:GetGroupsForCapacityReservation",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Read",
-      "action": "ec2:Get*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:GetHostReservationPurchasePreview",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Read",
-      "action": "ec2:Get*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:GetImageAncestry",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Read",
-      "action": "ec2:Get*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:GetImageBlockPublicAccessState",
+      "effective_action": "ec2:DescribeAvailabilityZones",
       "privesc": false,
       "resource_exposure": false
     },
     {
       "access_level": "List",
-      "action": "ec2:Get*",
+      "action": "ec2:DescribeHosts",
       "condition": null,
       "credentials_exposure": false,
       "data_access": false,
-      "effective_action": "ec2:GetInstanceMetadataDefaults",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Read",
-      "action": "ec2:Get*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:GetInstanceTpmEkPub",
+      "effective_action": "ec2:DescribeHosts",
       "privesc": false,
       "resource_exposure": false
     },
     {
       "access_level": "List",
-      "action": "ec2:Get*",
+      "action": "ec2:DescribeTags",
       "condition": null,
       "credentials_exposure": false,
       "data_access": false,
-      "effective_action": "ec2:GetInstanceTypesFromInstanceRequirements",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Read",
-      "action": "ec2:Get*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:GetInstanceUefiData",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Read",
-      "action": "ec2:Get*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:GetIpamAddressHistory",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Read",
-      "action": "ec2:Get*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:GetIpamDiscoveredAccounts",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Read",
-      "action": "ec2:Get*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:GetIpamDiscoveredPublicAddresses",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Read",
-      "action": "ec2:Get*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:GetIpamDiscoveredResourceCidrs",
+      "effective_action": "ec2:DescribeTags",
       "privesc": false,
       "resource_exposure": false
     },
     {
       "access_level": "List",
-      "action": "ec2:Get*",
+      "action": "ec2:DescribeInstanceTypes",
       "condition": null,
       "credentials_exposure": false,
       "data_access": false,
-      "effective_action": "ec2:GetIpamPolicyAllocationRules",
+      "effective_action": "ec2:DescribeInstanceTypes",
       "privesc": false,
       "resource_exposure": false
     },
     {
       "access_level": "List",
-      "action": "ec2:Get*",
+      "action": "ec2:DescribeAccountAttributes",
       "condition": null,
       "credentials_exposure": false,
       "data_access": false,
-      "effective_action": "ec2:GetIpamPolicyOrganizationTargets",
+      "effective_action": "ec2:DescribeAccountAttributes",
       "privesc": false,
       "resource_exposure": false
     },
     {
       "access_level": "List",
-      "action": "ec2:Get*",
+      "action": "ec2:DescribeDhcpOptions",
       "condition": null,
       "credentials_exposure": false,
       "data_access": false,
-      "effective_action": "ec2:GetIpamPoolAllocations",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Read",
-      "action": "ec2:Get*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:GetIpamPoolCidrs",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Read",
-      "action": "ec2:Get*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:GetIpamPrefixListResolverRules",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Read",
-      "action": "ec2:Get*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:GetIpamPrefixListResolverVersionEntries",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Read",
-      "action": "ec2:Get*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:GetIpamPrefixListResolverVersions",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Read",
-      "action": "ec2:Get*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:GetIpamResourceCidrs",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Read",
-      "action": "ec2:Get*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:GetLaunchTemplateData",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Read",
-      "action": "ec2:Get*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:GetManagedPrefixListAssociations",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Read",
-      "action": "ec2:Get*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:GetManagedPrefixListEntries",
+      "effective_action": "ec2:DescribeDhcpOptions",
       "privesc": false,
       "resource_exposure": false
     },
     {
       "access_level": "List",
-      "action": "ec2:Get*",
+      "action": "ec2:DescribeInternetGateways",
       "condition": null,
       "credentials_exposure": false,
       "data_access": false,
-      "effective_action": "ec2:GetManagedResourceVisibility",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Read",
-      "action": "ec2:Get*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:GetNetworkInsightsAccessScopeAnalysisFindings",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Read",
-      "action": "ec2:Get*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:GetNetworkInsightsAccessScopeContent",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Read",
-      "action": "ec2:Get*",
-      "condition": null,
-      "credentials_exposure": true,
-      "data_access": false,
-      "effective_action": "ec2:GetPasswordData",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Read",
-      "action": "ec2:Get*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:GetReservedInstancesExchangeQuote",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Read",
-      "action": "ec2:Get*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:GetRouteServerAssociations",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Read",
-      "action": "ec2:Get*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:GetRouteServerPropagations",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Read",
-      "action": "ec2:Get*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:GetRouteServerRoutingDatabase",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Read",
-      "action": "ec2:Get*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:GetSecurityGroupsForVpc",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Read",
-      "action": "ec2:Get*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:GetSerialConsoleAccessStatus",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Read",
-      "action": "ec2:Get*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:GetSnapshotBlockPublicAccessState",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Read",
-      "action": "ec2:Get*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:GetSpotPlacementScores",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Read",
-      "action": "ec2:Get*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:GetSubnetCidrReservations",
+      "effective_action": "ec2:DescribeInternetGateways",
       "privesc": false,
       "resource_exposure": false
     },
     {
       "access_level": "List",
-      "action": "ec2:Get*",
+      "action": "ec2:DescribeNatGateways",
       "condition": null,
       "credentials_exposure": false,
       "data_access": false,
-      "effective_action": "ec2:GetTransitGatewayAttachmentPropagations",
+      "effective_action": "ec2:DescribeNatGateways",
       "privesc": false,
       "resource_exposure": false
     },
     {
       "access_level": "List",
-      "action": "ec2:Get*",
+      "action": "ec2:DescribeRouteTables",
       "condition": null,
       "credentials_exposure": false,
       "data_access": false,
-      "effective_action": "ec2:GetTransitGatewayMeteringPolicyEntries",
+      "effective_action": "ec2:DescribeRouteTables",
       "privesc": false,
       "resource_exposure": false
     },
     {
       "access_level": "List",
-      "action": "ec2:Get*",
+      "action": "ec2:DescribeAddresses",
       "condition": null,
       "credentials_exposure": false,
       "data_access": false,
-      "effective_action": "ec2:GetTransitGatewayMulticastDomainAssociations",
+      "effective_action": "ec2:DescribeAddresses",
       "privesc": false,
       "resource_exposure": false
     },
     {
       "access_level": "List",
-      "action": "ec2:Get*",
+      "action": "ec2:DescribeFlowLogs",
       "condition": null,
       "credentials_exposure": false,
       "data_access": false,
-      "effective_action": "ec2:GetTransitGatewayPolicyTableAssociations",
+      "effective_action": "ec2:DescribeFlowLogs",
       "privesc": false,
       "resource_exposure": false
     },
     {
       "access_level": "List",
-      "action": "ec2:Get*",
+      "action": "ec2:DescribeLaunchTemplates",
       "condition": null,
       "credentials_exposure": false,
       "data_access": false,
-      "effective_action": "ec2:GetTransitGatewayPolicyTableEntries",
+      "effective_action": "ec2:DescribeLaunchTemplates",
       "privesc": false,
       "resource_exposure": false
     },
     {
       "access_level": "List",
-      "action": "ec2:Get*",
+      "action": "ec2:DescribeLaunchTemplateVersions",
       "condition": null,
       "credentials_exposure": false,
       "data_access": false,
-      "effective_action": "ec2:GetTransitGatewayPrefixListReferences",
+      "effective_action": "ec2:DescribeLaunchTemplateVersions",
       "privesc": false,
       "resource_exposure": false
     },
     {
       "access_level": "List",
-      "action": "ec2:Get*",
+      "action": "ec2:DescribeStaleSecurityGroups",
       "condition": null,
       "credentials_exposure": false,
       "data_access": false,
-      "effective_action": "ec2:GetTransitGatewayRouteTableAssociations",
+      "effective_action": "ec2:DescribeStaleSecurityGroups",
       "privesc": false,
       "resource_exposure": false
     },
     {
       "access_level": "List",
-      "action": "ec2:Get*",
+      "action": "ec2:DescribeInstanceTypeOfferings",
       "condition": null,
       "credentials_exposure": false,
       "data_access": false,
-      "effective_action": "ec2:GetTransitGatewayRouteTablePropagations",
+      "effective_action": "ec2:DescribeInstanceTypeOfferings",
       "privesc": false,
       "resource_exposure": false
     },
     {
       "access_level": "List",
-      "action": "ec2:Get*",
+      "action": "ec2:DescribePlacementGroups",
       "condition": null,
       "credentials_exposure": false,
       "data_access": false,
-      "effective_action": "ec2:GetVerifiedAccessEndpointPolicy",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "ec2:Get*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:GetVerifiedAccessEndpointTargets",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "ec2:Get*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:GetVerifiedAccessGroupPolicy",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "ec2:Get*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:GetVpcResourcesBlockingEncryptionEnforcement",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "ec2:Get*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:GetVpnConnectionDeviceSampleConfiguration",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "ec2:Get*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:GetVpnConnectionDeviceTypes",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "ec2:Get*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:GetVpnTunnelReplacementStatus",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Read",
-      "action": "ec2:Get*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:GetResourcePolicy",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "ec2:Get*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:GetVerifiedAccessInstanceWebAcl",
+      "effective_action": "ec2:DescribePlacementGroups",
       "privesc": false,
       "resource_exposure": false
     },
@@ -7205,6 +5984,16 @@
       "resource_exposure": false
     },
     {
+      "access_level": "Read",
+      "action": "pricing:GetProducts",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "pricing:GetProducts",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
       "access_level": "Write",
       "action": "ssm:StartAutomationExecution",
       "condition": {
@@ -7233,862 +6022,50 @@
       "resource_exposure": false
     },
     {
-      "access_level": "Read",
-      "action": "cloudformation:List*",
+      "access_level": "Write",
+      "action": "ssm:CreateOpsMetadata",
       "condition": null,
       "credentials_exposure": false,
       "data_access": false,
-      "effective_action": "cloudformation:ListResourceRequests",
+      "effective_action": "ssm:CreateOpsMetadata",
       "privesc": false,
       "resource_exposure": false
     },
     {
-      "access_level": "Read",
-      "action": "cloudformation:List*",
+      "access_level": "Write",
+      "action": "ssm:DeleteOpsMetadata",
       "condition": null,
       "credentials_exposure": false,
       "data_access": false,
-      "effective_action": "cloudformation:ListResources",
+      "effective_action": "ssm:DeleteOpsMetadata",
       "privesc": false,
       "resource_exposure": false
     },
     {
-      "access_level": "List",
-      "action": "cloudformation:List*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "cloudformation:ListAllHookResults",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "cloudformation:List*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "cloudformation:ListChangeSets",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "cloudformation:List*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "cloudformation:ListExports",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "cloudformation:List*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "cloudformation:ListGeneratedTemplates",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "cloudformation:List*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "cloudformation:ListHookResults",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "cloudformation:List*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "cloudformation:ListImports",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "cloudformation:List*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "cloudformation:ListResourceScanRelatedResources",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "cloudformation:List*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "cloudformation:ListResourceScanResources",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "cloudformation:List*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "cloudformation:ListResourceScans",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "cloudformation:List*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "cloudformation:ListStackInstanceResourceDrifts",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "cloudformation:List*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "cloudformation:ListStackInstances",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "cloudformation:List*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "cloudformation:ListStackRefactorActions",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "cloudformation:List*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "cloudformation:ListStackRefactors",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "cloudformation:List*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "cloudformation:ListStackResources",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "cloudformation:List*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "cloudformation:ListStackSetAutoDeploymentTargets",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "cloudformation:List*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "cloudformation:ListStackSetOperationResults",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "cloudformation:List*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "cloudformation:ListStackSetOperations",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "cloudformation:List*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "cloudformation:ListStackSets",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "cloudformation:List*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "cloudformation:ListStacks",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "cloudformation:List*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "cloudformation:ListTypeRegistrations",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "cloudformation:List*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "cloudformation:ListTypeVersions",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "cloudformation:List*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "cloudformation:ListTypes",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Read",
-      "action": "cloudformation:Describe*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "cloudformation:DescribeAccountLimits",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Read",
-      "action": "cloudformation:Describe*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "cloudformation:DescribeChangeSet",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Read",
-      "action": "cloudformation:Describe*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "cloudformation:DescribeChangeSetHooks",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Read",
-      "action": "cloudformation:Describe*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "cloudformation:DescribeEvents",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Read",
-      "action": "cloudformation:Describe*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "cloudformation:DescribeGeneratedTemplate",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Read",
-      "action": "cloudformation:Describe*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "cloudformation:DescribeOrganizationsAccess",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Read",
-      "action": "cloudformation:Describe*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "cloudformation:DescribePublisher",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Read",
-      "action": "cloudformation:Describe*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "cloudformation:DescribeResourceScan",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Read",
-      "action": "cloudformation:Describe*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "cloudformation:DescribeStackDriftDetectionStatus",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Read",
-      "action": "cloudformation:Describe*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "cloudformation:DescribeStackEvents",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Read",
-      "action": "cloudformation:Describe*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "cloudformation:DescribeStackInstance",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Read",
-      "action": "cloudformation:Describe*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "cloudformation:DescribeStackRefactor",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Read",
-      "action": "cloudformation:Describe*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "cloudformation:DescribeStackResource",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Read",
-      "action": "cloudformation:Describe*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "cloudformation:DescribeStackResourceDrifts",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Read",
-      "action": "cloudformation:Describe*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "cloudformation:DescribeStackResources",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Read",
-      "action": "cloudformation:Describe*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "cloudformation:DescribeStackSet",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Read",
-      "action": "cloudformation:Describe*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "cloudformation:DescribeStackSetOperation",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "cloudformation:Describe*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "cloudformation:DescribeStacks",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Read",
-      "action": "cloudformation:Describe*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "cloudformation:DescribeType",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Read",
-      "action": "cloudformation:Describe*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "cloudformation:DescribeTypeRegistration",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Permissions management",
-      "action": "iam:CreateServiceLinkedRole",
+      "access_level": "Write",
+      "action": "ssm:CreateAssociation",
       "condition": {
-        "StringEquals": {
-          "iam:AWSServiceName": [
-            "autoscaling.amazonaws.com",
-            "application-insights.amazonaws.com",
-            "events.amazonaws.com",
-            "autoscaling.amazonaws.com.cn",
-            "events.amazonaws.com.cn"
-          ]
+        "ForAnyValue:StringEquals": {
+          "aws:CalledVia": "launchwizard.amazonaws.com"
         }
       },
       "credentials_exposure": false,
       "data_access": false,
-      "effective_action": "iam:CreateServiceLinkedRole",
-      "privesc": true,
-      "resource_exposure": true
-    },
-    {
-      "access_level": "Write",
-      "action": "launchwizard:*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "launchwizard:CreateDeployment",
+      "effective_action": "ssm:CreateAssociation",
       "privesc": false,
       "resource_exposure": false
     },
     {
       "access_level": "Write",
-      "action": "launchwizard:*",
-      "condition": null,
+      "action": "ssm:DeleteAssociation",
+      "condition": {
+        "ForAnyValue:StringEquals": {
+          "aws:CalledVia": "launchwizard.amazonaws.com"
+        }
+      },
       "credentials_exposure": false,
       "data_access": false,
-      "effective_action": "launchwizard:DeleteDeployment",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Read",
-      "action": "launchwizard:*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "launchwizard:GetDeployment",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Read",
-      "action": "launchwizard:*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "launchwizard:GetDeploymentPatternVersion",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Read",
-      "action": "launchwizard:*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "launchwizard:GetWorkload",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Read",
-      "action": "launchwizard:*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "launchwizard:GetWorkloadDeploymentPattern",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "launchwizard:*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "launchwizard:ListDeploymentEvents",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "launchwizard:*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "launchwizard:ListDeploymentPatternVersions",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "launchwizard:*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "launchwizard:ListDeployments",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Read",
-      "action": "launchwizard:*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "launchwizard:ListTagsForResource",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "launchwizard:*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "launchwizard:ListWorkloadDeploymentPatterns",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "launchwizard:*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "launchwizard:ListWorkloads",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Tagging, Write",
-      "action": "launchwizard:*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "launchwizard:TagResource",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Tagging, Write",
-      "action": "launchwizard:*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "launchwizard:UntagResource",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Write",
-      "action": "launchwizard:*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "launchwizard:UpdateDeployment",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Write",
-      "action": "launchwizard:*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "launchwizard:CreateAdditionalNode",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Write",
-      "action": "launchwizard:*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "launchwizard:CreateSettingsSet",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Write",
-      "action": "launchwizard:*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "launchwizard:DeleteAdditionalNode",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Write",
-      "action": "launchwizard:*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "launchwizard:DeleteApp",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Write",
-      "action": "launchwizard:*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "launchwizard:DeleteSettingsSet",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Read",
-      "action": "launchwizard:*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "launchwizard:DescribeAdditionalNode",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Read",
-      "action": "launchwizard:*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "launchwizard:DescribeProvisionedApp",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Read",
-      "action": "launchwizard:*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "launchwizard:DescribeProvisioningEvents",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Read",
-      "action": "launchwizard:*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "launchwizard:DescribeSettingsSet",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Read",
-      "action": "launchwizard:*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "launchwizard:GetInfrastructureSuggestion",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Read",
-      "action": "launchwizard:*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "launchwizard:GetIpAddress",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Read",
-      "action": "launchwizard:*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "launchwizard:GetResourceCostEstimate",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Read",
-      "action": "launchwizard:*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "launchwizard:GetResourceRecommendation",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Read",
-      "action": "launchwizard:*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "launchwizard:GetSettingsSet",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Read",
-      "action": "launchwizard:*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "launchwizard:GetWorkloadAsset",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Read",
-      "action": "launchwizard:*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "launchwizard:GetWorkloadAssets",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "launchwizard:*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "launchwizard:ListAdditionalNodes",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "launchwizard:*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "launchwizard:ListAllowedResources",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "launchwizard:*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "launchwizard:ListProvisionedApps",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "launchwizard:*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "launchwizard:ListResourceCostEstimates",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "launchwizard:*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "launchwizard:ListSettingsSets",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "launchwizard:*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "launchwizard:ListWorkloadDeploymentOptions",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Write",
-      "action": "launchwizard:*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "launchwizard:PutSettingsSet",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Write",
-      "action": "launchwizard:*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "launchwizard:StartProvisioning",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Write",
-      "action": "launchwizard:*",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "launchwizard:UpdateSettingsSet",
+      "effective_action": "ssm:DeleteAssociation",
       "privesc": false,
       "resource_exposure": false
     },
@@ -8273,26 +6250,6 @@
       "resource_exposure": false
     },
     {
-      "access_level": "Write",
-      "action": "elasticfilesystem:CreateFileSystem",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "elasticfilesystem:CreateFileSystem",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Write",
-      "action": "elasticfilesystem:CreateMountTarget",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "elasticfilesystem:CreateMountTarget",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
       "access_level": "Read",
       "action": "elasticfilesystem:DescribeMountTargets",
       "condition": null,
@@ -8309,6 +6266,72 @@
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "elasticfilesystem:DescribeMountTargetSecurityGroups",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "backup:ListBackupPlans",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "backup:ListBackupPlans",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "elasticfilesystem:CreateFileSystem",
+      "condition": {
+        "ForAnyValue:StringEquals": {
+          "aws:CalledVia": "launchwizard.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "elasticfilesystem:CreateFileSystem",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "elasticfilesystem:CreateMountTarget",
+      "condition": {
+        "ForAnyValue:StringEquals": {
+          "aws:CalledVia": "launchwizard.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "elasticfilesystem:CreateMountTarget",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Tagging, Write",
+      "action": "elasticfilesystem:UntagResource",
+      "condition": {
+        "ForAnyValue:StringEquals": {
+          "aws:CalledVia": "launchwizard.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "elasticfilesystem:UntagResource",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Tagging, Write",
+      "action": "elasticfilesystem:TagResource",
+      "condition": {
+        "ForAnyValue:StringEquals": {
+          "aws:CalledVia": "launchwizard.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "elasticfilesystem:TagResource",
       "privesc": false,
       "resource_exposure": false
     },
@@ -8333,16 +6356,334 @@
       "resource_exposure": false
     },
     {
-      "access_level": "Tagging, Write",
-      "action": "cloudformation:TagResource",
+      "access_level": "List",
+      "action": "elasticloadbalancing:DescribeLoadBalancers",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "elasticloadbalancing:DescribeLoadBalancers",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "elasticloadbalancing:DescribeLoadBalancerAttributes",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "elasticloadbalancing:DescribeLoadBalancerAttributes",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "elasticloadbalancing:DescribeListeners",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "elasticloadbalancing:DescribeListeners",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "elasticloadbalancing:DescribeRules",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "elasticloadbalancing:DescribeRules",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "elasticloadbalancing:DescribeTargetGroups",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "elasticloadbalancing:DescribeTargetGroups",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "elasticloadbalancing:DescribeTargetGroupAttributes",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "elasticloadbalancing:DescribeTargetGroupAttributes",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "elasticloadbalancing:DescribeTargetHealth",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "elasticloadbalancing:DescribeTargetHealth",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "elasticloadbalancing:DescribeTags",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "elasticloadbalancing:DescribeTags",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "elasticloadbalancing:CreateLoadBalancer",
       "condition": {
-        "ForAllValues:StringLike": {
-          "aws:TagKeys": "LaunchWizard*"
+        "ForAnyValue:StringEquals": {
+          "aws:CalledVia": "launchwizard.amazonaws.com"
         }
       },
       "credentials_exposure": false,
       "data_access": false,
-      "effective_action": "cloudformation:TagResource",
+      "effective_action": "elasticloadbalancing:CreateLoadBalancer",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "elasticloadbalancing:DeleteLoadBalancer",
+      "condition": {
+        "ForAnyValue:StringEquals": {
+          "aws:CalledVia": "launchwizard.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "elasticloadbalancing:DeleteLoadBalancer",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "elasticloadbalancing:ModifyLoadBalancerAttributes",
+      "condition": {
+        "ForAnyValue:StringEquals": {
+          "aws:CalledVia": "launchwizard.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "elasticloadbalancing:ModifyLoadBalancerAttributes",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "elasticloadbalancing:CreateListener",
+      "condition": {
+        "ForAnyValue:StringEquals": {
+          "aws:CalledVia": "launchwizard.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "elasticloadbalancing:CreateListener",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "elasticloadbalancing:DeleteListener",
+      "condition": {
+        "ForAnyValue:StringEquals": {
+          "aws:CalledVia": "launchwizard.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "elasticloadbalancing:DeleteListener",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "elasticloadbalancing:CreateTargetGroup",
+      "condition": {
+        "ForAnyValue:StringEquals": {
+          "aws:CalledVia": "launchwizard.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "elasticloadbalancing:CreateTargetGroup",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "elasticloadbalancing:DeleteTargetGroup",
+      "condition": {
+        "ForAnyValue:StringEquals": {
+          "aws:CalledVia": "launchwizard.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "elasticloadbalancing:DeleteTargetGroup",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "elasticloadbalancing:ModifyTargetGroup",
+      "condition": {
+        "ForAnyValue:StringEquals": {
+          "aws:CalledVia": "launchwizard.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "elasticloadbalancing:ModifyTargetGroup",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "elasticloadbalancing:ModifyTargetGroupAttributes",
+      "condition": {
+        "ForAnyValue:StringEquals": {
+          "aws:CalledVia": "launchwizard.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "elasticloadbalancing:ModifyTargetGroupAttributes",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "elasticloadbalancing:RegisterTargets",
+      "condition": {
+        "ForAnyValue:StringEquals": {
+          "aws:CalledVia": "launchwizard.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "elasticloadbalancing:RegisterTargets",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "elasticloadbalancing:DeregisterTargets",
+      "condition": {
+        "ForAnyValue:StringEquals": {
+          "aws:CalledVia": "launchwizard.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "elasticloadbalancing:DeregisterTargets",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Tagging, Write",
+      "action": "elasticloadbalancing:AddTags",
+      "condition": {
+        "ForAnyValue:StringEquals": {
+          "aws:CalledVia": "launchwizard.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "elasticloadbalancing:AddTags",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Tagging, Write",
+      "action": "elasticloadbalancing:RemoveTags",
+      "condition": {
+        "ForAnyValue:StringEquals": {
+          "aws:CalledVia": "launchwizard.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "elasticloadbalancing:RemoveTags",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:CreatePlacementGroup",
+      "condition": {
+        "ForAnyValue:StringEquals": {
+          "aws:CalledVia": "launchwizard.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:CreatePlacementGroup",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:DeletePlacementGroup",
+      "condition": {
+        "ForAnyValue:StringEquals": {
+          "aws:CalledVia": "launchwizard.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:DeletePlacementGroup",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:CreateLaunchTemplate",
+      "condition": {
+        "ForAnyValue:StringEquals": {
+          "aws:CalledVia": "launchwizard.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:CreateLaunchTemplate",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:DeleteLaunchTemplate",
+      "condition": {
+        "ForAnyValue:StringEquals": {
+          "aws:CalledVia": "launchwizard.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:DeleteLaunchTemplate",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:ModifyLaunchTemplate",
+      "condition": {
+        "ForAnyValue:StringEquals": {
+          "aws:CalledVia": "launchwizard.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:ModifyLaunchTemplate",
       "privesc": false,
       "resource_exposure": false
     },
@@ -8427,6 +6768,26 @@
       "resource_exposure": false
     },
     {
+      "access_level": "Tagging",
+      "action": "lambda:TagResource",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "lambda:TagResource",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Tagging",
+      "action": "lambda:UntagResource",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "lambda:UntagResource",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
       "access_level": "Write",
       "action": "dynamodb:CreateTable",
       "condition": null,
@@ -8453,6 +6814,26 @@
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "dynamodb:DeleteTable",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Tagging, Write",
+      "action": "dynamodb:TagResource",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "dynamodb:TagResource",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Tagging, Write",
+      "action": "dynamodb:UntagResource",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "dynamodb:UntagResource",
       "privesc": false,
       "resource_exposure": false
     },
@@ -8557,26 +6938,6 @@
       "resource_exposure": false
     },
     {
-      "access_level": "Write",
-      "action": "ssm:CreateOpsMetadata",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ssm:CreateOpsMetadata",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Write",
-      "action": "ssm:DeleteOpsMetadata",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ssm:DeleteOpsMetadata",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
       "access_level": "Permissions management",
       "action": "sns:CreateTopic",
       "condition": null,
@@ -8669,6 +7030,34 @@
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "fsx:ListTagsForResource",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Tagging, Write",
+      "action": "fsx:TagResource",
+      "condition": {
+        "StringLike": {
+          "aws:ResourceTag/aws:cloudformation:stack-id": "arn:aws:cloudformation:*:*:stack/LaunchWizard-*/*"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "fsx:TagResource",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Tagging, Write",
+      "action": "fsx:UntagResource",
+      "condition": {
+        "StringLike": {
+          "aws:ResourceTag/aws:cloudformation:stack-id": "arn:aws:cloudformation:*:*:stack/LaunchWizard-*/*"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "fsx:UntagResource",
       "privesc": false,
       "resource_exposure": false
     },
@@ -8807,62 +7196,6 @@
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "servicecatalog:UntagResource",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Write",
-      "action": "ssm:CreateAssociation",
-      "condition": {
-        "ForAnyValue:StringEquals": {
-          "aws:CalledVia": "launchwizard.amazonaws.com"
-        }
-      },
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ssm:CreateAssociation",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Write",
-      "action": "ssm:DeleteAssociation",
-      "condition": {
-        "ForAnyValue:StringEquals": {
-          "aws:CalledVia": "launchwizard.amazonaws.com"
-        }
-      },
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ssm:DeleteAssociation",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Tagging, Write",
-      "action": "elasticfilesystem:UntagResource",
-      "condition": {
-        "ForAnyValue:StringEquals": {
-          "aws:CalledVia": "launchwizard.amazonaws.com"
-        }
-      },
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "elasticfilesystem:UntagResource",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Tagging, Write",
-      "action": "elasticfilesystem:TagResource",
-      "condition": {
-        "ForAnyValue:StringEquals": {
-          "aws:CalledVia": "launchwizard.amazonaws.com"
-        }
-      },
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "elasticfilesystem:TagResource",
       "privesc": false,
       "resource_exposure": false
     },
@@ -9067,9 +7400,7 @@
       "action": "fsx:CreateStorageVirtualMachine",
       "condition": {
         "ForAnyValue:StringEquals": {
-          "aws:CalledVia": [
-            "launchwizard.amazonaws.com"
-          ]
+          "aws:CalledVia": "launchwizard.amazonaws.com"
         },
         "StringLike": {
           "aws:ResourceTag/aws:cloudformation:stack-id": "arn:aws:cloudformation:*:*:stack/LaunchWizard-*/*"
@@ -9086,9 +7417,7 @@
       "action": "fsx:CreateVolume",
       "condition": {
         "ForAnyValue:StringEquals": {
-          "aws:CalledVia": [
-            "launchwizard.amazonaws.com"
-          ]
+          "aws:CalledVia": "launchwizard.amazonaws.com"
         },
         "StringLike": {
           "aws:ResourceTag/aws:cloudformation:stack-id": "arn:aws:cloudformation:*:*:stack/LaunchWizard-*/*"
@@ -9105,9 +7434,7 @@
       "action": "fsx:DescribeStorageVirtualMachines",
       "condition": {
         "ForAnyValue:StringEquals": {
-          "aws:CalledVia": [
-            "launchwizard.amazonaws.com"
-          ]
+          "aws:CalledVia": "launchwizard.amazonaws.com"
         }
       },
       "credentials_exposure": false,
@@ -9121,9 +7448,7 @@
       "action": "fsx:DescribeVolumes",
       "condition": {
         "ForAnyValue:StringEquals": {
-          "aws:CalledVia": [
-            "launchwizard.amazonaws.com"
-          ]
+          "aws:CalledVia": "launchwizard.amazonaws.com"
         }
       },
       "credentials_exposure": false,
@@ -9137,9 +7462,7 @@
       "action": "fsx:DeleteStorageVirtualMachine",
       "condition": {
         "ForAnyValue:StringEquals": {
-          "aws:CalledVia": [
-            "launchwizard.amazonaws.com"
-          ]
+          "aws:CalledVia": "launchwizard.amazonaws.com"
         },
         "StringLike": {
           "aws:ResourceTag/aws:cloudformation:stack-id": "arn:aws:cloudformation:*:*:stack/LaunchWizard-*/*"
@@ -9156,9 +7479,7 @@
       "action": "fsx:DeleteVolume",
       "condition": {
         "ForAnyValue:StringEquals": {
-          "aws:CalledVia": [
-            "launchwizard.amazonaws.com"
-          ]
+          "aws:CalledVia": "launchwizard.amazonaws.com"
         },
         "StringLike": {
           "aws:ResourceTag/aws:cloudformation:stack-id": "arn:aws:cloudformation:*:*:stack/LaunchWizard-*/*"
@@ -9178,6 +7499,6 @@
   "resource_exposure": true,
   "undocumented_actions": false,
   "unknown_actions": [],
-  "updatedate": "2023-09-01T17:14:56+00:00",
-  "version": "v1"
+  "updatedate": "2026-08-18T19:27:25+00:00",
+  "version": "v2"
 }

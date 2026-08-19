@@ -6,7 +6,7 @@
     "Write"
   ],
   "arn": "arn:aws:iam::aws:policy/AmazonEC2RolePolicyForLaunchWizard",
-  "createdate": "2024-09-25T22:40:50+00:00",
+  "createdate": "2026-08-18T19:27:15+00:00",
   "credentials_exposure": false,
   "data_access": true,
   "deprecated": false,
@@ -70,6 +70,42 @@
               "LaunchWizardResourceGroupID",
               "LaunchWizardApplicationType"
             ]
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:ec2:*:*:volume/*"
+      },
+      {
+        "Action": [
+          "ec2:CreateVolume"
+        ],
+        "Condition": {
+          "StringLike": {
+            "aws:RequestTag/LaunchWizardResourceGroupID": "*"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:ec2:*:*:volume/*"
+      },
+      {
+        "Action": [
+          "ec2:CreateTags"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "ec2:CreateAction": "CreateVolume"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:ec2:*:*:volume/*"
+      },
+      {
+        "Action": [
+          "ec2:CreateTags"
+        ],
+        "Condition": {
+          "StringLike": {
+            "ec2:ResourceTag/LaunchWizardResourceGroupID": "*"
           }
         },
         "Effect": "Allow",
@@ -392,6 +428,48 @@
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "ec2:CreateVolume",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:CreateVolume",
+      "condition": {
+        "StringLike": {
+          "aws:RequestTag/LaunchWizardResourceGroupID": "*"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:CreateVolume",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Tagging, Write",
+      "action": "ec2:CreateTags",
+      "condition": {
+        "StringEquals": {
+          "ec2:CreateAction": "CreateVolume"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:CreateTags",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Tagging, Write",
+      "action": "ec2:CreateTags",
+      "condition": {
+        "StringLike": {
+          "ec2:ResourceTag/LaunchWizardResourceGroupID": "*"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:CreateTags",
       "privesc": false,
       "resource_exposure": false
     },
@@ -3491,6 +3569,6 @@
   "resource_exposure": false,
   "undocumented_actions": false,
   "unknown_actions": [],
-  "updatedate": "2024-09-25T22:40:50+00:00",
-  "version": "v11"
+  "updatedate": "2026-08-18T19:27:15+00:00",
+  "version": "v12"
 }

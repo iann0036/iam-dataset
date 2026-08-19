@@ -1,26 +1,171 @@
 {
   "access_levels": [
     "List",
+    "Read",
     "Tagging",
-    "Write"
+    "Write",
+    "Permissions management"
   ],
   "arn": "arn:aws:iam::aws:policy/service-role/ROSAAmazonEBSCSIDriverOperatorPolicy",
-  "createdate": "2026-02-12T17:58:07+00:00",
+  "createdate": "2026-08-19T05:07:11+00:00",
   "credentials_exposure": false,
-  "data_access": false,
+  "data_access": true,
   "deprecated": false,
   "document": {
     "Statement": [
       {
         "Action": [
+          "ec2:DescribeAvailabilityZones",
           "ec2:DescribeInstances",
+          "ec2:DescribeInstanceTypes",
           "ec2:DescribeSnapshots",
           "ec2:DescribeTags",
           "ec2:DescribeVolumes",
-          "ec2:DescribeVolumesModifications"
+          "ec2:DescribeVolumesModifications",
+          "ec2:DescribeVolumeStatus"
         ],
         "Effect": "Allow",
-        "Resource": "*"
+        "Resource": "*",
+        "Sid": "ReadOnlyDescribeOperations"
+      },
+      {
+        "Action": [
+          "ec2:CreateVolume",
+          "ec2:CopyVolumes"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:RequestTag/red-hat-managed": "true"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:ec2:*:*:volume/*",
+        "Sid": "CreateAndCopyVolumesWithManagedTag"
+      },
+      {
+        "Action": [
+          "ec2:CopyVolumes"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceTag/red-hat-managed": "true"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:ec2:*:*:volume/vol-*",
+        "Sid": "CopyManagedVolumes"
+      },
+      {
+        "Action": [
+          "ec2:CopyVolumes"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceTag/red-hat": "true"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:ec2:*:*:volume/vol-*",
+        "Sid": "CopyUserBroughtVolumes"
+      },
+      {
+        "Action": [
+          "ec2:CreateSnapshot"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:RequestTag/red-hat-managed": "true"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:ec2:*:*:snapshot/*",
+        "Sid": "CreateSnapshotsWithManagedTag"
+      },
+      {
+        "Action": [
+          "ec2:CreateSnapshot"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceTag/red-hat-managed": "true"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:ec2:*:*:volume/*",
+        "Sid": "CreateSnapshotsFromManagedVolumes"
+      },
+      {
+        "Action": [
+          "ec2:CreateSnapshot"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceTag/red-hat": "true"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:ec2:*:*:volume/*",
+        "Sid": "CreateSnapshotsFromUserBroughtVolumes"
+      },
+      {
+        "Action": [
+          "ec2:ModifyVolume",
+          "ec2:AttachVolume",
+          "ec2:DetachVolume",
+          "ec2:DeleteVolume"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceTag/red-hat-managed": "true"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:ec2:*:*:volume/*",
+        "Sid": "ManageManagedVolumes"
+      },
+      {
+        "Action": [
+          "ec2:ModifyVolume",
+          "ec2:AttachVolume",
+          "ec2:DetachVolume",
+          "ec2:DeleteVolume"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceTag/red-hat": "true"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:ec2:*:*:volume/*",
+        "Sid": "ManageUserBroughtVolumes"
+      },
+      {
+        "Action": [
+          "ec2:CreateVolume",
+          "ec2:EnableFastSnapshotRestores"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceTag/red-hat-managed": "true"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:ec2:*:*:snapshot/*",
+        "Sid": "CreateVolumesFromAndEnableFSROnManagedSnapshots"
+      },
+      {
+        "Action": [
+          "ec2:CreateVolume",
+          "ec2:EnableFastSnapshotRestores"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceTag/red-hat": "true"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:ec2:*:*:snapshot/*",
+        "Sid": "CreateVolumesFromAndEnableFSROnUserBroughtSnapshots"
       },
       {
         "Action": [
@@ -33,15 +178,13 @@
           }
         },
         "Effect": "Allow",
-        "Resource": [
-          "arn:aws:ec2:*:*:instance/*",
-          "arn:aws:ec2:*:*:volume/*"
-        ]
+        "Resource": "arn:aws:ec2:*:*:instance/*",
+        "Sid": "AttachDetachVolumesToManagedInstances"
       },
       {
         "Action": [
-          "ec2:DeleteVolume",
-          "ec2:ModifyVolume"
+          "ec2:DeleteSnapshot",
+          "ec2:LockSnapshot"
         ],
         "Condition": {
           "StringEquals": {
@@ -49,77 +192,22 @@
           }
         },
         "Effect": "Allow",
-        "Resource": [
-          "arn:aws:ec2:*:*:volume/*"
-        ]
+        "Resource": "arn:aws:ec2:*:*:snapshot/*",
+        "Sid": "DeleteAndLockManagedSnapshots"
       },
       {
         "Action": [
-          "ec2:CreateVolume"
+          "ec2:DeleteSnapshot",
+          "ec2:LockSnapshot"
         ],
         "Condition": {
           "StringEquals": {
-            "aws:RequestTag/red-hat-managed": "true"
+            "aws:ResourceTag/red-hat": "true"
           }
         },
         "Effect": "Allow",
-        "Resource": [
-          "arn:aws:ec2:*:*:volume/*"
-        ]
-      },
-      {
-        "Action": [
-          "ec2:CreateVolume"
-        ],
-        "Effect": "Allow",
-        "Resource": [
-          "arn:aws:ec2:*:*:snapshot/*"
-        ],
-        "Sid": "CreateVolumeFromSnapshot"
-      },
-      {
-        "Action": [
-          "ec2:CreateSnapshot"
-        ],
-        "Condition": {
-          "StringEquals": {
-            "aws:ResourceTag/red-hat-managed": "true"
-          }
-        },
-        "Effect": "Allow",
-        "Resource": [
-          "arn:aws:ec2:*:*:volume/*"
-        ],
-        "Sid": "CreateSnapshotResourceTag"
-      },
-      {
-        "Action": [
-          "ec2:CreateSnapshot"
-        ],
-        "Condition": {
-          "StringEquals": {
-            "aws:RequestTag/red-hat-managed": "true"
-          }
-        },
-        "Effect": "Allow",
-        "Resource": [
-          "arn:aws:ec2:*:*:snapshot/*"
-        ],
-        "Sid": "CreateSnapshotRequestTag"
-      },
-      {
-        "Action": [
-          "ec2:DeleteSnapshot"
-        ],
-        "Condition": {
-          "StringEquals": {
-            "aws:ResourceTag/red-hat-managed": "true"
-          }
-        },
-        "Effect": "Allow",
-        "Resource": [
-          "arn:aws:ec2:*:*:snapshot/*"
-        ]
+        "Resource": "arn:aws:ec2:*:*:snapshot/*",
+        "Sid": "DeleteAndLockUserBroughtSnapshots"
       },
       {
         "Action": [
@@ -129,7 +217,8 @@
           "StringEquals": {
             "ec2:CreateAction": [
               "CreateVolume",
-              "CreateSnapshot"
+              "CreateSnapshot",
+              "CopyVolumes"
             ]
           }
         },
@@ -137,7 +226,134 @@
         "Resource": [
           "arn:aws:ec2:*:*:volume/*",
           "arn:aws:ec2:*:*:snapshot/*"
-        ]
+        ],
+        "Sid": "TagResourcesOnCreation"
+      },
+      {
+        "Action": [
+          "ec2:CreateTags",
+          "ec2:DeleteTags"
+        ],
+        "Condition": {
+          "ForAllValues:StringNotEquals": {
+            "aws:TagKeys": [
+              "red-hat-managed",
+              "ebs.csi.aws.com/cluster",
+              "kubernetes.io/created-for/pvc/name"
+            ]
+          },
+          "Null": {
+            "aws:TagKeys": "false"
+          },
+          "StringEquals": {
+            "aws:ResourceTag/red-hat-managed": "true"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:ec2:*:*:volume/*",
+        "Sid": "ModifyTagsOnManagedVolumes"
+      },
+      {
+        "Action": [
+          "ec2:CreateTags",
+          "ec2:DeleteTags"
+        ],
+        "Condition": {
+          "ForAllValues:StringNotEquals": {
+            "aws:TagKeys": [
+              "red-hat-managed",
+              "red-hat",
+              "ebs.csi.aws.com/cluster",
+              "kubernetes.io/created-for/pvc/name"
+            ]
+          },
+          "Null": {
+            "aws:TagKeys": "false"
+          },
+          "StringEquals": {
+            "aws:ResourceTag/red-hat": "true"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:ec2:*:*:volume/*",
+        "Sid": "ModifyTagsOnUserBroughtVolumes"
+      },
+      {
+        "Action": [
+          "kms:Decrypt",
+          "kms:GenerateDataKeyWithoutPlaintext",
+          "kms:ReEncryptFrom",
+          "kms:ReEncryptTo"
+        ],
+        "Condition": {
+          "ForAllValues:StringEquals": {
+            "kms:EncryptionContextKeys": [
+              "aws:ebs:id"
+            ]
+          },
+          "Null": {
+            "kms:EncryptionContextKeys": false
+          },
+          "StringEquals": {
+            "aws:ResourceTag/red-hat": "true"
+          },
+          "StringLike": {
+            "kms:ViaService": "ec2.*.amazonaws.com"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:kms:*:*:key/*",
+        "Sid": "KMSEncryptedVolumes"
+      },
+      {
+        "Action": [
+          "kms:CreateGrant"
+        ],
+        "Condition": {
+          "Bool": {
+            "kms:GrantIsForAWSResource": true
+          },
+          "ForAllValues:StringEquals": {
+            "kms:EncryptionContextKeys": [
+              "aws:ebs:id"
+            ],
+            "kms:GrantOperations": [
+              "Decrypt",
+              "GenerateDataKeyWithoutPlaintext",
+              "ReEncryptFrom",
+              "ReEncryptTo"
+            ]
+          },
+          "Null": {
+            "kms:EncryptionContextKeys": false
+          },
+          "StringEquals": {
+            "aws:ResourceTag/red-hat": "true",
+            "kms:GrantConstraintType": "EncryptionContextSubset"
+          },
+          "StringLike": {
+            "kms:ViaService": "ec2.*.amazonaws.com"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:kms:*:*:key/*",
+        "Sid": "KMSCreateGrant"
+      },
+      {
+        "Action": [
+          "kms:DescribeKey"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceTag/red-hat": "true"
+          },
+          "StringLike": {
+            "kms:ViaService": "ec2.*.amazonaws.com"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:kms:*:*:key/*",
+        "Sid": "DescribeKMSKeysForEBSVolumeEncryption"
       }
     ],
     "Version": "2012-10-17"
@@ -145,11 +361,31 @@
   "effective_actions": [
     {
       "access_level": "List",
+      "action": "ec2:DescribeAvailabilityZones",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:DescribeAvailabilityZones",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
       "action": "ec2:DescribeInstances",
       "condition": null,
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "ec2:DescribeInstances",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "ec2:DescribeInstanceTypes",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:DescribeInstanceTypes",
       "privesc": false,
       "resource_exposure": false
     },
@@ -190,6 +426,128 @@
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "ec2:DescribeVolumesModifications",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "ec2:DescribeVolumeStatus",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:DescribeVolumeStatus",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:CreateVolume",
+      "condition": {
+        "StringEquals": {
+          "aws:RequestTag/red-hat-managed": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:CreateVolume",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:CopyVolumes",
+      "condition": {
+        "StringEquals": {
+          "aws:RequestTag/red-hat-managed": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:CopyVolumes",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:CopyVolumes",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/red-hat-managed": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:CopyVolumes",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:CopyVolumes",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/red-hat": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:CopyVolumes",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:CreateSnapshot",
+      "condition": {
+        "StringEquals": {
+          "aws:RequestTag/red-hat-managed": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:CreateSnapshot",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:CreateSnapshot",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/red-hat-managed": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:CreateSnapshot",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:CreateSnapshot",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/red-hat": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:CreateSnapshot",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:ModifyVolume",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/red-hat-managed": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:ModifyVolume",
       "privesc": false,
       "resource_exposure": false
     },
@@ -240,7 +598,7 @@
       "action": "ec2:ModifyVolume",
       "condition": {
         "StringEquals": {
-          "aws:ResourceTag/red-hat-managed": "true"
+          "aws:ResourceTag/red-hat": "true"
         }
       },
       "credentials_exposure": false,
@@ -251,31 +609,49 @@
     },
     {
       "access_level": "Write",
-      "action": "ec2:CreateVolume",
+      "action": "ec2:AttachVolume",
       "condition": {
         "StringEquals": {
-          "aws:RequestTag/red-hat-managed": "true"
+          "aws:ResourceTag/red-hat": "true"
         }
       },
       "credentials_exposure": false,
       "data_access": false,
-      "effective_action": "ec2:CreateVolume",
+      "effective_action": "ec2:AttachVolume",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:DetachVolume",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/red-hat": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:DetachVolume",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:DeleteVolume",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/red-hat": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:DeleteVolume",
       "privesc": false,
       "resource_exposure": false
     },
     {
       "access_level": "Write",
       "action": "ec2:CreateVolume",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:CreateVolume",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Write",
-      "action": "ec2:CreateSnapshot",
       "condition": {
         "StringEquals": {
           "aws:ResourceTag/red-hat-managed": "true"
@@ -283,21 +659,77 @@
       },
       "credentials_exposure": false,
       "data_access": false,
-      "effective_action": "ec2:CreateSnapshot",
+      "effective_action": "ec2:CreateVolume",
       "privesc": false,
       "resource_exposure": false
     },
     {
       "access_level": "Write",
-      "action": "ec2:CreateSnapshot",
+      "action": "ec2:EnableFastSnapshotRestores",
       "condition": {
         "StringEquals": {
-          "aws:RequestTag/red-hat-managed": "true"
+          "aws:ResourceTag/red-hat-managed": "true"
         }
       },
       "credentials_exposure": false,
       "data_access": false,
-      "effective_action": "ec2:CreateSnapshot",
+      "effective_action": "ec2:EnableFastSnapshotRestores",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:CreateVolume",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/red-hat": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:CreateVolume",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:EnableFastSnapshotRestores",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/red-hat": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:EnableFastSnapshotRestores",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:AttachVolume",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/red-hat-managed": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:AttachVolume",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:DetachVolume",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/red-hat-managed": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:DetachVolume",
       "privesc": false,
       "resource_exposure": false
     },
@@ -316,13 +748,56 @@
       "resource_exposure": false
     },
     {
+      "access_level": "Write",
+      "action": "ec2:LockSnapshot",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/red-hat-managed": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:LockSnapshot",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:DeleteSnapshot",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/red-hat": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:DeleteSnapshot",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:LockSnapshot",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/red-hat": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:LockSnapshot",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
       "access_level": "Tagging, Write",
       "action": "ec2:CreateTags",
       "condition": {
         "StringEquals": {
           "ec2:CreateAction": [
             "CreateVolume",
-            "CreateSnapshot"
+            "CreateSnapshot",
+            "CopyVolumes"
           ]
         }
       },
@@ -331,15 +806,265 @@
       "effective_action": "ec2:CreateTags",
       "privesc": false,
       "resource_exposure": false
+    },
+    {
+      "access_level": "Tagging, Write",
+      "action": "ec2:CreateTags",
+      "condition": {
+        "ForAllValues:StringNotEquals": {
+          "aws:TagKeys": [
+            "red-hat-managed",
+            "ebs.csi.aws.com/cluster",
+            "kubernetes.io/created-for/pvc/name"
+          ]
+        },
+        "Null": {
+          "aws:TagKeys": "false"
+        },
+        "StringEquals": {
+          "aws:ResourceTag/red-hat-managed": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:CreateTags",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Tagging, Write",
+      "action": "ec2:DeleteTags",
+      "condition": {
+        "ForAllValues:StringNotEquals": {
+          "aws:TagKeys": [
+            "red-hat-managed",
+            "ebs.csi.aws.com/cluster",
+            "kubernetes.io/created-for/pvc/name"
+          ]
+        },
+        "Null": {
+          "aws:TagKeys": "false"
+        },
+        "StringEquals": {
+          "aws:ResourceTag/red-hat-managed": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:DeleteTags",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Tagging, Write",
+      "action": "ec2:CreateTags",
+      "condition": {
+        "ForAllValues:StringNotEquals": {
+          "aws:TagKeys": [
+            "red-hat-managed",
+            "red-hat",
+            "ebs.csi.aws.com/cluster",
+            "kubernetes.io/created-for/pvc/name"
+          ]
+        },
+        "Null": {
+          "aws:TagKeys": "false"
+        },
+        "StringEquals": {
+          "aws:ResourceTag/red-hat": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:CreateTags",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Tagging, Write",
+      "action": "ec2:DeleteTags",
+      "condition": {
+        "ForAllValues:StringNotEquals": {
+          "aws:TagKeys": [
+            "red-hat-managed",
+            "red-hat",
+            "ebs.csi.aws.com/cluster",
+            "kubernetes.io/created-for/pvc/name"
+          ]
+        },
+        "Null": {
+          "aws:TagKeys": "false"
+        },
+        "StringEquals": {
+          "aws:ResourceTag/red-hat": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:DeleteTags",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "kms:Decrypt",
+      "condition": {
+        "ForAllValues:StringEquals": {
+          "kms:EncryptionContextKeys": [
+            "aws:ebs:id"
+          ]
+        },
+        "Null": {
+          "kms:EncryptionContextKeys": false
+        },
+        "StringEquals": {
+          "aws:ResourceTag/red-hat": "true"
+        },
+        "StringLike": {
+          "kms:ViaService": "ec2.*.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "kms:Decrypt",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "kms:GenerateDataKeyWithoutPlaintext",
+      "condition": {
+        "ForAllValues:StringEquals": {
+          "kms:EncryptionContextKeys": [
+            "aws:ebs:id"
+          ]
+        },
+        "Null": {
+          "kms:EncryptionContextKeys": false
+        },
+        "StringEquals": {
+          "aws:ResourceTag/red-hat": "true"
+        },
+        "StringLike": {
+          "kms:ViaService": "ec2.*.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "kms:GenerateDataKeyWithoutPlaintext",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "kms:ReEncryptFrom",
+      "condition": {
+        "ForAllValues:StringEquals": {
+          "kms:EncryptionContextKeys": [
+            "aws:ebs:id"
+          ]
+        },
+        "Null": {
+          "kms:EncryptionContextKeys": false
+        },
+        "StringEquals": {
+          "aws:ResourceTag/red-hat": "true"
+        },
+        "StringLike": {
+          "kms:ViaService": "ec2.*.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "kms:ReEncryptFrom",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "kms:ReEncryptTo",
+      "condition": {
+        "ForAllValues:StringEquals": {
+          "kms:EncryptionContextKeys": [
+            "aws:ebs:id"
+          ]
+        },
+        "Null": {
+          "kms:EncryptionContextKeys": false
+        },
+        "StringEquals": {
+          "aws:ResourceTag/red-hat": "true"
+        },
+        "StringLike": {
+          "kms:ViaService": "ec2.*.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "kms:ReEncryptTo",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Permissions management, Write",
+      "action": "kms:CreateGrant",
+      "condition": {
+        "Bool": {
+          "kms:GrantIsForAWSResource": true
+        },
+        "ForAllValues:StringEquals": {
+          "kms:EncryptionContextKeys": [
+            "aws:ebs:id"
+          ],
+          "kms:GrantOperations": [
+            "Decrypt",
+            "GenerateDataKeyWithoutPlaintext",
+            "ReEncryptFrom",
+            "ReEncryptTo"
+          ]
+        },
+        "Null": {
+          "kms:EncryptionContextKeys": false
+        },
+        "StringEquals": {
+          "aws:ResourceTag/red-hat": "true",
+          "kms:GrantConstraintType": "EncryptionContextSubset"
+        },
+        "StringLike": {
+          "kms:ViaService": "ec2.*.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": true,
+      "effective_action": "kms:CreateGrant",
+      "privesc": true,
+      "resource_exposure": true
+    },
+    {
+      "access_level": "Read",
+      "action": "kms:DescribeKey",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/red-hat": "true"
+        },
+        "StringLike": {
+          "kms:ViaService": "ec2.*.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "kms:DescribeKey",
+      "privesc": false,
+      "resource_exposure": false
     }
   ],
   "grantless": false,
   "malformed": false,
   "name": "ROSAAmazonEBSCSIDriverOperatorPolicy",
-  "privesc": false,
-  "resource_exposure": false,
+  "privesc": true,
+  "resource_exposure": true,
   "undocumented_actions": false,
   "unknown_actions": [],
-  "updatedate": "2026-02-12T17:58:07+00:00",
-  "version": "v6"
+  "updatedate": "2026-08-19T05:07:11+00:00",
+  "version": "v7"
 }
