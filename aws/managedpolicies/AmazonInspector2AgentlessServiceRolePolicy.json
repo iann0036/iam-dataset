@@ -6,7 +6,7 @@
     "Write"
   ],
   "arn": "arn:aws:iam::aws:policy/aws-service-role/AmazonInspector2AgentlessServiceRolePolicy",
-  "createdate": "2023-11-20T15:18:32+00:00",
+  "createdate": "2026-08-20T19:17:13+00:00",
   "credentials_exposure": false,
   "data_access": false,
   "deprecated": false,
@@ -166,6 +166,56 @@
         "Effect": "Allow",
         "Resource": "arn:aws:kms:*:*:key/*",
         "Sid": "DescribeKeysForEbsOperations"
+      },
+      {
+        "Action": [
+          "kms:Decrypt"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceOrgID": "${aws:PrincipalOrgID}"
+          },
+          "StringLike": {
+            "kms:EncryptionContext:aws:ebs:id": "vol-*",
+            "kms:ViaService": "ec2.*.amazonaws.com"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:kms:*:*:key/*",
+        "Sid": "DecryptCrossAccountOrgVolContext"
+      },
+      {
+        "Action": [
+          "kms:Decrypt"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceOrgID": "${aws:PrincipalOrgID}"
+          },
+          "StringLike": {
+            "kms:EncryptionContext:aws:ebs:id": "snap-*",
+            "kms:ViaService": "ec2.*.amazonaws.com"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:kms:*:*:key/*",
+        "Sid": "DecryptCrossAccountOrgSnapContext"
+      },
+      {
+        "Action": [
+          "kms:DescribeKey"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceOrgID": "${aws:PrincipalOrgID}"
+          },
+          "StringLike": {
+            "kms:ViaService": "ec2.*.amazonaws.com"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:kms:*:*:key/*",
+        "Sid": "DescribeCrossAccountOrgKeysForEbsOperations"
       },
       {
         "Action": [
@@ -352,6 +402,59 @@
       "resource_exposure": false
     },
     {
+      "access_level": "Write",
+      "action": "kms:Decrypt",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceOrgID": "${aws:PrincipalOrgID}"
+        },
+        "StringLike": {
+          "kms:EncryptionContext:aws:ebs:id": "vol-*",
+          "kms:ViaService": "ec2.*.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "kms:Decrypt",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "kms:Decrypt",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceOrgID": "${aws:PrincipalOrgID}"
+        },
+        "StringLike": {
+          "kms:EncryptionContext:aws:ebs:id": "snap-*",
+          "kms:ViaService": "ec2.*.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "kms:Decrypt",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "kms:DescribeKey",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceOrgID": "${aws:PrincipalOrgID}"
+        },
+        "StringLike": {
+          "kms:ViaService": "ec2.*.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "kms:DescribeKey",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
       "access_level": "List",
       "action": "kms:ListResourceTags",
       "condition": null,
@@ -369,6 +472,6 @@
   "resource_exposure": false,
   "undocumented_actions": false,
   "unknown_actions": [],
-  "updatedate": "2023-11-20T15:18:32+00:00",
-  "version": "v1"
+  "updatedate": "2026-08-20T19:17:13+00:00",
+  "version": "v2"
 }
