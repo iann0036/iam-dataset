@@ -1,14 +1,89 @@
 {
   "access_levels": [
-    "Write"
+    "List",
+    "Read",
+    "Write",
+    "Permissions management"
   ],
   "arn": "arn:aws:iam::aws:policy/aws-service-role/AWSAgentRegistryServiceRolePolicy",
-  "createdate": "2026-08-06T14:27:17+00:00",
+  "createdate": "2026-08-21T16:57:22+00:00",
   "credentials_exposure": false,
   "data_access": false,
   "deprecated": false,
   "document": {
     "Statement": [
+      {
+        "Action": [
+          "organizations:DescribeAccount",
+          "organizations:DescribeOrganization",
+          "organizations:ListAccounts",
+          "organizations:ListDelegatedAdministrators"
+        ],
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "AllowOrganizationsReadAccess"
+      },
+      {
+        "Action": [
+          "iam:CreateServiceLinkedRole"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "iam:AWSServiceName": "config.amazonaws.com"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:iam::*:role/aws-service-role/config.amazonaws.com/AWSServiceRoleForConfig",
+        "Sid": "AllowSLRCreationForAWSConfig"
+      },
+      {
+        "Action": [
+          "config:DeleteServiceLinkedConfigurationRecorder",
+          "config:PutServiceLinkedConfigurationRecorder"
+        ],
+        "Condition": {
+          "StringLike": {
+            "config:ConfigurationRecorderServicePrincipal": [
+              "agent-registry.amazonaws.com"
+            ]
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "*"
+        ],
+        "Sid": "AllowConfigRecorderWrite"
+      },
+      {
+        "Action": [
+          "config:DescribeConfigurationRecorders",
+          "config:DescribeConfigurationRecorderStatus"
+        ],
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:config:*:*:configuration-recorder/AWSConfigurationRecorderForAgentRegistry*"
+        ],
+        "Sid": "AllowConfigRecorderRead"
+      },
+      {
+        "Action": [
+          "agent-registry:CreateRegistryRecord",
+          "agent-registry:DeleteRegistryRecord",
+          "agent-registry:GetRegistryRecord",
+          "agent-registry:ListRegistryRecords",
+          "agent-registry:UpdateRegistryRecord"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:agent-registry:*:*:registry/*"
+        ],
+        "Sid": "AllowRegistryRecordReadWrite"
+      },
       {
         "Action": [
           "cloudwatch:PutMetricData"
@@ -31,6 +106,182 @@
   },
   "effective_actions": [
     {
+      "access_level": "Read",
+      "action": "organizations:DescribeAccount",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "organizations:DescribeAccount",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "organizations:DescribeOrganization",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "organizations:DescribeOrganization",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "organizations:ListAccounts",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "organizations:ListAccounts",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "organizations:ListDelegatedAdministrators",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "organizations:ListDelegatedAdministrators",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Permissions management",
+      "action": "iam:CreateServiceLinkedRole",
+      "condition": {
+        "StringEquals": {
+          "iam:AWSServiceName": "config.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "iam:CreateServiceLinkedRole",
+      "privesc": true,
+      "resource_exposure": true
+    },
+    {
+      "access_level": "Write",
+      "action": "config:DeleteServiceLinkedConfigurationRecorder",
+      "condition": {
+        "StringLike": {
+          "config:ConfigurationRecorderServicePrincipal": [
+            "agent-registry.amazonaws.com"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "config:DeleteServiceLinkedConfigurationRecorder",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "config:PutServiceLinkedConfigurationRecorder",
+      "condition": {
+        "StringLike": {
+          "config:ConfigurationRecorderServicePrincipal": [
+            "agent-registry.amazonaws.com"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "config:PutServiceLinkedConfigurationRecorder",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "config:DescribeConfigurationRecorders",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "config:DescribeConfigurationRecorders",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "config:DescribeConfigurationRecorderStatus",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "config:DescribeConfigurationRecorderStatus",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "agent-registry:CreateRegistryRecord",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "agent-registry:CreateRegistryRecord",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "agent-registry:DeleteRegistryRecord",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "agent-registry:DeleteRegistryRecord",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "agent-registry:GetRegistryRecord",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "agent-registry:GetRegistryRecord",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "agent-registry:ListRegistryRecords",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "agent-registry:ListRegistryRecords",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "agent-registry:UpdateRegistryRecord",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "agent-registry:UpdateRegistryRecord",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
       "access_level": "Write",
       "action": "cloudwatch:PutMetricData",
       "condition": {
@@ -52,10 +303,10 @@
   "grantless": false,
   "malformed": false,
   "name": "AWSAgentRegistryServiceRolePolicy",
-  "privesc": false,
-  "resource_exposure": false,
+  "privesc": true,
+  "resource_exposure": true,
   "undocumented_actions": false,
   "unknown_actions": [],
-  "updatedate": "2026-08-06T14:27:17+00:00",
-  "version": "v1"
+  "updatedate": "2026-08-21T16:57:22+00:00",
+  "version": "v2"
 }
