@@ -7,7 +7,7 @@
     "Permissions management"
   ],
   "arn": "arn:aws:iam::aws:policy/service-role/SageMakerStudioProjectProvisioningRolePolicy",
-  "createdate": "2026-06-04T21:27:16+00:00",
+  "createdate": "2026-08-24T20:37:11+00:00",
   "credentials_exposure": true,
   "data_access": true,
   "deprecated": false,
@@ -16,7 +16,8 @@
       {
         "Action": [
           "cloudformation:CreateStack",
-          "cloudformation:TagResource"
+          "cloudformation:TagResource",
+          "cloudformation:UntagResource"
         ],
         "Condition": {
           "ForAllValues:StringLike": {
@@ -2001,6 +2002,8 @@
       },
       {
         "Action": [
+          "sagemaker:CreateApp",
+          "sagemaker:AddTags",
           "sagemaker:DeleteApp"
         ],
         "Condition": {
@@ -2012,13 +2015,8 @@
           }
         },
         "Effect": "Allow",
-        "Resource": [
-          "arn:aws:sagemaker:*:*:app/*/*/codeeditor/*",
-          "arn:aws:sagemaker:*:*:app/*/*/CodeEditor/*",
-          "arn:aws:sagemaker:*:*:app/*/*/jupyterlab/*",
-          "arn:aws:sagemaker:*:*:app/*/*/JupyterLab/*"
-        ],
-        "Sid": "SMAppDelete"
+        "Resource": "arn:aws:sagemaker:*:*:app/*",
+        "Sid": "SMApp"
       },
       {
         "Action": [
@@ -3120,6 +3118,29 @@
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "cloudformation:TagResource",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Tagging, Write",
+      "action": "cloudformation:UntagResource",
+      "condition": {
+        "ForAllValues:StringLike": {
+          "aws:TagKeys": [
+            "AmazonDataZone*"
+          ]
+        },
+        "Null": {
+          "aws:ResourceTag/AmazonDataZoneProject": "false",
+          "aws:TagKeys": "false"
+        },
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudformation:UntagResource",
       "privesc": false,
       "resource_exposure": false
     },
@@ -7370,6 +7391,40 @@
     },
     {
       "access_level": "Write",
+      "action": "sagemaker:CreateApp",
+      "condition": {
+        "Null": {
+          "aws:ResourceTag/AmazonDataZoneProject": "false"
+        },
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sagemaker:CreateApp",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Tagging, Write",
+      "action": "sagemaker:AddTags",
+      "condition": {
+        "Null": {
+          "aws:ResourceTag/AmazonDataZoneProject": "false"
+        },
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sagemaker:AddTags",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
       "action": "sagemaker:DeleteApp",
       "condition": {
         "Null": {
@@ -11338,6 +11393,6 @@
   "resource_exposure": true,
   "undocumented_actions": false,
   "unknown_actions": [],
-  "updatedate": "2026-06-04T21:27:16+00:00",
-  "version": "v81"
+  "updatedate": "2026-08-24T20:37:11+00:00",
+  "version": "v82"
 }
