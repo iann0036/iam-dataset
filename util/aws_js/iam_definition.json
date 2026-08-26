@@ -28580,6 +28580,11 @@
         "type": "Numeric"
       },
       {
+        "condition": "autoscaling:TargetCapacityTypes",
+        "description": "Filters access based on the target capacity types present in the distribution segments of a mixed instances policy. Use it to qualify which capacity types can be explicitly defined in the policy",
+        "type": "ArrayOfString"
+      },
+      {
         "condition": "autoscaling:TargetGroupARNs",
         "description": "Filters access based on the ARN of a target group",
         "type": "ArrayOfARN"
@@ -28753,6 +28758,7 @@
               "autoscaling:MinSize",
               "autoscaling:OperatorPrincipal",
               "autoscaling:ResourceTag/${TagKey}",
+              "autoscaling:TargetCapacityTypes",
               "autoscaling:TargetGroupARNs",
               "autoscaling:TrafficSourceIdentifiers",
               "autoscaling:VPCZoneIdentifiers",
@@ -29545,6 +29551,7 @@
             "condition_keys": [
               "autoscaling:ImageId",
               "autoscaling:ResourceTag/${TagKey}",
+              "autoscaling:TargetCapacityTypes",
               "aws:ResourceTag/${TagKey}"
             ],
             "dependent_actions": [],
@@ -29598,6 +29605,7 @@
               "autoscaling:MaxSize",
               "autoscaling:MinSize",
               "autoscaling:ResourceTag/${TagKey}",
+              "autoscaling:TargetCapacityTypes",
               "autoscaling:VPCZoneIdentifiers",
               "aws:ResourceTag/${TagKey}"
             ],
@@ -114988,7 +114996,9 @@
               "aws:RequestTag/${TagKey}",
               "aws:TagKeys"
             ],
-            "dependent_actions": [],
+            "dependent_actions": [
+              "drs:TagResource"
+            ],
             "resource_type": ""
           }
         ]
@@ -191706,7 +191716,7 @@
               "aws:ResourceTag/${TagKey}"
             ],
             "dependent_actions": [
-              "iam:PassRole"
+              "iam:PassedToService"
             ],
             "resource_type": "instance-profile*"
           }
@@ -191869,9 +191879,7 @@
               "aws:ResourceTag/${TagKey}",
               "aws:TagKeys"
             ],
-            "dependent_actions": [
-              "iam:TagInstanceProfile"
-            ],
+            "dependent_actions": [],
             "resource_type": "instance-profile*"
           }
         ]
@@ -191902,9 +191910,7 @@
               "aws:ResourceTag/${TagKey}",
               "aws:TagKeys"
             ],
-            "dependent_actions": [
-              "iam:TagOpenIDConnectProvider"
-            ],
+            "dependent_actions": [],
             "resource_type": "oidc-provider*"
           }
         ]
@@ -191920,9 +191926,7 @@
               "aws:ResourceTag/${TagKey}",
               "aws:TagKeys"
             ],
-            "dependent_actions": [
-              "iam:TagPolicy"
-            ],
+            "dependent_actions": [],
             "resource_type": "policy*"
           }
         ]
@@ -191955,9 +191959,7 @@
               "iam:ResourceTag/${TagKey}",
               "iam:RoleTemplateARN"
             ],
-            "dependent_actions": [
-              "iam:TagRole"
-            ],
+            "dependent_actions": [],
             "resource_type": "role*"
           }
         ]
@@ -191973,9 +191975,7 @@
               "aws:ResourceTag/${TagKey}",
               "aws:TagKeys"
             ],
-            "dependent_actions": [
-              "iam:TagSAMLProvider"
-            ],
+            "dependent_actions": [],
             "resource_type": "saml-provider*"
           }
         ]
@@ -191991,9 +191991,7 @@
               "iam:AWSServiceName",
               "iam:ResourceTag/${TagKey}"
             ],
-            "dependent_actions": [
-              "iam:PutRolePolicy"
-            ],
+            "dependent_actions": [],
             "resource_type": "role*"
           }
         ]
@@ -192028,9 +192026,7 @@
               "iam:PermissionsBoundary",
               "iam:ResourceTag/${TagKey}"
             ],
-            "dependent_actions": [
-              "iam:TagUser"
-            ],
+            "dependent_actions": [],
             "resource_type": "user*"
           }
         ]
@@ -192046,9 +192042,7 @@
               "aws:ResourceTag/${TagKey}",
               "aws:TagKeys"
             ],
-            "dependent_actions": [
-              "iam:TagMFADevice"
-            ],
+            "dependent_actions": [],
             "resource_type": "mfa*"
           }
         ]
@@ -193626,9 +193620,7 @@
             "condition_keys": [
               "iam:AccountPropertyNamespaces"
             ],
-            "dependent_actions": [
-              "iam:CreateServiceLinkedRole"
-            ],
+            "dependent_actions": [],
             "resource_type": ""
           }
         ]
@@ -194420,9 +194412,7 @@
               "aws:ResourceTag/${TagKey}",
               "aws:TagKeys"
             ],
-            "dependent_actions": [
-              "iam:TagServerCertificate"
-            ],
+            "dependent_actions": [],
             "resource_type": "server-certificate*"
           }
         ]
@@ -294534,30 +294524,6 @@
       },
       {
         "access_level": "Read",
-        "description": "Grants permission to describe an automation group",
-        "privilege": "DescribeAutomationGroup",
-        "resource_types": [
-          {
-            "condition_keys": [],
-            "dependent_actions": [],
-            "resource_type": "automationGroup*"
-          }
-        ]
-      },
-      {
-        "access_level": "Permissions management, Write",
-        "description": "Grants permission to describe permissions for an automation group",
-        "privilege": "DescribeAutomationGroupPermissions",
-        "resource_types": [
-          {
-            "condition_keys": [],
-            "dependent_actions": [],
-            "resource_type": "automationGroup*"
-          }
-        ]
-      },
-      {
-        "access_level": "Read",
         "description": "Grants permission to describe an automation job",
         "privilege": "DescribeAutomationJob",
         "resource_types": [
@@ -295493,18 +295459,6 @@
       },
       {
         "access_level": "List",
-        "description": "Grants permission to list all automation groups in an account",
-        "privilege": "ListAutomationGroups",
-        "resource_types": [
-          {
-            "condition_keys": [],
-            "dependent_actions": [],
-            "resource_type": ""
-          }
-        ]
-      },
-      {
-        "access_level": "List",
         "description": "Grants permission to lists all brands in an Amazon QuickSight account",
         "privilege": "ListBrands",
         "resource_types": [
@@ -296317,18 +296271,6 @@
       },
       {
         "access_level": "List",
-        "description": "Grants permission to search for automation groups in an account",
-        "privilege": "SearchAutomationGroups",
-        "resource_types": [
-          {
-            "condition_keys": [],
-            "dependent_actions": [],
-            "resource_type": ""
-          }
-        ]
-      },
-      {
-        "access_level": "List",
         "description": "Grants permission to search for a sub-set of QuickSight Dashboards",
         "privilege": "SearchDashboards",
         "resource_types": [
@@ -297039,18 +296981,6 @@
             "condition_keys": [],
             "dependent_actions": [],
             "resource_type": "approvalPolicy*"
-          }
-        ]
-      },
-      {
-        "access_level": "Permissions management, Write",
-        "description": "Grants permission to update permissions for an automation group",
-        "privilege": "UpdateAutomationGroupPermissions",
-        "resource_types": [
-          {
-            "condition_keys": [],
-            "dependent_actions": [],
-            "resource_type": "automationGroup*"
           }
         ]
       },
@@ -298037,6 +297967,18 @@
         "access_level": "Read",
         "description": "Grants permission to use Amazon QuickSight, in Enterprise edition, to identify and display the Microsoft Active Directory (Microsoft Active Directory) directory groups that are mapped to roles in Amazon QuickSight",
         "privilege": "GetGroupMapping",
+        "resource_types": [
+          {
+            "condition_keys": [],
+            "dependent_actions": [],
+            "resource_type": ""
+          }
+        ]
+      },
+      {
+        "access_level": "List",
+        "description": "Grants permission to list assignment information of the custom permission profile in an account",
+        "privilege": "ListCustomPermissionAssignments",
         "resource_types": [
           {
             "condition_keys": [],
