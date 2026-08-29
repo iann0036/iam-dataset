@@ -6,7 +6,7 @@
     "Permissions management"
   ],
   "arn": "arn:aws:iam::aws:policy/AWS-SSM-DiagnosisAutomation-ExecutionRolePolicy",
-  "createdate": "2026-02-12T18:02:31+00:00",
+  "createdate": "2026-08-28T21:37:07+00:00",
   "credentials_exposure": false,
   "data_access": false,
   "deprecated": false,
@@ -30,6 +30,19 @@
       },
       {
         "Action": [
+          "ec2:GetConsoleOutput"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "AllowGetConsoleOutput"
+      },
+      {
+        "Action": [
           "ssm:DescribeAutomationStepExecutions",
           "ssm:DescribeInstanceInformation",
           "ssm:DescribeAutomationExecutions",
@@ -43,13 +56,25 @@
       },
       {
         "Action": [
+          "iam:GetInstanceProfile",
+          "iam:GetRole",
+          "iam:SimulatePrincipalPolicy"
+        ],
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "AllowReadOnlyAccessIAMResource"
+      },
+      {
+        "Action": [
           "ssm:StartAutomationExecution"
         ],
         "Effect": "Allow",
         "Resource": [
           "arn:aws:ssm:*:*:document/AWS-*UnmanagedEC2*",
+          "arn:aws:ssm:*:*:document/AWS-DiagnoseHybridActivationIssues",
           "arn:aws:ssm:*:*:automation-execution/*",
-          "arn:aws:ssm:*:*:automation-definition/AWS-*UnmanagedEC2*:*"
+          "arn:aws:ssm:*:*:automation-definition/AWS-*UnmanagedEC2*:*",
+          "arn:aws:ssm:*:*:automation-definition/AWS-DiagnoseHybridActivationIssues:*"
         ],
         "Sid": "AllowExecuteSSMAutomation"
       },
@@ -185,6 +210,20 @@
     },
     {
       "access_level": "Read",
+      "action": "ec2:GetConsoleOutput",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:GetConsoleOutput",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
       "action": "ssm:DescribeAutomationStepExecutions",
       "condition": null,
       "credentials_exposure": false,
@@ -240,6 +279,36 @@
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "ssm:GetServiceSetting",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "iam:GetInstanceProfile",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "iam:GetInstanceProfile",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "iam:GetRole",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "iam:GetRole",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "iam:SimulatePrincipalPolicy",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "iam:SimulatePrincipalPolicy",
       "privesc": false,
       "resource_exposure": false
     },
@@ -321,6 +390,6 @@
   "resource_exposure": true,
   "undocumented_actions": false,
   "unknown_actions": [],
-  "updatedate": "2026-02-12T18:02:31+00:00",
-  "version": "v7"
+  "updatedate": "2026-08-28T21:37:07+00:00",
+  "version": "v8"
 }

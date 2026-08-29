@@ -190178,6 +190178,22 @@
       },
       {
         "access_level": "Write",
+        "description": "Grants permission to restore a backup-enabled datastore to a point in time, creating a new datastore from the backup",
+        "privilege": "RestoreFHIRDatastore",
+        "resource_types": [
+          {
+            "condition_keys": [
+              "aws:RequestTag/${TagKey}",
+              "aws:ResourceTag/${TagKey}",
+              "aws:TagKeys"
+            ],
+            "dependent_actions": [],
+            "resource_type": "datastore*"
+          }
+        ]
+      },
+      {
+        "access_level": "Write",
         "description": "Grants permission to retrieve member attribution status",
         "privilege": "RetrieveAttributionStatus",
         "resource_types": [
@@ -330521,6 +330537,11 @@
         "type": "String"
       },
       {
+        "condition": "sagemaker:AuthMode",
+        "description": "Filters access by the authentication mode specified in the request",
+        "type": "String"
+      },
+      {
         "condition": "sagemaker:BearerTokenType",
         "description": "Filters access by the type of bearer token used in the request",
         "type": "String"
@@ -330666,6 +330687,11 @@
         "type": "Bool"
       },
       {
+        "condition": "sagemaker:IsUpdateRecord",
+        "description": "Filters access by whether the PutRecord authorization was triggered by an UpdateRecord API call. Set to true on UpdateRecord and false on direct PutRecord calls",
+        "type": "Bool"
+      },
+      {
         "condition": "sagemaker:KeepAlivePeriod",
         "description": "Filters access by the keep-alive period associated with the resource in the request",
         "type": "Numeric"
@@ -330784,6 +330810,11 @@
         "condition": "sagemaker:TargetModel",
         "description": "Filters access by the target model associated with the Multi-Model Endpoint in the request",
         "type": "String"
+      },
+      {
+        "condition": "sagemaker:UpdatableFeatures",
+        "description": "Filters access by the list of feature names being updated by an UpdateRecord API call. Absent on direct PutRecord calls",
+        "type": "ArrayOfString"
       },
       {
         "condition": "sagemaker:UserProfileName",
@@ -331709,6 +331740,36 @@
       },
       {
         "access_level": "Write",
+        "description": "Grants permission to reboot nodes in a SageMaker HyperPod cluster",
+        "privilege": "BatchRebootClusterNodes",
+        "resource_types": [
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}",
+              "sagemaker:ResourceTag/${TagKey}"
+            ],
+            "dependent_actions": [],
+            "resource_type": "cluster*"
+          }
+        ]
+      },
+      {
+        "access_level": "Write",
+        "description": "Grants permission to replace nodes in a SageMaker HyperPod cluster",
+        "privilege": "BatchReplaceClusterNodes",
+        "resource_types": [
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}",
+              "sagemaker:ResourceTag/${TagKey}"
+            ],
+            "dependent_actions": [],
+            "resource_type": "cluster*"
+          }
+        ]
+      },
+      {
+        "access_level": "Write",
         "description": "Grants permission to put a batch of records to one or more feature groups",
         "privilege": "BatchWriteRecord",
         "resource_types": [
@@ -332157,6 +332218,7 @@
               "aws:ResourceTag/${TagKey}",
               "aws:TagKeys",
               "sagemaker:AppNetworkAccessType",
+              "sagemaker:AuthMode",
               "sagemaker:DomainSharingOutputKmsKeyArn",
               "sagemaker:ImageArns",
               "sagemaker:ImageVersionArns",
@@ -335966,6 +336028,21 @@
       },
       {
         "access_level": "Read",
+        "description": "Grants permission to retrieve the extension history for a specified training plan",
+        "privilege": "DescribeTrainingPlanExtensionHistory",
+        "resource_types": [
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}",
+              "sagemaker:ResourceTag/${TagKey}"
+            ],
+            "dependent_actions": [],
+            "resource_type": "training-plan*"
+          }
+        ]
+      },
+      {
+        "access_level": "Read",
         "description": "Grants permission to return information about a transform job",
         "privilege": "DescribeTransformJob",
         "resource_types": [
@@ -336116,6 +336193,18 @@
         "access_level": "Write",
         "description": "Grants permission to enable a SageMaker Service Catalog Portfolio",
         "privilege": "EnableSagemakerServicecatalogPortfolio",
+        "resource_types": [
+          {
+            "condition_keys": [],
+            "dependent_actions": [],
+            "resource_type": ""
+          }
+        ]
+      },
+      {
+        "access_level": "Write",
+        "description": "Grants permission to extend an existing training plan by purchasing an extension offering",
+        "privilege": "ExtendTrainingPlan",
         "resource_types": [
           {
             "condition_keys": [],
@@ -338048,7 +338137,9 @@
           {
             "condition_keys": [
               "aws:ResourceTag/${TagKey}",
-              "sagemaker:ResourceTag/${TagKey}"
+              "sagemaker:IsUpdateRecord",
+              "sagemaker:ResourceTag/${TagKey}",
+              "sagemaker:UpdatableFeatures"
             ],
             "dependent_actions": [],
             "resource_type": "feature-group*"
