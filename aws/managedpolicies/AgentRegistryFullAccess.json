@@ -7,9 +7,9 @@
     "Permissions management"
   ],
   "arn": "arn:aws:iam::aws:policy/AgentRegistryFullAccess",
-  "createdate": "2026-08-06T18:12:14+00:00",
+  "createdate": "2026-08-31T17:07:08+00:00",
   "credentials_exposure": false,
-  "data_access": false,
+  "data_access": true,
   "deprecated": false,
   "document": {
     "Statement": [
@@ -50,7 +50,11 @@
           "bedrock-agentcore:GetResourceOauth2Token"
         ],
         "Effect": "Allow",
-        "Resource": "arn:aws:bedrock-agentcore:*:*:credential-provider/*",
+        "Resource": [
+          "arn:aws:bedrock-agentcore:*:*:credential-provider/*",
+          "arn:aws:bedrock-agentcore:*:*:workload-identity-directory/*",
+          "arn:aws:bedrock-agentcore:*:*:token-vault/*/oauth2credentialprovider/*"
+        ],
         "Sid": "AllowGetResourceOauth2TokenForOauthBasedSynchronization"
       },
       {
@@ -74,13 +78,73 @@
           "kms:Decrypt"
         ],
         "Condition": {
+          "ForAnyValue:StringEquals": {
+            "aws:CalledVia": "bedrock-agentcore.amazonaws.com"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:kms:*:*:key/*",
+        "Sid": "AgentRegistryKMSDecryptKeyForSynchronization"
+      },
+      {
+        "Action": [
+          "kms:DescribeKey"
+        ],
+        "Condition": {
           "StringLike": {
             "kms:ViaService": "agent-registry.*.amazonaws.com"
           }
         },
         "Effect": "Allow",
         "Resource": "arn:aws:kms:*:*:key/*",
-        "Sid": "AgentRegistryKMSAccess"
+        "Sid": "AgentRegistryKMSDescribeKey"
+      },
+      {
+        "Action": [
+          "kms:Decrypt",
+          "kms:Encrypt",
+          "kms:GenerateDataKey",
+          "kms:GenerateDataKeyWithoutPlaintext",
+          "kms:ReEncryptFrom",
+          "kms:ReEncryptTo"
+        ],
+        "Condition": {
+          "StringLike": {
+            "kms:EncryptionContext:aws:agent-registry:registry-arn": "arn:aws:agent-registry:*:*:registry/*",
+            "kms:ViaService": "agent-registry.*.amazonaws.com"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:kms:*:*:key/*",
+        "Sid": "AgentRegistryKMSCryptoOps"
+      },
+      {
+        "Action": [
+          "kms:CreateGrant"
+        ],
+        "Condition": {
+          "ForAllValues:StringEquals": {
+            "kms:GrantOperations": [
+              "Decrypt",
+              "Encrypt",
+              "GenerateDataKey",
+              "GenerateDataKeyWithoutPlaintext",
+              "ReEncryptFrom",
+              "ReEncryptTo",
+              "DescribeKey",
+              "CreateGrant"
+            ]
+          },
+          "Null": {
+            "kms:GrantOperations": "false"
+          },
+          "StringLike": {
+            "kms:ViaService": "agent-registry.*.amazonaws.com"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:kms:*:*:key/*",
+        "Sid": "AgentRegistryKMSCreateGrant"
       },
       {
         "Action": [
@@ -415,7 +479,36 @@
       "access_level": "Write",
       "action": "kms:Decrypt",
       "condition": {
+        "ForAnyValue:StringEquals": {
+          "aws:CalledVia": "bedrock-agentcore.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "kms:Decrypt",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "kms:DescribeKey",
+      "condition": {
         "StringLike": {
+          "kms:ViaService": "agent-registry.*.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "kms:DescribeKey",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "kms:Decrypt",
+      "condition": {
+        "StringLike": {
+          "kms:EncryptionContext:aws:agent-registry:registry-arn": "arn:aws:agent-registry:*:*:registry/*",
           "kms:ViaService": "agent-registry.*.amazonaws.com"
         }
       },
@@ -424,6 +517,110 @@
       "effective_action": "kms:Decrypt",
       "privesc": false,
       "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "kms:Encrypt",
+      "condition": {
+        "StringLike": {
+          "kms:EncryptionContext:aws:agent-registry:registry-arn": "arn:aws:agent-registry:*:*:registry/*",
+          "kms:ViaService": "agent-registry.*.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "kms:Encrypt",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "kms:GenerateDataKey",
+      "condition": {
+        "StringLike": {
+          "kms:EncryptionContext:aws:agent-registry:registry-arn": "arn:aws:agent-registry:*:*:registry/*",
+          "kms:ViaService": "agent-registry.*.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "kms:GenerateDataKey",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "kms:GenerateDataKeyWithoutPlaintext",
+      "condition": {
+        "StringLike": {
+          "kms:EncryptionContext:aws:agent-registry:registry-arn": "arn:aws:agent-registry:*:*:registry/*",
+          "kms:ViaService": "agent-registry.*.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "kms:GenerateDataKeyWithoutPlaintext",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "kms:ReEncryptFrom",
+      "condition": {
+        "StringLike": {
+          "kms:EncryptionContext:aws:agent-registry:registry-arn": "arn:aws:agent-registry:*:*:registry/*",
+          "kms:ViaService": "agent-registry.*.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "kms:ReEncryptFrom",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "kms:ReEncryptTo",
+      "condition": {
+        "StringLike": {
+          "kms:EncryptionContext:aws:agent-registry:registry-arn": "arn:aws:agent-registry:*:*:registry/*",
+          "kms:ViaService": "agent-registry.*.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "kms:ReEncryptTo",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Permissions management, Write",
+      "action": "kms:CreateGrant",
+      "condition": {
+        "ForAllValues:StringEquals": {
+          "kms:GrantOperations": [
+            "Decrypt",
+            "Encrypt",
+            "GenerateDataKey",
+            "GenerateDataKeyWithoutPlaintext",
+            "ReEncryptFrom",
+            "ReEncryptTo",
+            "DescribeKey",
+            "CreateGrant"
+          ]
+        },
+        "Null": {
+          "kms:GrantOperations": "false"
+        },
+        "StringLike": {
+          "kms:ViaService": "agent-registry.*.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": true,
+      "effective_action": "kms:CreateGrant",
+      "privesc": true,
+      "resource_exposure": true
     },
     {
       "access_level": "Read",
@@ -457,6 +654,6 @@
   "resource_exposure": true,
   "undocumented_actions": false,
   "unknown_actions": [],
-  "updatedate": "2026-08-06T18:12:14+00:00",
-  "version": "v1"
+  "updatedate": "2026-08-31T17:07:08+00:00",
+  "version": "v2"
 }

@@ -7,7 +7,7 @@
     "Permissions management"
   ],
   "arn": "arn:aws:iam::aws:policy/AWSTransformNetworkMigrationAgentPolicy",
-  "createdate": "2026-08-06T15:27:26+00:00",
+  "createdate": "2026-09-01T10:37:07+00:00",
   "credentials_exposure": true,
   "data_access": true,
   "deprecated": false,
@@ -602,7 +602,8 @@
       },
       {
         "Action": [
-          "lambda:GetFunction"
+          "lambda:GetFunction",
+          "lambda:ListTags"
         ],
         "Condition": {
           "ForAnyValue:StringEquals": {
@@ -617,7 +618,7 @@
         },
         "Effect": "Allow",
         "Resource": "arn:aws:lambda:*:*:function:network-migration*",
-        "Sid": "LambdaViaCfnNetworkMigrationFunctionOperationsReadOnly"
+        "Sid": "LambdaViaCfnNetworkMigrationFunctionReadOnly"
       },
       {
         "Action": [
@@ -746,6 +747,7 @@
           "mgn:ListNetworkMigrationExecutions",
           "mgn:ListNetworkMigrationMapperSegmentConstructs",
           "mgn:ListNetworkMigrationMapperSegments",
+          "mgn:ListNetworkMigrationExecutionArtifacts",
           "mgn:ListNetworkMigrationMappings"
         ],
         "Condition": {
@@ -1174,9 +1176,7 @@
         "Action": [
           "ssm:DeleteParameter",
           "ssm:DeleteResourcePolicy",
-          "ssm:GetResourcePolicies",
-          "ssm:ListTagsForResource",
-          "ssm:PutResourcePolicy"
+          "ssm:ListTagsForResource"
         ],
         "Condition": {
           "ForAnyValue:StringEquals": {
@@ -1193,6 +1193,26 @@
         "Effect": "Allow",
         "Resource": "arn:aws:ssm:*:*:parameter/network-migration/*",
         "Sid": "SsmParametersViaCfnOperationsWriteWithResourceTag"
+      },
+      {
+        "Action": [
+          "ssm:GetResourcePolicies",
+          "ssm:PutResourcePolicy"
+        ],
+        "Condition": {
+          "ForAnyValue:StringEquals": {
+            "aws:CalledVia": [
+              "cloudformation.amazonaws.com"
+            ]
+          },
+          "StringEquals": {
+            "aws:RequestedRegion": "${aws:PrincipalTag/TargetRegion}",
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:ssm:*:*:parameter/network-migration/*",
+        "Sid": "SsmParametersViaCfnRamSharingOperations"
       },
       {
         "Action": [
@@ -3926,6 +3946,26 @@
       "resource_exposure": false
     },
     {
+      "access_level": "Read",
+      "action": "lambda:ListTags",
+      "condition": {
+        "ForAnyValue:StringEquals": {
+          "aws:CalledVia": [
+            "cloudformation.amazonaws.com"
+          ]
+        },
+        "StringEquals": {
+          "aws:RequestedRegion": "${aws:PrincipalTag/TargetRegion}",
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "lambda:ListTags",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
       "access_level": "Tagging",
       "action": "lambda:TagResource",
       "condition": {
@@ -4314,6 +4354,20 @@
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "mgn:ListNetworkMigrationMapperSegments",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "mgn:ListNetworkMigrationExecutionArtifacts",
+      "condition": {
+        "StringEquals": {
+          "aws:RequestedRegion": "${aws:PrincipalTag/TargetRegion}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "mgn:ListNetworkMigrationExecutionArtifacts",
       "privesc": false,
       "resource_exposure": false
     },
@@ -6056,27 +6110,6 @@
     },
     {
       "access_level": "List",
-      "action": "ssm:GetResourcePolicies",
-      "condition": {
-        "ForAnyValue:StringEquals": {
-          "aws:CalledVia": [
-            "cloudformation.amazonaws.com"
-          ]
-        },
-        "StringEquals": {
-          "aws:RequestedRegion": "${aws:PrincipalTag/TargetRegion}",
-          "aws:ResourceAccount": "${aws:PrincipalAccount}",
-          "aws:ResourceTag/CreatedBy": "AWSApplicationMigrationService"
-        }
-      },
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ssm:GetResourcePolicies",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
       "action": "ssm:ListTagsForResource",
       "condition": {
         "ForAnyValue:StringEquals": {
@@ -6097,6 +6130,26 @@
       "resource_exposure": false
     },
     {
+      "access_level": "List",
+      "action": "ssm:GetResourcePolicies",
+      "condition": {
+        "ForAnyValue:StringEquals": {
+          "aws:CalledVia": [
+            "cloudformation.amazonaws.com"
+          ]
+        },
+        "StringEquals": {
+          "aws:RequestedRegion": "${aws:PrincipalTag/TargetRegion}",
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ssm:GetResourcePolicies",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
       "access_level": "Permissions management, Write",
       "action": "ssm:PutResourcePolicy",
       "condition": {
@@ -6107,8 +6160,7 @@
         },
         "StringEquals": {
           "aws:RequestedRegion": "${aws:PrincipalTag/TargetRegion}",
-          "aws:ResourceAccount": "${aws:PrincipalAccount}",
-          "aws:ResourceTag/CreatedBy": "AWSApplicationMigrationService"
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
         }
       },
       "credentials_exposure": false,
@@ -6140,6 +6192,6 @@
   "resource_exposure": true,
   "undocumented_actions": false,
   "unknown_actions": [],
-  "updatedate": "2026-08-06T15:27:26+00:00",
-  "version": "v1"
+  "updatedate": "2026-09-01T10:37:07+00:00",
+  "version": "v2"
 }
