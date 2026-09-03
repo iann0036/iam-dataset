@@ -6,7 +6,7 @@
     "Permissions management"
   ],
   "arn": "arn:aws:iam::aws:policy/AWSTransformInfrastructureExecutorAccessEC2",
-  "createdate": "2026-07-28T15:42:16+00:00",
+  "createdate": "2026-09-02T21:27:07+00:00",
   "credentials_exposure": false,
   "data_access": true,
   "deprecated": false,
@@ -22,7 +22,8 @@
         "Effect": "Allow",
         "Resource": [
           "arn:aws:cloudformation:*:*:stack/atx-*/*",
-          "arn:aws:cloudformation:*:*:stack/AtxSecurityAgentStack-*/*"
+          "arn:aws:cloudformation:*:*:stack/AtxSecurityAgentStack-*/*",
+          "arn:aws:cloudformation:*:*:stack/AtxDispatcherStack/*"
         ],
         "Sid": "CFNRead"
       },
@@ -322,6 +323,19 @@
         "Effect": "Allow",
         "Resource": "*",
         "Sid": "CFNListStacksForDetect"
+      },
+      {
+        "Action": [
+          "sqs:SendMessage"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:sqs:*:*:atx-dispatcher-queue",
+        "Sid": "SQSEnqueueToDispatcher"
       }
     ],
     "Version": "2012-10-17"
@@ -1022,6 +1036,20 @@
       "effective_action": "cloudformation:ListStacks",
       "privesc": false,
       "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "sqs:SendMessage",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sqs:SendMessage",
+      "privesc": false,
+      "resource_exposure": false
     }
   ],
   "grantless": false,
@@ -1031,6 +1059,6 @@
   "resource_exposure": true,
   "undocumented_actions": false,
   "unknown_actions": [],
-  "updatedate": "2026-07-28T15:42:16+00:00",
-  "version": "v2"
+  "updatedate": "2026-09-02T21:27:07+00:00",
+  "version": "v3"
 }
