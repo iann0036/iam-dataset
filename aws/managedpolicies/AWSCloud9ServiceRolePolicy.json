@@ -7,7 +7,7 @@
     "Permissions management"
   ],
   "arn": "arn:aws:iam::aws:policy/aws-service-role/AWSCloud9ServiceRolePolicy",
-  "createdate": "2022-01-17T14:06:15+00:00",
+  "createdate": "2026-09-03T23:17:07+00:00",
   "credentials_exposure": false,
   "data_access": false,
   "deprecated": false,
@@ -25,13 +25,7 @@
           "cloudformation:CreateStack",
           "cloudformation:DescribeStacks",
           "cloudformation:DescribeStackEvents",
-          "cloudformation:DescribeStackResources"
-        ],
-        "Effect": "Allow",
-        "Resource": "*"
-      },
-      {
-        "Action": [
+          "cloudformation:DescribeStackResources",
           "ec2:TerminateInstances",
           "ec2:DeleteSecurityGroup",
           "ec2:AuthorizeSecurityGroupIngress"
@@ -107,6 +101,21 @@
         "Resource": [
           "arn:aws:iam::*:role/service-role/AWSCloud9SSMAccessRole"
         ]
+      },
+      {
+        "Action": [
+          "cloudformation:TagResource"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "cloudformation:CreateAction": [
+              "CreateStack"
+            ]
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "CloudFormationTagOnCreate"
       }
     ],
     "Version": "2012-10-17"
@@ -357,6 +366,22 @@
       "effective_action": "iam:PassRole",
       "privesc": true,
       "resource_exposure": true
+    },
+    {
+      "access_level": "Tagging, Write",
+      "action": "cloudformation:TagResource",
+      "condition": {
+        "StringEquals": {
+          "cloudformation:CreateAction": [
+            "CreateStack"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudformation:TagResource",
+      "privesc": false,
+      "resource_exposure": false
     }
   ],
   "grantless": false,
@@ -366,6 +391,6 @@
   "resource_exposure": true,
   "undocumented_actions": false,
   "unknown_actions": [],
-  "updatedate": "2022-01-17T14:06:15+00:00",
-  "version": "v8"
+  "updatedate": "2026-09-03T23:17:07+00:00",
+  "version": "v9"
 }

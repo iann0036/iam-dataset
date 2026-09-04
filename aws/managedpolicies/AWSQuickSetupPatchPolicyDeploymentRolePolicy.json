@@ -7,7 +7,7 @@
     "Permissions management"
   ],
   "arn": "arn:aws:iam::aws:policy/AWSQuickSetupPatchPolicyDeploymentRolePolicy",
-  "createdate": "2024-06-26T09:57:02+00:00",
+  "createdate": "2026-09-04T08:47:07+00:00",
   "credentials_exposure": true,
   "data_access": true,
   "deprecated": false,
@@ -347,6 +347,27 @@
           "arn:aws:iam::*:role/AWS-QuickSetup-*"
         ],
         "Sid": "ConfigRoleBoundedManage"
+      },
+      {
+        "Action": [
+          "cloudformation:TagResource",
+          "cloudformation:UntagResource"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "cloudformation:CreateAction": [
+              "CreateStack",
+              "UpdateStack",
+              "CreateChangeSet",
+              "ExecuteChangeSet"
+            ]
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:cloudformation:*:*:stack/StackSet-AWS-QuickSetup-*"
+        ],
+        "Sid": "CfnTagOnMutate"
       }
     ],
     "Version": "2012-10-17"
@@ -3773,6 +3794,44 @@
       "effective_action": "iam:PutRolePermissionsBoundary",
       "privesc": true,
       "resource_exposure": true
+    },
+    {
+      "access_level": "Tagging, Write",
+      "action": "cloudformation:TagResource",
+      "condition": {
+        "StringEquals": {
+          "cloudformation:CreateAction": [
+            "CreateStack",
+            "UpdateStack",
+            "CreateChangeSet",
+            "ExecuteChangeSet"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudformation:TagResource",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Tagging, Write",
+      "action": "cloudformation:UntagResource",
+      "condition": {
+        "StringEquals": {
+          "cloudformation:CreateAction": [
+            "CreateStack",
+            "UpdateStack",
+            "CreateChangeSet",
+            "ExecuteChangeSet"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudformation:UntagResource",
+      "privesc": false,
+      "resource_exposure": false
     }
   ],
   "grantless": false,
@@ -3782,6 +3841,6 @@
   "resource_exposure": true,
   "undocumented_actions": false,
   "unknown_actions": [],
-  "updatedate": "2024-06-26T09:57:02+00:00",
-  "version": "v1"
+  "updatedate": "2026-09-04T08:47:07+00:00",
+  "version": "v2"
 }
