@@ -278398,6 +278398,21 @@
         "type": "String"
       },
       {
+        "condition": "payment-cryptography:DeriveKeyUsage",
+        "description": "Filters access by the DeriveKeyUsage specified in the request for the CreateKey operation",
+        "type": "String"
+      },
+      {
+        "condition": "payment-cryptography:ExportDukptInitialKey",
+        "description": "Filters access by whether the request is to export a DUKPT initial key for the ExportKey operation",
+        "type": "Bool"
+      },
+      {
+        "condition": "payment-cryptography:ExportKeyMaterial",
+        "description": "Filters access by the type of key material being exported [Tr34KeyBlock, Tr31KeyBlock, DiffieHellmanTr31KeyBlock, As2805KeyCryptogram, KeyCryptogram] for the ExportKey operation",
+        "type": "String"
+      },
+      {
         "condition": "payment-cryptography:ImportKeyMaterial",
         "description": "Filters access by the type of key material being imported [RootCertificatePublicKey, TrustedCertificatePublicKey, Tr34KeyBlock, Tr31KeyBlock, DiffieHellmanTr31KeyBlock, As2805KeyCryptogram, KeyCryptogram] for the ImportKey operation",
         "type": "String"
@@ -278414,7 +278429,12 @@
       },
       {
         "condition": "payment-cryptography:KeyUsage",
-        "description": "Filters access by KeyClass specified in the request or associated with a key for the CreateKey operation",
+        "description": "Filters access by KeyUsage specified in the request or associated with a key for the CreateKey operation",
+        "type": "String"
+      },
+      {
+        "condition": "payment-cryptography:PrivateKeyIdentifier",
+        "description": "Filters access by the PrivateKeyIdentifier specified in the request for the ImportKey and ExportKey operations",
         "type": "String"
       },
       {
@@ -278426,6 +278446,11 @@
         "condition": "payment-cryptography:ResourceAliases",
         "description": "Filters access by aliases associated with a key for the specified operation",
         "type": "ArrayOfString"
+      },
+      {
+        "condition": "payment-cryptography:SigningKeyIdentifier",
+        "description": "Filters access by the SigningKeyIdentifier specified in the request for the ExportKey operation",
+        "type": "String"
       },
       {
         "condition": "payment-cryptography:WrappingKeyIdentifier",
@@ -278504,6 +278529,7 @@
             "condition_keys": [
               "aws:RequestTag/${TagKey}",
               "aws:TagKeys",
+              "payment-cryptography:DeriveKeyUsage",
               "payment-cryptography:KeyAlgorithm",
               "payment-cryptography:KeyClass",
               "payment-cryptography:KeyUsage"
@@ -278655,8 +278681,12 @@
             "condition_keys": [
               "aws:ResourceTag/${TagKey}",
               "payment-cryptography:CertificateAuthorityPublicKeyIdentifier",
+              "payment-cryptography:ExportDukptInitialKey",
+              "payment-cryptography:ExportKeyMaterial",
+              "payment-cryptography:PrivateKeyIdentifier",
               "payment-cryptography:RequestAlias",
               "payment-cryptography:ResourceAliases",
+              "payment-cryptography:SigningKeyIdentifier",
               "payment-cryptography:WrappingKeyIdentifier"
             ],
             "dependent_actions": [],
@@ -278668,6 +278698,30 @@
         "access_level": "Write",
         "description": "Grants permission to generate a KekValidationRequest or a KekValidationResponse for node-to-node initialization between payment processing nodes using Australian Standard 2805 (AS2805)",
         "privilege": "GenerateAs2805KekValidation",
+        "resource_types": [
+          {
+            "condition_keys": [
+              "payment-cryptography:RequestAlias",
+              "payment-cryptography:ResourceAliases"
+            ],
+            "dependent_actions": [],
+            "resource_type": "alias*"
+          },
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}",
+              "payment-cryptography:RequestAlias",
+              "payment-cryptography:ResourceAliases"
+            ],
+            "dependent_actions": [],
+            "resource_type": "key*"
+          }
+        ]
+      },
+      {
+        "access_level": "Write",
+        "description": "Grants permission to generate an Authorization Request Cryptogram (ARQC) for an EMV chip payment card authorization",
+        "privilege": "GenerateAuthRequestCryptogram",
         "resource_types": [
           {
             "condition_keys": [
@@ -278942,6 +278996,7 @@
               "aws:TagKeys",
               "payment-cryptography:CertificateAuthorityPublicKeyIdentifier",
               "payment-cryptography:ImportKeyMaterial",
+              "payment-cryptography:PrivateKeyIdentifier",
               "payment-cryptography:WrappingKeyIdentifier"
             ],
             "dependent_actions": [],
@@ -312974,7 +313029,9 @@
             "condition_keys": [
               "aws:ResourceTag/${TagKey}"
             ],
-            "dependent_actions": [],
+            "dependent_actions": [
+              "iam:PassedToService"
+            ],
             "resource_type": "service*"
           }
         ]
