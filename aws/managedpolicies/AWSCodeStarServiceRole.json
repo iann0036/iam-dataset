@@ -7,7 +7,7 @@
     "Permissions management"
   ],
   "arn": "arn:aws:iam::aws:policy/service-role/AWSCodeStarServiceRole",
-  "createdate": "2021-09-20T19:11:03+00:00",
+  "createdate": "2026-09-08T12:47:08+00:00",
   "credentials_exposure": true,
   "data_access": true,
   "deprecated": false,
@@ -52,6 +52,30 @@
         "Effect": "Allow",
         "Resource": "*",
         "Sid": "ProjectStackTemplate"
+      },
+      {
+        "Action": [
+          "cloudformation:TagResource",
+          "cloudformation:UntagResource"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "cloudformation:CreateAction": [
+              "CreateStack",
+              "UpdateStack",
+              "CreateChangeSet",
+              "ExecuteChangeSet"
+            ]
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:cloudformation:*:*:stack/awscodestar-*",
+          "arn:aws:cloudformation:*:*:stack/awseb-*",
+          "arn:aws:cloudformation:*:*:stack/aws-cloud9-*",
+          "arn:aws:cloudformation:*:aws:transform/CodeStar*"
+        ],
+        "Sid": "CloudFormationTagOnCreate"
       },
       {
         "Action": [
@@ -725,6 +749,44 @@
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "cloudformation:DescribeChangeSet",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Tagging, Write",
+      "action": "cloudformation:TagResource",
+      "condition": {
+        "StringEquals": {
+          "cloudformation:CreateAction": [
+            "CreateStack",
+            "UpdateStack",
+            "CreateChangeSet",
+            "ExecuteChangeSet"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudformation:TagResource",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Tagging, Write",
+      "action": "cloudformation:UntagResource",
+      "condition": {
+        "StringEquals": {
+          "cloudformation:CreateAction": [
+            "CreateStack",
+            "UpdateStack",
+            "CreateChangeSet",
+            "ExecuteChangeSet"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudformation:UntagResource",
       "privesc": false,
       "resource_exposure": false
     },
@@ -17707,5 +17769,5 @@
   "undocumented_actions": false,
   "unknown_actions": [],
   "updatedate": "2021-09-20T19:11:03+00:00",
-  "version": "v11"
+  "version": "v12"
 }
