@@ -44468,6 +44468,24 @@
       },
       {
         "access_level": "Write",
+        "description": "Grants permission to create a new consent portal",
+        "privilege": "CreateConsentPortal",
+        "resource_types": [
+          {
+            "condition_keys": [
+              "aws:RequestTag/${TagKey}",
+              "aws:ResourceTag/${TagKey}",
+              "aws:TagKeys"
+            ],
+            "dependent_actions": [
+              "iam:PassedToService"
+            ],
+            "resource_type": "consent-portal*"
+          }
+        ]
+      },
+      {
+        "access_level": "Write",
         "description": "Grants permission to create a new dataset",
         "privilege": "CreateDataset",
         "resource_types": [
@@ -45009,6 +45027,20 @@
             ],
             "dependent_actions": [],
             "resource_type": "configuration-bundle*"
+          }
+        ]
+      },
+      {
+        "access_level": "Write",
+        "description": "Grants permission to delete a consent portal",
+        "privilege": "DeleteConsentPortal",
+        "resource_types": [
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}"
+            ],
+            "dependent_actions": [],
+            "resource_type": "consent-portal*"
           }
         ]
       },
@@ -45659,6 +45691,20 @@
             ],
             "dependent_actions": [],
             "resource_type": "configuration-bundle*"
+          }
+        ]
+      },
+      {
+        "access_level": "Read",
+        "description": "Grants permission to retrieve information about a consent portal",
+        "privilege": "GetConsentPortal",
+        "resource_types": [
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}"
+            ],
+            "dependent_actions": [],
+            "resource_type": "consent-portal*"
           }
         ]
       },
@@ -46718,6 +46764,18 @@
         "access_level": "List",
         "description": "Grants permission to list configuration bundles",
         "privilege": "ListConfigurationBundles",
+        "resource_types": [
+          {
+            "condition_keys": [],
+            "dependent_actions": [],
+            "resource_type": ""
+          }
+        ]
+      },
+      {
+        "access_level": "List",
+        "description": "Grants permission to list all of the consent portals in your account",
+        "privilege": "ListConsentPortals",
         "resource_types": [
           {
             "condition_keys": [],
@@ -48101,6 +48159,20 @@
       },
       {
         "access_level": "Write",
+        "description": "Grants permission to update an existing consent portal",
+        "privilege": "UpdateConsentPortal",
+        "resource_types": [
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}"
+            ],
+            "dependent_actions": [],
+            "resource_type": "consent-portal*"
+          }
+        ]
+      },
+      {
+        "access_level": "Write",
         "description": "Grants permission to update a dataset",
         "privilege": "UpdateDataset",
         "resource_types": [
@@ -48710,6 +48782,13 @@
           "aws:ResourceTag/${TagKey}"
         ],
         "resource": "configuration-bundle"
+      },
+      {
+        "arn": "arn:${Partition}:bedrock-agentcore:${Region}:${Account}:consent-portal/${ConsentPortalId}",
+        "condition_keys": [
+          "aws:ResourceTag/${TagKey}"
+        ],
+        "resource": "consent-portal"
       },
       {
         "arn": "arn:${Partition}:bedrock-agentcore:${Region}:${Account}:dataset/${DatasetId}",
@@ -92570,6 +92649,21 @@
             "dependent_actions": [],
             "resource_type": "ai-agent"
           },
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}",
+              "connect:InstanceId"
+            ],
+            "dependent_actions": [],
+            "resource_type": "instance*"
+          }
+        ]
+      },
+      {
+        "access_level": "List",
+        "description": "Grants permission to list the AI versions for evaluation forms in the specified Amazon Connect instance",
+        "privilege": "ListEvaluationFormAIVersions",
+        "resource_types": [
           {
             "condition_keys": [
               "aws:ResourceTag/${TagKey}",
@@ -146730,7 +146824,9 @@
               "ecs:cluster",
               "ecs:enable-ebs-volumes",
               "ecs:enable-execute-command",
-              "ecs:ResourceTag/${TagKey}"
+              "ecs:ResourceTag/${TagKey}",
+              "ecs:task-cpu",
+              "ecs:task-memory"
             ],
             "dependent_actions": [
               "ecs:TagResource",
@@ -268889,7 +268985,10 @@
               "aws:ResourceTag/${TagKey}",
               "aws:TagKeys"
             ],
-            "dependent_actions": [],
+            "dependent_actions": [
+              "odb:CreateDbNode",
+              "odb:TagResource"
+            ],
             "resource_type": "exascale-db-storage-vault*"
           },
           {
@@ -392392,6 +392491,11 @@
   {
     "conditions": [
       {
+        "condition": "aws:ResourceTag/${TagKey}",
+        "description": "Filters access by tag key-value pairs attached to the resource",
+        "type": "String"
+      },
+      {
         "condition": "vpc-lattice-svcs:Port",
         "description": "Filters access by the destination port the request is made to",
         "type": "Numeric"
@@ -392446,6 +392550,7 @@
         "resource_types": [
           {
             "condition_keys": [
+              "aws:ResourceTag/${TagKey}",
               "vpc-lattice-svcs:Port",
               "vpc-lattice-svcs:ServiceArn",
               "vpc-lattice-svcs:ServiceNetworkArn",
@@ -392464,6 +392569,7 @@
         "resource_types": [
           {
             "condition_keys": [
+              "aws:ResourceTag/${TagKey}",
               "vpc-lattice-svcs:Port",
               "vpc-lattice-svcs:RequestHeader/${HeaderName}",
               "vpc-lattice-svcs:RequestMethod",
@@ -392483,12 +392589,16 @@
     "resources": [
       {
         "arn": "arn:${Partition}:vpc-lattice:${Region}:${Account}:service/${ServiceId}/${RequestPath}",
-        "condition_keys": [],
+        "condition_keys": [
+          "aws:ResourceTag/${TagKey}"
+        ],
         "resource": "Service"
       },
       {
         "arn": "arn:${Partition}:vpc-lattice:${Region}:${Account}:service/${ServiceId}",
-        "condition_keys": [],
+        "condition_keys": [
+          "aws:ResourceTag/${TagKey}"
+        ],
         "resource": "TCP Service"
       }
     ],

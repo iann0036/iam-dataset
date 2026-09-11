@@ -7,7 +7,7 @@
     "Permissions management"
   ],
   "arn": "arn:aws:iam::aws:policy/aws-service-role/AmazonGuardDutyServiceRolePolicy",
-  "createdate": "2026-04-24T20:12:17+00:00",
+  "createdate": "2026-09-09T21:27:07+00:00",
   "credentials_exposure": false,
   "data_access": false,
   "deprecated": false,
@@ -304,6 +304,27 @@
         "Effect": "Allow",
         "Resource": "arn:aws:cloudtrail:*:*:channel/aws-service-channel/guardduty/*",
         "Sid": "CloudTrailCreateServiceLinkedChannelSid"
+      },
+      {
+        "Action": [
+          "vpc-lattice:CreateServiceNetworkVpcAssociation"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:vpc-lattice:*:*:servicenetworkvpcassociation/*",
+        "Sid": "GdLatticeCreateManagedSnvaAssociation"
+      },
+      {
+        "Action": [
+          "vpc-lattice:AssociateViaAWSService"
+        ],
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "GdLatticeAssociateViaAwsService"
       }
     ],
     "Version": "2012-10-17"
@@ -1025,6 +1046,30 @@
       "effective_action": "cloudtrail:CreateServiceLinkedChannel",
       "privesc": false,
       "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "vpc-lattice:CreateServiceNetworkVpcAssociation",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "vpc-lattice:CreateServiceNetworkVpcAssociation",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Permissions management, Write",
+      "action": "vpc-lattice:AssociateViaAWSService",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "vpc-lattice:AssociateViaAWSService",
+      "privesc": false,
+      "resource_exposure": false
     }
   ],
   "grantless": false,
@@ -1034,6 +1079,6 @@
   "resource_exposure": true,
   "undocumented_actions": false,
   "unknown_actions": [],
-  "updatedate": "2026-04-24T20:12:17+00:00",
-  "version": "v12"
+  "updatedate": "2026-09-09T21:27:07+00:00",
+  "version": "v13"
 }
