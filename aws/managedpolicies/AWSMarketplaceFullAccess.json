@@ -7,7 +7,7 @@
     "Permissions management"
   ],
   "arn": "arn:aws:iam::aws:policy/AWSMarketplaceFullAccess",
-  "createdate": "2026-02-12T18:00:23+00:00",
+  "createdate": "2026-09-11T16:27:07+00:00",
   "credentials_exposure": false,
   "data_access": false,
   "deprecated": false,
@@ -25,7 +25,6 @@
           "ec2:AuthorizeSecurityGroupIngress",
           "ec2:CreateSecurityGroup",
           "ec2:CreateTags",
-          "ec2:DescribeAccountAttributes",
           "ec2:DescribeAddresses",
           "ec2:DeleteSecurityGroup",
           "ec2:DescribeAccountAttributes",
@@ -39,7 +38,9 @@
           "ec2:RunInstances",
           "ec2:StartInstances",
           "ec2:StopInstances",
-          "ec2:TerminateInstances"
+          "ec2:TerminateInstances",
+          "license-manager:ListReceivedLicenses",
+          "payments:ListPaymentProgramStatus"
         ],
         "Effect": "Allow",
         "Resource": "*"
@@ -65,6 +66,33 @@
         ],
         "Effect": "Allow",
         "Resource": "*"
+      },
+      {
+        "Action": [
+          "cloudformation:TagResource",
+          "cloudformation:UntagResource"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "cloudformation:CreateAction": [
+              "CreateStack"
+            ]
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "*"
+      },
+      {
+        "Action": [
+          "signin:CreateOAuth2Token"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "signin:OAuthGrantType": "client_credentials"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:signin:*:*:service-principal/marketplace-mcp.amazonaws.com"
       },
       {
         "Action": [
@@ -1368,16 +1396,6 @@
     },
     {
       "access_level": "List",
-      "action": "ec2:DescribeAccountAttributes",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:DescribeAccountAttributes",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
       "action": "ec2:DescribeAddresses",
       "condition": null,
       "credentials_exposure": false,
@@ -1513,6 +1531,26 @@
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "ec2:TerminateInstances",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "license-manager:ListReceivedLicenses",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "license-manager:ListReceivedLicenses",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "payments:ListPaymentProgramStatus",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "payments:ListPaymentProgramStatus",
       "privesc": false,
       "resource_exposure": false
     },
@@ -1677,6 +1715,52 @@
       "resource_exposure": false
     },
     {
+      "access_level": "Tagging, Write",
+      "action": "cloudformation:TagResource",
+      "condition": {
+        "StringEquals": {
+          "cloudformation:CreateAction": [
+            "CreateStack"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudformation:TagResource",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Tagging, Write",
+      "action": "cloudformation:UntagResource",
+      "condition": {
+        "StringEquals": {
+          "cloudformation:CreateAction": [
+            "CreateStack"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudformation:UntagResource",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "signin:CreateOAuth2Token",
+      "condition": {
+        "StringEquals": {
+          "signin:OAuthGrantType": "client_credentials"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "signin:CreateOAuth2Token",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
       "access_level": "Permissions management",
       "action": "iam:PassRole",
       "condition": {
@@ -1700,6 +1784,6 @@
   "resource_exposure": true,
   "undocumented_actions": false,
   "unknown_actions": [],
-  "updatedate": "2026-02-12T18:00:23+00:00",
-  "version": "v7"
+  "updatedate": "2026-09-11T16:27:07+00:00",
+  "version": "v8"
 }
