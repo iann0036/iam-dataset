@@ -7,7 +7,7 @@
     "Permissions management"
   ],
   "arn": "arn:aws:iam::aws:policy/AmazonECSInfrastructureRolePolicyForManagedInstances",
-  "createdate": "2026-02-26T18:27:10+00:00",
+  "createdate": "2026-09-15T17:57:08+00:00",
   "credentials_exposure": false,
   "data_access": false,
   "deprecated": false,
@@ -58,7 +58,6 @@
           "arn:aws:ec2:*:*:fleet/*",
           "arn:aws:ec2:*:*:instance/*",
           "arn:aws:ec2:*:*:network-interface/*",
-          "arn:aws:ec2:*:*:launch-template/*",
           "arn:aws:ec2:*:*:volume/*"
         ],
         "Sid": "ProvisionEC2InstancesForManagedInstances"
@@ -74,6 +73,21 @@
           "arn:aws:ec2:*::image/*"
         ],
         "Sid": "CreateFleetForSupportingResources"
+      },
+      {
+        "Action": [
+          "ec2:CreateFleet"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "ec2:ResourceTag/AmazonECSManaged": "true"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:ec2:*:*:launch-template/*"
+        ],
+        "Sid": "CreateFleetForECSManagedLaunchTemplates"
       },
       {
         "Action": [
@@ -260,6 +274,20 @@
       "access_level": "Write",
       "action": "ec2:CreateFleet",
       "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:CreateFleet",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:CreateFleet",
+      "condition": {
+        "StringEquals": {
+          "ec2:ResourceTag/AmazonECSManaged": "true"
+        }
+      },
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "ec2:CreateFleet",
@@ -494,6 +522,6 @@
   "resource_exposure": true,
   "undocumented_actions": false,
   "unknown_actions": [],
-  "updatedate": "2026-02-26T18:27:10+00:00",
-  "version": "v11"
+  "updatedate": "2026-09-15T17:57:08+00:00",
+  "version": "v12"
 }
