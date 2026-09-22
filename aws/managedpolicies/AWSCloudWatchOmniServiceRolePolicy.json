@@ -1,0 +1,392 @@
+{
+  "access_levels": [
+    "List",
+    "Read",
+    "Tagging",
+    "Write",
+    "Permissions management"
+  ],
+  "arn": "arn:aws:iam::aws:policy/aws-service-role/AWSCloudWatchOmniServiceRolePolicy",
+  "createdate": "2026-09-22T05:37:07+00:00",
+  "credentials_exposure": false,
+  "data_access": false,
+  "deprecated": false,
+  "document": {
+    "Statement": [
+      {
+        "Action": [
+          "cloudwatch:CreateIntegration"
+        ],
+        "Condition": {
+          "ForAllValues:StringEquals": {
+            "aws:TagKeys": "CloudWatchOmniManaged"
+          },
+          "StringEquals": {
+            "aws:RequestTag/CloudWatchOmniManaged": "true",
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:cloudwatch:*:*:integration/*",
+        "Sid": "CreateManagedCloudWatchIntegration"
+      },
+      {
+        "Action": [
+          "cloudwatch:TagResource"
+        ],
+        "Condition": {
+          "ForAllValues:StringEquals": {
+            "aws:TagKeys": "CloudWatchOmniManaged"
+          },
+          "StringEquals": {
+            "aws:RequestTag/CloudWatchOmniManaged": "true",
+            "aws:ResourceAccount": "${aws:PrincipalAccount}",
+            "aws:ResourceTag/CloudWatchOmniManaged": "true"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:cloudwatch:*:*:integration/*",
+        "Sid": "TagOperationForCloudWatchIntegration"
+      },
+      {
+        "Action": [
+          "cloudwatch:ListIntegrations"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "ListCloudWatchIntegration"
+      },
+      {
+        "Action": [
+          "cloudwatch:DeleteIntegration"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}",
+            "aws:ResourceTag/CloudWatchOmniManaged": "true"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:cloudwatch:*:*:integration/*",
+        "Sid": "DeleteManagedCloudWatchIntegration"
+      },
+      {
+        "Action": [
+          "config:PutServiceLinkedConfigurationRecorder",
+          "config:DescribeConfigurationRecorderStatus",
+          "config:DeleteServiceLinkedConfigurationRecorder"
+        ],
+        "Effect": "Allow",
+        "Resource": "arn:aws:config:*:*:configuration-recorder/AWSConfigurationRecorderForCloudWatch/*",
+        "Sid": "ManageConfigServiceLinkedRecorder"
+      },
+      {
+        "Action": [
+          "iam:CreateServiceLinkedRole"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "iam:AWSServiceName": "config.amazonaws.com"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:iam::*:role/aws-service-role/config.amazonaws.com/AWSServiceRoleForConfig",
+        "Sid": "CreateConfigServiceLinkedRole"
+      },
+      {
+        "Action": [
+          "iam:CreateRole",
+          "iam:AttachRolePolicy"
+        ],
+        "Condition": {
+          "ArnEquals": {
+            "iam:RoleTemplateARN": "arn:aws:iam::aws:role-template/cloudwatch.amazonaws.com/CloudWatchOmniAWSIntegrationForOrgRoleTemplate:1"
+          },
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:iam::*:role/service-role/CloudWatchOmniAWSIntegrationRole-*",
+        "Sid": "CreateCloudWatchOmniAWSIntegrationRole"
+      },
+      {
+        "Action": [
+          "iam:GetRoleTemplateVersion"
+        ],
+        "Effect": "Allow",
+        "Resource": "arn:aws:iam::aws:role-template/cloudwatch.amazonaws.com/CloudWatchOmniAWSIntegrationForOrgRoleTemplate:1",
+        "Sid": "ReadRoleTemplate"
+      },
+      {
+        "Action": [
+          "iam:PassRole"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}",
+            "iam:PassedToService": "cloudwatch.amazonaws.com"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:iam::*:role/service-role/CloudWatchOmniAWSIntegrationRole-*",
+        "Sid": "PassRolePermissionForCloudWatchOmniAWSIntegrationRole"
+      },
+      {
+        "Action": [
+          "iam:ListUsers",
+          "iam:ListRoles"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "ListIamUsersAndRoles"
+      },
+      {
+        "Action": [
+          "account:GetAccountInformation"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "GetAwsAccountInformation"
+      }
+    ],
+    "Version": "2012-10-17"
+  },
+  "effective_actions": [
+    {
+      "access_level": "Write",
+      "action": "cloudwatch:CreateIntegration",
+      "condition": {
+        "ForAllValues:StringEquals": {
+          "aws:TagKeys": "CloudWatchOmniManaged"
+        },
+        "StringEquals": {
+          "aws:RequestTag/CloudWatchOmniManaged": "true",
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudwatch:CreateIntegration",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Tagging, Write",
+      "action": "cloudwatch:TagResource",
+      "condition": {
+        "ForAllValues:StringEquals": {
+          "aws:TagKeys": "CloudWatchOmniManaged"
+        },
+        "StringEquals": {
+          "aws:RequestTag/CloudWatchOmniManaged": "true",
+          "aws:ResourceAccount": "${aws:PrincipalAccount}",
+          "aws:ResourceTag/CloudWatchOmniManaged": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudwatch:TagResource",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "cloudwatch:ListIntegrations",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudwatch:ListIntegrations",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "cloudwatch:DeleteIntegration",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}",
+          "aws:ResourceTag/CloudWatchOmniManaged": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudwatch:DeleteIntegration",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "config:PutServiceLinkedConfigurationRecorder",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "config:PutServiceLinkedConfigurationRecorder",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "config:DescribeConfigurationRecorderStatus",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "config:DescribeConfigurationRecorderStatus",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "config:DeleteServiceLinkedConfigurationRecorder",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "config:DeleteServiceLinkedConfigurationRecorder",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Permissions management",
+      "action": "iam:CreateServiceLinkedRole",
+      "condition": {
+        "StringEquals": {
+          "iam:AWSServiceName": "config.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "iam:CreateServiceLinkedRole",
+      "privesc": true,
+      "resource_exposure": true
+    },
+    {
+      "access_level": "Permissions management",
+      "action": "iam:CreateRole",
+      "condition": {
+        "ArnEquals": {
+          "iam:RoleTemplateARN": "arn:aws:iam::aws:role-template/cloudwatch.amazonaws.com/CloudWatchOmniAWSIntegrationForOrgRoleTemplate:1"
+        },
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "iam:CreateRole",
+      "privesc": false,
+      "resource_exposure": true
+    },
+    {
+      "access_level": "Permissions management, Write",
+      "action": "iam:AttachRolePolicy",
+      "condition": {
+        "ArnEquals": {
+          "iam:RoleTemplateARN": "arn:aws:iam::aws:role-template/cloudwatch.amazonaws.com/CloudWatchOmniAWSIntegrationForOrgRoleTemplate:1"
+        },
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "iam:AttachRolePolicy",
+      "privesc": true,
+      "resource_exposure": true
+    },
+    {
+      "access_level": "Read",
+      "action": "iam:GetRoleTemplateVersion",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "iam:GetRoleTemplateVersion",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Permissions management",
+      "action": "iam:PassRole",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}",
+          "iam:PassedToService": "cloudwatch.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "iam:PassRole",
+      "privesc": true,
+      "resource_exposure": true
+    },
+    {
+      "access_level": "List",
+      "action": "iam:ListUsers",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "iam:ListUsers",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "iam:ListRoles",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "iam:ListRoles",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "account:GetAccountInformation",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "account:GetAccountInformation",
+      "privesc": false,
+      "resource_exposure": false
+    }
+  ],
+  "grantless": false,
+  "malformed": false,
+  "name": "AWSCloudWatchOmniServiceRolePolicy",
+  "privesc": true,
+  "resource_exposure": true,
+  "undocumented_actions": false,
+  "unknown_actions": [],
+  "updatedate": "2026-09-22T05:37:07+00:00",
+  "version": "v1"
+}

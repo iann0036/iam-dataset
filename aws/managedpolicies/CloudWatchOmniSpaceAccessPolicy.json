@@ -1,0 +1,2367 @@
+{
+  "access_levels": [
+    "List",
+    "Read",
+    "Tagging",
+    "Write",
+    "Permissions management"
+  ],
+  "arn": "arn:aws:iam::aws:policy/CloudWatchOmniSpaceAccessPolicy",
+  "createdate": "2026-09-22T01:47:07+00:00",
+  "credentials_exposure": false,
+  "data_access": true,
+  "deprecated": false,
+  "document": {
+    "Statement": [
+      {
+        "Action": [
+          "cloudwatch:UpdateSpace",
+          "cloudwatch:GetSpace",
+          "cloudwatch:ListSpaces",
+          "cloudwatch:GetDomain",
+          "cloudwatch:CreateAccessGrant",
+          "cloudwatch:GetAccessGrant",
+          "cloudwatch:ListAccessGrants",
+          "cloudwatch:DeleteAccessGrant",
+          "cloudwatch:SearchPrincipals",
+          "cloudwatch:StartTelemetryQuerySession",
+          "cloudwatch:StopTelemetryQuerySession",
+          "cloudwatch:ListTelemetryQuerySessions",
+          "cloudwatch:StopTelemetryQuery",
+          "cloudwatch:GetTelemetryQueryResults",
+          "cloudwatch:GetRecords",
+          "cloudwatch:GetMetricData",
+          "cloudwatch:ListMetrics",
+          "cloudwatch:GetContextGraph",
+          "cloudwatch:CreateAlert",
+          "cloudwatch:GetAlert",
+          "cloudwatch:UpdateAlert",
+          "cloudwatch:DeleteAlert",
+          "cloudwatch:ListAlerts",
+          "cloudwatch:CreateOmniDashboard",
+          "cloudwatch:GetOmniDashboard",
+          "cloudwatch:UpdateOmniDashboard",
+          "cloudwatch:DeleteOmniDashboard",
+          "cloudwatch:ListOmniDashboards",
+          "cloudwatch:CreateAccessProfile",
+          "cloudwatch:GetAccessProfile",
+          "cloudwatch:UpdateAccessProfile",
+          "cloudwatch:DeleteAccessProfile",
+          "cloudwatch:ListAccessProfiles",
+          "cloudwatch:AssumeAccessProfile",
+          "cloudwatch:CreateView",
+          "cloudwatch:GetView",
+          "cloudwatch:UpdateView",
+          "cloudwatch:DeleteView",
+          "cloudwatch:ListViews",
+          "cloudwatch:GetPreferences",
+          "cloudwatch:UpdatePreferences",
+          "cloudwatch:CreateOmniThread",
+          "cloudwatch:GetOmniThread",
+          "cloudwatch:UpdateOmniThread",
+          "cloudwatch:ListOmniThreads",
+          "cloudwatch:DeleteOmniThread",
+          "cloudwatch:StartOmniThreadSession",
+          "cloudwatch:SubmitFeedback",
+          "cloudwatch:CreateIntegration",
+          "cloudwatch:UpdateIntegration",
+          "cloudwatch:GetIntegration",
+          "cloudwatch:DeleteIntegration",
+          "cloudwatch:ListIntegrations",
+          "cloudwatch:InvokeIntegration",
+          "cloudwatch:GetIntelligenceConfiguration",
+          "cloudwatch:PutIntelligenceConfiguration",
+          "cloudwatch:TagResource",
+          "cloudwatch:UntagResource",
+          "cloudwatch:ListTagsForResource"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "cloudwatch:HasAccessGrant": "true"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "CloudWatchOmniSpaceAccessPermissions"
+      },
+      {
+        "Action": [
+          "cloudwatch:TagResource",
+          "cloudwatch:UntagResource",
+          "cloudwatch:ListTagsForResource"
+        ],
+        "Effect": "Deny",
+        "NotResource": [
+          "arn:aws:cloudwatch:*:*:space/*",
+          "arn:aws:cloudwatch:*:*:domain/*",
+          "arn:aws:cloudwatch:*:*:organization-domain/*",
+          "arn:aws:cloudwatch:*:*:access-grant/*",
+          "arn:aws:cloudwatch:*:*:organization-access-grant/*",
+          "arn:aws:cloudwatch:*:*:access-profile/*",
+          "arn:aws:cloudwatch:*:*:omni-dashboard/*",
+          "arn:aws:cloudwatch:*:*:alert/*",
+          "arn:aws:cloudwatch:*:*:view/*",
+          "arn:aws:cloudwatch:*:*:integration/*",
+          "arn:aws:cloudwatch:*:*:dataset/*"
+        ],
+        "Sid": "DenyClassicCloudWatchResourceTagging"
+      },
+      {
+        "Action": [
+          "iam:PassRole"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}",
+            "iam:PassedToService": [
+              "cloudwatch.amazonaws.com"
+            ]
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:iam::*:role/*",
+        "Sid": "AllowPassRoleForCloudWatchOmni"
+      },
+      {
+        "Action": [
+          "iam:ListUsers",
+          "iam:ListRoles",
+          "iam:GetRole",
+          "iam:ListAttachedRolePolicies"
+        ],
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "ListRolesAndUsers"
+      },
+      {
+        "Action": [
+          "iam:ListUserTags",
+          "iam:ListServiceSpecificCredentials"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:iam::*:user/omni/OmniIngestionUser-*",
+        "Sid": "APIKeyConfigurationUsers"
+      },
+      {
+        "Action": [
+          "kms:ListKeys"
+        ],
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "KmsListKeysForOmni"
+      },
+      {
+        "Action": [
+          "kms:DescribeKey"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:kms:*:*:key/*",
+        "Sid": "KmsDescribeKeyForOmni"
+      },
+      {
+        "Action": [
+          "kms:Decrypt",
+          "kms:GenerateDataKey"
+        ],
+        "Condition": {
+          "ForAnyValue:StringEquals": {
+            "aws:CalledVia": [
+              "cloudwatch.amazonaws.com"
+            ]
+          },
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}",
+            "aws:ResourceTag/cw-omni": "true"
+          },
+          "StringLike": {
+            "kms:EncryptionContext:aws:cloudwatch:arn": "arn:aws:cloudwatch:*:${aws:PrincipalAccount}:space/*"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:kms:*:*:key/*",
+        "Sid": "KmsCryptoOpsForOmniSpaces"
+      },
+      {
+        "Action": [
+          "kms:Decrypt",
+          "kms:GenerateDataKey"
+        ],
+        "Condition": {
+          "ForAnyValue:StringEquals": {
+            "aws:CalledVia": [
+              "cloudwatch.amazonaws.com"
+            ]
+          },
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          },
+          "StringLike": {
+            "kms:EncryptionContext:aws:cloudwatch:arn": "arn:aws:cloudwatch:*:${aws:PrincipalAccount}:dataset/*"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:kms:*:*:key/*",
+        "Sid": "KmsCryptoOpsForDatasets"
+      },
+      {
+        "Action": [
+          "kms:Decrypt",
+          "kms:GenerateDataKey"
+        ],
+        "Condition": {
+          "ForAnyValue:StringEquals": {
+            "aws:CalledVia": [
+              "cloudwatch.amazonaws.com"
+            ]
+          },
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}",
+            "aws:ResourceTag/cw-omni": "true"
+          },
+          "StringLike": {
+            "kms:EncryptionContext:aws:cloudwatch:account": "${aws:PrincipalAccount}"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:kms:*:*:key/*",
+        "Sid": "KmsCryptoOpsForOmniIntelligence"
+      },
+      {
+        "Action": [
+          "kms:Decrypt",
+          "kms:GenerateDataKey"
+        ],
+        "Condition": {
+          "ForAnyValue:StringEquals": {
+            "aws:CalledVia": [
+              "cloudwatch.amazonaws.com"
+            ]
+          },
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}",
+            "aws:ResourceTag/cw-omni": "true"
+          },
+          "StringLike": {
+            "kms:EncryptionContext:aws-crypto-ec:aws:cloudwatch:account": "${aws:PrincipalAccount}"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:kms:*:*:key/*",
+        "Sid": "KmsCryptoOpsForOmniIntelligenceBranchKey"
+      },
+      {
+        "Action": [
+          "config:PutServiceLinkedConfigurationRecorder",
+          "config:DeleteServiceLinkedConfigurationRecorder"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}",
+            "config:ConfigurationRecorderServicePrincipal": [
+              "cloudwatch.amazonaws.com"
+            ]
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "ConfigServiceLinkedRecorderManagement"
+      },
+      {
+        "Action": [
+          "config:DescribeConfigurationRecorderStatus"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "DescribeConfigurationRecorder"
+      },
+      {
+        "Action": [
+          "iam:CreateServiceLinkedRole"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}",
+            "iam:AWSServiceName": "config.amazonaws.com"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:iam::*:role/aws-service-role/config.amazonaws.com/*",
+        "Sid": "AllowConfigServiceLinkedRoleCreation"
+      },
+      {
+        "Action": [
+          "bedrock-agentcore:CreateEvaluator",
+          "bedrock-agentcore:GetEvaluator",
+          "bedrock-agentcore:UpdateEvaluator",
+          "bedrock-agentcore:DeleteEvaluator",
+          "bedrock-agentcore:ListEvaluators",
+          "bedrock-agentcore:Evaluate",
+          "bedrock-agentcore:TagResource",
+          "bedrock-agentcore:UntagResource",
+          "bedrock-agentcore:ListTagsForResource"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:bedrock-agentcore:*:*:evaluator/*",
+        "Sid": "AgentCoreEvaluator"
+      },
+      {
+        "Action": [
+          "bedrock-agentcore:CreateOnlineEvaluationConfig",
+          "bedrock-agentcore:GetOnlineEvaluationConfig",
+          "bedrock-agentcore:ListOnlineEvaluationConfigs",
+          "bedrock-agentcore:UpdateOnlineEvaluationConfig",
+          "bedrock-agentcore:DeleteOnlineEvaluationConfig",
+          "bedrock-agentcore:TagResource",
+          "bedrock-agentcore:UntagResource",
+          "bedrock-agentcore:ListTagsForResource"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:bedrock-agentcore:*:*:online-evaluation-config/*",
+        "Sid": "AgentCoreOnlineEvaluationConfig"
+      },
+      {
+        "Action": [
+          "bedrock-agentcore:GetDataset",
+          "bedrock-agentcore:ListDatasets",
+          "bedrock-agentcore:ListDatasetVersions",
+          "bedrock-agentcore:ListDatasetExamples",
+          "bedrock-agentcore:CreateDataset",
+          "bedrock-agentcore:UpdateDataset",
+          "bedrock-agentcore:CreateDatasetVersion",
+          "bedrock-agentcore:AddDatasetExamples",
+          "bedrock-agentcore:UpdateDatasetExamples",
+          "bedrock-agentcore:DeleteDatasetExamples",
+          "bedrock-agentcore:DeleteDataset",
+          "bedrock-agentcore:TagResource",
+          "bedrock-agentcore:UntagResource",
+          "bedrock-agentcore:ListTagsForResource"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:bedrock-agentcore:*:*:dataset/*",
+        "Sid": "AgentCoreEvaluationDatasets"
+      },
+      {
+        "Action": [
+          "bedrock:ListFoundationModels",
+          "bedrock:ListInferenceProfiles"
+        ],
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "BedrockFoundationModelDiscovery"
+      },
+      {
+        "Action": [
+          "iam:PassRole"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}",
+            "iam:PassedToService": [
+              "bedrock-agentcore.amazonaws.com"
+            ]
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:iam::*:role/*",
+        "Sid": "AgentCorePassRole"
+      },
+      {
+        "Action": [
+          "logs:CreateLogGroup",
+          "logs:CreateLogStream",
+          "logs:PutLogEvents"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:logs:*:*:log-group:/aws/cloudwatch/*",
+          "arn:aws:logs:*:*:log-group:/aws/bedrock-agentcore/evaluations/*"
+        ],
+        "Sid": "AnnotationAndEvalLogs"
+      },
+      {
+        "Action": [
+          "logs:DescribeLogGroups"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:logs:*:*:log-group:*",
+        "Sid": "OnlineEvalLogGroupDiscovery"
+      },
+      {
+        "Action": [
+          "kms:GenerateDataKey",
+          "kms:Decrypt"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          },
+          "StringLike": {
+            "kms:EncryptionContext:aws:bedrock-agentcore:evaluatorArn": "arn:aws:bedrock-agentcore:*:${aws:PrincipalAccount}:evaluator/*"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:kms:*:*:key/*",
+        "Sid": "KmsCryptoOpsForCMKEvaluators"
+      },
+      {
+        "Action": [
+          "lambda:InvokeFunction",
+          "lambda:GetFunction"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:lambda:*:*:function:cloudwatchCodeEvaluator*",
+        "Sid": "CodeEvaluatorLambdaInvoke"
+      },
+      {
+        "Action": [
+          "secretsmanager:ListSecrets"
+        ],
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "ModelProviderKeyDiscovery"
+      },
+      {
+        "Action": [
+          "secretsmanager:CreateSecret"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:RequestTag/cw-omni": "true",
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:secretsmanager:*:*:secret:cw-omni-*",
+        "Sid": "ModelProviderKeyCreation"
+      },
+      {
+        "Action": [
+          "secretsmanager:PutSecretValue",
+          "secretsmanager:GetSecretValue",
+          "secretsmanager:DeleteSecret",
+          "secretsmanager:TagResource"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}",
+            "aws:ResourceTag/cw-omni": "true"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:secretsmanager:*:*:secret:cw-omni-*",
+        "Sid": "ModelProviderKeyManagement"
+      }
+    ],
+    "Version": "2012-10-17"
+  },
+  "effective_actions": [
+    {
+      "access_level": "Write",
+      "action": "cloudwatch:UpdateSpace",
+      "condition": {
+        "StringEquals": {
+          "cloudwatch:HasAccessGrant": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudwatch:UpdateSpace",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "cloudwatch:GetSpace",
+      "condition": {
+        "StringEquals": {
+          "cloudwatch:HasAccessGrant": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudwatch:GetSpace",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "cloudwatch:ListSpaces",
+      "condition": {
+        "StringEquals": {
+          "cloudwatch:HasAccessGrant": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudwatch:ListSpaces",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "cloudwatch:GetDomain",
+      "condition": {
+        "StringEquals": {
+          "cloudwatch:HasAccessGrant": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudwatch:GetDomain",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Permissions management, Write",
+      "action": "cloudwatch:CreateAccessGrant",
+      "condition": {
+        "StringEquals": {
+          "cloudwatch:HasAccessGrant": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudwatch:CreateAccessGrant",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "cloudwatch:GetAccessGrant",
+      "condition": {
+        "StringEquals": {
+          "cloudwatch:HasAccessGrant": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudwatch:GetAccessGrant",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "cloudwatch:ListAccessGrants",
+      "condition": {
+        "StringEquals": {
+          "cloudwatch:HasAccessGrant": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudwatch:ListAccessGrants",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Permissions management, Write",
+      "action": "cloudwatch:DeleteAccessGrant",
+      "condition": {
+        "StringEquals": {
+          "cloudwatch:HasAccessGrant": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudwatch:DeleteAccessGrant",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "cloudwatch:SearchPrincipals",
+      "condition": {
+        "StringEquals": {
+          "cloudwatch:HasAccessGrant": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudwatch:SearchPrincipals",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "cloudwatch:StartTelemetryQuerySession",
+      "condition": {
+        "StringEquals": {
+          "cloudwatch:HasAccessGrant": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudwatch:StartTelemetryQuerySession",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "cloudwatch:StopTelemetryQuerySession",
+      "condition": {
+        "StringEquals": {
+          "cloudwatch:HasAccessGrant": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudwatch:StopTelemetryQuerySession",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "cloudwatch:ListTelemetryQuerySessions",
+      "condition": {
+        "StringEquals": {
+          "cloudwatch:HasAccessGrant": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudwatch:ListTelemetryQuerySessions",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "cloudwatch:StopTelemetryQuery",
+      "condition": {
+        "StringEquals": {
+          "cloudwatch:HasAccessGrant": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudwatch:StopTelemetryQuery",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "cloudwatch:GetTelemetryQueryResults",
+      "condition": {
+        "StringEquals": {
+          "cloudwatch:HasAccessGrant": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudwatch:GetTelemetryQueryResults",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "cloudwatch:GetRecords",
+      "condition": {
+        "StringEquals": {
+          "cloudwatch:HasAccessGrant": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudwatch:GetRecords",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "cloudwatch:GetMetricData",
+      "condition": {
+        "StringEquals": {
+          "cloudwatch:HasAccessGrant": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudwatch:GetMetricData",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "cloudwatch:ListMetrics",
+      "condition": {
+        "StringEquals": {
+          "cloudwatch:HasAccessGrant": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudwatch:ListMetrics",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "cloudwatch:GetContextGraph",
+      "condition": {
+        "StringEquals": {
+          "cloudwatch:HasAccessGrant": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudwatch:GetContextGraph",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "cloudwatch:CreateAlert",
+      "condition": {
+        "StringEquals": {
+          "cloudwatch:HasAccessGrant": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudwatch:CreateAlert",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "cloudwatch:GetAlert",
+      "condition": {
+        "StringEquals": {
+          "cloudwatch:HasAccessGrant": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudwatch:GetAlert",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "cloudwatch:UpdateAlert",
+      "condition": {
+        "StringEquals": {
+          "cloudwatch:HasAccessGrant": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudwatch:UpdateAlert",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "cloudwatch:DeleteAlert",
+      "condition": {
+        "StringEquals": {
+          "cloudwatch:HasAccessGrant": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudwatch:DeleteAlert",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "cloudwatch:ListAlerts",
+      "condition": {
+        "StringEquals": {
+          "cloudwatch:HasAccessGrant": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudwatch:ListAlerts",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "cloudwatch:CreateOmniDashboard",
+      "condition": {
+        "StringEquals": {
+          "cloudwatch:HasAccessGrant": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudwatch:CreateOmniDashboard",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "cloudwatch:GetOmniDashboard",
+      "condition": {
+        "StringEquals": {
+          "cloudwatch:HasAccessGrant": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudwatch:GetOmniDashboard",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "cloudwatch:UpdateOmniDashboard",
+      "condition": {
+        "StringEquals": {
+          "cloudwatch:HasAccessGrant": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudwatch:UpdateOmniDashboard",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "cloudwatch:DeleteOmniDashboard",
+      "condition": {
+        "StringEquals": {
+          "cloudwatch:HasAccessGrant": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudwatch:DeleteOmniDashboard",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "cloudwatch:ListOmniDashboards",
+      "condition": {
+        "StringEquals": {
+          "cloudwatch:HasAccessGrant": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudwatch:ListOmniDashboards",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Permissions management, Write",
+      "action": "cloudwatch:CreateAccessProfile",
+      "condition": {
+        "StringEquals": {
+          "cloudwatch:HasAccessGrant": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudwatch:CreateAccessProfile",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "cloudwatch:GetAccessProfile",
+      "condition": {
+        "StringEquals": {
+          "cloudwatch:HasAccessGrant": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudwatch:GetAccessProfile",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Permissions management, Write",
+      "action": "cloudwatch:UpdateAccessProfile",
+      "condition": {
+        "StringEquals": {
+          "cloudwatch:HasAccessGrant": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudwatch:UpdateAccessProfile",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Permissions management, Write",
+      "action": "cloudwatch:DeleteAccessProfile",
+      "condition": {
+        "StringEquals": {
+          "cloudwatch:HasAccessGrant": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudwatch:DeleteAccessProfile",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "cloudwatch:ListAccessProfiles",
+      "condition": {
+        "StringEquals": {
+          "cloudwatch:HasAccessGrant": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudwatch:ListAccessProfiles",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Permissions management, Write",
+      "action": "cloudwatch:AssumeAccessProfile",
+      "condition": {
+        "StringEquals": {
+          "cloudwatch:HasAccessGrant": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudwatch:AssumeAccessProfile",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "cloudwatch:CreateView",
+      "condition": {
+        "StringEquals": {
+          "cloudwatch:HasAccessGrant": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudwatch:CreateView",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "cloudwatch:GetView",
+      "condition": {
+        "StringEquals": {
+          "cloudwatch:HasAccessGrant": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudwatch:GetView",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "cloudwatch:UpdateView",
+      "condition": {
+        "StringEquals": {
+          "cloudwatch:HasAccessGrant": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudwatch:UpdateView",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "cloudwatch:DeleteView",
+      "condition": {
+        "StringEquals": {
+          "cloudwatch:HasAccessGrant": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudwatch:DeleteView",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "cloudwatch:ListViews",
+      "condition": {
+        "StringEquals": {
+          "cloudwatch:HasAccessGrant": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudwatch:ListViews",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "cloudwatch:GetPreferences",
+      "condition": {
+        "StringEquals": {
+          "cloudwatch:HasAccessGrant": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudwatch:GetPreferences",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "cloudwatch:UpdatePreferences",
+      "condition": {
+        "StringEquals": {
+          "cloudwatch:HasAccessGrant": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudwatch:UpdatePreferences",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "cloudwatch:CreateOmniThread",
+      "condition": {
+        "StringEquals": {
+          "cloudwatch:HasAccessGrant": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudwatch:CreateOmniThread",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "cloudwatch:GetOmniThread",
+      "condition": {
+        "StringEquals": {
+          "cloudwatch:HasAccessGrant": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudwatch:GetOmniThread",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "cloudwatch:UpdateOmniThread",
+      "condition": {
+        "StringEquals": {
+          "cloudwatch:HasAccessGrant": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudwatch:UpdateOmniThread",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "cloudwatch:ListOmniThreads",
+      "condition": {
+        "StringEquals": {
+          "cloudwatch:HasAccessGrant": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudwatch:ListOmniThreads",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "cloudwatch:DeleteOmniThread",
+      "condition": {
+        "StringEquals": {
+          "cloudwatch:HasAccessGrant": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudwatch:DeleteOmniThread",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "cloudwatch:StartOmniThreadSession",
+      "condition": {
+        "StringEquals": {
+          "cloudwatch:HasAccessGrant": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudwatch:StartOmniThreadSession",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "cloudwatch:SubmitFeedback",
+      "condition": {
+        "StringEquals": {
+          "cloudwatch:HasAccessGrant": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudwatch:SubmitFeedback",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "cloudwatch:CreateIntegration",
+      "condition": {
+        "StringEquals": {
+          "cloudwatch:HasAccessGrant": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudwatch:CreateIntegration",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "cloudwatch:UpdateIntegration",
+      "condition": {
+        "StringEquals": {
+          "cloudwatch:HasAccessGrant": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudwatch:UpdateIntegration",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "cloudwatch:GetIntegration",
+      "condition": {
+        "StringEquals": {
+          "cloudwatch:HasAccessGrant": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudwatch:GetIntegration",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "cloudwatch:DeleteIntegration",
+      "condition": {
+        "StringEquals": {
+          "cloudwatch:HasAccessGrant": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudwatch:DeleteIntegration",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "cloudwatch:ListIntegrations",
+      "condition": {
+        "StringEquals": {
+          "cloudwatch:HasAccessGrant": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudwatch:ListIntegrations",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "cloudwatch:InvokeIntegration",
+      "condition": {
+        "StringEquals": {
+          "cloudwatch:HasAccessGrant": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudwatch:InvokeIntegration",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "cloudwatch:GetIntelligenceConfiguration",
+      "condition": {
+        "StringEquals": {
+          "cloudwatch:HasAccessGrant": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudwatch:GetIntelligenceConfiguration",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "cloudwatch:PutIntelligenceConfiguration",
+      "condition": {
+        "StringEquals": {
+          "cloudwatch:HasAccessGrant": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudwatch:PutIntelligenceConfiguration",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Tagging, Write",
+      "action": "cloudwatch:TagResource",
+      "condition": {
+        "StringEquals": {
+          "cloudwatch:HasAccessGrant": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudwatch:TagResource",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Tagging, Write",
+      "action": "cloudwatch:UntagResource",
+      "condition": {
+        "StringEquals": {
+          "cloudwatch:HasAccessGrant": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudwatch:UntagResource",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "cloudwatch:ListTagsForResource",
+      "condition": {
+        "StringEquals": {
+          "cloudwatch:HasAccessGrant": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudwatch:ListTagsForResource",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Permissions management",
+      "action": "iam:PassRole",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}",
+          "iam:PassedToService": [
+            "cloudwatch.amazonaws.com"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "iam:PassRole",
+      "privesc": true,
+      "resource_exposure": true
+    },
+    {
+      "access_level": "List",
+      "action": "iam:ListUsers",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "iam:ListUsers",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "iam:ListRoles",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "iam:ListRoles",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "iam:GetRole",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "iam:GetRole",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "iam:ListAttachedRolePolicies",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "iam:ListAttachedRolePolicies",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "iam:ListUserTags",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "iam:ListUserTags",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "iam:ListServiceSpecificCredentials",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "iam:ListServiceSpecificCredentials",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "kms:ListKeys",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "kms:ListKeys",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "kms:DescribeKey",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "kms:DescribeKey",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "kms:Decrypt",
+      "condition": {
+        "ForAnyValue:StringEquals": {
+          "aws:CalledVia": [
+            "cloudwatch.amazonaws.com"
+          ]
+        },
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}",
+          "aws:ResourceTag/cw-omni": "true"
+        },
+        "StringLike": {
+          "kms:EncryptionContext:aws:cloudwatch:arn": "arn:aws:cloudwatch:*:${aws:PrincipalAccount}:space/*"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "kms:Decrypt",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "kms:GenerateDataKey",
+      "condition": {
+        "ForAnyValue:StringEquals": {
+          "aws:CalledVia": [
+            "cloudwatch.amazonaws.com"
+          ]
+        },
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}",
+          "aws:ResourceTag/cw-omni": "true"
+        },
+        "StringLike": {
+          "kms:EncryptionContext:aws:cloudwatch:arn": "arn:aws:cloudwatch:*:${aws:PrincipalAccount}:space/*"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "kms:GenerateDataKey",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "kms:Decrypt",
+      "condition": {
+        "ForAnyValue:StringEquals": {
+          "aws:CalledVia": [
+            "cloudwatch.amazonaws.com"
+          ]
+        },
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        },
+        "StringLike": {
+          "kms:EncryptionContext:aws:cloudwatch:arn": "arn:aws:cloudwatch:*:${aws:PrincipalAccount}:dataset/*"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "kms:Decrypt",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "kms:GenerateDataKey",
+      "condition": {
+        "ForAnyValue:StringEquals": {
+          "aws:CalledVia": [
+            "cloudwatch.amazonaws.com"
+          ]
+        },
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        },
+        "StringLike": {
+          "kms:EncryptionContext:aws:cloudwatch:arn": "arn:aws:cloudwatch:*:${aws:PrincipalAccount}:dataset/*"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "kms:GenerateDataKey",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "kms:Decrypt",
+      "condition": {
+        "ForAnyValue:StringEquals": {
+          "aws:CalledVia": [
+            "cloudwatch.amazonaws.com"
+          ]
+        },
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}",
+          "aws:ResourceTag/cw-omni": "true"
+        },
+        "StringLike": {
+          "kms:EncryptionContext:aws:cloudwatch:account": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "kms:Decrypt",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "kms:GenerateDataKey",
+      "condition": {
+        "ForAnyValue:StringEquals": {
+          "aws:CalledVia": [
+            "cloudwatch.amazonaws.com"
+          ]
+        },
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}",
+          "aws:ResourceTag/cw-omni": "true"
+        },
+        "StringLike": {
+          "kms:EncryptionContext:aws:cloudwatch:account": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "kms:GenerateDataKey",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "kms:Decrypt",
+      "condition": {
+        "ForAnyValue:StringEquals": {
+          "aws:CalledVia": [
+            "cloudwatch.amazonaws.com"
+          ]
+        },
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}",
+          "aws:ResourceTag/cw-omni": "true"
+        },
+        "StringLike": {
+          "kms:EncryptionContext:aws-crypto-ec:aws:cloudwatch:account": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "kms:Decrypt",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "kms:GenerateDataKey",
+      "condition": {
+        "ForAnyValue:StringEquals": {
+          "aws:CalledVia": [
+            "cloudwatch.amazonaws.com"
+          ]
+        },
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}",
+          "aws:ResourceTag/cw-omni": "true"
+        },
+        "StringLike": {
+          "kms:EncryptionContext:aws-crypto-ec:aws:cloudwatch:account": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "kms:GenerateDataKey",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "config:PutServiceLinkedConfigurationRecorder",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}",
+          "config:ConfigurationRecorderServicePrincipal": [
+            "cloudwatch.amazonaws.com"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "config:PutServiceLinkedConfigurationRecorder",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "config:DeleteServiceLinkedConfigurationRecorder",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}",
+          "config:ConfigurationRecorderServicePrincipal": [
+            "cloudwatch.amazonaws.com"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "config:DeleteServiceLinkedConfigurationRecorder",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "config:DescribeConfigurationRecorderStatus",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "config:DescribeConfigurationRecorderStatus",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Permissions management",
+      "action": "iam:CreateServiceLinkedRole",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}",
+          "iam:AWSServiceName": "config.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "iam:CreateServiceLinkedRole",
+      "privesc": true,
+      "resource_exposure": true
+    },
+    {
+      "access_level": "Write",
+      "action": "bedrock-agentcore:CreateEvaluator",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "bedrock-agentcore:CreateEvaluator",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "bedrock-agentcore:GetEvaluator",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "bedrock-agentcore:GetEvaluator",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "bedrock-agentcore:UpdateEvaluator",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "bedrock-agentcore:UpdateEvaluator",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "bedrock-agentcore:DeleteEvaluator",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "bedrock-agentcore:DeleteEvaluator",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "bedrock-agentcore:ListEvaluators",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "bedrock-agentcore:ListEvaluators",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "bedrock-agentcore:Evaluate",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "bedrock-agentcore:Evaluate",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Tagging, Write",
+      "action": "bedrock-agentcore:TagResource",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "bedrock-agentcore:TagResource",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Tagging, Write",
+      "action": "bedrock-agentcore:UntagResource",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "bedrock-agentcore:UntagResource",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "bedrock-agentcore:ListTagsForResource",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "bedrock-agentcore:ListTagsForResource",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "bedrock-agentcore:CreateOnlineEvaluationConfig",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "bedrock-agentcore:CreateOnlineEvaluationConfig",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "bedrock-agentcore:GetOnlineEvaluationConfig",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "bedrock-agentcore:GetOnlineEvaluationConfig",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "bedrock-agentcore:ListOnlineEvaluationConfigs",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "bedrock-agentcore:ListOnlineEvaluationConfigs",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "bedrock-agentcore:UpdateOnlineEvaluationConfig",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "bedrock-agentcore:UpdateOnlineEvaluationConfig",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "bedrock-agentcore:DeleteOnlineEvaluationConfig",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "bedrock-agentcore:DeleteOnlineEvaluationConfig",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Tagging, Write",
+      "action": "bedrock-agentcore:TagResource",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "bedrock-agentcore:TagResource",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Tagging, Write",
+      "action": "bedrock-agentcore:UntagResource",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "bedrock-agentcore:UntagResource",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "bedrock-agentcore:ListTagsForResource",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "bedrock-agentcore:ListTagsForResource",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "bedrock-agentcore:GetDataset",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "bedrock-agentcore:GetDataset",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "bedrock-agentcore:ListDatasets",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "bedrock-agentcore:ListDatasets",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "bedrock-agentcore:ListDatasetVersions",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "bedrock-agentcore:ListDatasetVersions",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "bedrock-agentcore:ListDatasetExamples",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "bedrock-agentcore:ListDatasetExamples",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "bedrock-agentcore:CreateDataset",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "bedrock-agentcore:CreateDataset",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "bedrock-agentcore:UpdateDataset",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "bedrock-agentcore:UpdateDataset",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "bedrock-agentcore:CreateDatasetVersion",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "bedrock-agentcore:CreateDatasetVersion",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "bedrock-agentcore:AddDatasetExamples",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "bedrock-agentcore:AddDatasetExamples",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "bedrock-agentcore:UpdateDatasetExamples",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "bedrock-agentcore:UpdateDatasetExamples",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "bedrock-agentcore:DeleteDatasetExamples",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "bedrock-agentcore:DeleteDatasetExamples",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "bedrock-agentcore:DeleteDataset",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "bedrock-agentcore:DeleteDataset",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Tagging, Write",
+      "action": "bedrock-agentcore:TagResource",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "bedrock-agentcore:TagResource",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Tagging, Write",
+      "action": "bedrock-agentcore:UntagResource",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "bedrock-agentcore:UntagResource",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "bedrock-agentcore:ListTagsForResource",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "bedrock-agentcore:ListTagsForResource",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "bedrock:ListFoundationModels",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "bedrock:ListFoundationModels",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "bedrock:ListInferenceProfiles",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "bedrock:ListInferenceProfiles",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Permissions management",
+      "action": "iam:PassRole",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}",
+          "iam:PassedToService": [
+            "bedrock-agentcore.amazonaws.com"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "iam:PassRole",
+      "privesc": true,
+      "resource_exposure": true
+    },
+    {
+      "access_level": "Write",
+      "action": "logs:CreateLogGroup",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "logs:CreateLogGroup",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "logs:CreateLogStream",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "logs:CreateLogStream",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "logs:PutLogEvents",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "logs:PutLogEvents",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "logs:DescribeLogGroups",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "logs:DescribeLogGroups",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "kms:GenerateDataKey",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        },
+        "StringLike": {
+          "kms:EncryptionContext:aws:bedrock-agentcore:evaluatorArn": "arn:aws:bedrock-agentcore:*:${aws:PrincipalAccount}:evaluator/*"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "kms:GenerateDataKey",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "kms:Decrypt",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        },
+        "StringLike": {
+          "kms:EncryptionContext:aws:bedrock-agentcore:evaluatorArn": "arn:aws:bedrock-agentcore:*:${aws:PrincipalAccount}:evaluator/*"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "kms:Decrypt",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "lambda:InvokeFunction",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "lambda:InvokeFunction",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "lambda:GetFunction",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": true,
+      "effective_action": "lambda:GetFunction",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "secretsmanager:ListSecrets",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "secretsmanager:ListSecrets",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "secretsmanager:CreateSecret",
+      "condition": {
+        "StringEquals": {
+          "aws:RequestTag/cw-omni": "true",
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "secretsmanager:CreateSecret",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "secretsmanager:PutSecretValue",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}",
+          "aws:ResourceTag/cw-omni": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "secretsmanager:PutSecretValue",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "secretsmanager:GetSecretValue",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}",
+          "aws:ResourceTag/cw-omni": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "secretsmanager:GetSecretValue",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "secretsmanager:DeleteSecret",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}",
+          "aws:ResourceTag/cw-omni": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "secretsmanager:DeleteSecret",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Tagging, Write",
+      "action": "secretsmanager:TagResource",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}",
+          "aws:ResourceTag/cw-omni": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "secretsmanager:TagResource",
+      "privesc": false,
+      "resource_exposure": false
+    }
+  ],
+  "grantless": false,
+  "malformed": false,
+  "name": "CloudWatchOmniSpaceAccessPolicy",
+  "privesc": true,
+  "resource_exposure": true,
+  "undocumented_actions": false,
+  "unknown_actions": [],
+  "updatedate": "2026-09-22T01:47:07+00:00",
+  "version": "v1"
+}
