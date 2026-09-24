@@ -49941,6 +49941,18 @@
         ]
       },
       {
+        "access_level": "List",
+        "description": "Grants permission to get the list of billing view segments for a specified billing view",
+        "privilege": "ListBillingViewSegments",
+        "resource_types": [
+          {
+            "condition_keys": [],
+            "dependent_actions": [],
+            "resource_type": ""
+          }
+        ]
+      },
+      {
         "access_level": "Read",
         "description": "Grants permission to get a list of all your available billing views",
         "privilege": "ListBillingViews",
@@ -71551,7 +71563,9 @@
         "resource_types": [
           {
             "condition_keys": [],
-            "dependent_actions": [],
+            "dependent_actions": [
+              "iam:PassedToService"
+            ],
             "resource_type": ""
           }
         ]
@@ -163644,6 +163658,11 @@
         "type": "ArrayOfString"
       },
       {
+        "condition": "events:ContentFilterPresent",
+        "description": "Filters access by whether a subscriber declares a payload-scope content filter to CreateSubscriber and UpdateSubscriber actions",
+        "type": "Bool"
+      },
+      {
         "condition": "events:EventBusArn",
         "description": "Filters access by the ARN of the event buses that can be associated with an endpoint to CreateEndpoint and UpdateEndpoint actions",
         "type": "ArrayOfARN"
@@ -163651,6 +163670,36 @@
       {
         "condition": "events:ManagedBy",
         "description": "Filters access by AWS services. If a rule is created by an AWS service on your behalf, the value is the principal name of the service that created the rule",
+        "type": "String"
+      },
+      {
+        "condition": "events:Metadata/${MetadataKey}",
+        "description": "Filters access by a metadata key-value pair on the published event to PutRawEvents actions, or by the exact-match values declared for that key in a subscriber's metadata filter to CreateSubscriber and UpdateSubscriber actions",
+        "type": "ArrayOfString"
+      },
+      {
+        "condition": "events:Metadata/${MetadataKey}/Matcher",
+        "description": "Filters access by the match type declared for a metadata key in a subscriber's filter to CreateSubscriber and UpdateSubscriber actions",
+        "type": "String"
+      },
+      {
+        "condition": "events:PolicyName",
+        "description": "Filters access by the name of the resource policy specified in the request to resource policy actions",
+        "type": "String"
+      },
+      {
+        "condition": "events:SystemMetadata/AwsDetailType",
+        "description": "Filters access by the detail type recorded in the system metadata of an event forwarded onto an event bus to PutEvents and PutRawEvents actions",
+        "type": "String"
+      },
+      {
+        "condition": "events:SystemMetadata/AwsSource",
+        "description": "Filters access by the source recorded in the system metadata of an event forwarded onto an event bus to PutEvents and PutRawEvents actions",
+        "type": "String"
+      },
+      {
+        "condition": "events:SystemMetadata/ContentType",
+        "description": "Filters access by the content type declared on an event for PutRawEvents and for forwarded events authorized as PutEvents",
         "type": "String"
       },
       {
@@ -163685,12 +163734,12 @@
       },
       {
         "condition": "events:eventBusInvocation",
-        "description": "Filters access by whether the event was generated via API or cross-account bus invocation to PutEvents actions",
+        "description": "Filters access to PutEvents and PutRawEvents by whether an event was forwarded from an event bus rather than published through a direct API call",
         "type": "String"
       },
       {
         "condition": "events:source",
-        "description": "Filters access by the AWS service or AWS partner event source that generated the event to PutEvents and PutRule actions. Matches the literal string of the source field of the event",
+        "description": "Filters access by the AWS service or AWS partner event source that generated the event to PutEvents and PutRule actions, or by the configured source of an event source to the CreateEventSource and UpdateEventSource actions. Matches the literal string of the source field of the event",
         "type": "ArrayOfString"
       }
     ],
@@ -163809,6 +163858,42 @@
               "events:TagResource"
             ],
             "resource_type": "event-bus"
+          },
+          {
+            "condition_keys": [
+              "aws:RequestTag/${TagKey}",
+              "aws:ResourceTag/${TagKey}",
+              "aws:TagKeys"
+            ],
+            "dependent_actions": [],
+            "resource_type": "event-busv2"
+          }
+        ]
+      },
+      {
+        "access_level": "Write",
+        "description": "Grants permission to create an event source that forwards events to an event bus",
+        "privilege": "CreateEventSource",
+        "resource_types": [
+          {
+            "condition_keys": [
+              "aws:RequestTag/${TagKey}",
+              "aws:ResourceTag/${TagKey}",
+              "aws:TagKeys",
+              "events:source"
+            ],
+            "dependent_actions": [],
+            "resource_type": "event-busv2*"
+          },
+          {
+            "condition_keys": [
+              "aws:RequestTag/${TagKey}",
+              "aws:ResourceTag/${TagKey}",
+              "aws:TagKeys",
+              "events:source"
+            ],
+            "dependent_actions": [],
+            "resource_type": "event-sourcev2*"
           }
         ]
       },
@@ -163821,6 +163906,37 @@
             "condition_keys": [],
             "dependent_actions": [],
             "resource_type": "event-source*"
+          }
+        ]
+      },
+      {
+        "access_level": "Write",
+        "description": "Grants permission to create a subscriber",
+        "privilege": "CreateSubscriber",
+        "resource_types": [
+          {
+            "condition_keys": [
+              "aws:RequestTag/${TagKey}",
+              "aws:ResourceTag/${TagKey}",
+              "aws:TagKeys",
+              "events:ContentFilterPresent",
+              "events:Metadata/${MetadataKey}",
+              "events:Metadata/${MetadataKey}/Matcher"
+            ],
+            "dependent_actions": [],
+            "resource_type": "event-busv2*"
+          },
+          {
+            "condition_keys": [
+              "aws:RequestTag/${TagKey}",
+              "aws:ResourceTag/${TagKey}",
+              "aws:TagKeys",
+              "events:ContentFilterPresent",
+              "events:Metadata/${MetadataKey}",
+              "events:Metadata/${MetadataKey}/Matcher"
+            ],
+            "dependent_actions": [],
+            "resource_type": "subscriber*"
           }
         ]
       },
@@ -163907,6 +164023,27 @@
             ],
             "dependent_actions": [],
             "resource_type": "event-bus"
+          },
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}"
+            ],
+            "dependent_actions": [],
+            "resource_type": "event-busv2"
+          }
+        ]
+      },
+      {
+        "access_level": "Write",
+        "description": "Grants permission to delete an event source",
+        "privilege": "DeleteEventSource",
+        "resource_types": [
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}"
+            ],
+            "dependent_actions": [],
+            "resource_type": "event-sourcev2*"
           }
         ]
       },
@@ -163919,6 +164056,21 @@
             "condition_keys": [],
             "dependent_actions": [],
             "resource_type": "event-source*"
+          }
+        ]
+      },
+      {
+        "access_level": "Permissions management, Write",
+        "description": "Grants permission to delete a resource policy attached to an event bus",
+        "privilege": "DeleteResourcePolicy",
+        "resource_types": [
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}",
+              "events:PolicyName"
+            ],
+            "dependent_actions": [],
+            "resource_type": "event-busv2*"
           }
         ]
       },
@@ -163944,6 +164096,20 @@
             ],
             "dependent_actions": [],
             "resource_type": "rule-on-default-event-bus"
+          }
+        ]
+      },
+      {
+        "access_level": "Write",
+        "description": "Grants permission to delete a subscriber",
+        "privilege": "DeleteSubscriber",
+        "resource_types": [
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}"
+            ],
+            "dependent_actions": [],
+            "resource_type": "subscriber*"
           }
         ]
       },
@@ -164011,6 +164177,13 @@
             ],
             "dependent_actions": [],
             "resource_type": "event-bus"
+          },
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}"
+            ],
+            "dependent_actions": [],
+            "resource_type": "event-busv2"
           }
         ]
       },
@@ -164022,7 +164195,14 @@
           {
             "condition_keys": [],
             "dependent_actions": [],
-            "resource_type": "event-source*"
+            "resource_type": "event-source"
+          },
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}"
+            ],
+            "dependent_actions": [],
+            "resource_type": "event-sourcev2"
           }
         ]
       },
@@ -164074,6 +164254,20 @@
         ]
       },
       {
+        "access_level": "Read",
+        "description": "Grants permission to retrieve details about a subscriber",
+        "privilege": "DescribeSubscriber",
+        "resource_types": [
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}"
+            ],
+            "dependent_actions": [],
+            "resource_type": "subscriber*"
+          }
+        ]
+      },
+      {
         "access_level": "Write",
         "description": "Grants permission to disable rules",
         "privilege": "DisableRule",
@@ -164120,6 +164314,21 @@
             ],
             "dependent_actions": [],
             "resource_type": "rule-on-default-event-bus"
+          }
+        ]
+      },
+      {
+        "access_level": "Read",
+        "description": "Grants permission to retrieve the resource policy attached to an event bus",
+        "privilege": "GetResourcePolicy",
+        "resource_types": [
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}",
+              "events:PolicyName"
+            ],
+            "dependent_actions": [],
+            "resource_type": "event-busv2*"
           }
         ]
       },
@@ -164233,6 +164442,20 @@
       },
       {
         "access_level": "List",
+        "description": "Grants permission to list the resource policies attached to an event bus",
+        "privilege": "ListResourcePolicies",
+        "resource_types": [
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}"
+            ],
+            "dependent_actions": [],
+            "resource_type": "event-busv2*"
+          }
+        ]
+      },
+      {
+        "access_level": "List",
         "description": "Grants permission to retrieve a list of the names of the rules associated with a target",
         "privilege": "ListRuleNamesByTarget",
         "resource_types": [
@@ -164247,6 +164470,18 @@
         "access_level": "List",
         "description": "Grants permission to retrieve a list of the Amazon EventBridge rules in the account",
         "privilege": "ListRules",
+        "resource_types": [
+          {
+            "condition_keys": [],
+            "dependent_actions": [],
+            "resource_type": ""
+          }
+        ]
+      },
+      {
+        "access_level": "List",
+        "description": "Grants permission to retrieve a list of subscribers",
+        "privilege": "ListSubscribers",
         "resource_types": [
           {
             "condition_keys": [],
@@ -164274,6 +164509,22 @@
               "events:creatorAccount"
             ],
             "dependent_actions": [],
+            "resource_type": "event-busv2"
+          },
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}",
+              "events:creatorAccount"
+            ],
+            "dependent_actions": [],
+            "resource_type": "event-sourcev2"
+          },
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}",
+              "events:creatorAccount"
+            ],
+            "dependent_actions": [],
             "resource_type": "rule-on-custom-event-bus"
           },
           {
@@ -164283,6 +164534,14 @@
             ],
             "dependent_actions": [],
             "resource_type": "rule-on-default-event-bus"
+          },
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}",
+              "events:creatorAccount"
+            ],
+            "dependent_actions": [],
+            "resource_type": "subscriber"
           }
         ]
       },
@@ -164319,10 +164578,26 @@
               "aws:ResourceTag/${TagKey}",
               "events:detail-type",
               "events:eventBusInvocation",
-              "events:source"
+              "events:source",
+              "events:SystemMetadata/AwsDetailType",
+              "events:SystemMetadata/AwsSource",
+              "events:SystemMetadata/ContentType"
             ],
             "dependent_actions": [],
             "resource_type": "event-bus"
+          },
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}",
+              "events:detail-type",
+              "events:eventBusInvocation",
+              "events:source",
+              "events:SystemMetadata/AwsDetailType",
+              "events:SystemMetadata/AwsSource",
+              "events:SystemMetadata/ContentType"
+            ],
+            "dependent_actions": [],
+            "resource_type": "event-busv2"
           }
         ]
       },
@@ -164347,6 +164622,40 @@
             "condition_keys": [],
             "dependent_actions": [],
             "resource_type": ""
+          }
+        ]
+      },
+      {
+        "access_level": "Write",
+        "description": "Grants permission to publish raw-format events with custom content types, metadata, binary payloads, and FIFO ordering to Amazon EventBridge",
+        "privilege": "PutRawEvents",
+        "resource_types": [
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}",
+              "events:eventBusInvocation",
+              "events:Metadata/${MetadataKey}",
+              "events:SystemMetadata/AwsDetailType",
+              "events:SystemMetadata/AwsSource",
+              "events:SystemMetadata/ContentType"
+            ],
+            "dependent_actions": [],
+            "resource_type": "event-busv2*"
+          }
+        ]
+      },
+      {
+        "access_level": "Permissions management, Write",
+        "description": "Grants permission to attach a resource policy to an event bus",
+        "privilege": "PutResourcePolicy",
+        "resource_types": [
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}",
+              "events:PolicyName"
+            ],
+            "dependent_actions": [],
+            "resource_type": "event-busv2*"
           }
         ]
       },
@@ -164460,6 +164769,20 @@
       },
       {
         "access_level": "Write",
+        "description": "Grants permission to revoke a subscriber or an event source on an event bus",
+        "privilege": "RevokeResource",
+        "resource_types": [
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}"
+            ],
+            "dependent_actions": [],
+            "resource_type": "event-busv2*"
+          }
+        ]
+      },
+      {
+        "access_level": "Write",
         "description": "Grants permission to start a replay of an archive",
         "privilege": "StartReplay",
         "resource_types": [
@@ -164505,6 +164828,26 @@
               "events:creatorAccount"
             ],
             "dependent_actions": [],
+            "resource_type": "event-busv2"
+          },
+          {
+            "condition_keys": [
+              "aws:RequestTag/${TagKey}",
+              "aws:ResourceTag/${TagKey}",
+              "aws:TagKeys",
+              "events:creatorAccount"
+            ],
+            "dependent_actions": [],
+            "resource_type": "event-sourcev2"
+          },
+          {
+            "condition_keys": [
+              "aws:RequestTag/${TagKey}",
+              "aws:ResourceTag/${TagKey}",
+              "aws:TagKeys",
+              "events:creatorAccount"
+            ],
+            "dependent_actions": [],
             "resource_type": "rule-on-custom-event-bus"
           },
           {
@@ -164516,6 +164859,16 @@
             ],
             "dependent_actions": [],
             "resource_type": "rule-on-default-event-bus"
+          },
+          {
+            "condition_keys": [
+              "aws:RequestTag/${TagKey}",
+              "aws:ResourceTag/${TagKey}",
+              "aws:TagKeys",
+              "events:creatorAccount"
+            ],
+            "dependent_actions": [],
+            "resource_type": "subscriber"
           }
         ]
       },
@@ -164552,6 +164905,24 @@
               "events:creatorAccount"
             ],
             "dependent_actions": [],
+            "resource_type": "event-busv2"
+          },
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}",
+              "aws:TagKeys",
+              "events:creatorAccount"
+            ],
+            "dependent_actions": [],
+            "resource_type": "event-sourcev2"
+          },
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}",
+              "aws:TagKeys",
+              "events:creatorAccount"
+            ],
+            "dependent_actions": [],
             "resource_type": "rule-on-custom-event-bus"
           },
           {
@@ -164562,6 +164933,15 @@
             ],
             "dependent_actions": [],
             "resource_type": "rule-on-default-event-bus"
+          },
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}",
+              "aws:TagKeys",
+              "events:creatorAccount"
+            ],
+            "dependent_actions": [],
+            "resource_type": "subscriber"
           }
         ]
       },
@@ -164638,6 +165018,63 @@
             ],
             "dependent_actions": [],
             "resource_type": "event-bus"
+          },
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}"
+            ],
+            "dependent_actions": [],
+            "resource_type": "event-busv2"
+          }
+        ]
+      },
+      {
+        "access_level": "Write",
+        "description": "Grants permission to update an event source",
+        "privilege": "UpdateEventSource",
+        "resource_types": [
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}",
+              "events:source"
+            ],
+            "dependent_actions": [],
+            "resource_type": "event-busv2"
+          },
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}",
+              "events:source"
+            ],
+            "dependent_actions": [],
+            "resource_type": "event-sourcev2*"
+          }
+        ]
+      },
+      {
+        "access_level": "Write",
+        "description": "Grants permission to update a subscriber",
+        "privilege": "UpdateSubscriber",
+        "resource_types": [
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}",
+              "events:ContentFilterPresent",
+              "events:Metadata/${MetadataKey}",
+              "events:Metadata/${MetadataKey}/Matcher"
+            ],
+            "dependent_actions": [],
+            "resource_type": "event-busv2"
+          },
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}",
+              "events:ContentFilterPresent",
+              "events:Metadata/${MetadataKey}",
+              "events:Metadata/${MetadataKey}/Matcher"
+            ],
+            "dependent_actions": [],
+            "resource_type": "subscriber*"
           }
         ]
       },
@@ -164651,7 +165088,14 @@
               "aws:ResourceTag/${TagKey}"
             ],
             "dependent_actions": [],
-            "resource_type": "event-bus*"
+            "resource_type": "event-bus"
+          },
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}"
+            ],
+            "dependent_actions": [],
+            "resource_type": "subscriber"
           }
         ]
       },
@@ -164719,9 +165163,23 @@
         "resource": "event-bus"
       },
       {
+        "arn": "arn:${Partition}:events:${Region}:${Account}:event-busv2/${EventBusName}/${OpaqueId}",
+        "condition_keys": [
+          "aws:ResourceTag/${TagKey}"
+        ],
+        "resource": "event-busv2"
+      },
+      {
         "arn": "arn:${Partition}:events:${Region}::event-source/${EventSourceName}",
         "condition_keys": [],
         "resource": "event-source"
+      },
+      {
+        "arn": "arn:${Partition}:events:${Region}:${Account}:event-sourcev2/${SourceType}/${EventSourceName}/${OpaqueId}",
+        "condition_keys": [
+          "aws:ResourceTag/${TagKey}"
+        ],
+        "resource": "event-sourcev2"
       },
       {
         "arn": "arn:${Partition}:kms:${Region}:${Account}:key/${KeyId}",
@@ -164756,6 +165214,13 @@
         "arn": "arn:${Partition}:events:${Region}:${Account}:target/stop-instance",
         "condition_keys": [],
         "resource": "stop-instance"
+      },
+      {
+        "arn": "arn:${Partition}:events:${Region}:${Account}:subscriber/${SubscriberName}/${OpaqueId}",
+        "condition_keys": [
+          "aws:ResourceTag/${TagKey}"
+        ],
+        "resource": "subscriber"
       },
       {
         "arn": "arn:${Partition}:events:${Region}:${Account}:target/terminate-instance",
@@ -224335,6 +224800,20 @@
       },
       {
         "access_level": "Write",
+        "description": "Grants permission to update the record distribution strategy for a Kinesis data stream",
+        "privilege": "UpdateStreamRecordDistributionStrategy",
+        "resource_types": [
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}"
+            ],
+            "dependent_actions": [],
+            "resource_type": "stream*"
+          }
+        ]
+      },
+      {
+        "access_level": "Write",
         "description": "Grants permission to update the warm throughput for a Kinesis on-demand data stream",
         "privilege": "UpdateStreamWarmThroughput",
         "resource_types": [
@@ -264500,6 +264979,1253 @@
     "conditions": [
       {
         "condition": "aws:RequestTag/${TagKey}",
+        "description": "Filters access by the tags that are passed in the request",
+        "type": "String"
+      },
+      {
+        "condition": "aws:ResourceTag/${TagKey}",
+        "description": "Filters access by the tags associated with the resource",
+        "type": "String"
+      },
+      {
+        "condition": "aws:TagKeys",
+        "description": "Filters access by the tag keys that are passed in the request",
+        "type": "ArrayOfString"
+      }
+    ],
+    "prefix": "network-security-manager",
+    "privileges": [
+      {
+        "access_level": "Write",
+        "description": "Grants permission to create a deployment",
+        "privilege": "CreateDeployment",
+        "resource_types": [
+          {
+            "condition_keys": [
+              "aws:RequestTag/${TagKey}",
+              "aws:ResourceTag/${TagKey}",
+              "aws:TagKeys"
+            ],
+            "dependent_actions": [
+              "network-security-manager:TagResource"
+            ],
+            "resource_type": "policy*"
+          },
+          {
+            "condition_keys": [
+              "aws:RequestTag/${TagKey}",
+              "aws:ResourceTag/${TagKey}",
+              "aws:TagKeys"
+            ],
+            "dependent_actions": [],
+            "resource_type": "policy-snapshot*"
+          },
+          {
+            "condition_keys": [
+              "aws:RequestTag/${TagKey}",
+              "aws:ResourceTag/${TagKey}",
+              "aws:TagKeys"
+            ],
+            "dependent_actions": [],
+            "resource_type": "scope*"
+          },
+          {
+            "condition_keys": [
+              "aws:RequestTag/${TagKey}",
+              "aws:ResourceTag/${TagKey}",
+              "aws:TagKeys"
+            ],
+            "dependent_actions": [],
+            "resource_type": "scope-snapshot*"
+          }
+        ]
+      },
+      {
+        "access_level": "Write",
+        "description": "Grants permission to create a snapshot of a deployment",
+        "privilege": "CreateDeploymentSnapshot",
+        "resource_types": [
+          {
+            "condition_keys": [
+              "aws:RequestTag/${TagKey}",
+              "aws:ResourceTag/${TagKey}",
+              "aws:TagKeys"
+            ],
+            "dependent_actions": [
+              "network-security-manager:TagResource"
+            ],
+            "resource_type": "deployment*"
+          }
+        ]
+      },
+      {
+        "access_level": "Write",
+        "description": "Grants permission to create a policy",
+        "privilege": "CreatePolicy",
+        "resource_types": [
+          {
+            "condition_keys": [
+              "aws:RequestTag/${TagKey}",
+              "aws:ResourceTag/${TagKey}",
+              "aws:TagKeys"
+            ],
+            "dependent_actions": [
+              "network-security-manager:TagResource"
+            ],
+            "resource_type": "rule"
+          },
+          {
+            "condition_keys": [
+              "aws:RequestTag/${TagKey}",
+              "aws:ResourceTag/${TagKey}",
+              "aws:TagKeys"
+            ],
+            "dependent_actions": [],
+            "resource_type": "rule-snapshot"
+          },
+          {
+            "condition_keys": [
+              "aws:RequestTag/${TagKey}",
+              "aws:ResourceTag/${TagKey}",
+              "aws:TagKeys"
+            ],
+            "dependent_actions": [],
+            "resource_type": "template"
+          },
+          {
+            "condition_keys": [
+              "aws:RequestTag/${TagKey}",
+              "aws:ResourceTag/${TagKey}",
+              "aws:TagKeys"
+            ],
+            "dependent_actions": [],
+            "resource_type": "template-snapshot"
+          }
+        ]
+      },
+      {
+        "access_level": "Write",
+        "description": "Grants permission to create a snapshot of a policy",
+        "privilege": "CreatePolicySnapshot",
+        "resource_types": [
+          {
+            "condition_keys": [
+              "aws:RequestTag/${TagKey}",
+              "aws:ResourceTag/${TagKey}",
+              "aws:TagKeys"
+            ],
+            "dependent_actions": [
+              "network-security-manager:TagResource"
+            ],
+            "resource_type": "policy*"
+          }
+        ]
+      },
+      {
+        "access_level": "Write",
+        "description": "Grants permission to create a rule",
+        "privilege": "CreateRule",
+        "resource_types": [
+          {
+            "condition_keys": [
+              "aws:RequestTag/${TagKey}",
+              "aws:TagKeys"
+            ],
+            "dependent_actions": [
+              "network-security-manager:TagResource"
+            ],
+            "resource_type": ""
+          }
+        ]
+      },
+      {
+        "access_level": "Write",
+        "description": "Grants permission to create a snapshot of a rule",
+        "privilege": "CreateRuleSnapshot",
+        "resource_types": [
+          {
+            "condition_keys": [
+              "aws:RequestTag/${TagKey}",
+              "aws:ResourceTag/${TagKey}",
+              "aws:TagKeys"
+            ],
+            "dependent_actions": [
+              "network-security-manager:TagResource"
+            ],
+            "resource_type": "rule*"
+          }
+        ]
+      },
+      {
+        "access_level": "Write",
+        "description": "Grants permission to create a scope",
+        "privilege": "CreateScope",
+        "resource_types": [
+          {
+            "condition_keys": [
+              "aws:RequestTag/${TagKey}",
+              "aws:TagKeys"
+            ],
+            "dependent_actions": [
+              "network-security-manager:TagResource"
+            ],
+            "resource_type": ""
+          }
+        ]
+      },
+      {
+        "access_level": "Write",
+        "description": "Grants permission to create a snapshot of a scope",
+        "privilege": "CreateScopeSnapshot",
+        "resource_types": [
+          {
+            "condition_keys": [
+              "aws:RequestTag/${TagKey}",
+              "aws:ResourceTag/${TagKey}",
+              "aws:TagKeys"
+            ],
+            "dependent_actions": [
+              "network-security-manager:TagResource"
+            ],
+            "resource_type": "scope*"
+          }
+        ]
+      },
+      {
+        "access_level": "Write",
+        "description": "Grants permission to create a template",
+        "privilege": "CreateTemplate",
+        "resource_types": [
+          {
+            "condition_keys": [
+              "aws:RequestTag/${TagKey}",
+              "aws:ResourceTag/${TagKey}",
+              "aws:TagKeys"
+            ],
+            "dependent_actions": [
+              "network-security-manager:TagResource"
+            ],
+            "resource_type": "rule*"
+          },
+          {
+            "condition_keys": [
+              "aws:RequestTag/${TagKey}",
+              "aws:ResourceTag/${TagKey}",
+              "aws:TagKeys"
+            ],
+            "dependent_actions": [],
+            "resource_type": "rule-snapshot*"
+          }
+        ]
+      },
+      {
+        "access_level": "Write",
+        "description": "Grants permission to create a snapshot of a template",
+        "privilege": "CreateTemplateSnapshot",
+        "resource_types": [
+          {
+            "condition_keys": [
+              "aws:RequestTag/${TagKey}",
+              "aws:ResourceTag/${TagKey}",
+              "aws:TagKeys"
+            ],
+            "dependent_actions": [
+              "network-security-manager:TagResource"
+            ],
+            "resource_type": "template*"
+          }
+        ]
+      },
+      {
+        "access_level": "Write",
+        "description": "Grants permission to remove a Network Security Manager administrator account",
+        "privilege": "DeleteAdminAccount",
+        "resource_types": [
+          {
+            "condition_keys": [],
+            "dependent_actions": [],
+            "resource_type": ""
+          }
+        ]
+      },
+      {
+        "access_level": "Write",
+        "description": "Grants permission to delete a deployment",
+        "privilege": "DeleteDeployment",
+        "resource_types": [
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}"
+            ],
+            "dependent_actions": [],
+            "resource_type": "deployment*"
+          },
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}"
+            ],
+            "dependent_actions": [],
+            "resource_type": "deployment-snapshot*"
+          }
+        ]
+      },
+      {
+        "access_level": "Write",
+        "description": "Grants permission to delete a policy",
+        "privilege": "DeletePolicy",
+        "resource_types": [
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}"
+            ],
+            "dependent_actions": [],
+            "resource_type": "policy*"
+          },
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}"
+            ],
+            "dependent_actions": [],
+            "resource_type": "policy-snapshot*"
+          }
+        ]
+      },
+      {
+        "access_level": "Write",
+        "description": "Grants permission to delete a rule",
+        "privilege": "DeleteRule",
+        "resource_types": [
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}"
+            ],
+            "dependent_actions": [],
+            "resource_type": "rule*"
+          },
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}"
+            ],
+            "dependent_actions": [],
+            "resource_type": "rule-snapshot*"
+          }
+        ]
+      },
+      {
+        "access_level": "Write",
+        "description": "Grants permission to delete a scope",
+        "privilege": "DeleteScope",
+        "resource_types": [
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}"
+            ],
+            "dependent_actions": [],
+            "resource_type": "scope*"
+          },
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}"
+            ],
+            "dependent_actions": [],
+            "resource_type": "scope-snapshot*"
+          }
+        ]
+      },
+      {
+        "access_level": "Write",
+        "description": "Grants permission to delete a template",
+        "privilege": "DeleteTemplate",
+        "resource_types": [
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}"
+            ],
+            "dependent_actions": [],
+            "resource_type": "template*"
+          },
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}"
+            ],
+            "dependent_actions": [],
+            "resource_type": "template-snapshot*"
+          }
+        ]
+      },
+      {
+        "access_level": "Write",
+        "description": "Grants permission to generate a rule configuration from a natural-language prompt",
+        "privilege": "GenerateRuleConfiguration",
+        "resource_types": [
+          {
+            "condition_keys": [],
+            "dependent_actions": [],
+            "resource_type": ""
+          }
+        ]
+      },
+      {
+        "access_level": "Read",
+        "description": "Grants permission to retrieve a Network Security Manager administrator account",
+        "privilege": "GetAdminAccount",
+        "resource_types": [
+          {
+            "condition_keys": [],
+            "dependent_actions": [],
+            "resource_type": ""
+          }
+        ]
+      },
+      {
+        "access_level": "Read",
+        "description": "Grants permission to retrieve a deployment",
+        "privilege": "GetDeployment",
+        "resource_types": [
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}"
+            ],
+            "dependent_actions": [],
+            "resource_type": "deployment*"
+          },
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}"
+            ],
+            "dependent_actions": [],
+            "resource_type": "deployment-snapshot*"
+          }
+        ]
+      },
+      {
+        "access_level": "Read",
+        "description": "Grants permission to retrieve a policy",
+        "privilege": "GetPolicy",
+        "resource_types": [
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}"
+            ],
+            "dependent_actions": [],
+            "resource_type": "policy*"
+          },
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}"
+            ],
+            "dependent_actions": [],
+            "resource_type": "policy-snapshot*"
+          }
+        ]
+      },
+      {
+        "access_level": "Read",
+        "description": "Grants permission to retrieve a rule",
+        "privilege": "GetRule",
+        "resource_types": [
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}"
+            ],
+            "dependent_actions": [],
+            "resource_type": "rule*"
+          },
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}"
+            ],
+            "dependent_actions": [],
+            "resource_type": "rule-snapshot*"
+          }
+        ]
+      },
+      {
+        "access_level": "Read",
+        "description": "Grants permission to retrieve a scope",
+        "privilege": "GetScope",
+        "resource_types": [
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}"
+            ],
+            "dependent_actions": [],
+            "resource_type": "scope*"
+          },
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}"
+            ],
+            "dependent_actions": [],
+            "resource_type": "scope-snapshot*"
+          }
+        ]
+      },
+      {
+        "access_level": "Read",
+        "description": "Grants permission to retrieve a template",
+        "privilege": "GetTemplate",
+        "resource_types": [
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}"
+            ],
+            "dependent_actions": [],
+            "resource_type": "template*"
+          },
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}"
+            ],
+            "dependent_actions": [],
+            "resource_type": "template-snapshot*"
+          }
+        ]
+      },
+      {
+        "access_level": "List",
+        "description": "Grants permission to list Network Security Manager administrator accounts",
+        "privilege": "ListAdminAccounts",
+        "resource_types": [
+          {
+            "condition_keys": [],
+            "dependent_actions": [],
+            "resource_type": ""
+          }
+        ]
+      },
+      {
+        "access_level": "Read",
+        "description": "Grants permission to list aggregate resource synchronization statuses across the caller's deployments",
+        "privilege": "ListAggregateResourceSynchronizationStatuses",
+        "resource_types": [
+          {
+            "condition_keys": [],
+            "dependent_actions": [],
+            "resource_type": ""
+          }
+        ]
+      },
+      {
+        "access_level": "Read",
+        "description": "Grants permission to list the snapshots of a deployment",
+        "privilege": "ListDeploymentSnapshots",
+        "resource_types": [
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}"
+            ],
+            "dependent_actions": [],
+            "resource_type": "deployment*"
+          }
+        ]
+      },
+      {
+        "access_level": "List",
+        "description": "Grants permission to list deployments",
+        "privilege": "ListDeployments",
+        "resource_types": [
+          {
+            "condition_keys": [],
+            "dependent_actions": [],
+            "resource_type": ""
+          }
+        ]
+      },
+      {
+        "access_level": "List",
+        "description": "Grants permission to list policies",
+        "privilege": "ListPolicies",
+        "resource_types": [
+          {
+            "condition_keys": [],
+            "dependent_actions": [],
+            "resource_type": ""
+          }
+        ]
+      },
+      {
+        "access_level": "Read",
+        "description": "Grants permission to list the snapshots of a policy",
+        "privilege": "ListPolicySnapshots",
+        "resource_types": [
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}"
+            ],
+            "dependent_actions": [],
+            "resource_type": "policy*"
+          }
+        ]
+      },
+      {
+        "access_level": "Read",
+        "description": "Grants permission to list the associations of a Network Security Manager resource",
+        "privilege": "ListResourceAssociations",
+        "resource_types": [
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}"
+            ],
+            "dependent_actions": [],
+            "resource_type": "deployment*"
+          },
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}"
+            ],
+            "dependent_actions": [],
+            "resource_type": "deployment-snapshot*"
+          },
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}"
+            ],
+            "dependent_actions": [],
+            "resource_type": "policy*"
+          },
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}"
+            ],
+            "dependent_actions": [],
+            "resource_type": "policy-snapshot*"
+          },
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}"
+            ],
+            "dependent_actions": [],
+            "resource_type": "rule*"
+          },
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}"
+            ],
+            "dependent_actions": [],
+            "resource_type": "rule-snapshot*"
+          },
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}"
+            ],
+            "dependent_actions": [],
+            "resource_type": "scope*"
+          },
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}"
+            ],
+            "dependent_actions": [],
+            "resource_type": "scope-snapshot*"
+          },
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}"
+            ],
+            "dependent_actions": [],
+            "resource_type": "template*"
+          },
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}"
+            ],
+            "dependent_actions": [],
+            "resource_type": "template-snapshot*"
+          }
+        ]
+      },
+      {
+        "access_level": "Read",
+        "description": "Grants permission to list resource synchronization statuses for a deployment",
+        "privilege": "ListResourceSynchronizationStatuses",
+        "resource_types": [
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}"
+            ],
+            "dependent_actions": [],
+            "resource_type": "deployment*"
+          },
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}"
+            ],
+            "dependent_actions": [],
+            "resource_type": "deployment-snapshot*"
+          }
+        ]
+      },
+      {
+        "access_level": "Read",
+        "description": "Grants permission to list the snapshots of a rule",
+        "privilege": "ListRuleSnapshots",
+        "resource_types": [
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}"
+            ],
+            "dependent_actions": [],
+            "resource_type": "rule*"
+          }
+        ]
+      },
+      {
+        "access_level": "List",
+        "description": "Grants permission to list rules",
+        "privilege": "ListRules",
+        "resource_types": [
+          {
+            "condition_keys": [],
+            "dependent_actions": [],
+            "resource_type": ""
+          }
+        ]
+      },
+      {
+        "access_level": "Read",
+        "description": "Grants permission to list the snapshots of a scope",
+        "privilege": "ListScopeSnapshots",
+        "resource_types": [
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}"
+            ],
+            "dependent_actions": [],
+            "resource_type": "scope*"
+          }
+        ]
+      },
+      {
+        "access_level": "List",
+        "description": "Grants permission to list scopes",
+        "privilege": "ListScopes",
+        "resource_types": [
+          {
+            "condition_keys": [],
+            "dependent_actions": [],
+            "resource_type": ""
+          }
+        ]
+      },
+      {
+        "access_level": "Read",
+        "description": "Grants permission to list the tags of a Network Security Manager resource",
+        "privilege": "ListTagsForResource",
+        "resource_types": [
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}"
+            ],
+            "dependent_actions": [],
+            "resource_type": "deployment"
+          },
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}"
+            ],
+            "dependent_actions": [],
+            "resource_type": "deployment-snapshot"
+          },
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}"
+            ],
+            "dependent_actions": [],
+            "resource_type": "policy"
+          },
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}"
+            ],
+            "dependent_actions": [],
+            "resource_type": "policy-snapshot"
+          },
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}"
+            ],
+            "dependent_actions": [],
+            "resource_type": "rule"
+          },
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}"
+            ],
+            "dependent_actions": [],
+            "resource_type": "rule-snapshot"
+          },
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}"
+            ],
+            "dependent_actions": [],
+            "resource_type": "scope"
+          },
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}"
+            ],
+            "dependent_actions": [],
+            "resource_type": "scope-snapshot"
+          },
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}"
+            ],
+            "dependent_actions": [],
+            "resource_type": "template"
+          },
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}"
+            ],
+            "dependent_actions": [],
+            "resource_type": "template-snapshot"
+          }
+        ]
+      },
+      {
+        "access_level": "Read",
+        "description": "Grants permission to list the snapshots of a template",
+        "privilege": "ListTemplateSnapshots",
+        "resource_types": [
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}"
+            ],
+            "dependent_actions": [],
+            "resource_type": "template*"
+          }
+        ]
+      },
+      {
+        "access_level": "List",
+        "description": "Grants permission to list templates",
+        "privilege": "ListTemplates",
+        "resource_types": [
+          {
+            "condition_keys": [],
+            "dependent_actions": [],
+            "resource_type": ""
+          }
+        ]
+      },
+      {
+        "access_level": "Write",
+        "description": "Grants permission to set a Network Security Manager administrator account",
+        "privilege": "PutAdminAccount",
+        "resource_types": [
+          {
+            "condition_keys": [],
+            "dependent_actions": [],
+            "resource_type": ""
+          }
+        ]
+      },
+      {
+        "access_level": "Tagging, Write",
+        "description": "Grants permission to add or overwrite tags on a Network Security Manager resource",
+        "privilege": "TagResource",
+        "resource_types": [
+          {
+            "condition_keys": [
+              "aws:RequestTag/${TagKey}",
+              "aws:ResourceTag/${TagKey}",
+              "aws:TagKeys"
+            ],
+            "dependent_actions": [],
+            "resource_type": "deployment"
+          },
+          {
+            "condition_keys": [
+              "aws:RequestTag/${TagKey}",
+              "aws:ResourceTag/${TagKey}",
+              "aws:TagKeys"
+            ],
+            "dependent_actions": [],
+            "resource_type": "deployment-snapshot"
+          },
+          {
+            "condition_keys": [
+              "aws:RequestTag/${TagKey}",
+              "aws:ResourceTag/${TagKey}",
+              "aws:TagKeys"
+            ],
+            "dependent_actions": [],
+            "resource_type": "policy"
+          },
+          {
+            "condition_keys": [
+              "aws:RequestTag/${TagKey}",
+              "aws:ResourceTag/${TagKey}",
+              "aws:TagKeys"
+            ],
+            "dependent_actions": [],
+            "resource_type": "policy-snapshot"
+          },
+          {
+            "condition_keys": [
+              "aws:RequestTag/${TagKey}",
+              "aws:ResourceTag/${TagKey}",
+              "aws:TagKeys"
+            ],
+            "dependent_actions": [],
+            "resource_type": "rule"
+          },
+          {
+            "condition_keys": [
+              "aws:RequestTag/${TagKey}",
+              "aws:ResourceTag/${TagKey}",
+              "aws:TagKeys"
+            ],
+            "dependent_actions": [],
+            "resource_type": "rule-snapshot"
+          },
+          {
+            "condition_keys": [
+              "aws:RequestTag/${TagKey}",
+              "aws:ResourceTag/${TagKey}",
+              "aws:TagKeys"
+            ],
+            "dependent_actions": [],
+            "resource_type": "scope"
+          },
+          {
+            "condition_keys": [
+              "aws:RequestTag/${TagKey}",
+              "aws:ResourceTag/${TagKey}",
+              "aws:TagKeys"
+            ],
+            "dependent_actions": [],
+            "resource_type": "scope-snapshot"
+          },
+          {
+            "condition_keys": [
+              "aws:RequestTag/${TagKey}",
+              "aws:ResourceTag/${TagKey}",
+              "aws:TagKeys"
+            ],
+            "dependent_actions": [],
+            "resource_type": "template"
+          },
+          {
+            "condition_keys": [
+              "aws:RequestTag/${TagKey}",
+              "aws:ResourceTag/${TagKey}",
+              "aws:TagKeys"
+            ],
+            "dependent_actions": [],
+            "resource_type": "template-snapshot"
+          }
+        ]
+      },
+      {
+        "access_level": "Tagging, Write",
+        "description": "Grants permission to remove tags from a Network Security Manager resource",
+        "privilege": "UntagResource",
+        "resource_types": [
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}",
+              "aws:TagKeys"
+            ],
+            "dependent_actions": [],
+            "resource_type": "deployment"
+          },
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}",
+              "aws:TagKeys"
+            ],
+            "dependent_actions": [],
+            "resource_type": "deployment-snapshot"
+          },
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}",
+              "aws:TagKeys"
+            ],
+            "dependent_actions": [],
+            "resource_type": "policy"
+          },
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}",
+              "aws:TagKeys"
+            ],
+            "dependent_actions": [],
+            "resource_type": "policy-snapshot"
+          },
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}",
+              "aws:TagKeys"
+            ],
+            "dependent_actions": [],
+            "resource_type": "rule"
+          },
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}",
+              "aws:TagKeys"
+            ],
+            "dependent_actions": [],
+            "resource_type": "rule-snapshot"
+          },
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}",
+              "aws:TagKeys"
+            ],
+            "dependent_actions": [],
+            "resource_type": "scope"
+          },
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}",
+              "aws:TagKeys"
+            ],
+            "dependent_actions": [],
+            "resource_type": "scope-snapshot"
+          },
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}",
+              "aws:TagKeys"
+            ],
+            "dependent_actions": [],
+            "resource_type": "template"
+          },
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}",
+              "aws:TagKeys"
+            ],
+            "dependent_actions": [],
+            "resource_type": "template-snapshot"
+          }
+        ]
+      },
+      {
+        "access_level": "Write",
+        "description": "Grants permission to update a deployment",
+        "privilege": "UpdateDeployment",
+        "resource_types": [
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}"
+            ],
+            "dependent_actions": [],
+            "resource_type": "deployment*"
+          },
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}"
+            ],
+            "dependent_actions": [],
+            "resource_type": "policy"
+          },
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}"
+            ],
+            "dependent_actions": [],
+            "resource_type": "policy-snapshot"
+          },
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}"
+            ],
+            "dependent_actions": [],
+            "resource_type": "scope"
+          },
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}"
+            ],
+            "dependent_actions": [],
+            "resource_type": "scope-snapshot"
+          }
+        ]
+      },
+      {
+        "access_level": "Write",
+        "description": "Grants permission to update a policy",
+        "privilege": "UpdatePolicy",
+        "resource_types": [
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}"
+            ],
+            "dependent_actions": [],
+            "resource_type": "policy*"
+          },
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}"
+            ],
+            "dependent_actions": [],
+            "resource_type": "rule"
+          },
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}"
+            ],
+            "dependent_actions": [],
+            "resource_type": "rule-snapshot"
+          },
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}"
+            ],
+            "dependent_actions": [],
+            "resource_type": "template"
+          },
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}"
+            ],
+            "dependent_actions": [],
+            "resource_type": "template-snapshot"
+          }
+        ]
+      },
+      {
+        "access_level": "Write",
+        "description": "Grants permission to update a rule",
+        "privilege": "UpdateRule",
+        "resource_types": [
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}"
+            ],
+            "dependent_actions": [],
+            "resource_type": "rule*"
+          }
+        ]
+      },
+      {
+        "access_level": "Write",
+        "description": "Grants permission to update a scope",
+        "privilege": "UpdateScope",
+        "resource_types": [
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}"
+            ],
+            "dependent_actions": [],
+            "resource_type": "scope*"
+          }
+        ]
+      },
+      {
+        "access_level": "Write",
+        "description": "Grants permission to update a template",
+        "privilege": "UpdateTemplate",
+        "resource_types": [
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}"
+            ],
+            "dependent_actions": [],
+            "resource_type": "rule"
+          },
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}"
+            ],
+            "dependent_actions": [],
+            "resource_type": "rule-snapshot"
+          },
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}"
+            ],
+            "dependent_actions": [],
+            "resource_type": "template*"
+          }
+        ]
+      }
+    ],
+    "resources": [
+      {
+        "arn": "arn:${Partition}:network-security-manager:${Region}:${Account}:deployment:${DeploymentId}",
+        "condition_keys": [
+          "aws:ResourceTag/${TagKey}"
+        ],
+        "resource": "deployment"
+      },
+      {
+        "arn": "arn:${Partition}:network-security-manager:${Region}:${Account}:deployment:${DeploymentId}:${VersionNumber}",
+        "condition_keys": [
+          "aws:ResourceTag/${TagKey}"
+        ],
+        "resource": "deployment-snapshot"
+      },
+      {
+        "arn": "arn:${Partition}:network-security-manager:${Region}:${Account}:policy:${PolicyId}",
+        "condition_keys": [
+          "aws:ResourceTag/${TagKey}"
+        ],
+        "resource": "policy"
+      },
+      {
+        "arn": "arn:${Partition}:network-security-manager:${Region}:${Account}:policy:${PolicyId}:${VersionNumber}",
+        "condition_keys": [
+          "aws:ResourceTag/${TagKey}"
+        ],
+        "resource": "policy-snapshot"
+      },
+      {
+        "arn": "arn:${Partition}:network-security-manager:${Region}:${Account}:rule:${RuleId}",
+        "condition_keys": [
+          "aws:ResourceTag/${TagKey}"
+        ],
+        "resource": "rule"
+      },
+      {
+        "arn": "arn:${Partition}:network-security-manager:${Region}:${Account}:rule:${RuleId}:${VersionNumber}",
+        "condition_keys": [
+          "aws:ResourceTag/${TagKey}"
+        ],
+        "resource": "rule-snapshot"
+      },
+      {
+        "arn": "arn:${Partition}:network-security-manager:${Region}:${Account}:scope:${ScopeId}",
+        "condition_keys": [
+          "aws:ResourceTag/${TagKey}"
+        ],
+        "resource": "scope"
+      },
+      {
+        "arn": "arn:${Partition}:network-security-manager:${Region}:${Account}:scope:${ScopeId}:${VersionNumber}",
+        "condition_keys": [
+          "aws:ResourceTag/${TagKey}"
+        ],
+        "resource": "scope-snapshot"
+      },
+      {
+        "arn": "arn:${Partition}:network-security-manager:${Region}:${Account}:template:${TemplateId}",
+        "condition_keys": [
+          "aws:ResourceTag/${TagKey}"
+        ],
+        "resource": "template"
+      },
+      {
+        "arn": "arn:${Partition}:network-security-manager:${Region}:${Account}:template:${TemplateId}:${VersionNumber}",
+        "condition_keys": [
+          "aws:ResourceTag/${TagKey}"
+        ],
+        "resource": "template-snapshot"
+      }
+    ],
+    "service_name": "AWS Network Security Manager"
+  },
+  {
+    "conditions": [
+      {
+        "condition": "aws:RequestTag/${TagKey}",
         "description": "Filters access by the tag key-value pairs in the request",
         "type": "String"
       },
@@ -269399,7 +271125,15 @@
               "aws:TagKeys",
               "oam:ResourceTypes"
             ],
-            "dependent_actions": [],
+            "dependent_actions": [
+              "oam:TagResource",
+              "application-signals:Link",
+              "applicationinsights:Link",
+              "cloudwatch:Link",
+              "internetmonitor:Link",
+              "logs:Link",
+              "xray:Link"
+            ],
             "resource_type": "Sink*"
           }
         ]
@@ -269414,7 +271148,9 @@
               "aws:RequestTag/${TagKey}",
               "aws:TagKeys"
             ],
-            "dependent_actions": [],
+            "dependent_actions": [
+              "oam:TagResource"
+            ],
             "resource_type": ""
           }
         ]
@@ -269620,7 +271356,14 @@
               "aws:ResourceTag/${TagKey}",
               "oam:ResourceTypes"
             ],
-            "dependent_actions": [],
+            "dependent_actions": [
+              "application-signals:Link",
+              "applicationinsights:Link",
+              "cloudwatch:Link",
+              "internetmonitor:Link",
+              "logs:Link",
+              "xray:Link"
+            ],
             "resource_type": "Link*"
           }
         ]
@@ -269780,7 +271523,6 @@
             ],
             "dependent_actions": [
               "observabilityadmin:TagResource",
-              "cloudwatch:PutPipelineRule",
               "iam:PassRole"
             ],
             "resource_type": "telemetry-pipeline*"
@@ -269877,9 +271619,7 @@
             "condition_keys": [
               "aws:ResourceTag/${TagKey}"
             ],
-            "dependent_actions": [
-              "cloudwatch:DeletePipelineRule"
-            ],
+            "dependent_actions": [],
             "resource_type": "telemetry-pipeline*"
           }
         ]
@@ -270432,7 +272172,6 @@
               "aws:ResourceTag/${TagKey}"
             ],
             "dependent_actions": [
-              "cloudwatch:PutPipelineRule",
               "iam:PassRole"
             ],
             "resource_type": "telemetry-pipeline*"
