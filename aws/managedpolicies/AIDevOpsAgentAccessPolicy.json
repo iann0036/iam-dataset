@@ -6,7 +6,7 @@
     "Permissions management"
   ],
   "arn": "arn:aws:iam::aws:policy/AIDevOpsAgentAccessPolicy",
-  "createdate": "2026-08-12T23:07:09+00:00",
+  "createdate": "2026-09-24T20:57:09+00:00",
   "credentials_exposure": true,
   "data_access": true,
   "deprecated": false,
@@ -43,6 +43,7 @@
           "aidevops:ListAssetTypes",
           "aidevops:ListAssetVersions",
           "aidevops:ListKnowledgeItems",
+          "airflow:GetEnvironment",
           "airflow:List*",
           "amplify:GetApp",
           "amplify:GetBranch",
@@ -183,6 +184,7 @@
           "cloudwatch:GetMetricData",
           "cloudwatch:GetMetricStatistics",
           "cloudwatch:GetMetricStream",
+          "cloudwatch:GetOTelEnrichment",
           "cloudwatch:GetService",
           "cloudwatch:GetServiceLevelObjective",
           "cloudwatch:List*",
@@ -270,6 +272,7 @@
           "config:List*",
           "config:SelectAggregateResourceConfig",
           "connect:Describe*",
+          "connect:GetMetricDataV2",
           "connect:GetTaskTemplate",
           "connect:List*",
           "cur:Describe*",
@@ -409,6 +412,7 @@
           "glue:GetDatabase",
           "glue:GetDatabases",
           "glue:GetDataCatalogEncryptionSettings",
+          "glue:GetDataQualityResult",
           "glue:GetJob",
           "glue:GetJobBookmark",
           "glue:GetJobRun",
@@ -466,6 +470,7 @@
           "iam:GetUserPolicy",
           "iam:ListAccountAliases",
           "iam:ListAttachedRolePolicies",
+          "iam:ListEntitiesForPolicy",
           "iam:ListOpenIDConnectProviders",
           "iam:ListRolePolicies",
           "iam:ListRoles",
@@ -757,6 +762,7 @@
           "rum:List*",
           "s3-outposts:ListEndpoints",
           "s3-outposts:ListOutpostsWithS3",
+          "s3:GetAccelerateConfiguration",
           "s3:GetAccessGrant",
           "s3:GetAccessGrantsInstance",
           "s3:GetAccessGrantsLocation",
@@ -766,6 +772,7 @@
           "s3:GetAccessPointPolicy",
           "s3:GetAccessPointPolicyForObjectLambda",
           "s3:GetAccessPointPolicyStatusForObjectLambda",
+          "s3:GetAnalyticsConfiguration",
           "s3:GetBucketAbac",
           "s3:GetBucketAcl",
           "s3:GetBucketCORS",
@@ -779,10 +786,12 @@
           "s3:GetBucketPublicAccessBlock",
           "s3:GetBucketTagging",
           "s3:GetBucketVersioning",
+          "s3:GetBucketWebsite",
           "s3:GetEncryptionConfiguration",
           "s3:GetIntelligentTieringConfiguration",
           "s3:GetInventoryConfiguration",
           "s3:GetLifecycleConfiguration",
+          "s3:GetMetricsConfiguration",
           "s3:GetMultiRegionAccessPoint",
           "s3:GetMultiRegionAccessPointPolicy",
           "s3:GetMultiRegionAccessPointPolicyStatus",
@@ -791,6 +800,7 @@
           "s3:GetStorageLensConfigurationTagging",
           "s3:GetStorageLensGroup",
           "s3:ListAllMyBuckets",
+          "s3:ListTagsForResource",
           "sagemaker:Describe*",
           "sagemaker:List*",
           "scheduler:GetSchedule",
@@ -914,9 +924,15 @@
           "wafv2:GetLoggingConfiguration",
           "wafv2:GetRegexPatternSet",
           "wafv2:GetRuleGroup",
+          "wafv2:GetSampledRequests",
           "wafv2:GetWebACL",
           "wafv2:GetWebACLForResource",
           "wafv2:List*",
+          "wisdom:Get*",
+          "wisdom:List*",
+          "wisdom:Query*",
+          "wisdom:Retrieve",
+          "wisdom:Search*",
           "workspaces-web:GetBrowserSettings",
           "workspaces-web:GetIdentityProvider",
           "workspaces-web:GetNetworkSettings",
@@ -965,6 +981,22 @@
           "arn:aws:apigateway:*::/domainnames/*"
         ],
         "Sid": "AIOPSAPIGatewayAccess"
+      },
+      {
+        "Action": [
+          "s3:ListBucket"
+        ],
+        "Condition": {
+          "StringLike": {
+            "s3:prefix": [
+              "AWSLogs/*",
+              "*/AWSLogs/*"
+            ]
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:s3:::*",
+        "Sid": "AllowListBucketAWSLogs"
       }
     ],
     "Version": "2012-10-17"
@@ -1287,6 +1319,16 @@
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "aidevops:ListKnowledgeItems",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "airflow:GetEnvironment",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "airflow:GetEnvironment",
       "privesc": false,
       "resource_exposure": false
     },
@@ -7452,6 +7494,16 @@
     },
     {
       "access_level": "Read",
+      "action": "cloudwatch:GetOTelEnrichment",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudwatch:GetOTelEnrichment",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
       "action": "cloudwatch:GetService",
       "condition": null,
       "credentials_exposure": false,
@@ -10317,6 +10369,16 @@
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "connect:DescribeForecastingPlanningSchedulingIntegration",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "connect:GetMetricDataV2",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "connect:GetMetricDataV2",
       "privesc": false,
       "resource_exposure": false
     },
@@ -19952,6 +20014,16 @@
     },
     {
       "access_level": "Read",
+      "action": "glue:GetDataQualityResult",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "glue:GetDataQualityResult",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
       "action": "glue:GetJob",
       "condition": null,
       "credentials_exposure": false,
@@ -21607,6 +21679,16 @@
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "iam:ListAttachedRolePolicies",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "iam:ListEntitiesForPolicy",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "iam:ListEntitiesForPolicy",
       "privesc": false,
       "resource_exposure": false
     },
@@ -34772,6 +34854,16 @@
     },
     {
       "access_level": "Read",
+      "action": "s3:GetAccelerateConfiguration",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3:GetAccelerateConfiguration",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
       "action": "s3:GetAccessGrant",
       "condition": null,
       "credentials_exposure": false,
@@ -34857,6 +34949,16 @@
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "s3:GetAccessPointPolicyStatusForObjectLambda",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "s3:GetAnalyticsConfiguration",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3:GetAnalyticsConfiguration",
       "privesc": false,
       "resource_exposure": false
     },
@@ -34992,6 +35094,16 @@
     },
     {
       "access_level": "Read",
+      "action": "s3:GetBucketWebsite",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3:GetBucketWebsite",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
       "action": "s3:GetEncryptionConfiguration",
       "condition": null,
       "credentials_exposure": false,
@@ -35027,6 +35139,16 @@
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "s3:GetLifecycleConfiguration",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "s3:GetMetricsConfiguration",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3:GetMetricsConfiguration",
       "privesc": false,
       "resource_exposure": false
     },
@@ -35107,6 +35229,16 @@
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "s3:ListAllMyBuckets",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "s3:ListTagsForResource",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3:ListTagsForResource",
       "privesc": false,
       "resource_exposure": false
     },
@@ -41112,6 +41244,16 @@
     },
     {
       "access_level": "Read",
+      "action": "wafv2:GetSampledRequests",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": true,
+      "effective_action": "wafv2:GetSampledRequests",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
       "action": "wafv2:GetWebACL",
       "condition": null,
       "credentials_exposure": false,
@@ -41257,6 +41399,406 @@
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "wafv2:ListWebACLs",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "wisdom:Get*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "wisdom:GetAIAgent",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "wisdom:Get*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "wisdom:GetAIGuardrail",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "wisdom:Get*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "wisdom:GetAIPrompt",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "wisdom:Get*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "wisdom:GetAssistant",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "wisdom:Get*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "wisdom:GetAssistantAssociation",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "wisdom:Get*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "wisdom:GetContent",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "wisdom:Get*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "wisdom:GetContentAssociation",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "wisdom:Get*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "wisdom:GetContentSummary",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "wisdom:Get*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "wisdom:GetImportJob",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "wisdom:Get*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "wisdom:GetKnowledgeBase",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "wisdom:Get*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "wisdom:GetMessageTemplate",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "wisdom:Get*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "wisdom:GetNextMessage",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "wisdom:Get*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "wisdom:GetQuickResponse",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "wisdom:Get*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "wisdom:GetRecommendations",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "wisdom:Get*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "wisdom:GetSession",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "wisdom:List*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "wisdom:ListAIAgentVersions",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "wisdom:List*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "wisdom:ListAIAgents",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "wisdom:List*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "wisdom:ListAIGuardrailVersions",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "wisdom:List*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "wisdom:ListAIGuardrails",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "wisdom:List*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "wisdom:ListAIPromptVersions",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "wisdom:List*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "wisdom:ListAIPrompts",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "wisdom:List*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "wisdom:ListAssistantAssociations",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "wisdom:List*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "wisdom:ListAssistants",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "wisdom:List*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "wisdom:ListContentAssociations",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "wisdom:List*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "wisdom:ListContents",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "wisdom:List*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "wisdom:ListImportJobs",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "wisdom:List*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "wisdom:ListKnowledgeBases",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "wisdom:List*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "wisdom:ListMessageTemplateVersions",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "wisdom:List*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "wisdom:ListMessageTemplates",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "wisdom:List*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "wisdom:ListMessages",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "wisdom:List*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "wisdom:ListModels",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "wisdom:List*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "wisdom:ListQuickResponses",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "wisdom:List*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "wisdom:ListSpans",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "wisdom:List*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "wisdom:ListTagsForResource",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "wisdom:Query*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "wisdom:QueryAssistant",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "wisdom:Retrieve",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "wisdom:Retrieve",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "wisdom:Search*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "wisdom:SearchContent",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "wisdom:Search*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "wisdom:SearchMessageTemplates",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "wisdom:Search*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "wisdom:SearchQuickResponses",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "wisdom:Search*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "wisdom:SearchSessions",
       "privesc": false,
       "resource_exposure": false
     },
@@ -41819,6 +42361,23 @@
       "effective_action": "apigateway:GET",
       "privesc": false,
       "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "s3:ListBucket",
+      "condition": {
+        "StringLike": {
+          "s3:prefix": [
+            "AWSLogs/*",
+            "*/AWSLogs/*"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3:ListBucket",
+      "privesc": false,
+      "resource_exposure": false
     }
   ],
   "grantless": false,
@@ -41828,6 +42387,6 @@
   "resource_exposure": false,
   "undocumented_actions": false,
   "unknown_actions": [],
-  "updatedate": "2026-08-12T23:07:09+00:00",
-  "version": "v10"
+  "updatedate": "2026-09-24T20:57:09+00:00",
+  "version": "v11"
 }
