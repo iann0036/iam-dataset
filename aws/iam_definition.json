@@ -122092,6 +122092,11 @@
         "type": "String"
       },
       {
+        "condition": "ec2:BootModeOverride",
+        "description": "Filters access by the boot mode",
+        "type": "String"
+      },
+      {
         "condition": "ec2:CapacityReservationFleet",
         "description": "Filters access by the ARN of the Capacity Reservation Fleet",
         "type": "ARN"
@@ -122781,7 +122786,6 @@
               "ec2:AvailabilityZone",
               "ec2:CapacityReservationFleet",
               "ec2:CreateDate",
-              "ec2:DestinationCapacityReservationId",
               "ec2:EbsOptimized",
               "ec2:EndDate",
               "ec2:EndDateType",
@@ -122793,7 +122797,6 @@
               "ec2:PlacementGroup",
               "ec2:Region",
               "ec2:ResourceTag/${TagKey}",
-              "ec2:SourceCapacityReservationId",
               "ec2:Tenancy"
             ],
             "dependent_actions": [],
@@ -123260,7 +123263,6 @@
               "ec2:AvailabilityZone",
               "ec2:CapacityReservationFleet",
               "ec2:CreateDate",
-              "ec2:DestinationCapacityReservationId",
               "ec2:EbsOptimized",
               "ec2:EndDate",
               "ec2:EndDateType",
@@ -123272,7 +123274,6 @@
               "ec2:PlacementGroup",
               "ec2:Region",
               "ec2:ResourceTag/${TagKey}",
-              "ec2:SourceCapacityReservationId",
               "ec2:Tenancy"
             ],
             "dependent_actions": [],
@@ -124942,13 +124943,22 @@
         "resource_types": [
           {
             "condition_keys": [
-              "aws:RequestTag/${TagKey}",
-              "aws:TagKeys",
-              "ec2:Region"
+              "aws:ResourceTag/${TagKey}",
+              "ec2:Region",
+              "ec2:ResourceTag/${TagKey}"
             ],
             "dependent_actions": [
               "ec2:CreateTags"
             ],
+            "resource_type": "capacity-reservation"
+          },
+          {
+            "condition_keys": [
+              "aws:RequestTag/${TagKey}",
+              "aws:TagKeys",
+              "ec2:Region"
+            ],
+            "dependent_actions": [],
             "resource_type": "fleet*"
           },
           {
@@ -125153,6 +125163,7 @@
             "condition_keys": [
               "aws:RequestTag/${TagKey}",
               "aws:TagKeys",
+              "ec2:BootModeOverride",
               "ec2:ImageID",
               "ec2:Owner",
               "ec2:Region"
@@ -135980,7 +135991,6 @@
               "ec2:AvailabilityZone",
               "ec2:CapacityReservationFleet",
               "ec2:CreateDate",
-              "ec2:DestinationCapacityReservationId",
               "ec2:EbsOptimized",
               "ec2:EndDate",
               "ec2:EndDateType",
@@ -135992,7 +136002,6 @@
               "ec2:PlacementGroup",
               "ec2:Region",
               "ec2:ResourceTag/${TagKey}",
-              "ec2:SourceCapacityReservationId",
               "ec2:Tenancy"
             ],
             "dependent_actions": [],
@@ -141335,7 +141344,6 @@
               "ec2:AvailabilityZone",
               "ec2:CapacityReservationFleet",
               "ec2:CreateDate",
-              "ec2:DestinationCapacityReservationId",
               "ec2:EbsOptimized",
               "ec2:EndDate",
               "ec2:EndDateType",
@@ -141347,7 +141355,6 @@
               "ec2:PlacementGroup",
               "ec2:Region",
               "ec2:ResourceTag/${TagKey}",
-              "ec2:SourceCapacityReservationId",
               "ec2:Tenancy"
             ],
             "dependent_actions": [],
@@ -141570,6 +141577,27 @@
             ],
             "dependent_actions": [],
             "resource_type": ""
+          }
+        ]
+      },
+      {
+        "access_level": "Write",
+        "description": "Grants permission to replace or remove the instance type specification for an Amazon Machine Image (AMI)",
+        "privilege": "ReplaceImageInstanceTypeSpecification",
+        "resource_types": [
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}",
+              "ec2:ImageID",
+              "ec2:ImageType",
+              "ec2:Owner",
+              "ec2:Public",
+              "ec2:Region",
+              "ec2:ResourceTag/${TagKey}",
+              "ec2:RootDeviceType"
+            ],
+            "dependent_actions": [],
+            "resource_type": "image*"
           }
         ]
       },
@@ -143185,6 +143213,24 @@
         ]
       },
       {
+        "access_level": "Read",
+        "description": "Grants permission to validate whether the specified security groups can be associated with a single network interface without exceeding applicable quotas",
+        "privilege": "ValidateSecurityGroupQuotasForInterface",
+        "resource_types": [
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}",
+              "ec2:Region",
+              "ec2:ResourceTag/${TagKey}",
+              "ec2:SecurityGroupID",
+              "ec2:Vpc"
+            ],
+            "dependent_actions": [],
+            "resource_type": "security-group*"
+          }
+        ]
+      },
+      {
         "access_level": "Write",
         "description": "Grants permission to stop advertising an address range that was provisioned for use in AWS through bring your own IP addresses (BYOIP)",
         "privilege": "WithdrawByoipCidr",
@@ -144036,6 +144082,7 @@
           "aws:TagKeys",
           "ec2:Attribute",
           "ec2:Attribute/${AttributeName}",
+          "ec2:BootModeOverride",
           "ec2:ImageID",
           "ec2:ImageType",
           "ec2:IsLaunchTemplateResource",
@@ -247226,7 +247273,9 @@
             "condition_keys": [
               "aws:ResourceTag/${TagKey}"
             ],
-            "dependent_actions": [],
+            "dependent_actions": [
+              "mediaconvert:ListJobs"
+            ],
             "resource_type": "Job*"
           }
         ]
@@ -336744,6 +336793,21 @@
       },
       {
         "access_level": "Write",
+        "description": "Grants permission to attach an elastic network interface to a SageMaker HyperPod cluster node",
+        "privilege": "AttachClusterNodeNetworkInterface",
+        "resource_types": [
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}",
+              "sagemaker:ResourceTag/${TagKey}"
+            ],
+            "dependent_actions": [],
+            "resource_type": "cluster*"
+          }
+        ]
+      },
+      {
+        "access_level": "Write",
         "description": "Grants permission to attach an Amazon EBS volume to a SageMaker HyperPod cluster node",
         "privilege": "AttachClusterNodeVolume",
         "resource_types": [
@@ -338875,7 +338939,6 @@
         "resource_types": [
           {
             "condition_keys": [
-              "aws:RequestTag/${TagKey}",
               "aws:ResourceTag/${TagKey}",
               "sagemaker:ResourceTag/${TagKey}"
             ],
@@ -350355,6 +350418,18 @@
       {
         "access_level": "Write",
         "description": "Grants permission to handle the provider OAuth registration callback that completes integration setup",
+        "privilege": "HandleProviderCallback",
+        "resource_types": [
+          {
+            "condition_keys": [],
+            "dependent_actions": [],
+            "resource_type": ""
+          }
+        ]
+      },
+      {
+        "access_level": "Write",
+        "description": "Grants permission to handle the provider OAuth registration callback that completes integration setup",
         "privilege": "HandleProviderRegistrationCallback",
         "resource_types": [
           {
@@ -351147,6 +351222,20 @@
             "dependent_actions": [],
             "resource_type": "AgentSpace*"
           },
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}"
+            ],
+            "dependent_actions": [],
+            "resource_type": "Integration*"
+          }
+        ]
+      },
+      {
+        "access_level": "Write",
+        "description": "Grants permission to update an integration",
+        "privilege": "UpdateIntegration",
+        "resource_types": [
           {
             "condition_keys": [
               "aws:ResourceTag/${TagKey}"
@@ -366682,6 +366771,20 @@
       },
       {
         "access_level": "Read",
+        "description": "Grants permission to retrieve voice calling permission for a WhatsApp phone number",
+        "privilege": "GetWhatsAppCallPermission",
+        "resource_types": [
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}"
+            ],
+            "dependent_actions": [],
+            "resource_type": "phone-number-id*"
+          }
+        ]
+      },
+      {
+        "access_level": "Read",
         "description": "Grants permission to retrieve the metadata and status of a WhatsApp Flow",
         "privilege": "GetWhatsAppFlow",
         "resource_types": [
@@ -366871,6 +366974,20 @@
       },
       {
         "access_level": "Write",
+        "description": "Grants permission to send a voice calling event through WhatsApp",
+        "privilege": "SendWhatsAppCallEvent",
+        "resource_types": [
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}"
+            ],
+            "dependent_actions": [],
+            "resource_type": "phone-number-id*"
+          }
+        ]
+      },
+      {
+        "access_level": "Write",
         "description": "Grants permission to send a message through WhatsApp",
         "privilege": "SendWhatsAppMessage",
         "resource_types": [
@@ -366928,6 +367045,20 @@
             ],
             "dependent_actions": [],
             "resource_type": "waba"
+          }
+        ]
+      },
+      {
+        "access_level": "Write",
+        "description": "Grants permission to update the settings of a linked WhatsApp phone number",
+        "privilege": "UpdateLinkedWhatsAppBusinessAccountPhoneNumber",
+        "resource_types": [
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}"
+            ],
+            "dependent_actions": [],
+            "resource_type": "phone-number-id*"
           }
         ]
       },
@@ -400277,13 +400408,6 @@
         "resource_types": [
           {
             "condition_keys": [
-              "aws:ResourceTag/${TagKey}"
-            ],
-            "dependent_actions": [],
-            "resource_type": "KnowledgeBase*"
-          },
-          {
-            "condition_keys": [
               "aws:ResourceTag/${TagKey}",
               "wisdom:MessageTemplate/RoutingProfileArn"
             ],
@@ -400446,15 +400570,6 @@
             ],
             "dependent_actions": [],
             "resource_type": "Content*"
-          },
-          {
-            "condition_keys": [
-              "aws:RequestTag/${TagKey}",
-              "aws:ResourceTag/${TagKey}",
-              "aws:TagKeys"
-            ],
-            "dependent_actions": [],
-            "resource_type": "KnowledgeBase*"
           }
         ]
       },
@@ -400496,13 +400611,6 @@
         "resource_types": [
           {
             "condition_keys": [
-              "aws:ResourceTag/${TagKey}"
-            ],
-            "dependent_actions": [],
-            "resource_type": "KnowledgeBase*"
-          },
-          {
-            "condition_keys": [
               "aws:ResourceTag/${TagKey}",
               "wisdom:MessageTemplate/RoutingProfileArn"
             ],
@@ -400516,13 +400624,6 @@
         "description": "Grants permission to create a version of a message template",
         "privilege": "CreateMessageTemplateVersion",
         "resource_types": [
-          {
-            "condition_keys": [
-              "aws:ResourceTag/${TagKey}"
-            ],
-            "dependent_actions": [],
-            "resource_type": "KnowledgeBase*"
-          },
           {
             "condition_keys": [
               "aws:ResourceTag/${TagKey}",
@@ -400568,13 +400669,6 @@
         "description": "Grants permission to deactivate a message template",
         "privilege": "DeactivateMessageTemplate",
         "resource_types": [
-          {
-            "condition_keys": [
-              "aws:ResourceTag/${TagKey}"
-            ],
-            "dependent_actions": [],
-            "resource_type": "KnowledgeBase*"
-          },
           {
             "condition_keys": [
               "aws:ResourceTag/${TagKey}",
@@ -400708,13 +400802,6 @@
             ],
             "dependent_actions": [],
             "resource_type": "Content*"
-          },
-          {
-            "condition_keys": [
-              "aws:ResourceTag/${TagKey}"
-            ],
-            "dependent_actions": [],
-            "resource_type": "KnowledgeBase*"
           }
         ]
       },
@@ -400736,13 +400823,6 @@
             ],
             "dependent_actions": [],
             "resource_type": "ContentAssociation*"
-          },
-          {
-            "condition_keys": [
-              "aws:ResourceTag/${TagKey}"
-            ],
-            "dependent_actions": [],
-            "resource_type": "KnowledgeBase*"
           }
         ]
       },
@@ -400781,13 +400861,6 @@
         "resource_types": [
           {
             "condition_keys": [
-              "aws:ResourceTag/${TagKey}"
-            ],
-            "dependent_actions": [],
-            "resource_type": "KnowledgeBase*"
-          },
-          {
-            "condition_keys": [
               "aws:ResourceTag/${TagKey}",
               "wisdom:MessageTemplate/RoutingProfileArn"
             ],
@@ -400803,13 +400876,6 @@
         "resource_types": [
           {
             "condition_keys": [
-              "aws:ResourceTag/${TagKey}"
-            ],
-            "dependent_actions": [],
-            "resource_type": "KnowledgeBase*"
-          },
-          {
-            "condition_keys": [
               "aws:ResourceTag/${TagKey}",
               "wisdom:MessageTemplate/RoutingProfileArn"
             ],
@@ -400823,13 +400889,6 @@
         "description": "Grants permission to delete quick response",
         "privilege": "DeleteQuickResponse",
         "resource_types": [
-          {
-            "condition_keys": [
-              "aws:ResourceTag/${TagKey}"
-            ],
-            "dependent_actions": [],
-            "resource_type": "KnowledgeBase*"
-          },
           {
             "condition_keys": [
               "aws:ResourceTag/${TagKey}"
@@ -400920,13 +400979,6 @@
             ],
             "dependent_actions": [],
             "resource_type": "Content*"
-          },
-          {
-            "condition_keys": [
-              "aws:ResourceTag/${TagKey}"
-            ],
-            "dependent_actions": [],
-            "resource_type": "KnowledgeBase*"
           }
         ]
       },
@@ -400948,13 +401000,6 @@
             ],
             "dependent_actions": [],
             "resource_type": "ContentAssociation*"
-          },
-          {
-            "condition_keys": [
-              "aws:ResourceTag/${TagKey}"
-            ],
-            "dependent_actions": [],
-            "resource_type": "KnowledgeBase*"
           }
         ]
       },
@@ -400969,13 +401014,6 @@
             ],
             "dependent_actions": [],
             "resource_type": "Content*"
-          },
-          {
-            "condition_keys": [
-              "aws:ResourceTag/${TagKey}"
-            ],
-            "dependent_actions": [],
-            "resource_type": "KnowledgeBase*"
           }
         ]
       },
@@ -401018,14 +401056,6 @@
               "wisdom:MessageTemplate/RoutingProfileArn"
             ],
             "dependent_actions": [],
-            "resource_type": "KnowledgeBase*"
-          },
-          {
-            "condition_keys": [
-              "aws:ResourceTag/${TagKey}",
-              "wisdom:MessageTemplate/RoutingProfileArn"
-            ],
-            "dependent_actions": [],
             "resource_type": "MessageTemplate*"
           }
         ]
@@ -401049,13 +401079,6 @@
         "description": "Grants permission to retrieve content",
         "privilege": "GetQuickResponse",
         "resource_types": [
-          {
-            "condition_keys": [
-              "aws:ResourceTag/${TagKey}"
-            ],
-            "dependent_actions": [],
-            "resource_type": "KnowledgeBase*"
-          },
           {
             "condition_keys": [
               "aws:ResourceTag/${TagKey}"
@@ -401206,13 +401229,6 @@
             ],
             "dependent_actions": [],
             "resource_type": "Content*"
-          },
-          {
-            "condition_keys": [
-              "aws:ResourceTag/${TagKey}"
-            ],
-            "dependent_actions": [],
-            "resource_type": "KnowledgeBase*"
           }
         ]
       },
@@ -401261,13 +401277,6 @@
         "description": "Grants permission to list message template versions for the specified message template",
         "privilege": "ListMessageTemplateVersions",
         "resource_types": [
-          {
-            "condition_keys": [
-              "aws:ResourceTag/${TagKey}"
-            ],
-            "dependent_actions": [],
-            "resource_type": "KnowledgeBase*"
-          },
           {
             "condition_keys": [
               "aws:ResourceTag/${TagKey}",
@@ -401435,14 +401444,6 @@
         "description": "Grants permission to render a message template",
         "privilege": "RenderMessageTemplate",
         "resource_types": [
-          {
-            "condition_keys": [
-              "aws:ResourceTag/${TagKey}",
-              "wisdom:MessageTemplate/RoutingProfileArn"
-            ],
-            "dependent_actions": [],
-            "resource_type": "KnowledgeBase*"
-          },
           {
             "condition_keys": [
               "aws:ResourceTag/${TagKey}",
@@ -401787,13 +401788,6 @@
             ],
             "dependent_actions": [],
             "resource_type": "Content*"
-          },
-          {
-            "condition_keys": [
-              "aws:ResourceTag/${TagKey}"
-            ],
-            "dependent_actions": [],
-            "resource_type": "KnowledgeBase*"
           }
         ]
       },
@@ -401818,13 +401812,6 @@
         "resource_types": [
           {
             "condition_keys": [
-              "aws:ResourceTag/${TagKey}"
-            ],
-            "dependent_actions": [],
-            "resource_type": "KnowledgeBase*"
-          },
-          {
-            "condition_keys": [
               "aws:ResourceTag/${TagKey}",
               "wisdom:MessageTemplate/RoutingProfileArn"
             ],
@@ -401840,13 +401827,6 @@
         "resource_types": [
           {
             "condition_keys": [
-              "aws:ResourceTag/${TagKey}"
-            ],
-            "dependent_actions": [],
-            "resource_type": "KnowledgeBase*"
-          },
-          {
-            "condition_keys": [
               "aws:ResourceTag/${TagKey}",
               "wisdom:MessageTemplate/RoutingProfileArn"
             ],
@@ -401860,13 +401840,6 @@
         "description": "Grants permission to update information or content of the quick response",
         "privilege": "UpdateQuickResponse",
         "resource_types": [
-          {
-            "condition_keys": [
-              "aws:ResourceTag/${TagKey}"
-            ],
-            "dependent_actions": [],
-            "resource_type": "KnowledgeBase*"
-          },
           {
             "condition_keys": [
               "aws:ResourceTag/${TagKey}"
