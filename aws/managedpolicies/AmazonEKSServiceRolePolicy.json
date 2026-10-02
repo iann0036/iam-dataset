@@ -7,7 +7,7 @@
     "Permissions management"
   ],
   "arn": "arn:aws:iam::aws:policy/aws-service-role/AmazonEKSServiceRolePolicy",
-  "createdate": "2026-08-21T17:17:09+00:00",
+  "createdate": "2026-10-01T16:27:08+00:00",
   "credentials_exposure": false,
   "data_access": false,
   "deprecated": false,
@@ -174,6 +174,20 @@
       },
       {
         "Action": [
+          "eks:CreateCertificateAuthority",
+          "eks:DeleteCertificateAuthority",
+          "eks:ActivateCertificateAuthority"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:eks:*:*:cluster/*"
+      },
+      {
+        "Action": [
           "eks:CreateAccessEntry",
           "eks:DeleteAccessEntry"
         ],
@@ -291,7 +305,8 @@
       {
         "Action": [
           "ec2:DeleteLaunchTemplate",
-          "ec2:TerminateInstances"
+          "ec2:TerminateInstances",
+          "ec2:RebootInstances"
         ],
         "Condition": {
           "StringLike": {
@@ -307,7 +322,8 @@
       {
         "Action": [
           "ec2:DeleteLaunchTemplate",
-          "ec2:TerminateInstances"
+          "ec2:TerminateInstances",
+          "ec2:RebootInstances"
         ],
         "Condition": {
           "StringEquals": {
@@ -1099,6 +1115,48 @@
     },
     {
       "access_level": "Write",
+      "action": "eks:CreateCertificateAuthority",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "eks:CreateCertificateAuthority",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "eks:DeleteCertificateAuthority",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "eks:DeleteCertificateAuthority",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "eks:ActivateCertificateAuthority",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "eks:ActivateCertificateAuthority",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
       "action": "eks:CreateAccessEntry",
       "condition": {
         "ArnLike": {
@@ -1333,6 +1391,20 @@
     },
     {
       "access_level": "Write",
+      "action": "ec2:RebootInstances",
+      "condition": {
+        "StringLike": {
+          "aws:ResourceTag/eks:eks-cluster-name": "*"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:RebootInstances",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
       "action": "ec2:DeleteLaunchTemplate",
       "condition": {
         "StringEquals": {
@@ -1360,6 +1432,22 @@
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "ec2:TerminateInstances",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:RebootInstances",
+      "condition": {
+        "StringEquals": {
+          "ec2:ManagedResourceOperator": [
+            "eks.amazonaws.com"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:RebootInstances",
       "privesc": false,
       "resource_exposure": false
     },
@@ -1469,6 +1557,6 @@
   "resource_exposure": true,
   "undocumented_actions": false,
   "unknown_actions": [],
-  "updatedate": "2026-08-21T17:17:09+00:00",
-  "version": "v27"
+  "updatedate": "2026-10-01T16:27:08+00:00",
+  "version": "v28"
 }
