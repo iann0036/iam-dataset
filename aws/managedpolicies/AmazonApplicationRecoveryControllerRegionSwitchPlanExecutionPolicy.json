@@ -1,10 +1,11 @@
 {
   "access_levels": [
     "List",
-    "Read"
+    "Read",
+    "Write"
   ],
   "arn": "arn:aws:iam::aws:policy/AmazonApplicationRecoveryControllerRegionSwitchPlanExecutionPolicy",
-  "createdate": "2026-03-05T19:27:12+00:00",
+  "createdate": "2026-10-02T18:57:08+00:00",
   "credentials_exposure": false,
   "data_access": false,
   "deprecated": false,
@@ -37,6 +38,28 @@
         "Effect": "Allow",
         "Resource": "*",
         "Sid": "CloudWatch"
+      },
+      {
+        "Action": [
+          "servicequotas:GetServiceQuota",
+          "servicequotas:GetRequestedServiceQuotaChange"
+        ],
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "ServiceQuotasRead"
+      },
+      {
+        "Action": [
+          "servicequotas:RequestServiceQuotaIncrease"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "ServiceQuotasWrite"
       }
     ],
     "Version": "2012-10-17"
@@ -111,6 +134,40 @@
       "effective_action": "cloudwatch:GetMetricStatistics",
       "privesc": false,
       "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "servicequotas:GetServiceQuota",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "servicequotas:GetServiceQuota",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "servicequotas:GetRequestedServiceQuotaChange",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "servicequotas:GetRequestedServiceQuotaChange",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "servicequotas:RequestServiceQuotaIncrease",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "servicequotas:RequestServiceQuotaIncrease",
+      "privesc": false,
+      "resource_exposure": false
     }
   ],
   "grantless": false,
@@ -120,6 +177,6 @@
   "resource_exposure": false,
   "undocumented_actions": false,
   "unknown_actions": [],
-  "updatedate": "2026-03-05T19:27:12+00:00",
-  "version": "v4"
+  "updatedate": "2026-10-02T18:57:08+00:00",
+  "version": "v5"
 }
