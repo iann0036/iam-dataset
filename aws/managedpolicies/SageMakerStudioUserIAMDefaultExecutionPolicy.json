@@ -8,7 +8,7 @@
     "Unknown"
   ],
   "arn": "arn:aws:iam::aws:policy/SageMakerStudioUserIAMDefaultExecutionPolicy",
-  "createdate": "2026-08-13T18:37:16+00:00",
+  "createdate": "2026-10-08T15:17:08+00:00",
   "credentials_exposure": true,
   "data_access": true,
   "deprecated": false,
@@ -524,7 +524,8 @@
               "redshift.amazonaws.com",
               "airflow-serverless.amazonaws.com",
               "events.amazonaws.com",
-              "pods.eks.amazonaws.com"
+              "pods.eks.amazonaws.com",
+              "access-grants.s3.amazonaws.com"
             ]
           }
         },
@@ -562,6 +563,9 @@
       {
         "Action": [
           "s3:GetBucketAcl",
+          "s3:GetAccessGrantsInstance",
+          "s3:GetAccessGrantsInstanceForPrefix",
+          "s3:GetDataAccess",
           "s3:List*"
         ],
         "Effect": "Allow",
@@ -1086,6 +1090,122 @@
         "Effect": "Allow",
         "Resource": "arn:aws:events:*:*:rule/*",
         "Sid": "CanvasEventBridgeTagBasedOperations"
+      },
+      {
+        "Action": [
+          "s3:AbortMultipartUpload",
+          "s3:DeleteObject",
+          "s3:DeleteObjectVersion",
+          "s3:GetObject",
+          "s3:GetObjectVersion",
+          "s3:GetObjectAcl",
+          "s3:GetObjectVersionAcl",
+          "s3:PutObject",
+          "s3:PutObjectAcl",
+          "s3:PutObjectVersionAcl"
+        ],
+        "Condition": {
+          "ArnEquals": {
+            "s3:AccessGrantsInstanceArn": [
+              "arn:aws:s3:*:*:access-grants/default"
+            ]
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "S3AGObjectPermissions"
+      },
+      {
+        "Action": [
+          "s3:CreateAccessGrantsLocation",
+          "s3:DeleteAccessGrantsLocation",
+          "s3:GetAccessGrantsLocation"
+        ],
+        "Condition": {
+          "Null": {
+            "aws:PrincipalTag/AmazonDataZoneProjectBucket": "false"
+          },
+          "StringEquals": {
+            "s3:accessGrantsLocationScope": "s3://${aws:PrincipalTag/AmazonDataZoneProjectBucket}"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:s3:*:*:access-grants/default/location/*",
+        "Sid": "S3AGLocationPermissions"
+      },
+      {
+        "Action": [
+          "s3:CreateAccessGrant",
+          "s3:DeleteAccessGrant"
+        ],
+        "Condition": {
+          "Null": {
+            "aws:PrincipalTag/AmazonDataZoneProjectBucket": "false"
+          },
+          "StringLike": {
+            "s3:accessGrantScope": "s3://${aws:PrincipalTag/AmazonDataZoneProjectBucket}/*"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:s3:*:*:access-grants/default/grant/*",
+        "Sid": "S3AGPermissions"
+      },
+      {
+        "Action": [
+          "s3:TagResource"
+        ],
+        "Condition": {
+          "ForAllValues:StringLike": {
+            "aws:TagKeys": [
+              "AWSDataZone*",
+              "AmazonDataZone*"
+            ]
+          },
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:s3:*:*:access-grants/default/location/*",
+          "arn:aws:s3:*:*:access-grants/default/grant/*"
+        ],
+        "Sid": "S3AGTaggingPermission"
+      },
+      {
+        "Action": [
+          "sso:DescribeInstance",
+          "sso:DescribeApplication"
+        ],
+        "Condition": {
+          "Bool": {
+            "aws:ViaAWSService": "true"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:sso:::instance/*",
+          "arn:aws:sso::*:application/*/*"
+        ],
+        "Sid": "SSOInstanceReadOnlyPermissions"
+      },
+      {
+        "Action": [
+          "identitystore:DescribeUser",
+          "identitystore:DescribeGroup"
+        ],
+        "Condition": {
+          "Bool": {
+            "aws:ViaAWSService": "true"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:identitystore::*:identitystore/*",
+          "arn:aws:identitystore:::user/*",
+          "arn:aws:identitystore:::group/*"
+        ],
+        "Sid": "IdentityStoreReadOnlyPermissions"
       }
     ],
     "Version": "2012-10-17"
@@ -10192,6 +10312,26 @@
       "condition": null,
       "credentials_exposure": false,
       "data_access": false,
+      "effective_action": "glue:GetSystemLogsForJobRun",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "glue:Get*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "glue:GetSystemLogsForSession",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "glue:Get*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
       "effective_action": "glue:GetTable",
       "privesc": false,
       "resource_exposure": false
@@ -10753,6 +10893,16 @@
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "glue:GetJobs",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "glue:*Job*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "glue:GetSystemLogsForJobRun",
       "privesc": false,
       "resource_exposure": false
     },
@@ -12843,6 +12993,26 @@
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "glue:GetStorageUnit",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "glue:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "glue:GetSystemLogsForJobRun",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "glue:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "glue:GetSystemLogsForSession",
       "privesc": false,
       "resource_exposure": false
     },
@@ -16601,6 +16771,34 @@
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "glue:GetStorageUnit",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "glue:*",
+      "condition": {
+        "StringEquals": {
+          "glue:LakeFormationPermissions": "Enabled"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "glue:GetSystemLogsForJobRun",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "glue:*",
+      "condition": {
+        "StringEquals": {
+          "glue:LakeFormationPermissions": "Enabled"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "glue:GetSystemLogsForSession",
       "privesc": false,
       "resource_exposure": false
     },
@@ -22831,7 +23029,8 @@
             "redshift.amazonaws.com",
             "airflow-serverless.amazonaws.com",
             "events.amazonaws.com",
-            "pods.eks.amazonaws.com"
+            "pods.eks.amazonaws.com",
+            "access-grants.s3.amazonaws.com"
           ]
         }
       },
@@ -23038,6 +23237,36 @@
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "s3:GetBucketAcl",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "s3:GetAccessGrantsInstance",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3:GetAccessGrantsInstance",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "s3:GetAccessGrantsInstanceForPrefix",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3:GetAccessGrantsInstanceForPrefix",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "s3:GetDataAccess",
+      "condition": null,
+      "credentials_exposure": true,
+      "data_access": false,
+      "effective_action": "s3:GetDataAccess",
       "privesc": false,
       "resource_exposure": false
     },
@@ -29204,6 +29433,327 @@
       "effective_action": "events:TagResource",
       "privesc": false,
       "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "s3:AbortMultipartUpload",
+      "condition": {
+        "ArnEquals": {
+          "s3:AccessGrantsInstanceArn": [
+            "arn:aws:s3:*:*:access-grants/default"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3:AbortMultipartUpload",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "s3:DeleteObject",
+      "condition": {
+        "ArnEquals": {
+          "s3:AccessGrantsInstanceArn": [
+            "arn:aws:s3:*:*:access-grants/default"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3:DeleteObject",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "s3:DeleteObjectVersion",
+      "condition": {
+        "ArnEquals": {
+          "s3:AccessGrantsInstanceArn": [
+            "arn:aws:s3:*:*:access-grants/default"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3:DeleteObjectVersion",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "s3:GetObject",
+      "condition": {
+        "ArnEquals": {
+          "s3:AccessGrantsInstanceArn": [
+            "arn:aws:s3:*:*:access-grants/default"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": true,
+      "effective_action": "s3:GetObject",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "s3:GetObjectVersion",
+      "condition": {
+        "ArnEquals": {
+          "s3:AccessGrantsInstanceArn": [
+            "arn:aws:s3:*:*:access-grants/default"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": true,
+      "effective_action": "s3:GetObjectVersion",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "s3:GetObjectAcl",
+      "condition": {
+        "ArnEquals": {
+          "s3:AccessGrantsInstanceArn": [
+            "arn:aws:s3:*:*:access-grants/default"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3:GetObjectAcl",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "s3:GetObjectVersionAcl",
+      "condition": {
+        "ArnEquals": {
+          "s3:AccessGrantsInstanceArn": [
+            "arn:aws:s3:*:*:access-grants/default"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3:GetObjectVersionAcl",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "s3:PutObject",
+      "condition": {
+        "ArnEquals": {
+          "s3:AccessGrantsInstanceArn": [
+            "arn:aws:s3:*:*:access-grants/default"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3:PutObject",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Permissions management, Write",
+      "action": "s3:PutObjectAcl",
+      "condition": {
+        "ArnEquals": {
+          "s3:AccessGrantsInstanceArn": [
+            "arn:aws:s3:*:*:access-grants/default"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3:PutObjectAcl",
+      "privesc": false,
+      "resource_exposure": true
+    },
+    {
+      "access_level": "Permissions management, Write",
+      "action": "s3:PutObjectVersionAcl",
+      "condition": {
+        "ArnEquals": {
+          "s3:AccessGrantsInstanceArn": [
+            "arn:aws:s3:*:*:access-grants/default"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3:PutObjectVersionAcl",
+      "privesc": false,
+      "resource_exposure": true
+    },
+    {
+      "access_level": "Permissions management, Write",
+      "action": "s3:CreateAccessGrantsLocation",
+      "condition": {
+        "Null": {
+          "aws:PrincipalTag/AmazonDataZoneProjectBucket": "false"
+        },
+        "StringEquals": {
+          "s3:accessGrantsLocationScope": "s3://${aws:PrincipalTag/AmazonDataZoneProjectBucket}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3:CreateAccessGrantsLocation",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Permissions management, Write",
+      "action": "s3:DeleteAccessGrantsLocation",
+      "condition": {
+        "Null": {
+          "aws:PrincipalTag/AmazonDataZoneProjectBucket": "false"
+        },
+        "StringEquals": {
+          "s3:accessGrantsLocationScope": "s3://${aws:PrincipalTag/AmazonDataZoneProjectBucket}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3:DeleteAccessGrantsLocation",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "s3:GetAccessGrantsLocation",
+      "condition": {
+        "Null": {
+          "aws:PrincipalTag/AmazonDataZoneProjectBucket": "false"
+        },
+        "StringEquals": {
+          "s3:accessGrantsLocationScope": "s3://${aws:PrincipalTag/AmazonDataZoneProjectBucket}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3:GetAccessGrantsLocation",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Permissions management, Write",
+      "action": "s3:CreateAccessGrant",
+      "condition": {
+        "Null": {
+          "aws:PrincipalTag/AmazonDataZoneProjectBucket": "false"
+        },
+        "StringLike": {
+          "s3:accessGrantScope": "s3://${aws:PrincipalTag/AmazonDataZoneProjectBucket}/*"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3:CreateAccessGrant",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Permissions management, Write",
+      "action": "s3:DeleteAccessGrant",
+      "condition": {
+        "Null": {
+          "aws:PrincipalTag/AmazonDataZoneProjectBucket": "false"
+        },
+        "StringLike": {
+          "s3:accessGrantScope": "s3://${aws:PrincipalTag/AmazonDataZoneProjectBucket}/*"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3:DeleteAccessGrant",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Tagging, Write",
+      "action": "s3:TagResource",
+      "condition": {
+        "ForAllValues:StringLike": {
+          "aws:TagKeys": [
+            "AWSDataZone*",
+            "AmazonDataZone*"
+          ]
+        },
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3:TagResource",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "sso:DescribeInstance",
+      "condition": {
+        "Bool": {
+          "aws:ViaAWSService": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sso:DescribeInstance",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "sso:DescribeApplication",
+      "condition": {
+        "Bool": {
+          "aws:ViaAWSService": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sso:DescribeApplication",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "identitystore:DescribeUser",
+      "condition": {
+        "Bool": {
+          "aws:ViaAWSService": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "identitystore:DescribeUser",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "identitystore:DescribeGroup",
+      "condition": {
+        "Bool": {
+          "aws:ViaAWSService": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "identitystore:DescribeGroup",
+      "privesc": false,
+      "resource_exposure": false
     }
   ],
   "grantless": false,
@@ -29213,6 +29763,6 @@
   "resource_exposure": true,
   "undocumented_actions": true,
   "unknown_actions": [],
-  "updatedate": "2026-08-13T18:37:16+00:00",
-  "version": "v29"
+  "updatedate": "2026-10-08T15:17:08+00:00",
+  "version": "v30"
 }

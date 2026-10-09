@@ -8,7 +8,7 @@
     "Unknown"
   ],
   "arn": "arn:aws:iam::aws:policy/SageMakerStudioUserIAMPermissiveExecutionPolicy",
-  "createdate": "2026-08-13T18:37:09+00:00",
+  "createdate": "2026-10-08T17:57:08+00:00",
   "credentials_exposure": true,
   "data_access": true,
   "deprecated": false,
@@ -261,7 +261,8 @@
               "emr-serverless.amazonaws.com",
               "elasticmapreduce.amazonaws.com",
               "airflow-serverless.amazonaws.com",
-              "pods.eks.amazonaws.com"
+              "pods.eks.amazonaws.com",
+              "access-grants.s3.amazonaws.com"
             ]
           }
         },
@@ -651,6 +652,41 @@
           "arn:aws:ec2:*:*:network-interface/*"
         ],
         "Sid": "EC2TagAccessForVpc"
+      },
+      {
+        "Action": [
+          "sso:DescribeInstance",
+          "sso:DescribeApplication"
+        ],
+        "Condition": {
+          "Bool": {
+            "aws:ViaAWSService": "true"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:sso:::instance/*",
+          "arn:aws:sso::*:application/*/*"
+        ],
+        "Sid": "SSOInstanceReadOnlyPermissions"
+      },
+      {
+        "Action": [
+          "identitystore:DescribeUser",
+          "identitystore:DescribeGroup"
+        ],
+        "Condition": {
+          "Bool": {
+            "aws:ViaAWSService": "true"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:identitystore::*:identitystore/*",
+          "arn:aws:identitystore:::user/*",
+          "arn:aws:identitystore:::group/*"
+        ],
+        "Sid": "IdentityStoreReadOnlyPermissions"
       }
     ],
     "Version": "2012-10-17"
@@ -1833,6 +1869,16 @@
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "cloudwatch:PutMetricStream",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "cloudwatch:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudwatch:PutRecords",
       "privesc": false,
       "resource_exposure": false
     },
@@ -3983,6 +4029,26 @@
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "glue:GetStorageUnit",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "glue:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "glue:GetSystemLogsForJobRun",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "glue:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "glue:GetSystemLogsForSession",
       "privesc": false,
       "resource_exposure": false
     },
@@ -33828,7 +33894,8 @@
             "emr-serverless.amazonaws.com",
             "elasticmapreduce.amazonaws.com",
             "airflow-serverless.amazonaws.com",
-            "pods.eks.amazonaws.com"
+            "pods.eks.amazonaws.com",
+            "access-grants.s3.amazonaws.com"
           ]
         }
       },
@@ -37204,6 +37271,62 @@
       "effective_action": "ec2:DeleteTags",
       "privesc": false,
       "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "sso:DescribeInstance",
+      "condition": {
+        "Bool": {
+          "aws:ViaAWSService": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sso:DescribeInstance",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "sso:DescribeApplication",
+      "condition": {
+        "Bool": {
+          "aws:ViaAWSService": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sso:DescribeApplication",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "identitystore:DescribeUser",
+      "condition": {
+        "Bool": {
+          "aws:ViaAWSService": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "identitystore:DescribeUser",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "identitystore:DescribeGroup",
+      "condition": {
+        "Bool": {
+          "aws:ViaAWSService": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "identitystore:DescribeGroup",
+      "privesc": false,
+      "resource_exposure": false
     }
   ],
   "grantless": false,
@@ -37213,6 +37336,6 @@
   "resource_exposure": true,
   "undocumented_actions": true,
   "unknown_actions": [],
-  "updatedate": "2026-08-13T18:37:09+00:00",
-  "version": "v24"
+  "updatedate": "2026-10-08T17:57:08+00:00",
+  "version": "v25"
 }
