@@ -6,7 +6,7 @@
     "Write"
   ],
   "arn": "arn:aws:iam::aws:policy/aws-service-role/CloudwatchApplicationInsightsServiceLinkedRolePolicy",
-  "createdate": "2024-07-25T16:24:03+00:00",
+  "createdate": "2026-10-09T16:27:08+00:00",
   "credentials_exposure": false,
   "data_access": true,
   "deprecated": false,
@@ -66,6 +66,33 @@
           "arn:aws:cloudformation:*:*:stack/ApplicationInsights-*"
         ],
         "Sid": "CloudFormation"
+      },
+      {
+        "Action": [
+          "cloudformation:TagResource"
+        ],
+        "Condition": {
+          "ForAllValues:StringEquals": {
+            "aws:TagKeys": [
+              "ApplicationInsightsManaged"
+            ]
+          },
+          "Null": {
+            "aws:TagKeys": "false"
+          },
+          "StringEquals": {
+            "aws:RequestTag/ApplicationInsightsManaged": "TRUE",
+            "cloudformation:CreateAction": [
+              "CreateStack",
+              "UpdateStack"
+            ]
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:cloudformation:*:*:stack/ApplicationInsights-*"
+        ],
+        "Sid": "CloudFormationTagOnCreate"
       },
       {
         "Action": [
@@ -655,6 +682,32 @@
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "cloudformation:UpdateTerminationProtection",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Tagging, Write",
+      "action": "cloudformation:TagResource",
+      "condition": {
+        "ForAllValues:StringEquals": {
+          "aws:TagKeys": [
+            "ApplicationInsightsManaged"
+          ]
+        },
+        "Null": {
+          "aws:TagKeys": "false"
+        },
+        "StringEquals": {
+          "aws:RequestTag/ApplicationInsightsManaged": "TRUE",
+          "cloudformation:CreateAction": [
+            "CreateStack",
+            "UpdateStack"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudformation:TagResource",
       "privesc": false,
       "resource_exposure": false
     },
@@ -1716,6 +1769,6 @@
   "resource_exposure": false,
   "undocumented_actions": false,
   "unknown_actions": [],
-  "updatedate": "2024-07-25T16:24:03+00:00",
-  "version": "v25"
+  "updatedate": "2026-10-09T16:27:08+00:00",
+  "version": "v26"
 }
