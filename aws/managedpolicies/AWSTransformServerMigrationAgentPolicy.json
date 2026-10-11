@@ -7,7 +7,7 @@
     "Permissions management"
   ],
   "arn": "arn:aws:iam::aws:policy/AWSTransformServerMigrationAgentPolicy",
-  "createdate": "2026-09-01T10:37:08+00:00",
+  "createdate": "2026-10-11T08:47:08+00:00",
   "credentials_exposure": true,
   "data_access": true,
   "deprecated": false,
@@ -1049,6 +1049,25 @@
         "Effect": "Allow",
         "Resource": "arn:aws:iam::*:role/AWSTransformRehostSharingRole_${aws:PrincipalAccount}",
         "Sid": "StsCrossAccountAssumeRole"
+      },
+      {
+        "Action": [
+          "sts:AssumeRole"
+        ],
+        "Condition": {
+          "ForAnyValue:StringEquals": {
+            "aws:CalledVia": [
+              "mgn.amazonaws.com"
+            ]
+          },
+          "StringEquals": {
+            "aws:ResourceOrgID": "${aws:PrincipalOrgID}",
+            "sts:ExternalId": "${aws:PrincipalAccount}:AWSTransform"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:iam::*:role/AWSTransformRehostSharingRole_${aws:PrincipalAccount}",
+        "Sid": "StsCrossAccountAssumeRoleViaMgn"
       }
     ],
     "Version": "2012-10-17"
@@ -3803,6 +3822,26 @@
       "effective_action": "sts:AssumeRole",
       "privesc": false,
       "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "sts:AssumeRole",
+      "condition": {
+        "ForAnyValue:StringEquals": {
+          "aws:CalledVia": [
+            "mgn.amazonaws.com"
+          ]
+        },
+        "StringEquals": {
+          "aws:ResourceOrgID": "${aws:PrincipalOrgID}",
+          "sts:ExternalId": "${aws:PrincipalAccount}:AWSTransform"
+        }
+      },
+      "credentials_exposure": true,
+      "data_access": false,
+      "effective_action": "sts:AssumeRole",
+      "privesc": false,
+      "resource_exposure": false
     }
   ],
   "grantless": false,
@@ -3812,6 +3851,6 @@
   "resource_exposure": true,
   "undocumented_actions": false,
   "unknown_actions": [],
-  "updatedate": "2026-09-01T10:37:08+00:00",
-  "version": "v2"
+  "updatedate": "2026-10-11T08:47:08+00:00",
+  "version": "v3"
 }
