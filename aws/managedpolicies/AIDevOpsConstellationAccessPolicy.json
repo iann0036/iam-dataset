@@ -5,7 +5,7 @@
     "Write"
   ],
   "arn": "arn:aws:iam::aws:policy/service-role/AIDevOpsConstellationAccessPolicy",
-  "createdate": "2026-08-05T16:27:17+00:00",
+  "createdate": "2026-10-13T20:37:07+00:00",
   "credentials_exposure": false,
   "data_access": false,
   "deprecated": false,
@@ -13,7 +13,6 @@
     "Statement": [
       {
         "Action": [
-          "aidevops:GetAgentSpace",
           "aidevops:CreateBacklogTask",
           "aidevops:GetBacklogTask",
           "aidevops:ListBacklogTasks",
@@ -23,7 +22,23 @@
           "aidevops:ListAssets",
           "aidevops:ListAssetFiles",
           "aidevops:ListExecutions",
-          "aidevops:ListJournalRecords"
+          "aidevops:ListJournalRecords",
+          "aidevops:SendMessage",
+          "aidevops:UpdateBacklogTask"
+        ],
+        "Condition": {
+          "Null": {
+            "aidevops:SourceAgentSpaceArn": "false",
+            "aidevops:TargetAgentSpaceArn": "false"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:aidevops:*:*:agentspace/*",
+        "Sid": "ConstellationScopedCoordination"
+      },
+      {
+        "Action": [
+          "aidevops:GetAgentSpace"
         ],
         "Effect": "Allow",
         "Resource": "arn:aws:aidevops:*:*:agentspace/*",
@@ -34,19 +49,14 @@
   },
   "effective_actions": [
     {
-      "access_level": "Read",
-      "action": "aidevops:GetAgentSpace",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "aidevops:GetAgentSpace",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
       "access_level": "Write",
       "action": "aidevops:CreateBacklogTask",
-      "condition": null,
+      "condition": {
+        "Null": {
+          "aidevops:SourceAgentSpaceArn": "false",
+          "aidevops:TargetAgentSpaceArn": "false"
+        }
+      },
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "aidevops:CreateBacklogTask",
@@ -56,7 +66,12 @@
     {
       "access_level": "Read",
       "action": "aidevops:GetBacklogTask",
-      "condition": null,
+      "condition": {
+        "Null": {
+          "aidevops:SourceAgentSpaceArn": "false",
+          "aidevops:TargetAgentSpaceArn": "false"
+        }
+      },
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "aidevops:GetBacklogTask",
@@ -66,7 +81,12 @@
     {
       "access_level": "List",
       "action": "aidevops:ListBacklogTasks",
-      "condition": null,
+      "condition": {
+        "Null": {
+          "aidevops:SourceAgentSpaceArn": "false",
+          "aidevops:TargetAgentSpaceArn": "false"
+        }
+      },
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "aidevops:ListBacklogTasks",
@@ -76,7 +96,12 @@
     {
       "access_level": "Read",
       "action": "aidevops:GetAsset",
-      "condition": null,
+      "condition": {
+        "Null": {
+          "aidevops:SourceAgentSpaceArn": "false",
+          "aidevops:TargetAgentSpaceArn": "false"
+        }
+      },
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "aidevops:GetAsset",
@@ -86,7 +111,12 @@
     {
       "access_level": "Read",
       "action": "aidevops:GetAssetContent",
-      "condition": null,
+      "condition": {
+        "Null": {
+          "aidevops:SourceAgentSpaceArn": "false",
+          "aidevops:TargetAgentSpaceArn": "false"
+        }
+      },
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "aidevops:GetAssetContent",
@@ -96,7 +126,12 @@
     {
       "access_level": "Read",
       "action": "aidevops:GetAssetFile",
-      "condition": null,
+      "condition": {
+        "Null": {
+          "aidevops:SourceAgentSpaceArn": "false",
+          "aidevops:TargetAgentSpaceArn": "false"
+        }
+      },
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "aidevops:GetAssetFile",
@@ -106,7 +141,12 @@
     {
       "access_level": "List",
       "action": "aidevops:ListAssets",
-      "condition": null,
+      "condition": {
+        "Null": {
+          "aidevops:SourceAgentSpaceArn": "false",
+          "aidevops:TargetAgentSpaceArn": "false"
+        }
+      },
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "aidevops:ListAssets",
@@ -116,7 +156,12 @@
     {
       "access_level": "List",
       "action": "aidevops:ListAssetFiles",
-      "condition": null,
+      "condition": {
+        "Null": {
+          "aidevops:SourceAgentSpaceArn": "false",
+          "aidevops:TargetAgentSpaceArn": "false"
+        }
+      },
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "aidevops:ListAssetFiles",
@@ -126,7 +171,12 @@
     {
       "access_level": "List",
       "action": "aidevops:ListExecutions",
-      "condition": null,
+      "condition": {
+        "Null": {
+          "aidevops:SourceAgentSpaceArn": "false",
+          "aidevops:TargetAgentSpaceArn": "false"
+        }
+      },
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "aidevops:ListExecutions",
@@ -136,10 +186,55 @@
     {
       "access_level": "List",
       "action": "aidevops:ListJournalRecords",
-      "condition": null,
+      "condition": {
+        "Null": {
+          "aidevops:SourceAgentSpaceArn": "false",
+          "aidevops:TargetAgentSpaceArn": "false"
+        }
+      },
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "aidevops:ListJournalRecords",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "aidevops:SendMessage",
+      "condition": {
+        "Null": {
+          "aidevops:SourceAgentSpaceArn": "false",
+          "aidevops:TargetAgentSpaceArn": "false"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "aidevops:SendMessage",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "aidevops:UpdateBacklogTask",
+      "condition": {
+        "Null": {
+          "aidevops:SourceAgentSpaceArn": "false",
+          "aidevops:TargetAgentSpaceArn": "false"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "aidevops:UpdateBacklogTask",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "aidevops:GetAgentSpace",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "aidevops:GetAgentSpace",
       "privesc": false,
       "resource_exposure": false
     }
@@ -151,6 +246,6 @@
   "resource_exposure": false,
   "undocumented_actions": false,
   "unknown_actions": [],
-  "updatedate": "2026-08-05T16:27:17+00:00",
-  "version": "v1"
+  "updatedate": "2026-10-13T20:37:07+00:00",
+  "version": "v2"
 }
