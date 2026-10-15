@@ -7,7 +7,7 @@
     "Permissions management"
   ],
   "arn": "arn:aws:iam::aws:policy/SageMakerStudioProjectRoleMachineLearningPolicy",
-  "createdate": "2026-09-14T20:37:08+00:00",
+  "createdate": "2026-10-14T19:37:07+00:00",
   "credentials_exposure": true,
   "data_access": true,
   "deprecated": false,
@@ -1154,8 +1154,10 @@
       },
       {
         "Action": [
+          "s3:GetAccessGrantsInstance",
           "s3:GetAccessGrantsInstanceForPrefix",
           "s3:GetDataAccess",
+          "s3:ListAccessGrants",
           "s3:ListCallerAccessGrants",
           "ram:GetResourceShareInvitations"
         ],
@@ -1266,13 +1268,19 @@
         "Action": [
           "datazone:GenerateCode",
           "datazone:CreateAsset*",
+          "datazone:Get*",
+          "datazone:CreateListingChangeSet",
+          "datazone:CreateSubscriptionRequest",
+          "datazone:RevokeSubscription",
           "datazone:List*",
           "datazone:Search*",
           "datazone:*Message*",
           "datazone:*Conversation*",
           "datazone:*Cell*",
           "datazone:*Notebook*",
-          "datazone:*Compute*"
+          "datazone:*Compute*",
+          "datazone:*Agent*",
+          "datazone:*DataApp*"
         ],
         "Effect": "Allow",
         "Resource": "*",
@@ -1306,6 +1314,22 @@
         "Effect": "Allow",
         "Resource": "*",
         "Sid": "SQLWorkBenchMLActionsWithResourceType"
+      },
+      {
+        "Action": [
+          "identitystore:DescribeUser",
+          "identitystore:DescribeGroup",
+          "sso:DescribeInstance",
+          "sso:DescribeApplication"
+        ],
+        "Condition": {
+          "Bool": {
+            "aws:ViaAWSService": "true"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "SSOReadOnlyPermissions"
       }
     ],
     "Version": "2012-10-17"
@@ -5738,6 +5762,16 @@
     },
     {
       "access_level": "Read",
+      "action": "s3:GetAccessGrantsInstance",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3:GetAccessGrantsInstance",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
       "action": "s3:GetAccessGrantsInstanceForPrefix",
       "condition": null,
       "credentials_exposure": false,
@@ -5753,6 +5787,16 @@
       "credentials_exposure": true,
       "data_access": false,
       "effective_action": "s3:GetDataAccess",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "s3:ListAccessGrants",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3:ListAccessGrants",
       "privesc": false,
       "resource_exposure": false
     },
@@ -6179,6 +6223,576 @@
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "datazone:CreateAssetType",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "datazone:Get*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "datazone:GetAccountPool",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "datazone:Get*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "datazone:GetAgentApprovalPolicy",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "datazone:Get*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "datazone:GetAsset",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "datazone:Get*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "datazone:GetAssetFilter",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "datazone:Get*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "datazone:GetAssetType",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "datazone:Get*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "datazone:GetCell",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "datazone:Get*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "datazone:GetCellRun",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "datazone:Get*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "datazone:GetCellRunResult",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "datazone:Get*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "datazone:GetCompute",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "datazone:Get*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "datazone:GetConnection",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "datazone:Get*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "datazone:GetConversation",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "datazone:Get*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "datazone:GetCurrentEffectivePolicy",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "datazone:Get*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "datazone:GetDataApp",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "datazone:Get*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "datazone:GetDataExportConfiguration",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "datazone:Get*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "datazone:GetDataProduct",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "datazone:Get*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "datazone:GetDataSource",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "datazone:Get*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "datazone:GetDataSourceRun",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "datazone:Get*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "datazone:GetDesignation",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "datazone:Get*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "datazone:GetDomain",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "datazone:Get*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "datazone:GetDomainUnit",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "datazone:Get*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "datazone:GetEnvironment",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "datazone:Get*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "datazone:GetEnvironmentAction",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "datazone:Get*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "datazone:GetEnvironmentBlueprint",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "datazone:Get*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "datazone:GetEnvironmentBlueprintConfiguration",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "datazone:Get*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "datazone:GetEnvironmentCredentials",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "datazone:Get*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "datazone:GetEnvironmentProfile",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "datazone:Get*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "datazone:GetFormType",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "datazone:Get*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "datazone:GetGlossary",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "datazone:Get*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "datazone:GetGlossaryTerm",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "datazone:Get*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "datazone:GetGroupProfile",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Permissions management, Write",
+      "action": "datazone:Get*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "datazone:GetIamPortalLoginUrl",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "datazone:Get*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "datazone:GetJobRun",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "datazone:Get*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "datazone:GetLineageEvent",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "datazone:Get*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "datazone:GetLineageNode",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "datazone:Get*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "datazone:GetListing",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "datazone:Get*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "datazone:GetMetadataGenerationRun",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "datazone:Get*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "datazone:GetNotebook",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "datazone:Get*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "datazone:GetNotebookCompute",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "datazone:Get*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "datazone:GetNotebookExport",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "datazone:Get*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "datazone:GetNotebookRun",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "datazone:Get*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "datazone:GetProject",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "datazone:Get*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "datazone:GetProjectProfile",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "datazone:Get*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "datazone:GetRule",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "datazone:Get*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "datazone:GetSubscription",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "datazone:Get*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "datazone:GetSubscriptionGrant",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "datazone:Get*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "datazone:GetSubscriptionRequestDetails",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "datazone:Get*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "datazone:GetSubscriptionTarget",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "datazone:Get*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "datazone:GetTimeSeriesDataPoint",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "datazone:Get*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "datazone:GetUpdateEligibility",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "datazone:Get*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "datazone:GetUserProfile",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "datazone:Get*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "datazone:GetDomainExecutionRoleCredentials",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "datazone:Get*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "datazone:GetDomainSharingPolicy",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "datazone:Get*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "datazone:GetEnvironmentActionLink",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "datazone:Get*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "datazone:GetSubscriptionEligibility",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "datazone:CreateListingChangeSet",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "datazone:CreateListingChangeSet",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "datazone:CreateSubscriptionRequest",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "datazone:CreateSubscriptionRequest",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Permissions management, Write",
+      "action": "datazone:RevokeSubscription",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "datazone:RevokeSubscription",
       "privesc": false,
       "resource_exposure": false
     },
@@ -7134,6 +7748,156 @@
     },
     {
       "access_level": "Write",
+      "action": "datazone:*Agent*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "datazone:DeleteAgentApprovalPolicy",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "datazone:*Agent*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "datazone:DeregisterAgentArtifact",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "datazone:*Agent*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "datazone:GetAgentApprovalPolicy",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "datazone:*Agent*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "datazone:InvokeAgent",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "datazone:*Agent*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "datazone:ListAgentArtifacts",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "datazone:*Agent*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "datazone:ListAgentSessionRecords",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "datazone:*Agent*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "datazone:PutAgentApprovalPolicy",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "datazone:*Agent*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "datazone:RegisterAgentArtifact",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "datazone:*Agent*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "datazone:StopAgent",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "datazone:*DataApp*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "datazone:CreateDataApp",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "datazone:*DataApp*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "datazone:DeleteDataApp",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "datazone:*DataApp*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "datazone:GetDataApp",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "datazone:*DataApp*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "datazone:ListDataApps",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "datazone:*DataApp*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "datazone:ListSharedDataApps",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "datazone:*DataApp*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "datazone:UpdateDataApp",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
       "action": "athena:GetSessionEndpoint",
       "condition": {
         "StringEquals": {
@@ -7188,6 +7952,62 @@
       "effective_action": "sqlworkbench:GetConnection",
       "privesc": false,
       "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "identitystore:DescribeUser",
+      "condition": {
+        "Bool": {
+          "aws:ViaAWSService": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "identitystore:DescribeUser",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "identitystore:DescribeGroup",
+      "condition": {
+        "Bool": {
+          "aws:ViaAWSService": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "identitystore:DescribeGroup",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "sso:DescribeInstance",
+      "condition": {
+        "Bool": {
+          "aws:ViaAWSService": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sso:DescribeInstance",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "sso:DescribeApplication",
+      "condition": {
+        "Bool": {
+          "aws:ViaAWSService": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sso:DescribeApplication",
+      "privesc": false,
+      "resource_exposure": false
     }
   ],
   "grantless": false,
@@ -7197,6 +8017,6 @@
   "resource_exposure": true,
   "undocumented_actions": false,
   "unknown_actions": [],
-  "updatedate": "2026-09-14T20:37:08+00:00",
-  "version": "v44"
+  "updatedate": "2026-10-14T19:37:07+00:00",
+  "version": "v45"
 }
