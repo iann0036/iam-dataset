@@ -8,7 +8,7 @@
     "Unknown"
   ],
   "arn": "arn:aws:iam::aws:policy/SageMakerStudioAdminIAMDefaultExecutionPolicy",
-  "createdate": "2026-10-14T19:37:08+00:00",
+  "createdate": "2026-10-15T21:47:07+00:00",
   "credentials_exposure": true,
   "data_access": true,
   "deprecated": false,
@@ -983,6 +983,7 @@
           "identitystore:DescribeUser",
           "identitystore:DescribeGroup",
           "sso:CreateApplication",
+          "sso:DeleteApplication",
           "sso:DescribeInstance",
           "sso:DescribeApplication",
           "sso:PutApplicationGrant",
@@ -1155,6 +1156,21 @@
         "Effect": "Allow",
         "Resource": "*",
         "Sid": "S3AGObjectPermissions"
+      },
+      {
+        "Action": [
+          "s3:AssociateAccessGrantsIdentityCenter"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:s3:*:*:access-grants/default"
+        ],
+        "Sid": "S3AGIdentityCenterAssociation"
       },
       {
         "Action": [
@@ -36562,6 +36578,20 @@
       "resource_exposure": false
     },
     {
+      "access_level": "Write",
+      "action": "sso:DeleteApplication",
+      "condition": {
+        "Bool": {
+          "aws:ViaAWSService": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sso:DeleteApplication",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
       "access_level": "Read",
       "action": "sso:DescribeInstance",
       "condition": {
@@ -39114,6 +39144,20 @@
     },
     {
       "access_level": "Permissions management, Write",
+      "action": "s3:AssociateAccessGrantsIdentityCenter",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3:AssociateAccessGrantsIdentityCenter",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Permissions management, Write",
       "action": "s3:CreateAccessGrantsLocation",
       "condition": {
         "Null": {
@@ -39219,6 +39263,6 @@
   "resource_exposure": true,
   "undocumented_actions": true,
   "unknown_actions": [],
-  "updatedate": "2026-10-14T19:37:08+00:00",
-  "version": "v26"
+  "updatedate": "2026-10-15T21:47:07+00:00",
+  "version": "v27"
 }
