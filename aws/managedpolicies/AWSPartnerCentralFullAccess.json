@@ -7,7 +7,7 @@
     "Permissions management"
   ],
   "arn": "arn:aws:iam::aws:policy/AWSPartnerCentralFullAccess",
-  "createdate": "2026-03-12T17:12:13+00:00",
+  "createdate": "2026-10-17T11:37:08+00:00",
   "credentials_exposure": true,
   "data_access": true,
   "deprecated": false,
@@ -140,7 +140,8 @@
         "Resource": [
           "arn:aws:aws-marketplace:*:*:AWSMarketplace*/Solution/*",
           "arn:aws:aws-marketplace:*:*:AWSMarketplace*/OfferSet/*",
-          "arn:aws:aws-marketplace:*:*:AWSMarketplace*/Offer/*"
+          "arn:aws:aws-marketplace:*:*:AWSMarketplace*/Offer/*",
+          "arn:aws:aws-marketplace:*:*:AWSMarketplace*/CaseStudy/*"
         ],
         "Sid": "DescribeEntityAccess"
       },
@@ -190,6 +191,54 @@
         "Effect": "Allow",
         "Resource": "*",
         "Sid": "PartnerCentralAgentsSessionAccess"
+      },
+      {
+        "Action": [
+          "aws-marketplace:StartChangeSet"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "catalog:ChangeType": [
+              "CreateCaseStudy",
+              "UpdateInformation",
+              "ReleaseCaseStudy",
+              "RestrictCaseStudy",
+              "UpdateVisibility"
+            ]
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:aws-marketplace:*:*:AWSMarketplace*/CaseStudy/*",
+          "arn:aws:aws-marketplace:*:*:AWSMarketplace*/ChangeSet/*"
+        ],
+        "Sid": "CaseStudyStartChangeSet"
+      },
+      {
+        "Action": [
+          "aws-marketplace:DescribeChangeSet"
+        ],
+        "Effect": "Allow",
+        "Resource": "arn:aws:aws-marketplace:*:*:AWSMarketplace*/ChangeSet/*",
+        "Sid": "CaseStudyDescribeChangeSet"
+      },
+      {
+        "Action": [
+          "aws-marketplace:ListChangeSets"
+        ],
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "CaseStudyListChangeSets"
+      },
+      {
+        "Action": [
+          "aws-marketplace:ListTagsForResource",
+          "aws-marketplace:TagResource",
+          "aws-marketplace:UntagResource"
+        ],
+        "Effect": "Allow",
+        "Resource": "arn:aws:aws-marketplace:*:*:AWSMarketplace*/CaseStudy/*",
+        "Sid": "CaseStudyEntityTagAccess"
       }
     ],
     "Version": "2012-10-17"
@@ -2840,6 +2889,76 @@
       "effective_action": "partnercentral:UseSession",
       "privesc": false,
       "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "aws-marketplace:StartChangeSet",
+      "condition": {
+        "StringEquals": {
+          "catalog:ChangeType": [
+            "CreateCaseStudy",
+            "UpdateInformation",
+            "ReleaseCaseStudy",
+            "RestrictCaseStudy",
+            "UpdateVisibility"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "aws-marketplace:StartChangeSet",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "aws-marketplace:DescribeChangeSet",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "aws-marketplace:DescribeChangeSet",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "aws-marketplace:ListChangeSets",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "aws-marketplace:ListChangeSets",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "aws-marketplace:ListTagsForResource",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "aws-marketplace:ListTagsForResource",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Tagging, Write",
+      "action": "aws-marketplace:TagResource",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "aws-marketplace:TagResource",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Tagging, Write",
+      "action": "aws-marketplace:UntagResource",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "aws-marketplace:UntagResource",
+      "privesc": false,
+      "resource_exposure": false
     }
   ],
   "grantless": false,
@@ -2850,5 +2969,5 @@
   "undocumented_actions": false,
   "unknown_actions": [],
   "updatedate": "2026-03-12T17:12:13+00:00",
-  "version": "v14"
+  "version": "v15"
 }
