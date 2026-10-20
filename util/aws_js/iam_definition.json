@@ -44463,6 +44463,16 @@
         "type": "String"
       },
       {
+        "condition": "bedrock-agentcore:namespacePath",
+        "description": "Filters access by the namespace path hierarchy of the memory records in the request",
+        "type": "String"
+      },
+      {
+        "condition": "bedrock-agentcore:namespaceVariable/${VariableName}",
+        "description": "Filters access by the value of a custom namespace variable in the request",
+        "type": "String"
+      },
+      {
         "condition": "bedrock-agentcore:runtimeSessionId",
         "description": "Filters access by Runtime Session Id",
         "type": "String"
@@ -44475,6 +44485,11 @@
       {
         "condition": "bedrock-agentcore:sessionId",
         "description": "Filters access by Memory Session Id",
+        "type": "String"
+      },
+      {
+        "condition": "bedrock-agentcore:sourceNamespace",
+        "description": "Filters access by the source namespace of the memory records in the request",
         "type": "String"
       },
       {
@@ -44531,7 +44546,8 @@
         "resource_types": [
           {
             "condition_keys": [
-              "aws:ResourceTag/${TagKey}"
+              "aws:ResourceTag/${TagKey}",
+              "bedrock-agentcore:namespace"
             ],
             "dependent_actions": [],
             "resource_type": "memory*"
@@ -44560,7 +44576,8 @@
           {
             "condition_keys": [
               "aws:ResourceTag/${TagKey}",
-              "bedrock-agentcore:namespace"
+              "bedrock-agentcore:namespace",
+              "bedrock-agentcore:sourceNamespace"
             ],
             "dependent_actions": [],
             "resource_type": "memory*"
@@ -44881,6 +44898,7 @@
             "condition_keys": [
               "aws:ResourceTag/${TagKey}",
               "bedrock-agentcore:actorId",
+              "bedrock-agentcore:namespaceVariable/${VariableName}",
               "bedrock-agentcore:sessionId"
             ],
             "dependent_actions": [],
@@ -45556,7 +45574,8 @@
         "resource_types": [
           {
             "condition_keys": [
-              "aws:ResourceTag/${TagKey}"
+              "aws:ResourceTag/${TagKey}",
+              "bedrock-agentcore:namespace"
             ],
             "dependent_actions": [],
             "resource_type": "memory*"
@@ -46206,7 +46225,8 @@
         "resource_types": [
           {
             "condition_keys": [
-              "aws:ResourceTag/${TagKey}"
+              "aws:ResourceTag/${TagKey}",
+              "bedrock-agentcore:namespace"
             ],
             "dependent_actions": [],
             "resource_type": "memory*"
@@ -46721,6 +46741,23 @@
             ],
             "dependent_actions": [],
             "resource_type": "workload-identity-directory*"
+          }
+        ]
+      },
+      {
+        "access_level": "Write",
+        "description": "Grants permission to ingest content to generate long-term memory records",
+        "privilege": "IngestData",
+        "resource_types": [
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}",
+              "bedrock-agentcore:actorId",
+              "bedrock-agentcore:namespaceVariable/${VariableName}",
+              "bedrock-agentcore:sessionId"
+            ],
+            "dependent_actions": [],
+            "resource_type": "memory*"
           }
         ]
       },
@@ -47319,6 +47356,7 @@
             "condition_keys": [
               "aws:ResourceTag/${TagKey}",
               "bedrock-agentcore:namespace",
+              "bedrock-agentcore:namespacePath",
               "bedrock-agentcore:strategyId"
             ],
             "dependent_actions": [],
@@ -47788,6 +47826,20 @@
         ]
       },
       {
+        "access_level": "Write",
+        "description": "Grants permission to reset a TokenVault's key material to a Service Managed Key after its Customer Managed Key (CMK) has been deleted",
+        "privilege": "ResetTokenVaultKeyMaterial",
+        "resource_types": [
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}"
+            ],
+            "dependent_actions": [],
+            "resource_type": "token-vault*"
+          }
+        ]
+      },
+      {
         "access_level": "List",
         "description": "Grants permission to retrieve memory records through sematic query",
         "privilege": "RetrieveMemoryRecords",
@@ -47796,6 +47848,7 @@
             "condition_keys": [
               "aws:ResourceTag/${TagKey}",
               "bedrock-agentcore:namespace",
+              "bedrock-agentcore:namespacePath",
               "bedrock-agentcore:strategyId"
             ],
             "dependent_actions": [],
@@ -49054,6 +49107,20 @@
             ],
             "dependent_actions": [],
             "resource_type": "gateway*"
+          }
+        ]
+      },
+      {
+        "access_level": "Write",
+        "description": "Grants permission to set or remove the expiry specification of long-term memory records",
+        "privilege": "UpdateMemoryRecordExpirySpecification",
+        "resource_types": [
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}"
+            ],
+            "dependent_actions": [],
+            "resource_type": "memory*"
           }
         ]
       }
@@ -148121,6 +148188,21 @@
     "privileges": [
       {
         "access_level": "Write",
+        "description": "Grants permission to associate an Amazon ECS gateway with a cluster",
+        "privilege": "AssociateGatewayWithCluster",
+        "resource_types": [
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}",
+              "ecs:cluster"
+            ],
+            "dependent_actions": [],
+            "resource_type": "gateway*"
+          }
+        ]
+      },
+      {
+        "access_level": "Write",
         "description": "Grants permission to continue a paused service deployment",
         "privilege": "ContinueServiceDeployment",
         "resource_types": [
@@ -148235,12 +148317,32 @@
               "ecs:task-memory"
             ],
             "dependent_actions": [
+              "ecs:AssociateGatewayWithCluster",
               "ecs:CreateCluster",
+              "ecs:CreateGateway",
               "ecs:RegisterTaskDefinition",
               "ecs:TagResource",
               "iam:PassRole"
             ],
             "resource_type": "service*"
+          }
+        ]
+      },
+      {
+        "access_level": "Write",
+        "description": "Grants permission to create an Amazon ECS gateway",
+        "privilege": "CreateGateway",
+        "resource_types": [
+          {
+            "condition_keys": [
+              "aws:RequestTag/${TagKey}",
+              "aws:ResourceTag/${TagKey}",
+              "aws:TagKeys",
+              "ecs:enable-ecs-managed-tags",
+              "ecs:propagate-tags"
+            ],
+            "dependent_actions": [],
+            "resource_type": "gateway*"
           }
         ]
       },
@@ -148406,6 +148508,20 @@
             ],
             "dependent_actions": [],
             "resource_type": "service*"
+          }
+        ]
+      },
+      {
+        "access_level": "Write",
+        "description": "Grants permission to delete an Amazon ECS gateway",
+        "privilege": "DeleteGateway",
+        "resource_types": [
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}"
+            ],
+            "dependent_actions": [],
+            "resource_type": "gateway*"
           }
         ]
       },
@@ -148625,6 +148741,56 @@
       },
       {
         "access_level": "Read",
+        "description": "Grants permission to describe an Amazon ECS gateway",
+        "privilege": "DescribeGateway",
+        "resource_types": [
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}"
+            ],
+            "dependent_actions": [],
+            "resource_type": "gateway*"
+          }
+        ]
+      },
+      {
+        "access_level": "Read",
+        "description": "Grants permission to describe the resources associated with an Amazon ECS gateway",
+        "privilege": "DescribeGatewayResources",
+        "resource_types": [
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}"
+            ],
+            "dependent_actions": [],
+            "resource_type": "gateway*"
+          }
+        ]
+      },
+      {
+        "access_level": "Read",
+        "description": "Grants permission to describe a route for an Amazon ECS gateway",
+        "privilege": "DescribeGatewayRoute",
+        "resource_types": [
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}"
+            ],
+            "dependent_actions": [],
+            "resource_type": "gateway*"
+          },
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}",
+              "ecs:gateway"
+            ],
+            "dependent_actions": [],
+            "resource_type": "gateway-route*"
+          }
+        ]
+      },
+      {
+        "access_level": "Read",
         "description": "Grants permission to describe one or more of your service deployments",
         "privilege": "DescribeServiceDeployments",
         "resource_types": [
@@ -148731,6 +148897,21 @@
             ],
             "dependent_actions": [],
             "resource_type": "task*"
+          }
+        ]
+      },
+      {
+        "access_level": "Write",
+        "description": "Grants permission to disassociate an Amazon ECS gateway from a cluster",
+        "privilege": "DisassociateGatewayFromCluster",
+        "resource_types": [
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}",
+              "ecs:cluster"
+            ],
+            "dependent_actions": [],
+            "resource_type": "gateway*"
           }
         ]
       },
@@ -148883,6 +149064,88 @@
             ],
             "dependent_actions": [],
             "resource_type": ""
+          }
+        ]
+      },
+      {
+        "access_level": "List",
+        "description": "Grants permission to list the cluster associations for Amazon ECS gateways",
+        "privilege": "ListGatewayClusterAssociations",
+        "resource_types": [
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}",
+              "ecs:cluster",
+              "ecs:ResourceTag/${TagKey}"
+            ],
+            "dependent_actions": [],
+            "resource_type": "cluster"
+          },
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}",
+              "ecs:cluster",
+              "ecs:gateway"
+            ],
+            "dependent_actions": [],
+            "resource_type": "gateway*"
+          }
+        ]
+      },
+      {
+        "access_level": "List",
+        "description": "Grants permission to list the routes for an Amazon ECS gateway",
+        "privilege": "ListGatewayRoutes",
+        "resource_types": [
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}",
+              "ecs:cluster",
+              "ecs:ResourceTag/${TagKey}"
+            ],
+            "dependent_actions": [],
+            "resource_type": "cluster"
+          },
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}",
+              "ecs:gateway"
+            ],
+            "dependent_actions": [],
+            "resource_type": "gateway"
+          },
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}",
+              "ecs:gateway"
+            ],
+            "dependent_actions": [],
+            "resource_type": "gateway-route"
+          },
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}",
+              "ecs:cluster",
+              "ecs:ResourceTag/${TagKey}",
+              "ecs:service"
+            ],
+            "dependent_actions": [],
+            "resource_type": "service"
+          }
+        ]
+      },
+      {
+        "access_level": "List",
+        "description": "Grants permission to list Amazon ECS gateways",
+        "privilege": "ListGateways",
+        "resource_types": [
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}",
+              "ecs:gateway"
+            ],
+            "dependent_actions": [],
+            "resource_type": "gateway*"
           }
         ]
       },
@@ -149360,6 +149623,16 @@
               "aws:RequestTag/${TagKey}",
               "aws:ResourceTag/${TagKey}",
               "aws:TagKeys",
+              "ecs:CreateAction"
+            ],
+            "dependent_actions": [],
+            "resource_type": "gateway"
+          },
+          {
+            "condition_keys": [
+              "aws:RequestTag/${TagKey}",
+              "aws:ResourceTag/${TagKey}",
+              "aws:TagKeys",
               "ecs:CreateAction",
               "ecs:ResourceTag/${TagKey}"
             ],
@@ -149449,6 +149722,14 @@
             ],
             "dependent_actions": [],
             "resource_type": "daemon-task-definition"
+          },
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}",
+              "aws:TagKeys"
+            ],
+            "dependent_actions": [],
+            "resource_type": "gateway"
           },
           {
             "condition_keys": [
@@ -149613,10 +149894,28 @@
               "ecs:task-memory"
             ],
             "dependent_actions": [
+              "ecs:AssociateGatewayWithCluster",
+              "ecs:CreateGateway",
               "ecs:RegisterTaskDefinition",
               "iam:PassRole"
             ],
             "resource_type": "service*"
+          }
+        ]
+      },
+      {
+        "access_level": "Write",
+        "description": "Grants permission to modify the parameters of an Amazon ECS gateway",
+        "privilege": "UpdateGateway",
+        "resource_types": [
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}",
+              "ecs:enable-ecs-managed-tags",
+              "ecs:propagate-tags"
+            ],
+            "dependent_actions": [],
+            "resource_type": "gateway*"
           }
         ]
       },
@@ -149830,6 +150129,21 @@
           "aws:ResourceTag/${TagKey}"
         ],
         "resource": "daemon-task-definition"
+      },
+      {
+        "arn": "arn:${Partition}:ecs:${Region}:${Account}:gateway/${GatewayName}/${GatewayId}",
+        "condition_keys": [
+          "aws:ResourceTag/${TagKey}"
+        ],
+        "resource": "gateway"
+      },
+      {
+        "arn": "arn:${Partition}:ecs:${Region}:${Account}:gateway-route/${GatewayName}/${GatewayId}/${RouteId}",
+        "condition_keys": [
+          "aws:ResourceTag/${TagKey}",
+          "ecs:gateway"
+        ],
+        "resource": "gateway-route"
       },
       {
         "arn": "arn:${Partition}:ecs:${Region}:${Account}:service/${ClusterName}/${ServiceName}",
@@ -161583,7 +161897,11 @@
             "condition_keys": [
               "aws:ResourceTag/${TagKey}"
             ],
-            "dependent_actions": [],
+            "dependent_actions": [
+              "emr-serverless:AccessSystemProfileLogs",
+              "glue:GetDatabases",
+              "glue:SearchTables"
+            ],
             "resource_type": "session*"
           }
         ]
@@ -409604,6 +409922,20 @@
             "condition_keys": [],
             "dependent_actions": [],
             "resource_type": ""
+          }
+        ]
+      },
+      {
+        "access_level": "Write",
+        "description": "Grants permission to modify a workspace managed volume in your account",
+        "privilege": "ModifyVolume",
+        "resource_types": [
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}"
+            ],
+            "dependent_actions": [],
+            "resource_type": "VolumeId*"
           }
         ]
       },
