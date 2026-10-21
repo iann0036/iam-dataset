@@ -7,7 +7,7 @@
     "Permissions management"
   ],
   "arn": "arn:aws:iam::aws:policy/CloudWatchFullAccessV2",
-  "createdate": "2026-09-22T16:57:08+00:00",
+  "createdate": "2026-10-20T18:57:07+00:00",
   "credentials_exposure": false,
   "data_access": true,
   "deprecated": false,
@@ -271,6 +271,22 @@
         "Effect": "Allow",
         "Resource": "*",
         "Sid": "LogAlarmLogLinesPassRolePermissions"
+      },
+      {
+        "Action": [
+          "kms:DescribeKey"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          },
+          "StringLike": {
+            "kms:ViaService": "logs.*.amazonaws.com"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:kms:*:*:key/*",
+        "Sid": "CloudWatchLogsKmsDescribeKeyPermissions"
       }
     ],
     "Version": "2012-10-17"
@@ -5148,6 +5164,23 @@
       "effective_action": "iam:PassRole",
       "privesc": true,
       "resource_exposure": true
+    },
+    {
+      "access_level": "Read",
+      "action": "kms:DescribeKey",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        },
+        "StringLike": {
+          "kms:ViaService": "logs.*.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "kms:DescribeKey",
+      "privesc": false,
+      "resource_exposure": false
     }
   ],
   "grantless": false,
@@ -5157,6 +5190,6 @@
   "resource_exposure": true,
   "undocumented_actions": false,
   "unknown_actions": [],
-  "updatedate": "2026-09-22T16:57:08+00:00",
-  "version": "v17"
+  "updatedate": "2026-10-20T18:57:07+00:00",
+  "version": "v18"
 }
