@@ -6,7 +6,7 @@
     "Permissions management"
   ],
   "arn": "arn:aws:iam::aws:policy/AWSTransformInfrastructureExecutorAccessEC2",
-  "createdate": "2026-09-02T21:27:07+00:00",
+  "createdate": "2026-10-22T21:17:07+00:00",
   "credentials_exposure": false,
   "data_access": true,
   "deprecated": false,
@@ -150,6 +150,37 @@
         "Effect": "Allow",
         "Resource": "arn:aws:kms:*:*:key/*",
         "Sid": "KMSEncryptDecrypt"
+      },
+      {
+        "Action": [
+          "logs:CreateLogGroup",
+          "logs:PutRetentionPolicy"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:logs:*:*:log-group:/aws/TransformContinuousModernization",
+        "Sid": "CmodCustomerLogGroupManagement"
+      },
+      {
+        "Action": [
+          "logs:CreateLogStream",
+          "logs:PutLogEvents"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:logs:*:*:log-group:/aws/TransformContinuousModernization:log-stream:local/*",
+          "arn:aws:logs:*:*:log-group:/aws/TransformContinuousModernization:log-stream:ec2/*"
+        ],
+        "Sid": "CmodCustomerLogStreamWrite"
       },
       {
         "Action": [
@@ -770,6 +801,62 @@
       "resource_exposure": false
     },
     {
+      "access_level": "Write",
+      "action": "logs:CreateLogGroup",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "logs:CreateLogGroup",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "logs:PutRetentionPolicy",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "logs:PutRetentionPolicy",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "logs:CreateLogStream",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "logs:CreateLogStream",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "logs:PutLogEvents",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "logs:PutLogEvents",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
       "access_level": "Read",
       "action": "secretsmanager:GetSecretValue",
       "condition": {
@@ -1059,6 +1146,6 @@
   "resource_exposure": true,
   "undocumented_actions": false,
   "unknown_actions": [],
-  "updatedate": "2026-09-02T21:27:07+00:00",
-  "version": "v3"
+  "updatedate": "2026-10-22T21:17:07+00:00",
+  "version": "v4"
 }

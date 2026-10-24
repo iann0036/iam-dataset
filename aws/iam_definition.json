@@ -9189,6 +9189,11 @@
         "type": "String"
       },
       {
+        "condition": "aoss:DeletionProtection",
+        "description": "Filters access by the deletion protection value set on a collection in the request. Valid values are enabled and disabled",
+        "type": "String"
+      },
+      {
         "condition": "aoss:collection",
         "description": "Filters access by the collection name",
         "type": "String"
@@ -9268,7 +9273,7 @@
       },
       {
         "access_level": "Read",
-        "description": "Grants permission to get attributes for one or more collection groups",
+        "description": "Grants permission to get attributes for one or more collection-groups",
         "privilege": "BatchGetCollectionGroup",
         "resource_types": [
           {
@@ -9313,6 +9318,20 @@
             "condition_keys": [],
             "dependent_actions": [],
             "resource_type": ""
+          }
+        ]
+      },
+      {
+        "access_level": "Write",
+        "description": "Grants permission to cancel an ingestion job",
+        "privilege": "CancelIngestionJob",
+        "resource_types": [
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}"
+            ],
+            "dependent_actions": [],
+            "resource_type": "IngestionJob*"
           }
         ]
       },
@@ -9376,6 +9395,43 @@
             "condition_keys": [],
             "dependent_actions": [],
             "resource_type": ""
+          }
+        ]
+      },
+      {
+        "access_level": "Write",
+        "description": "Grants permission to create an ingestion job on a collection",
+        "privilege": "CreateIngestionJob",
+        "resource_types": [
+          {
+            "condition_keys": [
+              "aws:RequestTag/${TagKey}",
+              "aws:ResourceTag/${TagKey}",
+              "aws:TagKeys"
+            ],
+            "dependent_actions": [
+              "aoss:TagResource"
+            ],
+            "resource_type": "Collection*"
+          }
+        ]
+      },
+      {
+        "access_level": "Write",
+        "description": "Grants permission to create an ingestion stream on a collection",
+        "privilege": "CreateIngestionStream",
+        "resource_types": [
+          {
+            "condition_keys": [
+              "aws:RequestTag/${TagKey}",
+              "aws:ResourceTag/${TagKey}",
+              "aws:TagKeys"
+            ],
+            "dependent_actions": [
+              "aoss:TagResource",
+              "iam:PassRole"
+            ],
+            "resource_type": "Collection*"
           }
         ]
       },
@@ -9503,6 +9559,20 @@
       },
       {
         "access_level": "Write",
+        "description": "Grants permission to delete an ingestion stream",
+        "privilege": "DeleteIngestionStream",
+        "resource_types": [
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}"
+            ],
+            "dependent_actions": [],
+            "resource_type": "IngestionStream*"
+          }
+        ]
+      },
+      {
+        "access_level": "Write",
         "description": "Grants permission to delete a lifecycle policy",
         "privilege": "DeleteLifecyclePolicy",
         "resource_types": [
@@ -9594,6 +9664,34 @@
       },
       {
         "access_level": "Read",
+        "description": "Grants permission to get information about an ingestion job",
+        "privilege": "GetIngestionJob",
+        "resource_types": [
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}"
+            ],
+            "dependent_actions": [],
+            "resource_type": "IngestionJob*"
+          }
+        ]
+      },
+      {
+        "access_level": "Read",
+        "description": "Grants permission to get information about an ingestion stream",
+        "privilege": "GetIngestionStream",
+        "resource_types": [
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}"
+            ],
+            "dependent_actions": [],
+            "resource_type": "IngestionStream*"
+          }
+        ]
+      },
+      {
+        "access_level": "Read",
         "description": "Grants permission to get statistis about the security policies in your account",
         "privilege": "GetPoliciesStats",
         "resource_types": [
@@ -9644,7 +9742,7 @@
       },
       {
         "access_level": "List",
-        "description": "Grants permission to list collection groups",
+        "description": "Grants permission to list collection-groups",
         "privilege": "ListCollectionGroups",
         "resource_types": [
           {
@@ -9663,6 +9761,34 @@
             "condition_keys": [],
             "dependent_actions": [],
             "resource_type": ""
+          }
+        ]
+      },
+      {
+        "access_level": "List",
+        "description": "Grants permission to list ingestion jobs for a collection",
+        "privilege": "ListIngestionJobs",
+        "resource_types": [
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}"
+            ],
+            "dependent_actions": [],
+            "resource_type": "Collection*"
+          }
+        ]
+      },
+      {
+        "access_level": "List",
+        "description": "Grants permission to list ingestion streams for a collection",
+        "privilege": "ListIngestionStreams",
+        "resource_types": [
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}"
+            ],
+            "dependent_actions": [],
+            "resource_type": "Collection*"
           }
         ]
       },
@@ -9704,13 +9830,36 @@
       },
       {
         "access_level": "List",
-        "description": "Grants permission to list tags for a collection",
+        "description": "Grants permission to list tags for a collection, collection group, ingestion job, or ingestion stream",
         "privilege": "ListTagsForResource",
         "resource_types": [
           {
-            "condition_keys": [],
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}"
+            ],
             "dependent_actions": [],
-            "resource_type": ""
+            "resource_type": "Collection*"
+          },
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}"
+            ],
+            "dependent_actions": [],
+            "resource_type": "CollectionGroup*"
+          },
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}"
+            ],
+            "dependent_actions": [],
+            "resource_type": "IngestionJob*"
+          },
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}"
+            ],
+            "dependent_actions": [],
+            "resource_type": "IngestionStream*"
           }
         ]
       },
@@ -9727,8 +9876,8 @@
         ]
       },
       {
-        "access_level": "Write",
-        "description": "Grants permission to tag a serverless collection",
+        "access_level": "Tagging, Write",
+        "description": "Grants permission to add tags to a collection, collection group, ingestion job, or ingestion stream",
         "privilege": "TagResource",
         "resource_types": [
           {
@@ -9738,21 +9887,73 @@
               "aws:TagKeys"
             ],
             "dependent_actions": [],
-            "resource_type": ""
+            "resource_type": "Collection*"
+          },
+          {
+            "condition_keys": [
+              "aws:RequestTag/${TagKey}",
+              "aws:ResourceTag/${TagKey}",
+              "aws:TagKeys"
+            ],
+            "dependent_actions": [],
+            "resource_type": "CollectionGroup*"
+          },
+          {
+            "condition_keys": [
+              "aws:RequestTag/${TagKey}",
+              "aws:ResourceTag/${TagKey}",
+              "aws:TagKeys"
+            ],
+            "dependent_actions": [],
+            "resource_type": "IngestionJob*"
+          },
+          {
+            "condition_keys": [
+              "aws:RequestTag/${TagKey}",
+              "aws:ResourceTag/${TagKey}",
+              "aws:TagKeys"
+            ],
+            "dependent_actions": [],
+            "resource_type": "IngestionStream*"
           }
         ]
       },
       {
-        "access_level": "Write",
-        "description": "Grants permission to remove tags from a collection",
+        "access_level": "Tagging, Write",
+        "description": "Grants permission to remove tags from a collection, collection group, ingestion job, or ingestion stream",
         "privilege": "UntagResource",
         "resource_types": [
           {
             "condition_keys": [
+              "aws:ResourceTag/${TagKey}",
               "aws:TagKeys"
             ],
             "dependent_actions": [],
-            "resource_type": ""
+            "resource_type": "Collection*"
+          },
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}",
+              "aws:TagKeys"
+            ],
+            "dependent_actions": [],
+            "resource_type": "CollectionGroup*"
+          },
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}",
+              "aws:TagKeys"
+            ],
+            "dependent_actions": [],
+            "resource_type": "IngestionJob*"
+          },
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}",
+              "aws:TagKeys"
+            ],
+            "dependent_actions": [],
+            "resource_type": "IngestionStream*"
           }
         ]
       },
@@ -9790,6 +9991,7 @@
         "resource_types": [
           {
             "condition_keys": [
+              "aoss:DeletionProtection",
               "aws:ResourceTag/${TagKey}"
             ],
             "dependent_actions": [],
@@ -9895,6 +10097,20 @@
         "arn": "arn:${Partition}:aoss:${Region}:${Account}:dashboards/default",
         "condition_keys": [],
         "resource": "Dashboards"
+      },
+      {
+        "arn": "arn:${Partition}:aoss:${Region}:${Account}:collection/${CollectionId}/ingestion-job/${IngestionJobId}",
+        "condition_keys": [
+          "aws:ResourceTag/${TagKey}"
+        ],
+        "resource": "IngestionJob"
+      },
+      {
+        "arn": "arn:${Partition}:aoss:${Region}:${Account}:collection/${CollectionId}/ingestion-stream/${IngestionStreamId}",
+        "condition_keys": [
+          "aws:ResourceTag/${TagKey}"
+        ],
+        "resource": "IngestionStream"
       }
     ],
     "service_name": "Amazon OpenSearch Serverless"
@@ -22013,7 +22229,8 @@
           {
             "condition_keys": [],
             "dependent_actions": [
-              "iam:PassRole"
+              "iam:PassRole",
+              "lambda:PassNetworkConnector"
             ],
             "resource_type": ""
           }
@@ -22915,7 +23132,8 @@
           {
             "condition_keys": [],
             "dependent_actions": [
-              "iam:PassRole"
+              "iam:PassRole",
+              "lambda:PassNetworkConnector"
             ],
             "resource_type": ""
           }
@@ -100291,6 +100509,498 @@
     "service_name": "AWS Consolidated Billing"
   },
   {
+    "conditions": [
+      {
+        "condition": "continuum:CollectorArn",
+        "description": "Filters access by the ARNs of the collectors in an AssociateCollector or DisassociateCollector request",
+        "type": "ArrayOfARN"
+      },
+      {
+        "condition": "continuum:EnvironmentArn",
+        "description": "Filters access by the ARN of the environment that requests access to the data of a collector",
+        "type": "ARN"
+      },
+      {
+        "condition": "continuum:RepositoryName",
+        "description": "Filters access by the repositories, as lowercase owner/repo values, that a CreateEnvironment or UpdateEnvironment request selects as sources",
+        "type": "ArrayOfString"
+      },
+      {
+        "condition": "continuum:S3BucketName",
+        "description": "Filters access by the name of the Amazon S3 bucket in a CreateIntegration request",
+        "type": "String"
+      }
+    ],
+    "prefix": "continuum",
+    "privileges": [
+      {
+        "access_level": "Write",
+        "description": "Grants permission to associate a collector with an environment",
+        "privilege": "AssociateCollector",
+        "resource_types": [
+          {
+            "condition_keys": [
+              "continuum:CollectorArn"
+            ],
+            "dependent_actions": [],
+            "resource_type": "environments*"
+          }
+        ]
+      },
+      {
+        "access_level": "Write",
+        "description": "Grants permission to create a code finding in an environment",
+        "privilege": "CreateCodeFinding",
+        "resource_types": [
+          {
+            "condition_keys": [],
+            "dependent_actions": [],
+            "resource_type": "code-findings*"
+          },
+          {
+            "condition_keys": [],
+            "dependent_actions": [],
+            "resource_type": "environments*"
+          }
+        ]
+      },
+      {
+        "access_level": "Write",
+        "description": "Grants permission to start a code scan of an environment",
+        "privilege": "CreateCodeScan",
+        "resource_types": [
+          {
+            "condition_keys": [],
+            "dependent_actions": [],
+            "resource_type": "code-scans*"
+          },
+          {
+            "condition_keys": [],
+            "dependent_actions": [],
+            "resource_type": "environments*"
+          }
+        ]
+      },
+      {
+        "access_level": "Write",
+        "description": "Grants permission to create a collector",
+        "privilege": "CreateCollector",
+        "resource_types": [
+          {
+            "condition_keys": [],
+            "dependent_actions": [],
+            "resource_type": "collectors*"
+          }
+        ]
+      },
+      {
+        "access_level": "Write",
+        "description": "Grants permission to create an environment",
+        "privilege": "CreateEnvironment",
+        "resource_types": [
+          {
+            "condition_keys": [
+              "continuum:RepositoryName"
+            ],
+            "dependent_actions": [],
+            "resource_type": "environments*"
+          },
+          {
+            "condition_keys": [
+              "continuum:RepositoryName"
+            ],
+            "dependent_actions": [],
+            "resource_type": "integrations"
+          }
+        ]
+      },
+      {
+        "access_level": "Write",
+        "description": "Grants permission to create an integration with an external source provider",
+        "privilege": "CreateIntegration",
+        "resource_types": [
+          {
+            "condition_keys": [
+              "continuum:S3BucketName"
+            ],
+            "dependent_actions": [],
+            "resource_type": "integrations*"
+          }
+        ]
+      },
+      {
+        "access_level": "Write",
+        "description": "Grants permission to delete a collector",
+        "privilege": "DeleteCollector",
+        "resource_types": [
+          {
+            "condition_keys": [],
+            "dependent_actions": [],
+            "resource_type": "collectors*"
+          }
+        ]
+      },
+      {
+        "access_level": "Write",
+        "description": "Grants permission to delete an environment",
+        "privilege": "DeleteEnvironment",
+        "resource_types": [
+          {
+            "condition_keys": [],
+            "dependent_actions": [],
+            "resource_type": "environments*"
+          }
+        ]
+      },
+      {
+        "access_level": "Write",
+        "description": "Grants permission to delete an integration",
+        "privilege": "DeleteIntegration",
+        "resource_types": [
+          {
+            "condition_keys": [],
+            "dependent_actions": [],
+            "resource_type": "integrations*"
+          }
+        ]
+      },
+      {
+        "access_level": "Write",
+        "description": "Grants permission to disassociate a collector from an environment",
+        "privilege": "DisassociateCollector",
+        "resource_types": [
+          {
+            "condition_keys": [
+              "continuum:CollectorArn"
+            ],
+            "dependent_actions": [],
+            "resource_type": "environments*"
+          }
+        ]
+      },
+      {
+        "access_level": "Read",
+        "description": "Grants permission to get a code finding",
+        "privilege": "GetCodeFinding",
+        "resource_types": [
+          {
+            "condition_keys": [],
+            "dependent_actions": [],
+            "resource_type": "code-findings*"
+          }
+        ]
+      },
+      {
+        "access_level": "Read",
+        "description": "Grants permission to get a code issue",
+        "privilege": "GetCodeIssue",
+        "resource_types": [
+          {
+            "condition_keys": [],
+            "dependent_actions": [],
+            "resource_type": "code-issues*"
+          }
+        ]
+      },
+      {
+        "access_level": "Read",
+        "description": "Grants permission to get an artifact of a code issue",
+        "privilege": "GetCodeIssueArtifact",
+        "resource_types": [
+          {
+            "condition_keys": [],
+            "dependent_actions": [],
+            "resource_type": "code-issues*"
+          }
+        ]
+      },
+      {
+        "access_level": "Read",
+        "description": "Grants permission to get a code scan",
+        "privilege": "GetCodeScan",
+        "resource_types": [
+          {
+            "condition_keys": [],
+            "dependent_actions": [],
+            "resource_type": "code-scans*"
+          }
+        ]
+      },
+      {
+        "access_level": "Read",
+        "description": "Grants permission to get a collector",
+        "privilege": "GetCollector",
+        "resource_types": [
+          {
+            "condition_keys": [],
+            "dependent_actions": [],
+            "resource_type": "collectors*"
+          }
+        ]
+      },
+      {
+        "access_level": "Read",
+        "description": "Grants permission to access the data of a collector from an environment",
+        "privilege": "GetCollectorDataAccessAuthorization",
+        "resource_types": [
+          {
+            "condition_keys": [
+              "continuum:EnvironmentArn"
+            ],
+            "dependent_actions": [],
+            "resource_type": "collectors*"
+          }
+        ]
+      },
+      {
+        "access_level": "Read",
+        "description": "Grants permission to get an environment",
+        "privilege": "GetEnvironment",
+        "resource_types": [
+          {
+            "condition_keys": [],
+            "dependent_actions": [],
+            "resource_type": "environments*"
+          }
+        ]
+      },
+      {
+        "access_level": "Read",
+        "description": "Grants permission to get an integration",
+        "privilege": "GetIntegration",
+        "resource_types": [
+          {
+            "condition_keys": [],
+            "dependent_actions": [],
+            "resource_type": "integrations*"
+          }
+        ]
+      },
+      {
+        "access_level": "Read",
+        "description": "Grants permission to get the resource policy attached to a resource",
+        "privilege": "GetResourcePolicy",
+        "resource_types": [
+          {
+            "condition_keys": [],
+            "dependent_actions": [],
+            "resource_type": "collectors*"
+          }
+        ]
+      },
+      {
+        "access_level": "List",
+        "description": "Grants permission to list the collectors associated with an environment",
+        "privilege": "ListAssociatedCollectors",
+        "resource_types": [
+          {
+            "condition_keys": [],
+            "dependent_actions": [],
+            "resource_type": "environments*"
+          }
+        ]
+      },
+      {
+        "access_level": "List",
+        "description": "Grants permission to list the environments associated with a collector",
+        "privilege": "ListAssociatedEnvironments",
+        "resource_types": [
+          {
+            "condition_keys": [],
+            "dependent_actions": [],
+            "resource_type": "collectors*"
+          }
+        ]
+      },
+      {
+        "access_level": "List",
+        "description": "Grants permission to list the code findings in an environment",
+        "privilege": "ListCodeFindings",
+        "resource_types": [
+          {
+            "condition_keys": [],
+            "dependent_actions": [],
+            "resource_type": "environments*"
+          }
+        ]
+      },
+      {
+        "access_level": "List",
+        "description": "Grants permission to list the artifacts of a code issue",
+        "privilege": "ListCodeIssueArtifacts",
+        "resource_types": [
+          {
+            "condition_keys": [],
+            "dependent_actions": [],
+            "resource_type": "code-issues*"
+          }
+        ]
+      },
+      {
+        "access_level": "List",
+        "description": "Grants permission to list the code issues in an environment",
+        "privilege": "ListCodeIssues",
+        "resource_types": [
+          {
+            "condition_keys": [],
+            "dependent_actions": [],
+            "resource_type": "environments*"
+          }
+        ]
+      },
+      {
+        "access_level": "List",
+        "description": "Grants permission to list the code scans of an environment",
+        "privilege": "ListCodeScans",
+        "resource_types": [
+          {
+            "condition_keys": [],
+            "dependent_actions": [],
+            "resource_type": "environments*"
+          }
+        ]
+      },
+      {
+        "access_level": "List",
+        "description": "Grants permission to list collectors",
+        "privilege": "ListCollectors",
+        "resource_types": [
+          {
+            "condition_keys": [],
+            "dependent_actions": [],
+            "resource_type": "collectors*"
+          }
+        ]
+      },
+      {
+        "access_level": "List",
+        "description": "Grants permission to list environments",
+        "privilege": "ListEnvironments",
+        "resource_types": [
+          {
+            "condition_keys": [],
+            "dependent_actions": [],
+            "resource_type": "environments*"
+          }
+        ]
+      },
+      {
+        "access_level": "List",
+        "description": "Grants permission to list integrations",
+        "privilege": "ListIntegrations",
+        "resource_types": [
+          {
+            "condition_keys": [],
+            "dependent_actions": [],
+            "resource_type": "integrations*"
+          }
+        ]
+      },
+      {
+        "access_level": "Write",
+        "description": "Grants permission to attach a resource policy to a resource",
+        "privilege": "PutResourcePolicy",
+        "resource_types": [
+          {
+            "condition_keys": [],
+            "dependent_actions": [],
+            "resource_type": "collectors*"
+          }
+        ]
+      },
+      {
+        "access_level": "Write",
+        "description": "Grants permission to start an OAuth authorization for a new integration",
+        "privilege": "StartIntegrationAuthorization",
+        "resource_types": [
+          {
+            "condition_keys": [],
+            "dependent_actions": [],
+            "resource_type": ""
+          }
+        ]
+      },
+      {
+        "access_level": "Write",
+        "description": "Grants permission to update a collector",
+        "privilege": "UpdateCollector",
+        "resource_types": [
+          {
+            "condition_keys": [],
+            "dependent_actions": [],
+            "resource_type": "collectors*"
+          }
+        ]
+      },
+      {
+        "access_level": "Write",
+        "description": "Grants permission to update an environment",
+        "privilege": "UpdateEnvironment",
+        "resource_types": [
+          {
+            "condition_keys": [
+              "continuum:RepositoryName"
+            ],
+            "dependent_actions": [],
+            "resource_type": "environments*"
+          },
+          {
+            "condition_keys": [
+              "continuum:RepositoryName"
+            ],
+            "dependent_actions": [],
+            "resource_type": "integrations"
+          }
+        ]
+      },
+      {
+        "access_level": "Write",
+        "description": "Grants permission to update the IAM role of an Amazon S3 integration",
+        "privilege": "UpdateIntegration",
+        "resource_types": [
+          {
+            "condition_keys": [],
+            "dependent_actions": [],
+            "resource_type": "integrations*"
+          }
+        ]
+      }
+    ],
+    "resources": [
+      {
+        "arn": "arn:${Partition}:continuum:${Region}:${Account}:environments/${EnvironmentId}/code-findings/${FindingId}",
+        "condition_keys": [],
+        "resource": "code-findings"
+      },
+      {
+        "arn": "arn:${Partition}:continuum:${Region}:${Account}:environments/${EnvironmentId}/code-issues/${IssueId}",
+        "condition_keys": [],
+        "resource": "code-issues"
+      },
+      {
+        "arn": "arn:${Partition}:continuum:${Region}:${Account}:environments/${EnvironmentId}/code-scans/${ScanRunId}",
+        "condition_keys": [],
+        "resource": "code-scans"
+      },
+      {
+        "arn": "arn:${Partition}:continuum:${Region}:${Account}:collectors/${CollectorId}",
+        "condition_keys": [],
+        "resource": "collectors"
+      },
+      {
+        "arn": "arn:${Partition}:continuum:${Region}:${Account}:environments/${EnvironmentId}",
+        "condition_keys": [],
+        "resource": "environments"
+      },
+      {
+        "arn": "arn:${Partition}:continuum:${Region}:${Account}:integrations/${IntegrationId}",
+        "condition_keys": [],
+        "resource": "integrations"
+      }
+    ],
+    "service_name": "AWS Continuum"
+  },
+  {
     "conditions": [],
     "prefix": "controlcatalog",
     "privileges": [
@@ -107665,7 +108375,9 @@
         "resource_types": [
           {
             "condition_keys": [],
-            "dependent_actions": [],
+            "dependent_actions": [
+              "iam:PassRole"
+            ],
             "resource_type": ""
           }
         ]
@@ -221493,6 +222205,18 @@
       },
       {
         "access_level": "Write",
+        "description": "Grants permission to revoke connection token for a specified token ID",
+        "privilege": "RevokeConnectionToken",
+        "resource_types": [
+          {
+            "condition_keys": [],
+            "dependent_actions": [],
+            "resource_type": ""
+          }
+        ]
+      },
+      {
+        "access_level": "Write",
         "description": "Grants permission to start a new composition",
         "privilege": "StartComposition",
         "resource_types": [
@@ -268601,7 +269325,8 @@
             ],
             "dependent_actions": [
               "networkmanager:PutAttachmentRoutingPolicyLabel",
-              "networkmanager:TagResource"
+              "networkmanager:TagResource",
+              "networkmanager:UpdateAttachmentNatConfiguration"
             ],
             "resource_type": "attachment*"
           },
@@ -268717,7 +269442,8 @@
             ],
             "dependent_actions": [
               "networkmanager:PutAttachmentRoutingPolicyLabel",
-              "networkmanager:TagResource"
+              "networkmanager:TagResource",
+              "networkmanager:UpdateAttachmentNatConfiguration"
             ],
             "resource_type": "core-network*"
           }
@@ -268799,7 +269525,8 @@
             ],
             "dependent_actions": [
               "networkmanager:PutAttachmentRoutingPolicyLabel",
-              "networkmanager:TagResource"
+              "networkmanager:TagResource",
+              "networkmanager:UpdateAttachmentNatConfiguration"
             ],
             "resource_type": "core-network*"
           }
@@ -268859,7 +269586,8 @@
             ],
             "dependent_actions": [
               "networkmanager:PutAttachmentRoutingPolicyLabel",
-              "networkmanager:TagResource"
+              "networkmanager:TagResource",
+              "networkmanager:UpdateAttachmentNatConfiguration"
             ],
             "resource_type": "core-network*"
           }
@@ -269598,6 +270326,20 @@
       },
       {
         "access_level": "List",
+        "description": "Grants permission to list the NAT configurations of attachments",
+        "privilege": "ListAttachmentNatConfigurations",
+        "resource_types": [
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}"
+            ],
+            "dependent_actions": [],
+            "resource_type": "attachment*"
+          }
+        ]
+      },
+      {
+        "access_level": "List",
         "description": "Grants permission to list all routing policies associated to core network attachments",
         "privilege": "ListAttachmentRoutingPolicyAssociations",
         "resource_types": [
@@ -270089,6 +270831,20 @@
             ],
             "dependent_actions": [],
             "resource_type": "site"
+          }
+        ]
+      },
+      {
+        "access_level": "Write",
+        "description": "Grants permission to update the NAT configuration of an attachment",
+        "privilege": "UpdateAttachmentNatConfiguration",
+        "resource_types": [
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}"
+            ],
+            "dependent_actions": [],
+            "resource_type": "attachment*"
           }
         ]
       },
@@ -281146,9 +281902,7 @@
         "resource_types": [
           {
             "condition_keys": [],
-            "dependent_actions": [
-              "iam:PassRole"
-            ],
+            "dependent_actions": [],
             "resource_type": ""
           }
         ]
@@ -299771,7 +300525,6 @@
               "aws:TagKeys"
             ],
             "dependent_actions": [
-              "quicksight:CreateFolderMembership",
               "quicksight:PassDataSet",
               "quicksight:TagResource"
             ],
@@ -389599,6 +390352,22 @@
       },
       {
         "access_level": "Write",
+        "description": "Grants permission to update a custom language model",
+        "privilege": "UpdateLanguageModel",
+        "resource_types": [
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}"
+            ],
+            "dependent_actions": [
+              "iam:PassRole"
+            ],
+            "resource_type": "languagemodel*"
+          }
+        ]
+      },
+      {
+        "access_level": "Write",
         "description": "Grants permission to update an existing medical vocabulary with new values. The UpdateMedicalVocabulary operation overwrites all of the existing information with the values that you provide in the request",
         "privilege": "UpdateMedicalVocabulary",
         "resource_types": [
@@ -404264,6 +405033,34 @@
             ],
             "dependent_actions": [],
             "resource_type": "Assistant*"
+          }
+        ]
+      },
+      {
+        "access_level": "Write",
+        "description": "Grants permission to register a replica KMS key for an assistant",
+        "privilege": "RegisterAssistantReplicaKey",
+        "resource_types": [
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}"
+            ],
+            "dependent_actions": [],
+            "resource_type": "Assistant*"
+          }
+        ]
+      },
+      {
+        "access_level": "Write",
+        "description": "Grants permission to register a replica KMS key for a knowledge base",
+        "privilege": "RegisterKnowledgeBaseReplicaKey",
+        "resource_types": [
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}"
+            ],
+            "dependent_actions": [],
+            "resource_type": "KnowledgeBase*"
           }
         ]
       },
