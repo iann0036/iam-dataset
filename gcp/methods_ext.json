@@ -11984,7 +11984,8 @@
       "advisorynotifications.projects.locations.getSettings": {
         "apiPaths": [
           "google/cloud/contactcenterinsights/{_version}/ContactCenterInsights/GetSettings",
-          "google/cloud/migrationcenter/{_version}/MigrationCenter/GetSettings"
+          "google/cloud/migrationcenter/{_version}/MigrationCenter/GetSettings",
+          "google/cloud/observability/{_version}/Observability/GetSettings"
         ],
         "description": "Get notification settings.",
         "flatPath": "{_version}/projects/{projectsId}/locations/{locationsId}/settings",
@@ -12086,7 +12087,8 @@
       "advisorynotifications.projects.locations.updateSettings": {
         "apiPaths": [
           "google/cloud/contactcenterinsights/{_version}/ContactCenterInsights/UpdateSettings",
-          "google/cloud/migrationcenter/{_version}/MigrationCenter/UpdateSettings"
+          "google/cloud/migrationcenter/{_version}/MigrationCenter/UpdateSettings",
+          "google/cloud/observability/{_version}/Observability/UpdateSettings"
         ],
         "description": "Update notification settings.",
         "flatPath": "{_version}/projects/{projectsId}/locations/{locationsId}/settings",
@@ -308880,7 +308882,8 @@
       },
       "gkehub.projects.locations.scopes.get": {
         "apiPaths": [
-          "google/cloud/gkehub/{_version}/GkeHub/GetScope"
+          "google/cloud/gkehub/{_version}/GkeHub/GetScope",
+          "google/cloud/observability/{_version}/Observability/GetScope"
         ],
         "description": "Returns the details of a Scope.",
         "flatPath": "{_version}/projects/{projectsId}/locations/{locationsId}/scopes/{scopesId}",
@@ -309194,7 +309197,8 @@
       },
       "gkehub.projects.locations.scopes.patch": {
         "apiPaths": [
-          "google/cloud/gkehub/{_version}/GkeHub/UpdateScope"
+          "google/cloud/gkehub/{_version}/GkeHub/UpdateScope",
+          "google/cloud/observability/{_version}/Observability/UpdateScope"
         ],
         "description": "Updates a scopes.",
         "flatPath": "{_version}/projects/{projectsId}/locations/{locationsId}/scopes/{scopesId}",
@@ -336609,7 +336613,9 @@
         ]
       },
       "logging.projects.locations.buckets.create": {
-        "apiPaths": [],
+        "apiPaths": [
+          "google/cloud/observability/{_version}/Observability/CreateBucket"
+        ],
         "description": "Creates a log bucket that can be used to store log entries. After a bucket has been created, the bucket's location cannot be changed.",
         "flatPath": "{_version}/projects/{projectsId}/locations/{locationsId}/buckets",
         "httpMethod": "POST",
@@ -336682,7 +336688,9 @@
         ]
       },
       "logging.projects.locations.buckets.get": {
-        "apiPaths": [],
+        "apiPaths": [
+          "google/cloud/observability/{_version}/Observability/GetBucket"
+        ],
         "description": "Gets a log bucket.",
         "flatPath": "{_version}/projects/{projectsId}/locations/{locationsId}/buckets/{bucketsId}",
         "httpMethod": "GET",
@@ -336803,7 +336811,9 @@
         ]
       },
       "logging.projects.locations.buckets.list": {
-        "apiPaths": [],
+        "apiPaths": [
+          "google/cloud/observability/{_version}/Observability/ListBuckets"
+        ],
         "description": "Lists log buckets.",
         "flatPath": "{_version}/projects/{projectsId}/locations/{locationsId}/buckets",
         "httpMethod": "GET",
@@ -336835,7 +336845,9 @@
         ]
       },
       "logging.projects.locations.buckets.patch": {
-        "apiPaths": [],
+        "apiPaths": [
+          "google/cloud/observability/{_version}/Observability/UpdateBucket"
+        ],
         "description": "Updates a log bucket.If the bucket has a lifecycle_state of DELETE_REQUESTED, then FAILED_PRECONDITION will be returned.After a bucket has been created, the bucket's location cannot be changed.",
         "flatPath": "{_version}/projects/{projectsId}/locations/{locationsId}/buckets/{bucketsId}",
         "httpMethod": "PATCH",
@@ -413845,25 +413857,19 @@
       },
       "sql.workloadCaptures.stopReplay": {
         "apiPaths": [],
-        "description": "Stops executing a captured workload on the separate Cloud SQL instance.",
-        "flatPath": "sql/v1beta4/projects/{project}/instances/{instance}/workloadCaptures/{workloadId}:stopReplay",
+        "description": "Stops an active workload replay on the target Cloud SQL replay instance.",
+        "flatPath": "sql/v1beta4/projects/{project}/instances/{instance}/workloadCaptures:stopReplay",
         "httpMethod": "POST",
         "method": "stopReplay",
         "parameters": {
           "instance": {
-            "description": "Required. Cloud SQL instance ID. This does not include the project ID.",
+            "description": "Required. Cloud SQL instance ID of the target replay instance. This does not include the project ID.",
             "location": "path",
             "required": true,
             "type": "string"
           },
           "project": {
-            "description": "Required. Project ID of the project that contains the instance.",
-            "location": "path",
-            "required": true,
-            "type": "string"
-          },
-          "workloadId": {
-            "description": "Required. The ID of the workload to replay.",
+            "description": "Required. Project ID of the project that contains the target replay instance.",
             "location": "path",
             "required": true,
             "type": "string"
@@ -432096,6 +432102,48 @@
           }
         },
         "resourceType": "announcements",
+        "resourceTypePath": "//projects/locations",
+        "versions": [
+          "v1"
+        ]
+      },
+      "vmwareengine.projects.locations.capacityAllocations.list": {
+        "apiPaths": [],
+        "description": "Lists `CapacityAllocation` resources in a given project and location.",
+        "flatPath": "{_version}/projects/{projectsId}/locations/{locationsId}/capacityAllocations",
+        "httpMethod": "GET",
+        "method": "list",
+        "parameters": {
+          "filter": {
+            "description": "Optional. A filter expression that matches resources returned in the response. The expression must specify the field name, a comparison operator, and the value that you want to use for filtering. The value must be a string or a number. The comparison operator must be `=`, `!=`, `>`, `>=`, `<`, or `<=`. The has operator `:` is also supported. Supported fields include `name`, `display_name` (or `placement_group`), `machine_family`, `allocated_capacity_count`, `consumed_capacity_count`, and `connected_placement_group` (using `=`). For example, if you are filtering a list of capacity allocations, you can exclude the ones named `example-capacity-allocation` by specifying `name != \"example-capacity-allocation\"`. You can also filter on other fields, such as machine family (`\"ve1\"`, `\"ve2\"`, or `\"ve3\"`) or connected placement group: ``` machine_family = \"ve1\" connected_placement_group = \"example-placement-group\" ``` To filter on multiple expressions, provide each separate expression within parentheses. For example: ``` (machine_family = \"ve1\") (allocated_capacity_count > 10) ``` By default, each expression is an `AND` expression. However, you can include `AND`, `OR`, and `NOT` expressions explicitly. For example: ``` ((machine_family = \"ve1\") AND (allocated_capacity_count > 10)) OR (consumed_capacity_count > 0) ```",
+            "location": "query",
+            "type": "string"
+          },
+          "orderBy": {
+            "description": "Optional. Sorts list results by a certain order. By default, returned results are ordered by `name` in ascending order. You can also sort results in descending order based on the `name` value using `orderBy=\"name desc\"`. Currently, only ordering by `name` is supported.",
+            "location": "query",
+            "type": "string"
+          },
+          "pageSize": {
+            "description": "Optional. The maximum number of capacity allocations to return in one page. The service may return fewer than this value. The maximum value is coerced to 1000. The default value of this field is 500.",
+            "format": "int32",
+            "location": "query",
+            "type": "integer"
+          },
+          "pageToken": {
+            "description": "Optional. A page token, received from a previous `ListCapacityAllocations` call. Provide this to retrieve the subsequent page. When paginating, all other parameters provided to `ListCapacityAllocations` must match the call that provided the page token.",
+            "location": "query",
+            "type": "string"
+          },
+          "parent": {
+            "description": "Required. The resource name of the location to query for capacity allocations. Resource names are schemeless URIs that follow the conventions in https://cloud.google.com/apis/design/resource_names. For example: `projects/my-project/locations/us-central1-a`",
+            "location": "path",
+            "pattern": "^projects/[^/]+/locations/[^/]+$",
+            "required": true,
+            "type": "string"
+          }
+        },
+        "resourceType": "capacityAllocations",
         "resourceTypePath": "//projects/locations",
         "versions": [
           "v1"
