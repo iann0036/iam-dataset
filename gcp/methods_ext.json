@@ -63266,7 +63266,7 @@
         "method": "batchDelete",
         "parameters": {
           "packageName": {
-            "description": "Required. The parent app (package name) for which the one-time products should be deleted. Must be equal to the package_name field on all the OneTimeProduct resources.",
+            "description": "Required. The parent app (package name) for which the one-time products should be deleted. Must be equal to the package_name field on all the requests.",
             "location": "path",
             "required": true,
             "type": "string"
@@ -63286,7 +63286,7 @@
         "method": "batchGet",
         "parameters": {
           "packageName": {
-            "description": "Required. The parent app (package name) for which the products should be retrieved. Must be equal to the package_name field on all requests.",
+            "description": "Required. The parent app (package name) for which the products should be retrieved.",
             "location": "path",
             "required": true,
             "type": "string"
@@ -63577,7 +63577,7 @@
         "method": "batchDelete",
         "parameters": {
           "packageName": {
-            "description": "Required. The parent app (package name) of the offers to delete. Must be equal to the package_name field on all the OneTimeProductOffer resources.",
+            "description": "Required. The parent app (package name) of the offers to delete. Must be equal to the package_name field on all the requests.",
             "location": "path",
             "required": true,
             "type": "string"
@@ -63589,7 +63589,7 @@
             "type": "string"
           },
           "purchaseOptionId": {
-            "description": "Required. The parent purchase option (ID) for which the offers should be deleted. May be specified as '-' to update offers from multiple purchase options.",
+            "description": "Required. The parent purchase option (ID) for which the offers should be deleted. May be specified as '-' to delete offers from multiple purchase options.",
             "location": "path",
             "required": true,
             "type": "string"
@@ -63609,19 +63609,19 @@
         "method": "batchGet",
         "parameters": {
           "packageName": {
-            "description": "Required. The parent app (package name) of the updated offers. Must be equal to the package_name field on all the updated OneTimeProductOffer resources.",
+            "description": "Required. The parent app (package name) of the offers to retrieve. Must be equal to the package_name field on all the requests.",
             "location": "path",
             "required": true,
             "type": "string"
           },
           "productId": {
-            "description": "Required. The product ID of the parent one-time product, if all updated offers belong to the same product. If this request spans multiple one-time products, set this field to \"-\".",
+            "description": "Required. The product ID of the parent one-time product, if all offers belong to the same product. If this request spans multiple one-time products, set this field to \"-\".",
             "location": "path",
             "required": true,
             "type": "string"
           },
           "purchaseOptionId": {
-            "description": "Required. The parent purchase option (ID) for which the offers should be updated. May be specified as '-' to update offers from multiple purchase options.",
+            "description": "Required. The parent purchase option (ID) for which the offers should be retrieved. May be specified as '-' to retrieve offers from multiple purchase options.",
             "location": "path",
             "required": true,
             "type": "string"
@@ -63793,7 +63793,7 @@
             "type": "integer"
           },
           "pageToken": {
-            "description": "Optional. A page token, received from a previous `ListOneTimeProductsOffers` call. Provide this to retrieve the subsequent page. When paginating, product_id, package_name and purchase_option_id provided to `ListOneTimeProductsOffersRequest` must match the call that provided the page token.",
+            "description": "Optional. A page token, received from a previous `ListOneTimeProductOffers` call. Provide this to retrieve the subsequent page. When paginating, product_id, package_name and purchase_option_id provided to `ListOneTimeProductOffersRequest` must match the call that provided the page token.",
             "location": "query",
             "type": "string"
           },
@@ -355549,6 +355549,23 @@
             "location": "query",
             "type": "string"
           },
+          "cloudDeploymentType": {
+            "description": "Optional. The deployment type for Cloud Monitoring Points.",
+            "enum": [
+              "CLOUD_DEPLOYMENT_TYPE_UNSPECIFIED",
+              "TERRAFORM",
+              "CLOUD_FORMATION",
+              "BICEP"
+            ],
+            "enumDescriptions": [
+              "Default value. If unspecified, defaults to `TERRAFORM` for `GCE_VM`, `BICEP` for `AZURE_VM`, and `CLOUD_FORMATION` for `AWS_EC2`.",
+              "Deploys using Terraform.",
+              "Deploys using AWS Cloud Formation. Supported only for `AWS_EC2` deployments.",
+              "Deploys using Azure Bicep. Supported only for `AZURE_VM` deployments."
+            ],
+            "location": "query",
+            "type": "string"
+          },
           "hostname": {
             "description": "Required. The hostname of the MonitoringPoint, e.g. \"test-vm\"",
             "location": "query",
@@ -422928,13 +422945,13 @@
     "methods": {
       "tasks.tasklists.delete": {
         "apiPaths": [],
-        "description": "Deletes the authenticated user's specified task list. If the list contains assigned tasks, both the assigned tasks and the original tasks in the assignment surface (Docs, Chat Spaces) are deleted.",
+        "description": "Deletes the authenticated user's specified task list. If the list contains assigned tasks, both the assigned tasks and the original tasks in the assignment surface (Docs, Chat Spaces) are deleted. The user's default task list cannot be deleted.",
         "flatPath": "tasks/v1/users/@me/lists/{tasklist}",
         "httpMethod": "DELETE",
         "method": "delete",
         "parameters": {
           "tasklist": {
-            "description": "Task list identifier.",
+            "description": "Task list identifier. The default task list cannot be deleted.",
             "location": "path",
             "required": true,
             "type": "string"
@@ -422954,7 +422971,7 @@
         "method": "get",
         "parameters": {
           "tasklist": {
-            "description": "Task list identifier.",
+            "description": "Task list identifier. Use \"@default\" to get the authenticated user's default task list.",
             "location": "path",
             "required": true,
             "type": "string"
@@ -422987,13 +423004,13 @@
         "method": "list",
         "parameters": {
           "maxResults": {
-            "description": "Maximum number of task lists returned on one page. Optional. The default is 1000 (max allowed: 1000).",
+            "description": "Optional. Maximum number of task lists returned on one page. The default is 1000 (max allowed: 1000).",
             "format": "int32",
             "location": "query",
             "type": "integer"
           },
           "pageToken": {
-            "description": "Token specifying the result page to return. Optional.",
+            "description": "Optional. Token specifying the result page to return.",
             "location": "query",
             "type": "string"
           }
@@ -423123,13 +423140,18 @@
         "httpMethod": "POST",
         "method": "insert",
         "parameters": {
+          "hidden": {
+            "description": "Optional. Flag indicating whether the task is created as 'hidden', as if it had been completed and then cleared from the task list (see the \"clear\" method). Hidden tasks are not returned by default when retrieving all tasks for a task list (see showHidden). Only completed tasks can be created as hidden, and they can not be nested or positioned, so parent and previous must be empty.",
+            "location": "query",
+            "type": "boolean"
+          },
           "parent": {
-            "description": "Parent task identifier. If the task is created at the top level, this parameter is omitted. An assigned task cannot be a parent task, nor can it have a parent. Setting the parent to an assigned task results in failure of the request. Optional.",
+            "description": "Optional. Parent task identifier. If the task is created at the top level, this parameter is omitted. An assigned task cannot be a parent task, nor can it have a parent. Setting the parent to an assigned task results in failure of the request.",
             "location": "query",
             "type": "string"
           },
           "previous": {
-            "description": "Previous sibling task identifier. If the task is created at the first position among its siblings, this parameter is omitted. Optional.",
+            "description": "Optional. Previous sibling task identifier. If the task is created at the first position among its siblings, this parameter is omitted.",
             "location": "query",
             "type": "string"
           },
@@ -423154,53 +423176,53 @@
         "method": "list",
         "parameters": {
           "completedMax": {
-            "description": "Upper bound for a task's completion date (as a RFC 3339 timestamp) to filter by. Optional. The default is not to filter by completion date.",
+            "description": "Optional. Upper bound for a task's completion date (as a RFC 3339 timestamp) to filter by. The default is not to filter by completion date.",
             "location": "query",
             "type": "string"
           },
           "completedMin": {
-            "description": "Lower bound for a task's completion date (as a RFC 3339 timestamp) to filter by. Optional. The default is not to filter by completion date.",
+            "description": "Optional. Lower bound for a task's completion date (as a RFC 3339 timestamp) to filter by. The default is not to filter by completion date.",
             "location": "query",
             "type": "string"
           },
           "dueMax": {
-            "description": "Upper bound for a task's due date (as a RFC 3339 timestamp) to filter by. Optional. The default is not to filter by due date.",
+            "description": "Optional. Upper bound for a task's due date (as a RFC 3339 timestamp) to filter by. The default is not to filter by due date.",
             "location": "query",
             "type": "string"
           },
           "dueMin": {
-            "description": "Lower bound for a task's due date (as a RFC 3339 timestamp) to filter by. Optional. The default is not to filter by due date.",
+            "description": "Optional. Lower bound for a task's due date (as a RFC 3339 timestamp) to filter by. The default is not to filter by due date.",
             "location": "query",
             "type": "string"
           },
           "maxResults": {
-            "description": "Maximum number of tasks returned on one page. Optional. The default is 20 (max allowed: 100).",
+            "description": "Optional. Maximum number of tasks returned on one page. The default is 20 (max allowed: 100).",
             "format": "int32",
             "location": "query",
             "type": "integer"
           },
           "pageToken": {
-            "description": "Token specifying the result page to return. Optional.",
+            "description": "Optional. Token specifying the result page to return.",
             "location": "query",
             "type": "string"
           },
           "showAssigned": {
-            "description": "Optional. Flag indicating whether tasks assigned to the current user are returned in the result. Optional. The default is False.",
+            "description": "Optional. Flag indicating whether tasks assigned to the current user are returned in the result. The default is False.",
             "location": "query",
             "type": "boolean"
           },
           "showCompleted": {
-            "description": "Flag indicating whether completed tasks are returned in the result. Note that showHidden must also be True to show tasks completed in first party clients, such as the web UI and Google's mobile apps. Optional. The default is True.",
+            "description": "Optional. Flag indicating whether completed tasks are returned in the result. Note that showHidden must also be True to show tasks completed in first party clients, such as the web UI and Google's mobile apps. The default is True.",
             "location": "query",
             "type": "boolean"
           },
           "showDeleted": {
-            "description": "Flag indicating whether deleted tasks are returned in the result. Optional. The default is False.",
+            "description": "Optional. Flag indicating whether deleted tasks are returned in the result. The default is False.",
             "location": "query",
             "type": "boolean"
           },
           "showHidden": {
-            "description": "Flag indicating whether hidden tasks are returned in the result. Optional. The default is False.",
+            "description": "Optional. Flag indicating whether hidden tasks are returned in the result. The default is False.",
             "location": "query",
             "type": "boolean"
           },
@@ -423211,7 +423233,7 @@
             "type": "string"
           },
           "updatedMin": {
-            "description": "Lower bound for a task's last modification time (as a RFC 3339 timestamp) to filter by. Optional. The default is not to filter by last modification time.",
+            "description": "Optional. Lower bound for a task's last modification time (as a RFC 3339 timestamp) to filter by. The default is not to filter by last modification time.",
             "location": "query",
             "type": "string"
           }
