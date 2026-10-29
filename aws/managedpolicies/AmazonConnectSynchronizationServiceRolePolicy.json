@@ -3,10 +3,11 @@
     "List",
     "Read",
     "Tagging",
-    "Write"
+    "Write",
+    "Permissions management"
   ],
   "arn": "arn:aws:iam::aws:policy/aws-service-role/AmazonConnectSynchronizationServiceRolePolicy",
-  "createdate": "2026-10-06T17:57:08+00:00",
+  "createdate": "2026-10-28T19:17:08+00:00",
   "credentials_exposure": true,
   "data_access": true,
   "deprecated": false,
@@ -90,6 +91,322 @@
         "Effect": "Allow",
         "Resource": "*",
         "Sid": "AllowPutMetricsForConnectNamespace"
+      },
+      {
+        "Action": [
+          "app-integrations:ListApplicationAssociations",
+          "app-integrations:ListApplications"
+        ],
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "AllowAppIntegrationsListApplications"
+      },
+      {
+        "Action": [
+          "app-integrations:CreateApplication",
+          "app-integrations:GetApplication",
+          "app-integrations:UpdateApplication",
+          "app-integrations:DeleteApplication",
+          "app-integrations:ListTagsForResource",
+          "app-integrations:TagResource",
+          "app-integrations:UntagResource"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:app-integrations:*:*:application/*",
+        "Sid": "AllowAppIntegrationsScopedToApplications"
+      },
+      {
+        "Action": [
+          "wisdom:CreateAssistant",
+          "wisdom:DeleteAssistant",
+          "wisdom:GetAssistant",
+          "wisdom:ListAssistants",
+          "wisdom:UpdateAssistantAIAgent",
+          "wisdom:RemoveAssistantAIAgent",
+          "wisdom:CreateAssistantAssociation",
+          "wisdom:DeleteAssistantAssociation",
+          "wisdom:GetAssistantAssociation",
+          "wisdom:ListAssistantAssociations",
+          "wisdom:CreateAIAgent",
+          "wisdom:CreateAIAgentVersion",
+          "wisdom:DeleteAIAgent",
+          "wisdom:DeleteAIAgentVersion",
+          "wisdom:GetAIAgent",
+          "wisdom:ListAIAgents",
+          "wisdom:ListAIAgentVersions",
+          "wisdom:UpdateAIAgent",
+          "wisdom:CreateAIPrompt",
+          "wisdom:CreateAIPromptVersion",
+          "wisdom:DeleteAIPrompt",
+          "wisdom:DeleteAIPromptVersion",
+          "wisdom:GetAIPrompt",
+          "wisdom:ListAIPrompts",
+          "wisdom:ListAIPromptVersions",
+          "wisdom:UpdateAIPrompt",
+          "wisdom:CreateAIGuardrail",
+          "wisdom:CreateAIGuardrailVersion",
+          "wisdom:DeleteAIGuardrail",
+          "wisdom:DeleteAIGuardrailVersion",
+          "wisdom:GetAIGuardrail",
+          "wisdom:ListAIGuardrails",
+          "wisdom:ListAIGuardrailVersions",
+          "wisdom:UpdateAIGuardrail",
+          "wisdom:CreateKnowledgeBase",
+          "wisdom:DeleteKnowledgeBase",
+          "wisdom:GetKnowledgeBase",
+          "wisdom:ListKnowledgeBases",
+          "wisdom:UpdateKnowledgeBaseTemplateUri",
+          "wisdom:RemoveKnowledgeBaseTemplateUri",
+          "wisdom:CreateContent",
+          "wisdom:StartContentUpload",
+          "wisdom:DeleteContent",
+          "wisdom:GetContent",
+          "wisdom:GetContentSummary",
+          "wisdom:ListContents",
+          "wisdom:UpdateContent",
+          "wisdom:CreateContentAssociation",
+          "wisdom:DeleteContentAssociation",
+          "wisdom:GetContentAssociation",
+          "wisdom:ListContentAssociations",
+          "wisdom:CreateQuickResponse",
+          "wisdom:DeleteQuickResponse",
+          "wisdom:GetQuickResponse",
+          "wisdom:ListQuickResponses",
+          "wisdom:UpdateQuickResponse",
+          "wisdom:ListTagsForResource",
+          "wisdom:TagResource",
+          "wisdom:UntagResource",
+          "wisdom:ListModels"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "AllowWisdomActions"
+      },
+      {
+        "Action": [
+          "kms:DescribeKey"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          },
+          "StringLike": {
+            "kms:ViaService": [
+              "wisdom.*.amazonaws.com"
+            ]
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:kms:*:*:key/*",
+        "Sid": "AllowKmsKeyValidationForQinConnectReplicaResources"
+      },
+      {
+        "Action": [
+          "kms:CreateGrant"
+        ],
+        "Condition": {
+          "Bool": {
+            "kms:GrantIsForAWSResource": "true"
+          },
+          "ForAllValues:StringEquals": {
+            "kms:EncryptionContextKeys": [
+              "aws:wisdom:assistant:arn"
+            ],
+            "kms:GrantOperations": [
+              "DescribeKey",
+              "Decrypt",
+              "GenerateDataKey",
+              "CreateGrant"
+            ]
+          },
+          "Null": {
+            "kms:EncryptionContextKeys": "false",
+            "kms:GrantOperations": "false"
+          },
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}",
+            "kms:GrantConstraintType": "EncryptionContextSubset"
+          },
+          "StringLike": {
+            "kms:EncryptionContext:aws:wisdom:assistant:arn": "arn:aws:wisdom:*:${aws:PrincipalAccount}:assistant/*",
+            "kms:ViaService": "wisdom.*.amazonaws.com"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:kms:*:*:key/*",
+        "Sid": "AllowKmsGrantCreationForQinConnectReplicaAssistant"
+      },
+      {
+        "Action": [
+          "kms:CreateGrant"
+        ],
+        "Condition": {
+          "Bool": {
+            "kms:GrantIsForAWSResource": "true"
+          },
+          "ForAllValues:StringEquals": {
+            "kms:EncryptionContextKeys": [
+              "aws:wisdom:knowledgeBase:arn"
+            ],
+            "kms:GrantOperations": [
+              "DescribeKey",
+              "Decrypt",
+              "GenerateDataKey",
+              "CreateGrant"
+            ]
+          },
+          "Null": {
+            "kms:EncryptionContextKeys": "false",
+            "kms:GrantOperations": "false"
+          },
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}",
+            "kms:GrantConstraintType": "EncryptionContextSubset"
+          },
+          "StringLike": {
+            "kms:EncryptionContext:aws:wisdom:knowledgeBase:arn": "arn:aws:wisdom:*:${aws:PrincipalAccount}:knowledge-base/*",
+            "kms:ViaService": "wisdom.*.amazonaws.com"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:kms:*:*:key/*",
+        "Sid": "AllowKmsGrantCreationForQinConnectReplicaKnowledgeBase"
+      },
+      {
+        "Action": [
+          "kms:Decrypt",
+          "kms:GenerateDataKey",
+          "kms:GenerateDataKeyWithoutPlaintext"
+        ],
+        "Condition": {
+          "ForAllValues:StringEquals": {
+            "kms:EncryptionContextKeys": [
+              "aws:wisdom:assistant:arn"
+            ]
+          },
+          "Null": {
+            "kms:EncryptionContextKeys": "false"
+          },
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          },
+          "StringLike": {
+            "kms:EncryptionContext:aws:wisdom:assistant:arn": "arn:aws:wisdom:*:${aws:PrincipalAccount}:assistant/*",
+            "kms:ViaService": "wisdom.*.amazonaws.com"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:kms:*:*:key/*",
+        "Sid": "AllowKmsCryptoForQinConnectReplicaAssistant"
+      },
+      {
+        "Action": [
+          "kms:Decrypt",
+          "kms:GenerateDataKey",
+          "kms:GenerateDataKeyWithoutPlaintext"
+        ],
+        "Condition": {
+          "ForAllValues:StringEquals": {
+            "kms:EncryptionContextKeys": [
+              "aws:wisdom:knowledgeBase:arn"
+            ]
+          },
+          "Null": {
+            "kms:EncryptionContextKeys": "false"
+          },
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          },
+          "StringLike": {
+            "kms:EncryptionContext:aws:wisdom:knowledgeBase:arn": "arn:aws:wisdom:*:${aws:PrincipalAccount}:knowledge-base/*",
+            "kms:ViaService": "wisdom.*.amazonaws.com"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:kms:*:*:key/*",
+        "Sid": "AllowKmsCryptoForQinConnectReplicaKnowledgeBase"
+      },
+      {
+        "Action": [
+          "kms:CreateGrant"
+        ],
+        "Condition": {
+          "Bool": {
+            "kms:GrantIsForAWSResource": "true"
+          },
+          "ForAllValues:StringEquals": {
+            "kms:EncryptionContextKeys": [
+              "aws:wisdom:assistant:arn"
+            ],
+            "kms:GrantOperations": [
+              "DescribeKey",
+              "Decrypt",
+              "GenerateDataKey",
+              "GenerateDataKeyPair"
+            ]
+          },
+          "Null": {
+            "kms:EncryptionContextKeys": "false",
+            "kms:GrantOperations": "false"
+          },
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}",
+            "kms:GrantConstraintType": "EncryptionContextEquals"
+          },
+          "StringLike": {
+            "kms:EncryptionContext:aws:wisdom:assistant:arn": "arn:aws:wisdom:*:${aws:PrincipalAccount}:assistant/*",
+            "kms:ViaService": "connect.*.amazonaws.com"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:kms:*:*:key/*",
+        "Sid": "AllowKmsGrantCreationForQinConnectInstanceAssociationAssistant"
+      },
+      {
+        "Action": [
+          "kms:CreateGrant"
+        ],
+        "Condition": {
+          "Bool": {
+            "kms:GrantIsForAWSResource": "true"
+          },
+          "ForAllValues:StringEquals": {
+            "kms:EncryptionContextKeys": [
+              "aws:wisdom:knowledgeBase:arn"
+            ],
+            "kms:GrantOperations": [
+              "DescribeKey",
+              "Decrypt",
+              "GenerateDataKey",
+              "GenerateDataKeyPair"
+            ]
+          },
+          "Null": {
+            "kms:EncryptionContextKeys": "false",
+            "kms:GrantOperations": "false"
+          },
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}",
+            "kms:GrantConstraintType": "EncryptionContextEquals"
+          },
+          "StringLike": {
+            "kms:EncryptionContext:aws:wisdom:knowledgeBase:arn": "arn:aws:wisdom:*:${aws:PrincipalAccount}:knowledge-base/*",
+            "kms:ViaService": "connect.*.amazonaws.com"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:kms:*:*:key/*",
+        "Sid": "AllowKmsGrantCreationForQinConnectInstanceAssociationKnowledgeBase"
       }
     ],
     "Version": "2012-10-17"
@@ -3498,15 +3815,1296 @@
       "effective_action": "cloudwatch:PutMetricData",
       "privesc": false,
       "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "app-integrations:ListApplicationAssociations",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "app-integrations:ListApplicationAssociations",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "app-integrations:ListApplications",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "app-integrations:ListApplications",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "app-integrations:CreateApplication",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "app-integrations:CreateApplication",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "app-integrations:GetApplication",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "app-integrations:GetApplication",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "app-integrations:UpdateApplication",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "app-integrations:UpdateApplication",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "app-integrations:DeleteApplication",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "app-integrations:DeleteApplication",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "app-integrations:ListTagsForResource",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "app-integrations:ListTagsForResource",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Tagging, Write",
+      "action": "app-integrations:TagResource",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "app-integrations:TagResource",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Tagging, Write",
+      "action": "app-integrations:UntagResource",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "app-integrations:UntagResource",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "wisdom:CreateAssistant",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "wisdom:CreateAssistant",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "wisdom:DeleteAssistant",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "wisdom:DeleteAssistant",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "wisdom:GetAssistant",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "wisdom:GetAssistant",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "wisdom:ListAssistants",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "wisdom:ListAssistants",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "wisdom:UpdateAssistantAIAgent",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "wisdom:UpdateAssistantAIAgent",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "wisdom:RemoveAssistantAIAgent",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "wisdom:RemoveAssistantAIAgent",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "wisdom:CreateAssistantAssociation",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "wisdom:CreateAssistantAssociation",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "wisdom:DeleteAssistantAssociation",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "wisdom:DeleteAssistantAssociation",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "wisdom:GetAssistantAssociation",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "wisdom:GetAssistantAssociation",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "wisdom:ListAssistantAssociations",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "wisdom:ListAssistantAssociations",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "wisdom:CreateAIAgent",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "wisdom:CreateAIAgent",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "wisdom:CreateAIAgentVersion",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "wisdom:CreateAIAgentVersion",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "wisdom:DeleteAIAgent",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "wisdom:DeleteAIAgent",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "wisdom:DeleteAIAgentVersion",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "wisdom:DeleteAIAgentVersion",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "wisdom:GetAIAgent",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "wisdom:GetAIAgent",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "wisdom:ListAIAgents",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "wisdom:ListAIAgents",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "wisdom:ListAIAgentVersions",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "wisdom:ListAIAgentVersions",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "wisdom:UpdateAIAgent",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "wisdom:UpdateAIAgent",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "wisdom:CreateAIPrompt",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "wisdom:CreateAIPrompt",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "wisdom:CreateAIPromptVersion",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "wisdom:CreateAIPromptVersion",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "wisdom:DeleteAIPrompt",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "wisdom:DeleteAIPrompt",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "wisdom:DeleteAIPromptVersion",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "wisdom:DeleteAIPromptVersion",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "wisdom:GetAIPrompt",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "wisdom:GetAIPrompt",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "wisdom:ListAIPrompts",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "wisdom:ListAIPrompts",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "wisdom:ListAIPromptVersions",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "wisdom:ListAIPromptVersions",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "wisdom:UpdateAIPrompt",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "wisdom:UpdateAIPrompt",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "wisdom:CreateAIGuardrail",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "wisdom:CreateAIGuardrail",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "wisdom:CreateAIGuardrailVersion",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "wisdom:CreateAIGuardrailVersion",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "wisdom:DeleteAIGuardrail",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "wisdom:DeleteAIGuardrail",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "wisdom:DeleteAIGuardrailVersion",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "wisdom:DeleteAIGuardrailVersion",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "wisdom:GetAIGuardrail",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "wisdom:GetAIGuardrail",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "wisdom:ListAIGuardrails",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "wisdom:ListAIGuardrails",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "wisdom:ListAIGuardrailVersions",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "wisdom:ListAIGuardrailVersions",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "wisdom:UpdateAIGuardrail",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "wisdom:UpdateAIGuardrail",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "wisdom:CreateKnowledgeBase",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "wisdom:CreateKnowledgeBase",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "wisdom:DeleteKnowledgeBase",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "wisdom:DeleteKnowledgeBase",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "wisdom:GetKnowledgeBase",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "wisdom:GetKnowledgeBase",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "wisdom:ListKnowledgeBases",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "wisdom:ListKnowledgeBases",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "wisdom:UpdateKnowledgeBaseTemplateUri",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "wisdom:UpdateKnowledgeBaseTemplateUri",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "wisdom:RemoveKnowledgeBaseTemplateUri",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "wisdom:RemoveKnowledgeBaseTemplateUri",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "wisdom:CreateContent",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "wisdom:CreateContent",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "wisdom:StartContentUpload",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "wisdom:StartContentUpload",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "wisdom:DeleteContent",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "wisdom:DeleteContent",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "wisdom:GetContent",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "wisdom:GetContent",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "wisdom:GetContentSummary",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "wisdom:GetContentSummary",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "wisdom:ListContents",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "wisdom:ListContents",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "wisdom:UpdateContent",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "wisdom:UpdateContent",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "wisdom:CreateContentAssociation",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "wisdom:CreateContentAssociation",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "wisdom:DeleteContentAssociation",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "wisdom:DeleteContentAssociation",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "wisdom:GetContentAssociation",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "wisdom:GetContentAssociation",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "wisdom:ListContentAssociations",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "wisdom:ListContentAssociations",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "wisdom:CreateQuickResponse",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "wisdom:CreateQuickResponse",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "wisdom:DeleteQuickResponse",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "wisdom:DeleteQuickResponse",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "wisdom:GetQuickResponse",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "wisdom:GetQuickResponse",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "wisdom:ListQuickResponses",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "wisdom:ListQuickResponses",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "wisdom:UpdateQuickResponse",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "wisdom:UpdateQuickResponse",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "wisdom:ListTagsForResource",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "wisdom:ListTagsForResource",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Tagging, Write",
+      "action": "wisdom:TagResource",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "wisdom:TagResource",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Tagging, Write",
+      "action": "wisdom:UntagResource",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "wisdom:UntagResource",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "wisdom:ListModels",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "wisdom:ListModels",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "kms:DescribeKey",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        },
+        "StringLike": {
+          "kms:ViaService": [
+            "wisdom.*.amazonaws.com"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "kms:DescribeKey",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Permissions management, Write",
+      "action": "kms:CreateGrant",
+      "condition": {
+        "Bool": {
+          "kms:GrantIsForAWSResource": "true"
+        },
+        "ForAllValues:StringEquals": {
+          "kms:EncryptionContextKeys": [
+            "aws:wisdom:assistant:arn"
+          ],
+          "kms:GrantOperations": [
+            "DescribeKey",
+            "Decrypt",
+            "GenerateDataKey",
+            "CreateGrant"
+          ]
+        },
+        "Null": {
+          "kms:EncryptionContextKeys": "false",
+          "kms:GrantOperations": "false"
+        },
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}",
+          "kms:GrantConstraintType": "EncryptionContextSubset"
+        },
+        "StringLike": {
+          "kms:EncryptionContext:aws:wisdom:assistant:arn": "arn:aws:wisdom:*:${aws:PrincipalAccount}:assistant/*",
+          "kms:ViaService": "wisdom.*.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": true,
+      "effective_action": "kms:CreateGrant",
+      "privesc": true,
+      "resource_exposure": true
+    },
+    {
+      "access_level": "Permissions management, Write",
+      "action": "kms:CreateGrant",
+      "condition": {
+        "Bool": {
+          "kms:GrantIsForAWSResource": "true"
+        },
+        "ForAllValues:StringEquals": {
+          "kms:EncryptionContextKeys": [
+            "aws:wisdom:knowledgeBase:arn"
+          ],
+          "kms:GrantOperations": [
+            "DescribeKey",
+            "Decrypt",
+            "GenerateDataKey",
+            "CreateGrant"
+          ]
+        },
+        "Null": {
+          "kms:EncryptionContextKeys": "false",
+          "kms:GrantOperations": "false"
+        },
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}",
+          "kms:GrantConstraintType": "EncryptionContextSubset"
+        },
+        "StringLike": {
+          "kms:EncryptionContext:aws:wisdom:knowledgeBase:arn": "arn:aws:wisdom:*:${aws:PrincipalAccount}:knowledge-base/*",
+          "kms:ViaService": "wisdom.*.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": true,
+      "effective_action": "kms:CreateGrant",
+      "privesc": true,
+      "resource_exposure": true
+    },
+    {
+      "access_level": "Write",
+      "action": "kms:Decrypt",
+      "condition": {
+        "ForAllValues:StringEquals": {
+          "kms:EncryptionContextKeys": [
+            "aws:wisdom:assistant:arn"
+          ]
+        },
+        "Null": {
+          "kms:EncryptionContextKeys": "false"
+        },
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        },
+        "StringLike": {
+          "kms:EncryptionContext:aws:wisdom:assistant:arn": "arn:aws:wisdom:*:${aws:PrincipalAccount}:assistant/*",
+          "kms:ViaService": "wisdom.*.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "kms:Decrypt",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "kms:GenerateDataKey",
+      "condition": {
+        "ForAllValues:StringEquals": {
+          "kms:EncryptionContextKeys": [
+            "aws:wisdom:assistant:arn"
+          ]
+        },
+        "Null": {
+          "kms:EncryptionContextKeys": "false"
+        },
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        },
+        "StringLike": {
+          "kms:EncryptionContext:aws:wisdom:assistant:arn": "arn:aws:wisdom:*:${aws:PrincipalAccount}:assistant/*",
+          "kms:ViaService": "wisdom.*.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "kms:GenerateDataKey",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "kms:GenerateDataKeyWithoutPlaintext",
+      "condition": {
+        "ForAllValues:StringEquals": {
+          "kms:EncryptionContextKeys": [
+            "aws:wisdom:assistant:arn"
+          ]
+        },
+        "Null": {
+          "kms:EncryptionContextKeys": "false"
+        },
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        },
+        "StringLike": {
+          "kms:EncryptionContext:aws:wisdom:assistant:arn": "arn:aws:wisdom:*:${aws:PrincipalAccount}:assistant/*",
+          "kms:ViaService": "wisdom.*.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "kms:GenerateDataKeyWithoutPlaintext",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "kms:Decrypt",
+      "condition": {
+        "ForAllValues:StringEquals": {
+          "kms:EncryptionContextKeys": [
+            "aws:wisdom:knowledgeBase:arn"
+          ]
+        },
+        "Null": {
+          "kms:EncryptionContextKeys": "false"
+        },
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        },
+        "StringLike": {
+          "kms:EncryptionContext:aws:wisdom:knowledgeBase:arn": "arn:aws:wisdom:*:${aws:PrincipalAccount}:knowledge-base/*",
+          "kms:ViaService": "wisdom.*.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "kms:Decrypt",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "kms:GenerateDataKey",
+      "condition": {
+        "ForAllValues:StringEquals": {
+          "kms:EncryptionContextKeys": [
+            "aws:wisdom:knowledgeBase:arn"
+          ]
+        },
+        "Null": {
+          "kms:EncryptionContextKeys": "false"
+        },
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        },
+        "StringLike": {
+          "kms:EncryptionContext:aws:wisdom:knowledgeBase:arn": "arn:aws:wisdom:*:${aws:PrincipalAccount}:knowledge-base/*",
+          "kms:ViaService": "wisdom.*.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "kms:GenerateDataKey",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "kms:GenerateDataKeyWithoutPlaintext",
+      "condition": {
+        "ForAllValues:StringEquals": {
+          "kms:EncryptionContextKeys": [
+            "aws:wisdom:knowledgeBase:arn"
+          ]
+        },
+        "Null": {
+          "kms:EncryptionContextKeys": "false"
+        },
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        },
+        "StringLike": {
+          "kms:EncryptionContext:aws:wisdom:knowledgeBase:arn": "arn:aws:wisdom:*:${aws:PrincipalAccount}:knowledge-base/*",
+          "kms:ViaService": "wisdom.*.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "kms:GenerateDataKeyWithoutPlaintext",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Permissions management, Write",
+      "action": "kms:CreateGrant",
+      "condition": {
+        "Bool": {
+          "kms:GrantIsForAWSResource": "true"
+        },
+        "ForAllValues:StringEquals": {
+          "kms:EncryptionContextKeys": [
+            "aws:wisdom:assistant:arn"
+          ],
+          "kms:GrantOperations": [
+            "DescribeKey",
+            "Decrypt",
+            "GenerateDataKey",
+            "GenerateDataKeyPair"
+          ]
+        },
+        "Null": {
+          "kms:EncryptionContextKeys": "false",
+          "kms:GrantOperations": "false"
+        },
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}",
+          "kms:GrantConstraintType": "EncryptionContextEquals"
+        },
+        "StringLike": {
+          "kms:EncryptionContext:aws:wisdom:assistant:arn": "arn:aws:wisdom:*:${aws:PrincipalAccount}:assistant/*",
+          "kms:ViaService": "connect.*.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": true,
+      "effective_action": "kms:CreateGrant",
+      "privesc": true,
+      "resource_exposure": true
+    },
+    {
+      "access_level": "Permissions management, Write",
+      "action": "kms:CreateGrant",
+      "condition": {
+        "Bool": {
+          "kms:GrantIsForAWSResource": "true"
+        },
+        "ForAllValues:StringEquals": {
+          "kms:EncryptionContextKeys": [
+            "aws:wisdom:knowledgeBase:arn"
+          ],
+          "kms:GrantOperations": [
+            "DescribeKey",
+            "Decrypt",
+            "GenerateDataKey",
+            "GenerateDataKeyPair"
+          ]
+        },
+        "Null": {
+          "kms:EncryptionContextKeys": "false",
+          "kms:GrantOperations": "false"
+        },
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}",
+          "kms:GrantConstraintType": "EncryptionContextEquals"
+        },
+        "StringLike": {
+          "kms:EncryptionContext:aws:wisdom:knowledgeBase:arn": "arn:aws:wisdom:*:${aws:PrincipalAccount}:knowledge-base/*",
+          "kms:ViaService": "connect.*.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": true,
+      "effective_action": "kms:CreateGrant",
+      "privesc": true,
+      "resource_exposure": true
     }
   ],
   "grantless": false,
   "malformed": false,
   "name": "AmazonConnectSynchronizationServiceRolePolicy",
-  "privesc": false,
-  "resource_exposure": false,
+  "privesc": true,
+  "resource_exposure": true,
   "undocumented_actions": false,
   "unknown_actions": [],
-  "updatedate": "2026-10-06T17:57:08+00:00",
-  "version": "v6"
+  "updatedate": "2026-10-28T19:17:08+00:00",
+  "version": "v7"
 }

@@ -7,7 +7,7 @@
     "Permissions management"
   ],
   "arn": "arn:aws:iam::aws:policy/AWSTransformNetworkMigrationAgentPolicy",
-  "createdate": "2026-09-01T10:37:07+00:00",
+  "createdate": "2026-10-29T10:17:08+00:00",
   "credentials_exposure": true,
   "data_access": true,
   "deprecated": false,
@@ -1227,6 +1227,58 @@
         "Effect": "Allow",
         "Resource": "arn:aws:iam::*:role/AWSTransformNetworkMigrationAgentSharingRole_${aws:PrincipalAccount}",
         "Sid": "StsCrossAccountAssumeRoleNetworkMigration"
+      },
+      {
+        "Action": [
+          "wellarchitected:ListAgentProfiles"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:RequestedRegion": "${aws:PrincipalTag/TargetRegion}"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "WellArchitectedAgentProfileListReadOnly"
+      },
+      {
+        "Action": [
+          "wellarchitected:CreateAgentContext",
+          "wellarchitected:CreateAgentGoal",
+          "wellarchitected:GetAgentProfile",
+          "wellarchitected:GetAgentRecommendationGeneration",
+          "wellarchitected:ListAgentContexts",
+          "wellarchitected:ListAgentGoals",
+          "wellarchitected:ListAgentRecommendations",
+          "wellarchitected:StartAgentRecommendationGeneration",
+          "wellarchitected:UpdateAgentContext",
+          "wellarchitected:UpdateAgentGoal",
+          "wellarchitected:UpdateAgentProfile"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:RequestedRegion": "${aws:PrincipalTag/TargetRegion}",
+            "aws:ResourceAccount": "${aws:PrincipalAccount}",
+            "aws:ResourceTag/AWSTransformNetworkMigration": "enabled"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:wellarchitected:*:*:agent-profile/*",
+        "Sid": "WellArchitectedAgentProfileOperationsWithResourceTag"
+      },
+      {
+        "Action": [
+          "wellarchitected:GetAgentRecommendation"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:RequestedRegion": "${aws:PrincipalTag/TargetRegion}",
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:wellarchitected:*:*:agent-recommendation/*",
+        "Sid": "WellArchitectedAgentRecommendationReadOnly"
       }
     ],
     "Version": "2012-10-17"
@@ -6183,6 +6235,211 @@
       "effective_action": "sts:AssumeRole",
       "privesc": false,
       "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "wellarchitected:ListAgentProfiles",
+      "condition": {
+        "StringEquals": {
+          "aws:RequestedRegion": "${aws:PrincipalTag/TargetRegion}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "wellarchitected:ListAgentProfiles",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "wellarchitected:CreateAgentContext",
+      "condition": {
+        "StringEquals": {
+          "aws:RequestedRegion": "${aws:PrincipalTag/TargetRegion}",
+          "aws:ResourceAccount": "${aws:PrincipalAccount}",
+          "aws:ResourceTag/AWSTransformNetworkMigration": "enabled"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "wellarchitected:CreateAgentContext",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "wellarchitected:CreateAgentGoal",
+      "condition": {
+        "StringEquals": {
+          "aws:RequestedRegion": "${aws:PrincipalTag/TargetRegion}",
+          "aws:ResourceAccount": "${aws:PrincipalAccount}",
+          "aws:ResourceTag/AWSTransformNetworkMigration": "enabled"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "wellarchitected:CreateAgentGoal",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "wellarchitected:GetAgentProfile",
+      "condition": {
+        "StringEquals": {
+          "aws:RequestedRegion": "${aws:PrincipalTag/TargetRegion}",
+          "aws:ResourceAccount": "${aws:PrincipalAccount}",
+          "aws:ResourceTag/AWSTransformNetworkMigration": "enabled"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "wellarchitected:GetAgentProfile",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "wellarchitected:GetAgentRecommendationGeneration",
+      "condition": {
+        "StringEquals": {
+          "aws:RequestedRegion": "${aws:PrincipalTag/TargetRegion}",
+          "aws:ResourceAccount": "${aws:PrincipalAccount}",
+          "aws:ResourceTag/AWSTransformNetworkMigration": "enabled"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "wellarchitected:GetAgentRecommendationGeneration",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "wellarchitected:ListAgentContexts",
+      "condition": {
+        "StringEquals": {
+          "aws:RequestedRegion": "${aws:PrincipalTag/TargetRegion}",
+          "aws:ResourceAccount": "${aws:PrincipalAccount}",
+          "aws:ResourceTag/AWSTransformNetworkMigration": "enabled"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "wellarchitected:ListAgentContexts",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "wellarchitected:ListAgentGoals",
+      "condition": {
+        "StringEquals": {
+          "aws:RequestedRegion": "${aws:PrincipalTag/TargetRegion}",
+          "aws:ResourceAccount": "${aws:PrincipalAccount}",
+          "aws:ResourceTag/AWSTransformNetworkMigration": "enabled"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "wellarchitected:ListAgentGoals",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "wellarchitected:ListAgentRecommendations",
+      "condition": {
+        "StringEquals": {
+          "aws:RequestedRegion": "${aws:PrincipalTag/TargetRegion}",
+          "aws:ResourceAccount": "${aws:PrincipalAccount}",
+          "aws:ResourceTag/AWSTransformNetworkMigration": "enabled"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "wellarchitected:ListAgentRecommendations",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "wellarchitected:StartAgentRecommendationGeneration",
+      "condition": {
+        "StringEquals": {
+          "aws:RequestedRegion": "${aws:PrincipalTag/TargetRegion}",
+          "aws:ResourceAccount": "${aws:PrincipalAccount}",
+          "aws:ResourceTag/AWSTransformNetworkMigration": "enabled"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "wellarchitected:StartAgentRecommendationGeneration",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "wellarchitected:UpdateAgentContext",
+      "condition": {
+        "StringEquals": {
+          "aws:RequestedRegion": "${aws:PrincipalTag/TargetRegion}",
+          "aws:ResourceAccount": "${aws:PrincipalAccount}",
+          "aws:ResourceTag/AWSTransformNetworkMigration": "enabled"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "wellarchitected:UpdateAgentContext",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "wellarchitected:UpdateAgentGoal",
+      "condition": {
+        "StringEquals": {
+          "aws:RequestedRegion": "${aws:PrincipalTag/TargetRegion}",
+          "aws:ResourceAccount": "${aws:PrincipalAccount}",
+          "aws:ResourceTag/AWSTransformNetworkMigration": "enabled"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "wellarchitected:UpdateAgentGoal",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "wellarchitected:UpdateAgentProfile",
+      "condition": {
+        "StringEquals": {
+          "aws:RequestedRegion": "${aws:PrincipalTag/TargetRegion}",
+          "aws:ResourceAccount": "${aws:PrincipalAccount}",
+          "aws:ResourceTag/AWSTransformNetworkMigration": "enabled"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "wellarchitected:UpdateAgentProfile",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "wellarchitected:GetAgentRecommendation",
+      "condition": {
+        "StringEquals": {
+          "aws:RequestedRegion": "${aws:PrincipalTag/TargetRegion}",
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "wellarchitected:GetAgentRecommendation",
+      "privesc": false,
+      "resource_exposure": false
     }
   ],
   "grantless": false,
@@ -6192,6 +6449,6 @@
   "resource_exposure": true,
   "undocumented_actions": false,
   "unknown_actions": [],
-  "updatedate": "2026-09-01T10:37:07+00:00",
-  "version": "v2"
+  "updatedate": "2026-10-29T10:17:08+00:00",
+  "version": "v3"
 }
