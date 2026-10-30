@@ -8,7 +8,7 @@
     "Unknown"
   ],
   "arn": "arn:aws:iam::aws:policy/SageMakerStudioProjectUserRolePolicy",
-  "createdate": "2026-08-27T20:57:08+00:00",
+  "createdate": "2026-10-29T22:37:07+00:00",
   "credentials_exposure": true,
   "data_access": true,
   "deprecated": false,
@@ -540,7 +540,8 @@
         ],
         "Effect": "Allow",
         "Resource": [
-          "arn:aws:logs:*:*:log-group:airflow-DataZoneMWAAEnv-${aws:PrincipalTag/AmazonDataZoneDomain}-${aws:PrincipalTag/AmazonDataZoneProject}-${aws:PrincipalTag/AmazonDataZoneScopeName}-*"
+          "arn:aws:logs:*:*:log-group:airflow-DataZoneMWAAEnv-${aws:PrincipalTag/AmazonDataZoneDomain}-${aws:PrincipalTag/AmazonDataZoneProject}-${aws:PrincipalTag/AmazonDataZoneScopeName}-*",
+          "arn:aws:logs:*:*:log-group:/aws/bedrock-agentcore/agent-builder/${aws:PrincipalTag/AmazonDataZoneProject}/evaluations*"
         ],
         "Sid": "AirflowCloudwatchLogsActions"
       },
@@ -566,13 +567,14 @@
             "cloudwatch:namespace": [
               "Glue",
               "AWS/Glue",
-              "Glue Data Quality"
+              "Glue Data Quality",
+              "bedrock-agentcore"
             ]
           }
         },
         "Effect": "Allow",
         "Resource": "*",
-        "Sid": "GlueJobCWPutMetricActions"
+        "Sid": "CWPutMetrics"
       },
       {
         "Action": [
@@ -894,7 +896,8 @@
         "Effect": "Allow",
         "Resource": [
           "arn:aws:logs:*:*:log-group:${aws:PrincipalTag/LogGroupName}",
-          "arn:aws:logs:*:*:log-group:${aws:PrincipalTag/LogGroupName}:log-stream:*"
+          "arn:aws:logs:*:*:log-group:${aws:PrincipalTag/LogGroupName}:log-stream:*",
+          "arn:aws:logs:*:*:log-group:/aws/bedrock-agentcore/agent-builder/${aws:PrincipalTag/AmazonDataZoneProject}/evaluations"
         ],
         "Sid": "ProjectLogGroup"
       },
@@ -1386,7 +1389,9 @@
               "elasticmapreduce.amazonaws.com",
               "scheduler.amazonaws.com",
               "access-grants.s3.amazonaws.com",
-              "pods.eks.amazonaws.com"
+              "pods.eks.amazonaws.com",
+              "bedrock-agentcore.amazonaws.com",
+              "agent-registry.amazonaws.com"
             ]
           }
         },
@@ -1949,6 +1954,23 @@
       },
       {
         "Action": [
+          "bedrock:InvokeModel",
+          "bedrock:InvokeModelWithResponseStream"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:PrincipalTag/EnableAmazonBedrockPermissions": "true"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:bedrock:*:*:inference-profile/*",
+          "arn:aws:bedrock:*::foundation-model/*"
+        ],
+        "Sid": "ACInvoke"
+      },
+      {
+        "Action": [
           "bedrock:GetInferenceProfile",
           "bedrock:InvokeModel",
           "bedrock:InvokeModelWithResponseStream"
@@ -2039,6 +2061,7 @@
           "bedrock:GetDataAutomationProject",
           "bedrock:GetDataAutomationStatus",
           "bedrock:GetEvaluationJob",
+          "bedrock:GetKnowledgeBase",
           "bedrock:GetIngestionJob",
           "bedrock:GetPrompt",
           "bedrock:InvokeAgent",
@@ -2174,7 +2197,9 @@
         "Action": [
           "bedrock:ListEvaluationJobs",
           "bedrock:RetrieveAndGenerate",
-          "bedrock:ListFoundationModels"
+          "bedrock:ListFoundationModels",
+          "bedrock:ListInferenceProfiles",
+          "bedrock:ListKnowledgeBases"
         ],
         "Condition": {
           "StringEquals": {
@@ -2417,32 +2442,17 @@
       {
         "Action": [
           "cloudformation:GetTemplate",
-          "cloudformation:DescribeStacks"
+          "cloudformation:DescribeStacks",
+          "cloudformation:ListStackResources"
         ],
         "Condition": {
           "StringEquals": {
-            "aws:PrincipalTag/EnableAmazonBedrockIDEPermissions": "true",
             "aws:ResourceTag/AmazonDataZoneProject": "${aws:PrincipalTag/AmazonDataZoneProject}"
           }
         },
         "Effect": "Allow",
         "Resource": "arn:aws:cloudformation:*:*:stack/DataZone-Env-*",
         "Sid": "DZEnvCfn"
-      },
-      {
-        "Action": [
-          "cloudformation:DescribeStacks",
-          "cloudformation:GetTemplate"
-        ],
-        "Condition": {
-          "StringEquals": {
-            "aws:PrincipalTag/EnableAmazonBedrockPermissions": "true",
-            "aws:ResourceTag/AmazonDataZoneProject": "${aws:PrincipalTag/AmazonDataZoneProject}"
-          }
-        },
-        "Effect": "Allow",
-        "Resource": "arn:aws:cloudformation:*:*:stack/DataZone-Env-*",
-        "Sid": "CFNGetDataZoneEnvironmentStack"
       },
       {
         "Action": [
@@ -2498,10 +2508,14 @@
         "Action": [
           "logs:CreateLogGroup",
           "logs:CreateLogStream",
-          "logs:PutLogEvents"
+          "logs:PutLogEvents",
+          "logs:DescribeLogStreams"
         ],
         "Effect": "Allow",
-        "Resource": "arn:aws:logs:*:*:log-group:/aws/lambda/athenafederatedcatalog*",
+        "Resource": [
+          "arn:aws:logs:*:*:log-group:/aws/lambda/athenafederatedcatalog*",
+          "arn:aws:logs:*:*:log-group:/aws/bedrock-agentcore/runtimes/*"
+        ],
         "Sid": "DataConnectionLambdaLogs"
       },
       {
@@ -6042,7 +6056,8 @@
           "cloudwatch:namespace": [
             "Glue",
             "AWS/Glue",
-            "Glue Data Quality"
+            "Glue Data Quality",
+            "bedrock-agentcore"
           ]
         }
       },
@@ -10020,7 +10035,9 @@
             "elasticmapreduce.amazonaws.com",
             "scheduler.amazonaws.com",
             "access-grants.s3.amazonaws.com",
-            "pods.eks.amazonaws.com"
+            "pods.eks.amazonaws.com",
+            "bedrock-agentcore.amazonaws.com",
+            "agent-registry.amazonaws.com"
           ]
         }
       },
@@ -12253,6 +12270,34 @@
     },
     {
       "access_level": "Read",
+      "action": "bedrock:InvokeModel",
+      "condition": {
+        "StringEquals": {
+          "aws:PrincipalTag/EnableAmazonBedrockPermissions": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "bedrock:InvokeModel",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "bedrock:InvokeModelWithResponseStream",
+      "condition": {
+        "StringEquals": {
+          "aws:PrincipalTag/EnableAmazonBedrockPermissions": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "bedrock:InvokeModelWithResponseStream",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
       "action": "bedrock:GetInferenceProfile",
       "condition": {
         "StringEquals": {
@@ -13018,6 +13063,21 @@
     },
     {
       "access_level": "Read",
+      "action": "bedrock:GetKnowledgeBase",
+      "condition": {
+        "StringEquals": {
+          "aws:PrincipalTag/EnableAmazonBedrockPermissions": "true",
+          "aws:ResourceTag/AmazonDataZoneProject": "${aws:PrincipalTag/AmazonDataZoneProject}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "bedrock:GetKnowledgeBase",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
       "action": "bedrock:GetIngestionJob",
       "condition": {
         "StringEquals": {
@@ -13431,6 +13491,34 @@
       "resource_exposure": false
     },
     {
+      "access_level": "List",
+      "action": "bedrock:ListInferenceProfiles",
+      "condition": {
+        "StringEquals": {
+          "aws:PrincipalTag/EnableAmazonBedrockPermissions": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "bedrock:ListInferenceProfiles",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "bedrock:ListKnowledgeBases",
+      "condition": {
+        "StringEquals": {
+          "aws:PrincipalTag/EnableAmazonBedrockPermissions": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "bedrock:ListKnowledgeBases",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
       "access_level": "Permissions management",
       "action": "iam:PassRole",
       "condition": {
@@ -13781,7 +13869,6 @@
       "action": "cloudformation:GetTemplate",
       "condition": {
         "StringEquals": {
-          "aws:PrincipalTag/EnableAmazonBedrockIDEPermissions": "true",
           "aws:ResourceTag/AmazonDataZoneProject": "${aws:PrincipalTag/AmazonDataZoneProject}"
         }
       },
@@ -13796,7 +13883,6 @@
       "action": "cloudformation:DescribeStacks",
       "condition": {
         "StringEquals": {
-          "aws:PrincipalTag/EnableAmazonBedrockIDEPermissions": "true",
           "aws:ResourceTag/AmazonDataZoneProject": "${aws:PrincipalTag/AmazonDataZoneProject}"
         }
       },
@@ -13808,31 +13894,15 @@
     },
     {
       "access_level": "List",
-      "action": "cloudformation:DescribeStacks",
+      "action": "cloudformation:ListStackResources",
       "condition": {
         "StringEquals": {
-          "aws:PrincipalTag/EnableAmazonBedrockPermissions": "true",
           "aws:ResourceTag/AmazonDataZoneProject": "${aws:PrincipalTag/AmazonDataZoneProject}"
         }
       },
       "credentials_exposure": false,
       "data_access": false,
-      "effective_action": "cloudformation:DescribeStacks",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Read",
-      "action": "cloudformation:GetTemplate",
-      "condition": {
-        "StringEquals": {
-          "aws:PrincipalTag/EnableAmazonBedrockPermissions": "true",
-          "aws:ResourceTag/AmazonDataZoneProject": "${aws:PrincipalTag/AmazonDataZoneProject}"
-        }
-      },
-      "credentials_exposure": false,
-      "data_access": true,
-      "effective_action": "cloudformation:GetTemplate",
+      "effective_action": "cloudformation:ListStackResources",
       "privesc": false,
       "resource_exposure": false
     },
@@ -13963,6 +14033,16 @@
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "logs:PutLogEvents",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "logs:DescribeLogStreams",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "logs:DescribeLogStreams",
       "privesc": false,
       "resource_exposure": false
     },
@@ -14893,6 +14973,6 @@
   "resource_exposure": true,
   "undocumented_actions": true,
   "unknown_actions": [],
-  "updatedate": "2026-08-27T20:57:08+00:00",
-  "version": "v75"
+  "updatedate": "2026-10-29T22:37:07+00:00",
+  "version": "v76"
 }
