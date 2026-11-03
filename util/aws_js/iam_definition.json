@@ -215246,7 +215246,9 @@
               "aws:ResourceTag/${TagKey}",
               "aws:TagKeys"
             ],
-            "dependent_actions": [],
+            "dependent_actions": [
+              "iotsitewise:TagResource"
+            ],
             "resource_type": "portal"
           },
           {
@@ -292017,7 +292019,23 @@
     "service_name": "Amazon EventBridge Pipes"
   },
   {
-    "conditions": [],
+    "conditions": [
+      {
+        "condition": "aws:RequestTag/${TagKey}",
+        "description": "Filters access by a tag's key and value in a request",
+        "type": "String"
+      },
+      {
+        "condition": "aws:ResourceTag/${TagKey}",
+        "description": "Filters access by the tag key-value pairs attached to the resource",
+        "type": "String"
+      },
+      {
+        "condition": "aws:TagKeys",
+        "description": "Filters access by the tag keys in a request",
+        "type": "ArrayOfString"
+      }
+    ],
     "prefix": "polly",
     "privileges": [
       {
@@ -292026,7 +292044,9 @@
         "privilege": "DeleteLexicon",
         "resource_types": [
           {
-            "condition_keys": [],
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}"
+            ],
             "dependent_actions": [],
             "resource_type": "lexicon*"
           }
@@ -292050,7 +292070,9 @@
         "privilege": "GetLexicon",
         "resource_types": [
           {
-            "condition_keys": [],
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}"
+            ],
             "dependent_actions": [],
             "resource_type": "lexicon*"
           }
@@ -292093,13 +292115,33 @@
         ]
       },
       {
+        "access_level": "Read",
+        "description": "Grants permission to list the tags of a resource",
+        "privilege": "ListTagsForResource",
+        "resource_types": [
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}"
+            ],
+            "dependent_actions": [],
+            "resource_type": "lexicon*"
+          }
+        ]
+      },
+      {
         "access_level": "Write",
         "description": "Grants permission to store a pronunciation lexicon in an AWS Region",
         "privilege": "PutLexicon",
         "resource_types": [
           {
-            "condition_keys": [],
-            "dependent_actions": [],
+            "condition_keys": [
+              "aws:RequestTag/${TagKey}",
+              "aws:ResourceTag/${TagKey}",
+              "aws:TagKeys"
+            ],
+            "dependent_actions": [
+              "polly:TagResource"
+            ],
             "resource_type": "lexicon*"
           }
         ]
@@ -292110,7 +292152,9 @@
         "privilege": "StartSpeechSynthesisStream",
         "resource_types": [
           {
-            "condition_keys": [],
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}"
+            ],
             "dependent_actions": [],
             "resource_type": "lexicon"
           }
@@ -292122,7 +292166,9 @@
         "privilege": "StartSpeechSynthesisTask",
         "resource_types": [
           {
-            "condition_keys": [],
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}"
+            ],
             "dependent_actions": [],
             "resource_type": "lexicon"
           }
@@ -292134,9 +292180,42 @@
         "privilege": "SynthesizeSpeech",
         "resource_types": [
           {
-            "condition_keys": [],
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}"
+            ],
             "dependent_actions": [],
             "resource_type": "lexicon"
+          }
+        ]
+      },
+      {
+        "access_level": "Tagging, Write",
+        "description": "Grants permission to add tags to a resource",
+        "privilege": "TagResource",
+        "resource_types": [
+          {
+            "condition_keys": [
+              "aws:RequestTag/${TagKey}",
+              "aws:ResourceTag/${TagKey}",
+              "aws:TagKeys"
+            ],
+            "dependent_actions": [],
+            "resource_type": "lexicon*"
+          }
+        ]
+      },
+      {
+        "access_level": "Tagging, Write",
+        "description": "Grants permission to remove tags from a resource",
+        "privilege": "UntagResource",
+        "resource_types": [
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}",
+              "aws:TagKeys"
+            ],
+            "dependent_actions": [],
+            "resource_type": "lexicon*"
           }
         ]
       }
@@ -292144,7 +292223,9 @@
     "resources": [
       {
         "arn": "arn:${Partition}:polly:${Region}:${Account}:lexicon/${LexiconName}",
-        "condition_keys": [],
+        "condition_keys": [
+          "aws:ResourceTag/${TagKey}"
+        ],
         "resource": "lexicon"
       }
     ],
