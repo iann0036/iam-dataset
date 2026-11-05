@@ -7,7 +7,7 @@
     "Permissions management"
   ],
   "arn": "arn:aws:iam::aws:policy/AWSBatchFullAccess",
-  "createdate": "2022-10-24T16:09:09+00:00",
+  "createdate": "2026-11-04T18:37:08+00:00",
   "credentials_exposure": false,
   "data_access": true,
   "deprecated": false,
@@ -65,6 +65,42 @@
         },
         "Effect": "Allow",
         "Resource": "arn:aws:iam::*:role/*Batch*"
+      },
+      {
+        "Action": [
+          "eks:CreateAccessEntry"
+        ],
+        "Condition": {
+          "ArnLike": {
+            "eks:principalArn": "arn:aws:iam::*:role/aws-service-role/batch.amazonaws.com/AWSServiceRoleForBatch"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "BatchEksAccessEntryCreate"
+      },
+      {
+        "Action": [
+          "eks:DescribeAccessEntry",
+          "eks:DeleteAccessEntry"
+        ],
+        "Effect": "Allow",
+        "Resource": "arn:aws:eks:*:*:access-entry/*/role/*/AWSServiceRoleForBatch/*",
+        "Sid": "BatchEksAccessEntryManage"
+      },
+      {
+        "Action": [
+          "eks:AssociateAccessPolicy"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "eks:accessScope": "cluster",
+            "eks:policyArn": "arn:aws:eks::aws:cluster-access-policy/AWSBatchClusterPolicy"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:eks:*:*:access-entry/*/role/*/AWSServiceRoleForBatch/*",
+        "Sid": "BatchEksAccessEntryAssociatePolicy"
       }
     ],
     "Version": "2012-10-17"
@@ -1413,6 +1449,55 @@
       "effective_action": "iam:CreateServiceLinkedRole",
       "privesc": true,
       "resource_exposure": true
+    },
+    {
+      "access_level": "Write",
+      "action": "eks:CreateAccessEntry",
+      "condition": {
+        "ArnLike": {
+          "eks:principalArn": "arn:aws:iam::*:role/aws-service-role/batch.amazonaws.com/AWSServiceRoleForBatch"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "eks:CreateAccessEntry",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "eks:DescribeAccessEntry",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "eks:DescribeAccessEntry",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "eks:DeleteAccessEntry",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "eks:DeleteAccessEntry",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "eks:AssociateAccessPolicy",
+      "condition": {
+        "StringEquals": {
+          "eks:accessScope": "cluster",
+          "eks:policyArn": "arn:aws:eks::aws:cluster-access-policy/AWSBatchClusterPolicy"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "eks:AssociateAccessPolicy",
+      "privesc": false,
+      "resource_exposure": false
     }
   ],
   "grantless": false,
@@ -1422,6 +1507,6 @@
   "resource_exposure": true,
   "undocumented_actions": false,
   "unknown_actions": [],
-  "updatedate": "2022-10-24T16:09:09+00:00",
-  "version": "v7"
+  "updatedate": "2026-11-04T18:37:08+00:00",
+  "version": "v8"
 }
