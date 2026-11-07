@@ -6,7 +6,7 @@
     "Write"
   ],
   "arn": "arn:aws:iam::aws:policy/aws-service-role/AmazonRedshiftServiceLinkedRolePolicy",
-  "createdate": "2025-02-19T17:22:07+00:00",
+  "createdate": "2026-11-06T19:27:07+00:00",
   "credentials_exposure": false,
   "data_access": true,
   "deprecated": false,
@@ -279,6 +279,70 @@
           "*"
         ],
         "Sid": "LakeFormationGetMetadataAccessForFederatedCatalogs"
+      },
+      {
+        "Action": [
+          "identitystore:GetUserId",
+          "identitystore:ListGroupMembershipsForMember",
+          "identitystore:DescribeGroup",
+          "sso:ListInstances"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "AllowIdentityCenterSameAccount"
+      },
+      {
+        "Action": [
+          "identitystore:GetUserId",
+          "identitystore:ListGroupMembershipsForMember",
+          "identitystore:DescribeGroup",
+          "sso:ListInstances"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceOrgID": "${aws:PrincipalOrgID}"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "AllowIdentityCenterSameOrg"
+      },
+      {
+        "Action": [
+          "kms:Decrypt"
+        ],
+        "Condition": {
+          "ArnLike": {
+            "kms:EncryptionContext:aws:sso:instance-arn": "arn:*:sso:::instance/*"
+          },
+          "StringLike": {
+            "kms:ViaService": "sso.*.amazonaws.com"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "AllowKmsAccessViaIdentityCenter"
+      },
+      {
+        "Action": [
+          "kms:Decrypt"
+        ],
+        "Condition": {
+          "ArnLike": {
+            "kms:EncryptionContext:aws:identitystore:identitystore-arn": "arn:*:identitystore::*:identitystore/*"
+          },
+          "StringLike": {
+            "kms:ViaService": "identitystore.*.amazonaws.com"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "AllowKmsAccessViaIdentityStore"
       }
     ],
     "Version": "2012-10-17"
@@ -901,6 +965,152 @@
       "effective_action": "lakeformation:GetDataAccess",
       "privesc": false,
       "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "identitystore:GetUserId",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "identitystore:GetUserId",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "identitystore:ListGroupMembershipsForMember",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "identitystore:ListGroupMembershipsForMember",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "identitystore:DescribeGroup",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "identitystore:DescribeGroup",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "sso:ListInstances",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sso:ListInstances",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "identitystore:GetUserId",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceOrgID": "${aws:PrincipalOrgID}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "identitystore:GetUserId",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "identitystore:ListGroupMembershipsForMember",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceOrgID": "${aws:PrincipalOrgID}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "identitystore:ListGroupMembershipsForMember",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "identitystore:DescribeGroup",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceOrgID": "${aws:PrincipalOrgID}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "identitystore:DescribeGroup",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "sso:ListInstances",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceOrgID": "${aws:PrincipalOrgID}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sso:ListInstances",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "kms:Decrypt",
+      "condition": {
+        "ArnLike": {
+          "kms:EncryptionContext:aws:sso:instance-arn": "arn:*:sso:::instance/*"
+        },
+        "StringLike": {
+          "kms:ViaService": "sso.*.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "kms:Decrypt",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "kms:Decrypt",
+      "condition": {
+        "ArnLike": {
+          "kms:EncryptionContext:aws:identitystore:identitystore-arn": "arn:*:identitystore::*:identitystore/*"
+        },
+        "StringLike": {
+          "kms:ViaService": "identitystore.*.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "kms:Decrypt",
+      "privesc": false,
+      "resource_exposure": false
     }
   ],
   "grantless": false,
@@ -910,6 +1120,6 @@
   "resource_exposure": false,
   "undocumented_actions": false,
   "unknown_actions": [],
-  "updatedate": "2025-02-19T17:22:07+00:00",
-  "version": "v15"
+  "updatedate": "2026-11-06T19:27:07+00:00",
+  "version": "v16"
 }
