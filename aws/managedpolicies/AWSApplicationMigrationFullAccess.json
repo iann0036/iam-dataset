@@ -7,7 +7,7 @@
     "Permissions management"
   ],
   "arn": "arn:aws:iam::aws:policy/AWSApplicationMigrationFullAccess",
-  "createdate": "2026-08-03T10:57:21+00:00",
+  "createdate": "2026-11-09T08:37:08+00:00",
   "credentials_exposure": false,
   "data_access": true,
   "deprecated": false,
@@ -377,6 +377,47 @@
           "arn:aws:fsx:*:*:volume/*/*"
         ],
         "Sid": "FSxCreateSnapshot"
+      },
+      {
+        "Action": [
+          "ssm:SendCommand"
+        ],
+        "Condition": {
+          "ForAnyValue:StringEquals": {
+            "aws:CalledVia": [
+              "mgn.amazonaws.com"
+            ]
+          },
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:ssm:*:*:managed-instance/*",
+        "Sid": "SsmViaMgnSendCommandToConnector"
+      },
+      {
+        "Action": [
+          "s3-outposts:ListOutpostsWithS3"
+        ],
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "S3OutpostsReadPermissions"
+      },
+      {
+        "Action": [
+          "cloudwatch:GetMetricData"
+        ],
+        "Condition": {
+          "ForAnyValue:StringEquals": {
+            "aws:CalledVia": [
+              "mgn.amazonaws.com"
+            ]
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "CloudWatchDescribeOperations"
       }
     ],
     "Version": "2012-10-17"
@@ -2471,6 +2512,51 @@
       "effective_action": "fsx:CreateSnapshot",
       "privesc": false,
       "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ssm:SendCommand",
+      "condition": {
+        "ForAnyValue:StringEquals": {
+          "aws:CalledVia": [
+            "mgn.amazonaws.com"
+          ]
+        },
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ssm:SendCommand",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "s3-outposts:ListOutpostsWithS3",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3-outposts:ListOutpostsWithS3",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "cloudwatch:GetMetricData",
+      "condition": {
+        "ForAnyValue:StringEquals": {
+          "aws:CalledVia": [
+            "mgn.amazonaws.com"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudwatch:GetMetricData",
+      "privesc": false,
+      "resource_exposure": false
     }
   ],
   "grantless": false,
@@ -2481,5 +2567,5 @@
   "undocumented_actions": false,
   "unknown_actions": [],
   "updatedate": "2026-08-03T10:57:21+00:00",
-  "version": "v14"
+  "version": "v15"
 }

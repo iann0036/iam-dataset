@@ -5,7 +5,7 @@
     "Write"
   ],
   "arn": "arn:aws:iam::aws:policy/AWSApplicationMigrationSSMAccess",
-  "createdate": "2026-02-12T18:00:51+00:00",
+  "createdate": "2026-11-09T08:37:07+00:00",
   "credentials_exposure": false,
   "data_access": true,
   "deprecated": false,
@@ -81,6 +81,24 @@
         ],
         "Effect": "Allow",
         "Resource": "arn:aws:ssm:*:*:document/*"
+      },
+      {
+        "Action": [
+          "ssm:SendCommand"
+        ],
+        "Condition": {
+          "ForAnyValue:StringEquals": {
+            "aws:CalledVia": [
+              "mgn.amazonaws.com"
+            ]
+          },
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:ssm:*:*:managed-instance/*",
+        "Sid": "SsmViaMgnSendCommandToConnector"
       }
     ],
     "Version": "2012-10-17"
@@ -214,6 +232,25 @@
       "effective_action": "ssm:GetDocument",
       "privesc": false,
       "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ssm:SendCommand",
+      "condition": {
+        "ForAnyValue:StringEquals": {
+          "aws:CalledVia": [
+            "mgn.amazonaws.com"
+          ]
+        },
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ssm:SendCommand",
+      "privesc": false,
+      "resource_exposure": false
     }
   ],
   "grantless": false,
@@ -224,5 +261,5 @@
   "undocumented_actions": false,
   "unknown_actions": [],
   "updatedate": "2026-02-12T18:00:51+00:00",
-  "version": "v5"
+  "version": "v6"
 }
