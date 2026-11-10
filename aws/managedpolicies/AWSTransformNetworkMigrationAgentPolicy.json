@@ -7,7 +7,7 @@
     "Permissions management"
   ],
   "arn": "arn:aws:iam::aws:policy/AWSTransformNetworkMigrationAgentPolicy",
-  "createdate": "2026-10-29T10:17:08+00:00",
+  "createdate": "2026-11-10T08:47:08+00:00",
   "credentials_exposure": true,
   "data_access": true,
   "deprecated": false,
@@ -401,6 +401,221 @@
       },
       {
         "Action": [
+          "ec2:GetSecurityGroupsForVpc"
+        ],
+        "Condition": {
+          "ForAnyValue:StringEquals": {
+            "aws:CalledVia": [
+              "cloudformation.amazonaws.com"
+            ]
+          },
+          "StringEquals": {
+            "aws:RequestedRegion": "${aws:PrincipalTag/TargetRegion}",
+            "aws:ResourceAccount": "${aws:PrincipalAccount}",
+            "aws:ResourceTag/CreatedBy": "AWSApplicationMigrationService"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:ec2:*:*:vpc/*",
+        "Sid": "Ec2ViaCfnSecurityGroupsForVpcRead"
+      },
+      {
+        "Action": [
+          "elasticloadbalancing:CreateListener"
+        ],
+        "Condition": {
+          "ForAnyValue:StringEquals": {
+            "aws:CalledVia": [
+              "cloudformation.amazonaws.com"
+            ],
+            "elasticloadbalancing:ListenerProtocol": [
+              "HTTP",
+              "TCP",
+              "TCP_UDP",
+              "UDP"
+            ]
+          },
+          "StringEquals": {
+            "aws:RequestedRegion": "${aws:PrincipalTag/TargetRegion}",
+            "aws:ResourceAccount": "${aws:PrincipalAccount}",
+            "aws:ResourceTag/CreatedBy": "AWSApplicationMigrationService"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:elasticloadbalancing:*:*:loadbalancer/app/*",
+          "arn:aws:elasticloadbalancing:*:*:loadbalancer/net/*"
+        ],
+        "Sid": "ElbViaCfnListenerCreateOnLoadBalancer"
+      },
+      {
+        "Action": [
+          "elasticloadbalancing:DeleteListener",
+          "elasticloadbalancing:ModifyListenerAttributes"
+        ],
+        "Condition": {
+          "ForAnyValue:StringEquals": {
+            "aws:CalledVia": [
+              "cloudformation.amazonaws.com"
+            ]
+          },
+          "StringEquals": {
+            "aws:RequestedRegion": "${aws:PrincipalTag/TargetRegion}",
+            "aws:ResourceAccount": "${aws:PrincipalAccount}",
+            "aws:ResourceTag/CreatedBy": "AWSApplicationMigrationService"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:elasticloadbalancing:*:*:listener/app/*",
+          "arn:aws:elasticloadbalancing:*:*:listener/net/*"
+        ],
+        "Sid": "ElbViaCfnListenerOperationsWrite"
+      },
+      {
+        "Action": [
+          "elasticloadbalancing:DeleteLoadBalancer",
+          "elasticloadbalancing:DeleteTargetGroup",
+          "elasticloadbalancing:ModifyLoadBalancerAttributes",
+          "elasticloadbalancing:ModifyTargetGroupAttributes"
+        ],
+        "Condition": {
+          "ForAnyValue:StringEquals": {
+            "aws:CalledVia": [
+              "cloudformation.amazonaws.com"
+            ]
+          },
+          "StringEquals": {
+            "aws:RequestedRegion": "${aws:PrincipalTag/TargetRegion}",
+            "aws:ResourceAccount": "${aws:PrincipalAccount}",
+            "aws:ResourceTag/CreatedBy": "AWSApplicationMigrationService"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:elasticloadbalancing:*:*:loadbalancer/app/*",
+          "arn:aws:elasticloadbalancing:*:*:loadbalancer/net/*",
+          "arn:aws:elasticloadbalancing:*:*:targetgroup/*"
+        ],
+        "Sid": "ElbViaCfnLoadBalancerAndTargetGroupOperationsWrite"
+      },
+      {
+        "Action": [
+          "elasticloadbalancing:CreateLoadBalancer"
+        ],
+        "Condition": {
+          "ForAnyValue:StringEquals": {
+            "aws:CalledVia": [
+              "cloudformation.amazonaws.com"
+            ]
+          },
+          "StringEquals": {
+            "aws:RequestTag/CreatedBy": "AWSApplicationMigrationService",
+            "aws:RequestedRegion": "${aws:PrincipalTag/TargetRegion}",
+            "aws:ResourceAccount": "${aws:PrincipalAccount}",
+            "elasticloadbalancing:Scheme": "internal"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:elasticloadbalancing:*:*:loadbalancer/app/*",
+          "arn:aws:elasticloadbalancing:*:*:loadbalancer/net/*"
+        ],
+        "Sid": "ElbViaCfnLoadBalancerCreateWithRequestTag"
+      },
+      {
+        "Action": [
+          "elasticloadbalancing:DescribeCapacityReservation",
+          "elasticloadbalancing:DescribeListenerAttributes",
+          "elasticloadbalancing:DescribeListeners",
+          "elasticloadbalancing:DescribeLoadBalancerAttributes",
+          "elasticloadbalancing:DescribeLoadBalancers",
+          "elasticloadbalancing:DescribeTags",
+          "elasticloadbalancing:DescribeTargetGroupAttributes",
+          "elasticloadbalancing:DescribeTargetGroups",
+          "elasticloadbalancing:DescribeTargetHealth"
+        ],
+        "Condition": {
+          "ForAnyValue:StringEquals": {
+            "aws:CalledVia": [
+              "cloudformation.amazonaws.com"
+            ]
+          },
+          "StringEquals": {
+            "aws:RequestedRegion": "${aws:PrincipalTag/TargetRegion}"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "ElbViaCfnOperationsReadOnly"
+      },
+      {
+        "Action": [
+          "elasticloadbalancing:AddTags"
+        ],
+        "Condition": {
+          "ForAnyValue:StringEquals": {
+            "aws:CalledVia": [
+              "cloudformation.amazonaws.com"
+            ]
+          },
+          "StringEquals": {
+            "aws:RequestTag/CreatedBy": "AWSApplicationMigrationService",
+            "aws:RequestedRegion": "${aws:PrincipalTag/TargetRegion}",
+            "aws:ResourceAccount": "${aws:PrincipalAccount}",
+            "elasticloadbalancing:CreateAction": [
+              "CreateListener",
+              "CreateLoadBalancer",
+              "CreateTargetGroup"
+            ]
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:elasticloadbalancing:*:*:listener/app/*",
+          "arn:aws:elasticloadbalancing:*:*:listener/net/*",
+          "arn:aws:elasticloadbalancing:*:*:loadbalancer/app/*",
+          "arn:aws:elasticloadbalancing:*:*:loadbalancer/net/*",
+          "arn:aws:elasticloadbalancing:*:*:targetgroup/*"
+        ],
+        "Sid": "ElbViaCfnTagOnCreate"
+      },
+      {
+        "Action": [
+          "elasticloadbalancing:CreateTargetGroup"
+        ],
+        "Condition": {
+          "ForAnyValue:StringEquals": {
+            "aws:CalledVia": [
+              "cloudformation.amazonaws.com"
+            ]
+          },
+          "StringEquals": {
+            "aws:RequestTag/CreatedBy": "AWSApplicationMigrationService",
+            "aws:RequestedRegion": "${aws:PrincipalTag/TargetRegion}",
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:elasticloadbalancing:*:*:targetgroup/*",
+        "Sid": "ElbViaCfnTargetGroupCreateWithRequestTag"
+      },
+      {
+        "Action": [
+          "iam:CreateServiceLinkedRole"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}",
+            "iam:AWSServiceName": "elasticloadbalancing.amazonaws.com"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:iam::*:role/aws-service-role/elasticloadbalancing.amazonaws.com/AWSServiceRoleForElasticLoadBalancing",
+        "Sid": "IamElbServiceLinkedRoleCreate"
+      },
+      {
+        "Action": [
           "iam:CreateServiceLinkedRole"
         ],
         "Condition": {
@@ -698,6 +913,7 @@
       {
         "Action": [
           "mgn:GetNetworkMigrationDefinition",
+          "mgn:ListNetworkMigrationInsights",
           "mgn:ListNetworkMigrationMappingUpdates",
           "mgn:StartNetworkMigrationMappingUpdate",
           "mgn:UpdateNetworkMigrationDefinition",
@@ -3546,6 +3762,435 @@
       "resource_exposure": false
     },
     {
+      "access_level": "Read",
+      "action": "ec2:GetSecurityGroupsForVpc",
+      "condition": {
+        "ForAnyValue:StringEquals": {
+          "aws:CalledVia": [
+            "cloudformation.amazonaws.com"
+          ]
+        },
+        "StringEquals": {
+          "aws:RequestedRegion": "${aws:PrincipalTag/TargetRegion}",
+          "aws:ResourceAccount": "${aws:PrincipalAccount}",
+          "aws:ResourceTag/CreatedBy": "AWSApplicationMigrationService"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:GetSecurityGroupsForVpc",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "elasticloadbalancing:CreateListener",
+      "condition": {
+        "ForAnyValue:StringEquals": {
+          "aws:CalledVia": [
+            "cloudformation.amazonaws.com"
+          ],
+          "elasticloadbalancing:ListenerProtocol": [
+            "HTTP",
+            "TCP",
+            "TCP_UDP",
+            "UDP"
+          ]
+        },
+        "StringEquals": {
+          "aws:RequestedRegion": "${aws:PrincipalTag/TargetRegion}",
+          "aws:ResourceAccount": "${aws:PrincipalAccount}",
+          "aws:ResourceTag/CreatedBy": "AWSApplicationMigrationService"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "elasticloadbalancing:CreateListener",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "elasticloadbalancing:DeleteListener",
+      "condition": {
+        "ForAnyValue:StringEquals": {
+          "aws:CalledVia": [
+            "cloudformation.amazonaws.com"
+          ]
+        },
+        "StringEquals": {
+          "aws:RequestedRegion": "${aws:PrincipalTag/TargetRegion}",
+          "aws:ResourceAccount": "${aws:PrincipalAccount}",
+          "aws:ResourceTag/CreatedBy": "AWSApplicationMigrationService"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "elasticloadbalancing:DeleteListener",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "elasticloadbalancing:ModifyListenerAttributes",
+      "condition": {
+        "ForAnyValue:StringEquals": {
+          "aws:CalledVia": [
+            "cloudformation.amazonaws.com"
+          ]
+        },
+        "StringEquals": {
+          "aws:RequestedRegion": "${aws:PrincipalTag/TargetRegion}",
+          "aws:ResourceAccount": "${aws:PrincipalAccount}",
+          "aws:ResourceTag/CreatedBy": "AWSApplicationMigrationService"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "elasticloadbalancing:ModifyListenerAttributes",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "elasticloadbalancing:DeleteLoadBalancer",
+      "condition": {
+        "ForAnyValue:StringEquals": {
+          "aws:CalledVia": [
+            "cloudformation.amazonaws.com"
+          ]
+        },
+        "StringEquals": {
+          "aws:RequestedRegion": "${aws:PrincipalTag/TargetRegion}",
+          "aws:ResourceAccount": "${aws:PrincipalAccount}",
+          "aws:ResourceTag/CreatedBy": "AWSApplicationMigrationService"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "elasticloadbalancing:DeleteLoadBalancer",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "elasticloadbalancing:DeleteTargetGroup",
+      "condition": {
+        "ForAnyValue:StringEquals": {
+          "aws:CalledVia": [
+            "cloudformation.amazonaws.com"
+          ]
+        },
+        "StringEquals": {
+          "aws:RequestedRegion": "${aws:PrincipalTag/TargetRegion}",
+          "aws:ResourceAccount": "${aws:PrincipalAccount}",
+          "aws:ResourceTag/CreatedBy": "AWSApplicationMigrationService"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "elasticloadbalancing:DeleteTargetGroup",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "elasticloadbalancing:ModifyLoadBalancerAttributes",
+      "condition": {
+        "ForAnyValue:StringEquals": {
+          "aws:CalledVia": [
+            "cloudformation.amazonaws.com"
+          ]
+        },
+        "StringEquals": {
+          "aws:RequestedRegion": "${aws:PrincipalTag/TargetRegion}",
+          "aws:ResourceAccount": "${aws:PrincipalAccount}",
+          "aws:ResourceTag/CreatedBy": "AWSApplicationMigrationService"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "elasticloadbalancing:ModifyLoadBalancerAttributes",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "elasticloadbalancing:ModifyTargetGroupAttributes",
+      "condition": {
+        "ForAnyValue:StringEquals": {
+          "aws:CalledVia": [
+            "cloudformation.amazonaws.com"
+          ]
+        },
+        "StringEquals": {
+          "aws:RequestedRegion": "${aws:PrincipalTag/TargetRegion}",
+          "aws:ResourceAccount": "${aws:PrincipalAccount}",
+          "aws:ResourceTag/CreatedBy": "AWSApplicationMigrationService"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "elasticloadbalancing:ModifyTargetGroupAttributes",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "elasticloadbalancing:CreateLoadBalancer",
+      "condition": {
+        "ForAnyValue:StringEquals": {
+          "aws:CalledVia": [
+            "cloudformation.amazonaws.com"
+          ]
+        },
+        "StringEquals": {
+          "aws:RequestTag/CreatedBy": "AWSApplicationMigrationService",
+          "aws:RequestedRegion": "${aws:PrincipalTag/TargetRegion}",
+          "aws:ResourceAccount": "${aws:PrincipalAccount}",
+          "elasticloadbalancing:Scheme": "internal"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "elasticloadbalancing:CreateLoadBalancer",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "elasticloadbalancing:DescribeCapacityReservation",
+      "condition": {
+        "ForAnyValue:StringEquals": {
+          "aws:CalledVia": [
+            "cloudformation.amazonaws.com"
+          ]
+        },
+        "StringEquals": {
+          "aws:RequestedRegion": "${aws:PrincipalTag/TargetRegion}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "elasticloadbalancing:DescribeCapacityReservation",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "elasticloadbalancing:DescribeListenerAttributes",
+      "condition": {
+        "ForAnyValue:StringEquals": {
+          "aws:CalledVia": [
+            "cloudformation.amazonaws.com"
+          ]
+        },
+        "StringEquals": {
+          "aws:RequestedRegion": "${aws:PrincipalTag/TargetRegion}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "elasticloadbalancing:DescribeListenerAttributes",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "elasticloadbalancing:DescribeListeners",
+      "condition": {
+        "ForAnyValue:StringEquals": {
+          "aws:CalledVia": [
+            "cloudformation.amazonaws.com"
+          ]
+        },
+        "StringEquals": {
+          "aws:RequestedRegion": "${aws:PrincipalTag/TargetRegion}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "elasticloadbalancing:DescribeListeners",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "elasticloadbalancing:DescribeLoadBalancerAttributes",
+      "condition": {
+        "ForAnyValue:StringEquals": {
+          "aws:CalledVia": [
+            "cloudformation.amazonaws.com"
+          ]
+        },
+        "StringEquals": {
+          "aws:RequestedRegion": "${aws:PrincipalTag/TargetRegion}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "elasticloadbalancing:DescribeLoadBalancerAttributes",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "elasticloadbalancing:DescribeLoadBalancers",
+      "condition": {
+        "ForAnyValue:StringEquals": {
+          "aws:CalledVia": [
+            "cloudformation.amazonaws.com"
+          ]
+        },
+        "StringEquals": {
+          "aws:RequestedRegion": "${aws:PrincipalTag/TargetRegion}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "elasticloadbalancing:DescribeLoadBalancers",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "elasticloadbalancing:DescribeTags",
+      "condition": {
+        "ForAnyValue:StringEquals": {
+          "aws:CalledVia": [
+            "cloudformation.amazonaws.com"
+          ]
+        },
+        "StringEquals": {
+          "aws:RequestedRegion": "${aws:PrincipalTag/TargetRegion}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "elasticloadbalancing:DescribeTags",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "elasticloadbalancing:DescribeTargetGroupAttributes",
+      "condition": {
+        "ForAnyValue:StringEquals": {
+          "aws:CalledVia": [
+            "cloudformation.amazonaws.com"
+          ]
+        },
+        "StringEquals": {
+          "aws:RequestedRegion": "${aws:PrincipalTag/TargetRegion}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "elasticloadbalancing:DescribeTargetGroupAttributes",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "elasticloadbalancing:DescribeTargetGroups",
+      "condition": {
+        "ForAnyValue:StringEquals": {
+          "aws:CalledVia": [
+            "cloudformation.amazonaws.com"
+          ]
+        },
+        "StringEquals": {
+          "aws:RequestedRegion": "${aws:PrincipalTag/TargetRegion}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "elasticloadbalancing:DescribeTargetGroups",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "elasticloadbalancing:DescribeTargetHealth",
+      "condition": {
+        "ForAnyValue:StringEquals": {
+          "aws:CalledVia": [
+            "cloudformation.amazonaws.com"
+          ]
+        },
+        "StringEquals": {
+          "aws:RequestedRegion": "${aws:PrincipalTag/TargetRegion}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "elasticloadbalancing:DescribeTargetHealth",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Tagging, Write",
+      "action": "elasticloadbalancing:AddTags",
+      "condition": {
+        "ForAnyValue:StringEquals": {
+          "aws:CalledVia": [
+            "cloudformation.amazonaws.com"
+          ]
+        },
+        "StringEquals": {
+          "aws:RequestTag/CreatedBy": "AWSApplicationMigrationService",
+          "aws:RequestedRegion": "${aws:PrincipalTag/TargetRegion}",
+          "aws:ResourceAccount": "${aws:PrincipalAccount}",
+          "elasticloadbalancing:CreateAction": [
+            "CreateListener",
+            "CreateLoadBalancer",
+            "CreateTargetGroup"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "elasticloadbalancing:AddTags",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "elasticloadbalancing:CreateTargetGroup",
+      "condition": {
+        "ForAnyValue:StringEquals": {
+          "aws:CalledVia": [
+            "cloudformation.amazonaws.com"
+          ]
+        },
+        "StringEquals": {
+          "aws:RequestTag/CreatedBy": "AWSApplicationMigrationService",
+          "aws:RequestedRegion": "${aws:PrincipalTag/TargetRegion}",
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "elasticloadbalancing:CreateTargetGroup",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Permissions management",
+      "action": "iam:CreateServiceLinkedRole",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}",
+          "iam:AWSServiceName": "elasticloadbalancing.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "iam:CreateServiceLinkedRole",
+      "privesc": true,
+      "resource_exposure": true
+    },
+    {
       "access_level": "Permissions management",
       "action": "iam:CreateServiceLinkedRole",
       "condition": {
@@ -4148,6 +4793,23 @@
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "mgn:GetNetworkMigrationDefinition",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "mgn:ListNetworkMigrationInsights",
+      "condition": {
+        "StringEquals": {
+          "aws:RequestedRegion": "${aws:PrincipalTag/TargetRegion}",
+          "aws:ResourceAccount": "${aws:PrincipalAccount}",
+          "aws:ResourceTag/ATWorkspace": "${aws:PrincipalTag/WorkspaceId}",
+          "aws:ResourceTag/CreatedBy": "AWSTransform"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "mgn:ListNetworkMigrationInsights",
       "privesc": false,
       "resource_exposure": false
     },
@@ -6450,5 +7112,5 @@
   "undocumented_actions": false,
   "unknown_actions": [],
   "updatedate": "2026-10-29T10:17:08+00:00",
-  "version": "v3"
+  "version": "v4"
 }

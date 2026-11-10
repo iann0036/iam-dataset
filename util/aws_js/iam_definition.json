@@ -4624,6 +4624,20 @@
         ]
       },
       {
+        "access_level": "Write",
+        "description": "Grants permission to use execute sequence tool",
+        "privilege": "ExecuteSequence",
+        "resource_types": [
+          {
+            "condition_keys": [
+              "agentaccess-mcp:StackArn"
+            ],
+            "dependent_actions": [],
+            "resource_type": ""
+          }
+        ]
+      },
+      {
         "access_level": "Read",
         "description": "Grants permission to capture screen state",
         "privilege": "GetScreenshot",
@@ -4860,6 +4874,20 @@
             "resource_type": ""
           }
         ]
+      },
+      {
+        "access_level": "Write",
+        "description": "Grants permission to use wait tool",
+        "privilege": "Wait",
+        "resource_types": [
+          {
+            "condition_keys": [
+              "agentaccess-mcp:StackArn"
+            ],
+            "dependent_actions": [],
+            "resource_type": ""
+          }
+        ]
       }
     ],
     "resources": [],
@@ -4867,6 +4895,11 @@
   },
   {
     "conditions": [
+      {
+        "condition": "aidevops:ApprovalTarget",
+        "description": "Filters access by the approvalTarget parameter in the request. TOOL_CALL is an approval for a single agent tool call. PLAN is an approval for a mitigation plan stage or its rollback. Defaults to TOOL_CALL",
+        "type": "String"
+      },
       {
         "condition": "aidevops:ServiceType",
         "description": "Filters access by the type of service in the association, such as github, slack, aws or sourceAws. Set by the service from the association's configuration, not supplied by the caller",
@@ -5441,6 +5474,22 @@
       },
       {
         "access_level": "Read",
+        "description": "Grants permission to get the knowledge graph of an agentspace",
+        "privilege": "GetKnowledgeGraph",
+        "resource_types": [
+          {
+            "condition_keys": [
+              "aidevops:SourceAgentSpaceArn",
+              "aidevops:TargetAgentSpaceArn",
+              "aws:ResourceTag/${TagKey}"
+            ],
+            "dependent_actions": [],
+            "resource_type": "agentspace*"
+          }
+        ]
+      },
+      {
+        "access_level": "Read",
         "description": "Grants permission to get a knowledge item",
         "privilege": "GetKnowledgeItem",
         "resource_types": [
@@ -5457,6 +5506,20 @@
         "access_level": "Read",
         "description": "Grants permission to get operator auth config for any enabled auth flow",
         "privilege": "GetOperatorApp",
+        "resource_types": [
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}"
+            ],
+            "dependent_actions": [],
+            "resource_type": "agentspace*"
+          }
+        ]
+      },
+      {
+        "access_level": "Read",
+        "description": "Grants permission to get a mitigation plan",
+        "privilege": "GetPlan",
         "resource_types": [
           {
             "condition_keys": [
@@ -5538,6 +5601,20 @@
         ]
       },
       {
+        "access_level": "Read",
+        "description": "Grants permission to list the investigation metrics of an agent space",
+        "privilege": "ListAgentSpaceMetrics",
+        "resource_types": [
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}"
+            ],
+            "dependent_actions": [],
+            "resource_type": "agentspace*"
+          }
+        ]
+      },
+      {
         "access_level": "List",
         "description": "Grants permission to list agentspace",
         "privilege": "ListAgentSpaces",
@@ -5546,6 +5623,22 @@
             "condition_keys": [],
             "dependent_actions": [],
             "resource_type": ""
+          }
+        ]
+      },
+      {
+        "access_level": "List",
+        "description": "Grants permission to list asset changes",
+        "privilege": "ListAssetChanges",
+        "resource_types": [
+          {
+            "condition_keys": [
+              "aidevops:SourceAgentSpaceArn",
+              "aidevops:TargetAgentSpaceArn",
+              "aws:ResourceTag/${TagKey}"
+            ],
+            "dependent_actions": [],
+            "resource_type": "agentspace*"
           }
         ]
       },
@@ -5975,6 +6068,20 @@
         ]
       },
       {
+        "access_level": "Write",
+        "description": "Grants permission to stop a mitigation plan",
+        "privilege": "StopPlan",
+        "resource_types": [
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}"
+            ],
+            "dependent_actions": [],
+            "resource_type": "agentspace*"
+          }
+        ]
+      },
+      {
         "access_level": "Tagging, Write",
         "description": "Grants permission to tag a resource",
         "privilege": "TagResource",
@@ -6060,6 +6167,7 @@
         "resource_types": [
           {
             "condition_keys": [
+              "aidevops:ApprovalTarget",
               "aws:ResourceTag/${TagKey}"
             ],
             "dependent_actions": [],
@@ -33792,6 +33900,18 @@
             "resource_type": "SellerDashboard*"
           }
         ]
+      },
+      {
+        "access_level": "Read",
+        "description": "Grants permission to query a seller reporting dataset",
+        "privilege": "GetSellerReportingData",
+        "resource_types": [
+          {
+            "condition_keys": [],
+            "dependent_actions": [],
+            "resource_type": "SellerDataset*"
+          }
+        ]
       }
     ],
     "resources": [
@@ -33799,6 +33919,11 @@
         "arn": "arn:${Partition}:aws-marketplace::${Account}:${Catalog}/ReportingData/${FactTable}/Dashboard/${DashboardName}",
         "condition_keys": [],
         "resource": "SellerDashboard"
+      },
+      {
+        "arn": "arn:${Partition}:aws-marketplace::${Account}:${Catalog}/ReportingData/${FactTable}/Dataset/${DatasetName}",
+        "condition_keys": [],
+        "resource": "SellerDataset"
       }
     ],
     "service_name": "AWS Marketplace Seller Reporting"
@@ -50557,9 +50682,7 @@
             "condition_keys": [
               "aws:ResourceTag/${TagKey}"
             ],
-            "dependent_actions": [
-              "iam:PassedToService"
-            ],
+            "dependent_actions": [],
             "resource_type": "gateway*"
           }
         ]
@@ -125931,7 +126054,7 @@
       },
       {
         "condition": "ec2:BootModeOverride",
-        "description": "Filters access by the boot mode",
+        "description": "Filters access by the boot mode override",
         "type": "String"
       },
       {
@@ -126040,6 +126163,11 @@
         "type": "ArrayOfARN"
       },
       {
+        "condition": "ec2:FutureCapacitySpecification",
+        "description": "Filters access by the ARN of the Future Capacity Specification",
+        "type": "ARN"
+      },
+      {
         "condition": "ec2:GatewayType",
         "description": "Filters access by the gateway type for a VPN endpoint on the AWS side of a VPN connection",
         "type": "String"
@@ -126063,6 +126191,11 @@
         "condition": "ec2:ImageType",
         "description": "Filters access by the type of image (machine, aki, or ari)",
         "type": "String"
+      },
+      {
+        "condition": "ec2:ImageWatermarkKeys",
+        "description": "Filters access by the watermark keys of an image",
+        "type": "ArrayOfString"
       },
       {
         "condition": "ec2:InsideTunnelCidr",
@@ -127690,6 +127823,7 @@
               "aws:ResourceTag/${TagKey}",
               "ec2:ImageID",
               "ec2:ImageType",
+              "ec2:ImageWatermarkKeys",
               "ec2:Owner",
               "ec2:Public",
               "ec2:Region",
@@ -128019,6 +128153,7 @@
             "condition_keys": [
               "aws:ResourceTag/${TagKey}",
               "ec2:CapacityReservationFleet",
+              "ec2:FutureCapacitySpecification",
               "ec2:Region"
             ],
             "dependent_actions": [],
@@ -128443,6 +128578,7 @@
           {
             "condition_keys": [
               "aws:ResourceTag/${TagKey}",
+              "ec2:FutureCapacitySpecification",
               "ec2:Region",
               "ec2:ResourceTag/${TagKey}"
             ],
@@ -128459,6 +128595,34 @@
             ],
             "dependent_actions": [],
             "resource_type": "capacity-reservation-cancellation-quote*"
+          }
+        ]
+      },
+      {
+        "access_level": "Write",
+        "description": "Grants permission to generate a quote for changing the start date of a future-dated Capacity Reservation",
+        "privilege": "CreateCapacityReservationDateChangeQuote",
+        "resource_types": [
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}",
+              "ec2:FutureCapacitySpecification",
+              "ec2:Region",
+              "ec2:ResourceTag/${TagKey}"
+            ],
+            "dependent_actions": [
+              "ec2:CreateTags"
+            ],
+            "resource_type": "capacity-reservation*"
+          },
+          {
+            "condition_keys": [
+              "aws:RequestTag/${TagKey}",
+              "aws:TagKeys",
+              "ec2:Region"
+            ],
+            "dependent_actions": [],
+            "resource_type": "capacity-reservation-modification-quote*"
           }
         ]
       },
@@ -129066,6 +129230,7 @@
               "aws:ResourceTag/${TagKey}",
               "ec2:ImageID",
               "ec2:ImageType",
+              "ec2:ImageWatermarkKeys",
               "ec2:Owner",
               "ec2:Public",
               "ec2:Region",
@@ -130176,6 +130341,7 @@
               "aws:ResourceTag/${TagKey}",
               "ec2:ImageID",
               "ec2:ImageType",
+              "ec2:ImageWatermarkKeys",
               "ec2:Owner",
               "ec2:Public",
               "ec2:Region",
@@ -130624,6 +130790,7 @@
               "aws:ResourceTag/${TagKey}",
               "ec2:ImageID",
               "ec2:ImageType",
+              "ec2:ImageWatermarkKeys",
               "ec2:Owner",
               "ec2:Public",
               "ec2:Region",
@@ -130745,6 +130912,7 @@
               "aws:ResourceTag/${TagKey}",
               "aws:TagKeys",
               "ec2:CreateAction",
+              "ec2:FutureCapacitySpecification",
               "ec2:Region"
             ],
             "dependent_actions": [],
@@ -130982,6 +131150,7 @@
               "ec2:CreateAction",
               "ec2:ImageID",
               "ec2:ImageType",
+              "ec2:ImageWatermarkKeys",
               "ec2:Owner",
               "ec2:Public",
               "ec2:Region",
@@ -133031,9 +133200,7 @@
             "condition_keys": [
               "aws:ResourceTag/${TagKey}",
               "ec2:Region",
-              "ec2:ResourceTag/${TagKey}",
-              "ec2:VpceMultiRegion",
-              "ec2:VpceServiceRegion"
+              "ec2:ResourceTag/${TagKey}"
             ],
             "dependent_actions": [],
             "resource_type": "vpc-endpoint-service"
@@ -133290,6 +133457,28 @@
         "access_level": "Write",
         "description": "Grants permission to delete a Client VPN endpoint",
         "privilege": "DeleteClientVpnEndpoint",
+        "resource_types": [
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}",
+              "ec2:ClientRootCertificateChainArn",
+              "ec2:CloudwatchLogGroupArn",
+              "ec2:CloudwatchLogStreamArn",
+              "ec2:DirectoryArn",
+              "ec2:Region",
+              "ec2:ResourceTag/${TagKey}",
+              "ec2:SamlProviderArn",
+              "ec2:ServerCertificateArn"
+            ],
+            "dependent_actions": [],
+            "resource_type": "client-vpn-endpoint*"
+          }
+        ]
+      },
+      {
+        "access_level": "Write",
+        "description": "Grants permission to delete the authorization policy for a Client VPN endpoint",
+        "privilege": "DeleteClientVpnEndpointAuthorizationPolicy",
         "resource_types": [
           {
             "condition_keys": [
@@ -135962,9 +136151,7 @@
             "condition_keys": [
               "aws:ResourceTag/${TagKey}",
               "ec2:Region",
-              "ec2:ResourceTag/${TagKey}",
-              "ec2:VpceMultiRegion",
-              "ec2:VpceSupportedRegion"
+              "ec2:ResourceTag/${TagKey}"
             ],
             "dependent_actions": [],
             "resource_type": "vpc-endpoint-service"
@@ -136163,6 +136350,7 @@
               "aws:ResourceTag/${TagKey}",
               "ec2:ImageID",
               "ec2:ImageType",
+              "ec2:ImageWatermarkKeys",
               "ec2:Owner",
               "ec2:Public",
               "ec2:Region",
@@ -136551,6 +136739,20 @@
         "access_level": "List",
         "description": "Grants permission to describe one or more Capacity Reservation cancellation quotes",
         "privilege": "DescribeCapacityReservationCancellationQuotes",
+        "resource_types": [
+          {
+            "condition_keys": [
+              "ec2:Region"
+            ],
+            "dependent_actions": [],
+            "resource_type": ""
+          }
+        ]
+      },
+      {
+        "access_level": "List",
+        "description": "Grants permission to describe one or more Capacity Reservation date change quotes",
+        "privilege": "DescribeCapacityReservationDateChangeQuotes",
         "resource_types": [
           {
             "condition_keys": [
@@ -137066,6 +137268,7 @@
               "aws:ResourceTag/${TagKey}",
               "ec2:ImageID",
               "ec2:ImageType",
+              "ec2:ImageWatermarkKeys",
               "ec2:Owner",
               "ec2:Public",
               "ec2:Region",
@@ -138949,9 +139152,7 @@
             "condition_keys": [
               "aws:ResourceTag/${TagKey}",
               "ec2:Region",
-              "ec2:ResourceTag/${TagKey}",
-              "ec2:VpceMultiRegion",
-              "ec2:VpceSupportedRegion"
+              "ec2:ResourceTag/${TagKey}"
             ],
             "dependent_actions": [],
             "resource_type": "vpc-endpoint-service*"
@@ -139108,6 +139309,7 @@
               "aws:ResourceTag/${TagKey}",
               "ec2:ImageID",
               "ec2:ImageType",
+              "ec2:ImageWatermarkKeys",
               "ec2:Owner",
               "ec2:Public",
               "ec2:Region",
@@ -139463,6 +139665,7 @@
               "aws:ResourceTag/${TagKey}",
               "ec2:ImageID",
               "ec2:ImageType",
+              "ec2:ImageWatermarkKeys",
               "ec2:Owner",
               "ec2:Public",
               "ec2:Region",
@@ -139498,6 +139701,7 @@
               "aws:ResourceTag/${TagKey}",
               "ec2:ImageID",
               "ec2:ImageType",
+              "ec2:ImageWatermarkKeys",
               "ec2:Owner",
               "ec2:Public",
               "ec2:Region",
@@ -139519,6 +139723,7 @@
               "aws:ResourceTag/${TagKey}",
               "ec2:ImageID",
               "ec2:ImageType",
+              "ec2:ImageWatermarkKeys",
               "ec2:Owner",
               "ec2:Public",
               "ec2:Region",
@@ -140400,6 +140605,7 @@
               "aws:ResourceTag/${TagKey}",
               "ec2:ImageID",
               "ec2:ImageType",
+              "ec2:ImageWatermarkKeys",
               "ec2:Owner",
               "ec2:Public",
               "ec2:Region",
@@ -140489,6 +140695,7 @@
               "aws:ResourceTag/${TagKey}",
               "ec2:ImageID",
               "ec2:ImageType",
+              "ec2:ImageWatermarkKeys",
               "ec2:Owner",
               "ec2:Public",
               "ec2:Region",
@@ -140858,6 +141065,7 @@
               "aws:ResourceTag/${TagKey}",
               "ec2:ImageID",
               "ec2:ImageType",
+              "ec2:ImageWatermarkKeys",
               "ec2:Owner",
               "ec2:Public",
               "ec2:Region",
@@ -141037,10 +141245,33 @@
             "condition_keys": [
               "aws:ResourceTag/${TagKey}",
               "ec2:CapacityReservationFleet",
+              "ec2:FutureCapacitySpecification",
               "ec2:Region"
             ],
             "dependent_actions": [],
             "resource_type": "capacity-reservation*"
+          }
+        ]
+      },
+      {
+        "access_level": "Read",
+        "description": "Grants permission to describe the authorization policy for a Client VPN endpoint",
+        "privilege": "GetClientVpnEndpointAuthorizationPolicy",
+        "resource_types": [
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}",
+              "ec2:ClientRootCertificateChainArn",
+              "ec2:CloudwatchLogGroupArn",
+              "ec2:CloudwatchLogStreamArn",
+              "ec2:DirectoryArn",
+              "ec2:Region",
+              "ec2:ResourceTag/${TagKey}",
+              "ec2:SamlProviderArn",
+              "ec2:ServerCertificateArn"
+            ],
+            "dependent_actions": [],
+            "resource_type": "client-vpn-endpoint*"
           }
         ]
       },
@@ -141228,6 +141459,7 @@
             "condition_keys": [
               "aws:ResourceTag/${TagKey}",
               "ec2:CapacityReservationFleet",
+              "ec2:FutureCapacitySpecification",
               "ec2:Region"
             ],
             "dependent_actions": [],
@@ -141259,6 +141491,7 @@
               "aws:ResourceTag/${TagKey}",
               "ec2:ImageID",
               "ec2:ImageType",
+              "ec2:ImageWatermarkKeys",
               "ec2:Owner",
               "ec2:Public",
               "ec2:Region",
@@ -141281,6 +141514,28 @@
             ],
             "dependent_actions": [],
             "resource_type": ""
+          }
+        ]
+      },
+      {
+        "access_level": "Read",
+        "description": "Grants permission to describe the Amazon Inspector vulnerability findings for an Amazon Machine Image (AMI)",
+        "privilege": "GetImageFindings",
+        "resource_types": [
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}",
+              "ec2:ImageID",
+              "ec2:ImageType",
+              "ec2:ImageWatermarkKeys",
+              "ec2:Owner",
+              "ec2:Public",
+              "ec2:Region",
+              "ec2:ResourceTag/${TagKey}",
+              "ec2:RootDeviceType"
+            ],
+            "dependent_actions": [],
+            "resource_type": "image*"
           }
         ]
       },
@@ -141998,6 +142253,22 @@
         ]
       },
       {
+        "access_level": "Read",
+        "description": "Grants permission to describe the NAT configuration for a transit gateway attachment",
+        "privilege": "GetTransitGatewayAttachmentNatConfiguration",
+        "resource_types": [
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}",
+              "ec2:Region",
+              "ec2:ResourceTag/${TagKey}"
+            ],
+            "dependent_actions": [],
+            "resource_type": "transit-gateway-attachment*"
+          }
+        ]
+      },
+      {
         "access_level": "List",
         "description": "Grants permission to list the route tables to which a resource attachment propagates routes",
         "privilege": "GetTransitGatewayAttachmentPropagations",
@@ -142612,10 +142883,20 @@
               "ec2:Attribute",
               "ec2:Attribute/${AttributeName}",
               "ec2:CapacityReservationFleet",
+              "ec2:FutureCapacitySpecification",
               "ec2:Region"
             ],
             "dependent_actions": [],
             "resource_type": "capacity-reservation*"
+          },
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}",
+              "ec2:Region",
+              "ec2:ResourceTag/${TagKey}"
+            ],
+            "dependent_actions": [],
+            "resource_type": "capacity-reservation-modification-quote"
           }
         ]
       },
@@ -142690,6 +142971,30 @@
             ],
             "dependent_actions": [],
             "resource_type": "vpc"
+          }
+        ]
+      },
+      {
+        "access_level": "Write",
+        "description": "Grants permission to create or update the authorization policy for a Client VPN endpoint",
+        "privilege": "ModifyClientVpnEndpointAuthorizationPolicy",
+        "resource_types": [
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}",
+              "ec2:Attribute",
+              "ec2:Attribute/${AttributeName}",
+              "ec2:ClientRootCertificateChainArn",
+              "ec2:CloudwatchLogGroupArn",
+              "ec2:CloudwatchLogStreamArn",
+              "ec2:DirectoryArn",
+              "ec2:Region",
+              "ec2:ResourceTag/${TagKey}",
+              "ec2:SamlProviderArn",
+              "ec2:ServerCertificateArn"
+            ],
+            "dependent_actions": [],
+            "resource_type": "client-vpn-endpoint*"
           }
         ]
       },
@@ -142854,6 +143159,7 @@
               "ec2:Attribute/${AttributeName}",
               "ec2:ImageID",
               "ec2:ImageType",
+              "ec2:ImageWatermarkKeys",
               "ec2:Owner",
               "ec2:Public",
               "ec2:Region",
@@ -142941,6 +143247,7 @@
           {
             "condition_keys": [
               "aws:ResourceTag/${TagKey}",
+              "ec2:FutureCapacitySpecification",
               "ec2:Region"
             ],
             "dependent_actions": [],
@@ -144051,6 +144358,24 @@
       },
       {
         "access_level": "Write",
+        "description": "Grants permission to modify the NAT configuration for a transit gateway attachment",
+        "privilege": "ModifyTransitGatewayAttachmentNatConfiguration",
+        "resource_types": [
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}",
+              "ec2:Attribute",
+              "ec2:Attribute/${AttributeName}",
+              "ec2:Region",
+              "ec2:ResourceTag/${TagKey}"
+            ],
+            "dependent_actions": [],
+            "resource_type": "transit-gateway-attachment*"
+          }
+        ]
+      },
+      {
+        "access_level": "Write",
         "description": "Grants permission to modify a transit gateway metering policy",
         "privilege": "ModifyTransitGatewayMeteringPolicy",
         "resource_types": [
@@ -144530,9 +144855,7 @@
             "condition_keys": [
               "aws:ResourceTag/${TagKey}",
               "ec2:Region",
-              "ec2:ResourceTag/${TagKey}",
-              "ec2:VpceMultiRegion",
-              "ec2:VpceSupportedRegion"
+              "ec2:ResourceTag/${TagKey}"
             ],
             "dependent_actions": [],
             "resource_type": "vpc-endpoint-service"
@@ -145917,6 +146240,7 @@
               "ec2:Attribute/${AttributeName}",
               "ec2:ImageID",
               "ec2:ImageType",
+              "ec2:ImageWatermarkKeys",
               "ec2:Owner",
               "ec2:Public",
               "ec2:Region",
@@ -146194,6 +146518,7 @@
           {
             "condition_keys": [
               "aws:ResourceTag/${TagKey}",
+              "ec2:FutureCapacitySpecification",
               "ec2:IsLaunchTemplateResource",
               "ec2:LaunchTemplate",
               "ec2:Region"
@@ -147653,6 +147978,7 @@
           "ec2:EndDate",
           "ec2:EndDateType",
           "ec2:EphemeralStorage",
+          "ec2:FutureCapacitySpecification",
           "ec2:InstanceCount",
           "ec2:InstanceMatchCriteria",
           "ec2:InstancePlatform",
@@ -147697,6 +148023,19 @@
           "ec2:ResourceTag/${TagKey}"
         ],
         "resource": "capacity-reservation-fleet"
+      },
+      {
+        "arn": "arn:${Partition}:ec2:${Region}:${Account}:capacity-reservation-modification-quote/${CapacityReservationModificationQuoteId}",
+        "condition_keys": [
+          "aws:RequestTag/${TagKey}",
+          "aws:ResourceTag/${TagKey}",
+          "aws:TagKeys",
+          "ec2:Attribute",
+          "ec2:Attribute/${AttributeName}",
+          "ec2:Region",
+          "ec2:ResourceTag/${TagKey}"
+        ],
+        "resource": "capacity-reservation-modification-quote"
       },
       {
         "arn": "arn:${Partition}:ec2:${Region}:${Account}:carrier-gateway/${CarrierGatewayId}",
@@ -147923,6 +148262,7 @@
           "ec2:BootModeOverride",
           "ec2:ImageID",
           "ec2:ImageType",
+          "ec2:ImageWatermarkKeys",
           "ec2:IsLaunchTemplateResource",
           "ec2:LaunchTemplate",
           "ec2:Owner",
@@ -167890,6 +168230,20 @@
             ],
             "dependent_actions": [],
             "resource_type": "application*"
+          }
+        ]
+      },
+      {
+        "access_level": "Write",
+        "description": "Grants permission to manage an in-progress cloned blue/green upgrade of an OpenSearch Service domain",
+        "privilege": "UpdateClone",
+        "resource_types": [
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}"
+            ],
+            "dependent_actions": [],
+            "resource_type": "domain*"
           }
         ]
       },
@@ -230331,6 +230685,11 @@
       {
         "condition": "kms:RecipientAttestation:PCR8",
         "description": "Filters access by the platform configuration register (PCR) 8 in the attestation document in the request. PCR8 is a measure of the signing certificate specified for the enclave image file",
+        "type": "String"
+      },
+      {
+        "condition": "kms:RecipientAttestation:PCR8:ServiceName",
+        "description": "Filters access by the AWS Service Name corresponding to the platform configuration register (PCR) 8 in the attestation document in the request. PCR8 is a measure of the signing certificate specified for the enclave image file",
         "type": "String"
       },
       {
@@ -330393,6 +330752,18 @@
       },
       {
         "access_level": "Write",
+        "description": "Grants permission to update the name or priority of a Profile to VPC association specified by the Profile association ID",
+        "privilege": "UpdateProfileAssociation",
+        "resource_types": [
+          {
+            "condition_keys": [],
+            "dependent_actions": [],
+            "resource_type": ""
+          }
+        ]
+      },
+      {
+        "access_level": "Write",
         "description": "Grants permission to update the Profile resource association name or the resource properties or both, if both name and resource properties are null, the api returns the existing Profile resource association",
         "privilege": "UpdateProfileResourceAssociation",
         "resource_types": [
@@ -360489,6 +360860,20 @@
       },
       {
         "access_level": "Write",
+        "description": "Grants permission to update a Security Hub V2 resource configuration",
+        "privilege": "UpdateSecurityHubV2",
+        "resource_types": [
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}"
+            ],
+            "dependent_actions": [],
+            "resource_type": "hubv2*"
+          }
+        ]
+      },
+      {
+        "access_level": "Write",
         "description": "Grants permission to update Security Hub standards controls",
         "privilege": "UpdateStandardsControl",
         "resource_types": [
@@ -370777,6 +371162,21 @@
             "condition_keys": [
               "signin:OAuthClientId",
               "signin:OAuthRedirectUri"
+            ],
+            "dependent_actions": [],
+            "resource_type": "oauth2-resource-service-principal*"
+          }
+        ]
+      },
+      {
+        "access_level": "Read",
+        "description": "Grants permission to exchange SigV4 credentials for a bearer token that can be used to access supported AWS services",
+        "privilege": "CreateBearerToken",
+        "resource_types": [
+          {
+            "condition_keys": [
+              "signin:OAuthClientId",
+              "signin:OAuthGrantType"
             ],
             "dependent_actions": [],
             "resource_type": "oauth2-resource-service-principal*"
