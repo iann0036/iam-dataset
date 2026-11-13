@@ -1,10 +1,13 @@
 {
   "access_levels": [
     "List",
-    "Read"
+    "Read",
+    "Tagging",
+    "Write",
+    "Permissions management"
   ],
   "arn": "arn:aws:iam::aws:policy/aws-service-role/AWSNetworkManagerServiceRolePolicy",
-  "createdate": "2022-07-27T19:41:29+00:00",
+  "createdate": "2026-11-12T21:57:09+00:00",
   "credentials_exposure": false,
   "data_access": false,
   "deprecated": false,
@@ -38,10 +41,229 @@
           "ec2:DescribeTransitGatewayRouteTableAnnouncements",
           "ec2:DescribeTransitGatewayPolicyTables",
           "ec2:GetTransitGatewayPolicyTableAssociations",
-          "ec2:GetTransitGatewayPolicyTableEntries"
+          "ec2:GetTransitGatewayPolicyTableEntries",
+          "config:DescribeConfigurationRecorders",
+          "config:DescribeConfigurationRecorderStatus",
+          "ec2:DescribeTransitGatewayVpcAttachments",
+          "ec2:DescribeNetworkAcls",
+          "ec2:DescribeSecurityGroups",
+          "ec2:DescribeSecurityGroupRules",
+          "ec2:DescribeManagedPrefixLists",
+          "ec2:GetManagedPrefixListEntries",
+          "ec2:DescribeVpcEndpoints",
+          "ec2:DescribeVpcEndpointServiceConfigurations",
+          "elasticloadbalancing:DescribeListeners",
+          "elasticloadbalancing:DescribeLoadBalancerAttributes",
+          "elasticloadbalancing:DescribeLoadBalancers",
+          "elasticloadbalancing:DescribeRules",
+          "elasticloadbalancing:DescribeTags",
+          "elasticloadbalancing:DescribeTargetGroups",
+          "elasticloadbalancing:DescribeTargetGroupAttributes",
+          "elasticloadbalancing:DescribeTargetHealth",
+          "network-firewall:ListFirewalls",
+          "network-firewall:DescribeFirewall",
+          "network-firewall:DescribeFirewallMetadata",
+          "network-firewall:ListFirewallPolicies",
+          "network-firewall:DescribeFirewallPolicy",
+          "network-firewall:ListRuleGroups",
+          "network-firewall:DescribeRuleGroup",
+          "directconnect:DescribeDirectConnectGatewayAssociations",
+          "ec2:DescribeVpnGateways",
+          "ec2:DescribeVpnConcentrators",
+          "networkmanager:ListCoreNetworks",
+          "networkmanager:GetCoreNetwork",
+          "networkmanager:GetCoreNetworkPolicy",
+          "networkmanager:ListAttachments",
+          "networkmanager:GetVpcAttachment",
+          "networkmanager:GetNetworkRoutes",
+          "networkmanager:ListConnectPeers",
+          "networkmanager:ListPeerings",
+          "wafv2:ListWebACLs",
+          "wafv2:ListRuleGroups",
+          "wafv2:ListIPSets",
+          "wafv2:ListRegexPatternSets",
+          "wafv2:ListLoggingConfigurations",
+          "wafv2:GetWebACL",
+          "wafv2:GetRuleGroup",
+          "wafv2:GetIPSet",
+          "wafv2:GetRegexPatternSet",
+          "cloudfront:ListDistributions",
+          "cloudfront:ListStreamingDistributions",
+          "cloudfront:ListCachePolicies",
+          "cloudfront:ListOriginRequestPolicies",
+          "cloudfront:ListResponseHeadersPolicies",
+          "cloudfront:ListOriginAccessControls",
+          "cloudfront:GetDistribution",
+          "cloudfront:GetStreamingDistribution",
+          "route53resolver:ListResolverEndpoints",
+          "route53resolver:ListResolverRules",
+          "route53resolver:ListResolverRuleAssociations",
+          "route53resolver:ListFirewallDomainLists",
+          "route53resolver:ListFirewallRuleGroups",
+          "route53resolver:ListFirewallRuleGroupAssociations",
+          "route53resolver:ListResolverQueryLogConfigs",
+          "route53resolver:GetFirewallDomainList",
+          "route53resolver:GetFirewallRuleGroup",
+          "ec2:DescribeSubnets",
+          "ec2:DescribeInstances",
+          "ec2:DescribeNatGateways",
+          "ec2:DescribeInternetGateways",
+          "ec2:DescribeEgressOnlyInternetGateways",
+          "ec2:DescribeAvailabilityZones",
+          "ec2:DescribeAddresses",
+          "ec2:DescribeNetworkInterfaces",
+          "ec2:DescribeVpcPeeringConnections",
+          "organizations:ListRoots",
+          "organizations:DescribeOrganizationalUnit",
+          "organizations:ListPolicies",
+          "organizations:DescribeResourcePolicy"
         ],
         "Effect": "Allow",
-        "Resource": "*"
+        "Resource": "*",
+        "Sid": "NetworkManagerSLR"
+      },
+      {
+        "Action": [
+          "config:PutServiceLinkedConfigurationRecorder",
+          "config:DeleteServiceLinkedConfigurationRecorder"
+        ],
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:config:*:*:configuration-recorder/AWSConfigurationRecorderForNetworkAgentService*"
+        ],
+        "Sid": "ConfigRecorderCreateDelete"
+      },
+      {
+        "Action": [
+          "iam:CreateServiceLinkedRole"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "iam:AWSServiceName": [
+              "config.amazonaws.com"
+            ]
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:iam::*:role/aws-service-role/config.amazonaws.com/AWSServiceRoleForConfig"
+        ],
+        "Sid": "ConfigRecorderSlrCreation"
+      },
+      {
+        "Action": [
+          "iam:CreateServiceLinkedRole"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "iam:AWSServiceName": [
+              "network-security-director.amazonaws.com"
+            ]
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:iam::*:role/aws-service-role/network-security-director.amazonaws.com/AWSServiceRoleForNetworkSecurityDirector"
+        ],
+        "Sid": "NSDSlrCreation"
+      },
+      {
+        "Action": [
+          "apigateway:GET"
+        ],
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:apigateway:*::/restapis",
+          "arn:aws:apigateway:*::/restapis/*",
+          "arn:aws:apigateway:*::/vpclinks",
+          "arn:aws:apigateway:*::/vpclinks/*"
+        ],
+        "Sid": "apiGatewayGetAPI"
+      },
+      {
+        "Action": [
+          "organizations:CreatePolicy",
+          "organizations:TagResource"
+        ],
+        "Condition": {
+          "ForAllValues:StringEquals": {
+            "aws:TagKeys": [
+              "NetworkScopeId"
+            ]
+          },
+          "Null": {
+            "aws:RequestTag/NetworkScopeId": "false"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:organizations::*:policy/o-*/network_security_director_policy/*"
+        ],
+        "Sid": "NSDOrgPolicyCreate"
+      },
+      {
+        "Action": [
+          "organizations:UpdatePolicy",
+          "organizations:DeletePolicy",
+          "organizations:UntagResource"
+        ],
+        "Condition": {
+          "ForAllValues:StringEquals": {
+            "aws:TagKeys": [
+              "NetworkScopeId"
+            ]
+          },
+          "Null": {
+            "aws:ResourceTag/NetworkScopeId": "false"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:organizations::*:policy/o-*/network_security_director_policy/*"
+        ],
+        "Sid": "NSDOrgPolicyMutate"
+      },
+      {
+        "Action": [
+          "organizations:AttachPolicy",
+          "organizations:DetachPolicy"
+        ],
+        "Condition": {
+          "Null": {
+            "aws:ResourceTag/NetworkScopeId": "false"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:organizations::*:policy/o-*/network_security_director_policy/*"
+        ],
+        "Sid": "NSDOrgPolicyAttachPolicy"
+      },
+      {
+        "Action": [
+          "organizations:AttachPolicy",
+          "organizations:DetachPolicy",
+          "organizations:ListPoliciesForTarget"
+        ],
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:organizations::*:root/o-*/*",
+          "arn:aws:organizations::*:ou/o-*/*",
+          "arn:aws:organizations::*:account/o-*/*"
+        ],
+        "Sid": "NSDOrgPolicyAttachTarget"
+      },
+      {
+        "Action": [
+          "organizations:DescribePolicy",
+          "organizations:ListTagsForResource",
+          "organizations:ListTargetsForPolicy"
+        ],
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:organizations::*:policy/o-*/network_security_director_policy/*"
+        ],
+        "Sid": "NSDOrgPolicyRead"
       }
     ],
     "Version": "2012-10-17"
@@ -316,15 +538,1010 @@
       "effective_action": "ec2:GetTransitGatewayPolicyTableEntries",
       "privesc": false,
       "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "config:DescribeConfigurationRecorders",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "config:DescribeConfigurationRecorders",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "config:DescribeConfigurationRecorderStatus",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "config:DescribeConfigurationRecorderStatus",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "ec2:DescribeTransitGatewayVpcAttachments",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:DescribeTransitGatewayVpcAttachments",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "ec2:DescribeNetworkAcls",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:DescribeNetworkAcls",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "ec2:DescribeSecurityGroups",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:DescribeSecurityGroups",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "ec2:DescribeSecurityGroupRules",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:DescribeSecurityGroupRules",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "ec2:DescribeManagedPrefixLists",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:DescribeManagedPrefixLists",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "ec2:GetManagedPrefixListEntries",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:GetManagedPrefixListEntries",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "ec2:DescribeVpcEndpoints",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:DescribeVpcEndpoints",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "ec2:DescribeVpcEndpointServiceConfigurations",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:DescribeVpcEndpointServiceConfigurations",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "elasticloadbalancing:DescribeListeners",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "elasticloadbalancing:DescribeListeners",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "elasticloadbalancing:DescribeLoadBalancerAttributes",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "elasticloadbalancing:DescribeLoadBalancerAttributes",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "elasticloadbalancing:DescribeLoadBalancers",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "elasticloadbalancing:DescribeLoadBalancers",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "elasticloadbalancing:DescribeRules",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "elasticloadbalancing:DescribeRules",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "elasticloadbalancing:DescribeTags",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "elasticloadbalancing:DescribeTags",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "elasticloadbalancing:DescribeTargetGroups",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "elasticloadbalancing:DescribeTargetGroups",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "elasticloadbalancing:DescribeTargetGroupAttributes",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "elasticloadbalancing:DescribeTargetGroupAttributes",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "elasticloadbalancing:DescribeTargetHealth",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "elasticloadbalancing:DescribeTargetHealth",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "network-firewall:ListFirewalls",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "network-firewall:ListFirewalls",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "network-firewall:DescribeFirewall",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "network-firewall:DescribeFirewall",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "network-firewall:DescribeFirewallMetadata",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "network-firewall:DescribeFirewallMetadata",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "network-firewall:ListFirewallPolicies",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "network-firewall:ListFirewallPolicies",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "network-firewall:DescribeFirewallPolicy",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "network-firewall:DescribeFirewallPolicy",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "network-firewall:ListRuleGroups",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "network-firewall:ListRuleGroups",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "network-firewall:DescribeRuleGroup",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "network-firewall:DescribeRuleGroup",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "directconnect:DescribeDirectConnectGatewayAssociations",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "directconnect:DescribeDirectConnectGatewayAssociations",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "ec2:DescribeVpnGateways",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:DescribeVpnGateways",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "ec2:DescribeVpnConcentrators",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:DescribeVpnConcentrators",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "networkmanager:ListCoreNetworks",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "networkmanager:ListCoreNetworks",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "networkmanager:GetCoreNetwork",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "networkmanager:GetCoreNetwork",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "networkmanager:GetCoreNetworkPolicy",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "networkmanager:GetCoreNetworkPolicy",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "networkmanager:ListAttachments",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "networkmanager:ListAttachments",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "networkmanager:GetVpcAttachment",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "networkmanager:GetVpcAttachment",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "networkmanager:GetNetworkRoutes",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "networkmanager:GetNetworkRoutes",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "networkmanager:ListConnectPeers",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "networkmanager:ListConnectPeers",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "networkmanager:ListPeerings",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "networkmanager:ListPeerings",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "wafv2:ListWebACLs",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "wafv2:ListWebACLs",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "wafv2:ListRuleGroups",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "wafv2:ListRuleGroups",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "wafv2:ListIPSets",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "wafv2:ListIPSets",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "wafv2:ListRegexPatternSets",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "wafv2:ListRegexPatternSets",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "wafv2:ListLoggingConfigurations",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "wafv2:ListLoggingConfigurations",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "wafv2:GetWebACL",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "wafv2:GetWebACL",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "wafv2:GetRuleGroup",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "wafv2:GetRuleGroup",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "wafv2:GetIPSet",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "wafv2:GetIPSet",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "wafv2:GetRegexPatternSet",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "wafv2:GetRegexPatternSet",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "cloudfront:ListDistributions",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudfront:ListDistributions",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "cloudfront:ListStreamingDistributions",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudfront:ListStreamingDistributions",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "cloudfront:ListCachePolicies",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudfront:ListCachePolicies",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "cloudfront:ListOriginRequestPolicies",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudfront:ListOriginRequestPolicies",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "cloudfront:ListResponseHeadersPolicies",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudfront:ListResponseHeadersPolicies",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "cloudfront:ListOriginAccessControls",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudfront:ListOriginAccessControls",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "cloudfront:GetDistribution",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudfront:GetDistribution",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "cloudfront:GetStreamingDistribution",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudfront:GetStreamingDistribution",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "route53resolver:ListResolverEndpoints",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "route53resolver:ListResolverEndpoints",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "route53resolver:ListResolverRules",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "route53resolver:ListResolverRules",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "route53resolver:ListResolverRuleAssociations",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "route53resolver:ListResolverRuleAssociations",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "route53resolver:ListFirewallDomainLists",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "route53resolver:ListFirewallDomainLists",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "route53resolver:ListFirewallRuleGroups",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "route53resolver:ListFirewallRuleGroups",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "route53resolver:ListFirewallRuleGroupAssociations",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "route53resolver:ListFirewallRuleGroupAssociations",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "route53resolver:ListResolverQueryLogConfigs",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "route53resolver:ListResolverQueryLogConfigs",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "route53resolver:GetFirewallDomainList",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "route53resolver:GetFirewallDomainList",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "route53resolver:GetFirewallRuleGroup",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "route53resolver:GetFirewallRuleGroup",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "ec2:DescribeSubnets",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:DescribeSubnets",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "ec2:DescribeInstances",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:DescribeInstances",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "ec2:DescribeNatGateways",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:DescribeNatGateways",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "ec2:DescribeInternetGateways",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:DescribeInternetGateways",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "ec2:DescribeEgressOnlyInternetGateways",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:DescribeEgressOnlyInternetGateways",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "ec2:DescribeAvailabilityZones",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:DescribeAvailabilityZones",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "ec2:DescribeAddresses",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:DescribeAddresses",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "ec2:DescribeNetworkInterfaces",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:DescribeNetworkInterfaces",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "ec2:DescribeVpcPeeringConnections",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:DescribeVpcPeeringConnections",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "organizations:ListRoots",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "organizations:ListRoots",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "organizations:DescribeOrganizationalUnit",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "organizations:DescribeOrganizationalUnit",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "organizations:ListPolicies",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "organizations:ListPolicies",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "organizations:DescribeResourcePolicy",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "organizations:DescribeResourcePolicy",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "config:PutServiceLinkedConfigurationRecorder",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "config:PutServiceLinkedConfigurationRecorder",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "config:DeleteServiceLinkedConfigurationRecorder",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "config:DeleteServiceLinkedConfigurationRecorder",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Permissions management",
+      "action": "iam:CreateServiceLinkedRole",
+      "condition": {
+        "StringEquals": {
+          "iam:AWSServiceName": [
+            "config.amazonaws.com"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "iam:CreateServiceLinkedRole",
+      "privesc": true,
+      "resource_exposure": true
+    },
+    {
+      "access_level": "Permissions management",
+      "action": "iam:CreateServiceLinkedRole",
+      "condition": {
+        "StringEquals": {
+          "iam:AWSServiceName": [
+            "network-security-director.amazonaws.com"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "iam:CreateServiceLinkedRole",
+      "privesc": true,
+      "resource_exposure": true
+    },
+    {
+      "access_level": "Read",
+      "action": "apigateway:GET",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "apigateway:GET",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "organizations:CreatePolicy",
+      "condition": {
+        "ForAllValues:StringEquals": {
+          "aws:TagKeys": [
+            "NetworkScopeId"
+          ]
+        },
+        "Null": {
+          "aws:RequestTag/NetworkScopeId": "false"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "organizations:CreatePolicy",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Tagging, Write",
+      "action": "organizations:TagResource",
+      "condition": {
+        "ForAllValues:StringEquals": {
+          "aws:TagKeys": [
+            "NetworkScopeId"
+          ]
+        },
+        "Null": {
+          "aws:RequestTag/NetworkScopeId": "false"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "organizations:TagResource",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Permissions management, Write",
+      "action": "organizations:UpdatePolicy",
+      "condition": {
+        "ForAllValues:StringEquals": {
+          "aws:TagKeys": [
+            "NetworkScopeId"
+          ]
+        },
+        "Null": {
+          "aws:ResourceTag/NetworkScopeId": "false"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "organizations:UpdatePolicy",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "organizations:DeletePolicy",
+      "condition": {
+        "ForAllValues:StringEquals": {
+          "aws:TagKeys": [
+            "NetworkScopeId"
+          ]
+        },
+        "Null": {
+          "aws:ResourceTag/NetworkScopeId": "false"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "organizations:DeletePolicy",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Tagging, Write",
+      "action": "organizations:UntagResource",
+      "condition": {
+        "ForAllValues:StringEquals": {
+          "aws:TagKeys": [
+            "NetworkScopeId"
+          ]
+        },
+        "Null": {
+          "aws:ResourceTag/NetworkScopeId": "false"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "organizations:UntagResource",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Permissions management, Write",
+      "action": "organizations:AttachPolicy",
+      "condition": {
+        "Null": {
+          "aws:ResourceTag/NetworkScopeId": "false"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "organizations:AttachPolicy",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Permissions management, Write",
+      "action": "organizations:DetachPolicy",
+      "condition": {
+        "Null": {
+          "aws:ResourceTag/NetworkScopeId": "false"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "organizations:DetachPolicy",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Permissions management, Write",
+      "action": "organizations:AttachPolicy",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "organizations:AttachPolicy",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Permissions management, Write",
+      "action": "organizations:DetachPolicy",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "organizations:DetachPolicy",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "organizations:ListPoliciesForTarget",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "organizations:ListPoliciesForTarget",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "organizations:DescribePolicy",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "organizations:DescribePolicy",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "organizations:ListTagsForResource",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "organizations:ListTagsForResource",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "organizations:ListTargetsForPolicy",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "organizations:ListTargetsForPolicy",
+      "privesc": false,
+      "resource_exposure": false
     }
   ],
   "grantless": false,
   "malformed": false,
   "name": "AWSNetworkManagerServiceRolePolicy",
-  "privesc": false,
-  "resource_exposure": false,
+  "privesc": true,
+  "resource_exposure": true,
   "undocumented_actions": false,
   "unknown_actions": [],
-  "updatedate": "2022-07-27T19:41:29+00:00",
-  "version": "v8"
+  "updatedate": "2026-11-12T21:57:09+00:00",
+  "version": "v9"
 }
