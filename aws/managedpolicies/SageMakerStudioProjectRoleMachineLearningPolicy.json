@@ -7,7 +7,7 @@
     "Permissions management"
   ],
   "arn": "arn:aws:iam::aws:policy/SageMakerStudioProjectRoleMachineLearningPolicy",
-  "createdate": "2026-10-29T22:27:07+00:00",
+  "createdate": "2026-11-13T20:47:08+00:00",
   "credentials_exposure": true,
   "data_access": true,
   "deprecated": false,
@@ -639,7 +639,9 @@
           "bedrock-agentcore:GetWorkloadAccessToken",
           "bedrock-agentcore:GetWorkloadAccessTokenForJWT",
           "bedrock-agentcore:ListTagsForResource",
-          "bedrock-agentcore:GetConfigurationBundleVersion"
+          "bedrock-agentcore:GetConfigurationBundleVersion",
+          "bedrock-agentcore:*ApiKeyCredentialProvider",
+          "bedrock-agentcore:GetResourceApiKey"
         ],
         "Condition": {
           "StringEquals": {
@@ -661,7 +663,8 @@
           "bedrock-agentcore:ListMemories",
           "bedrock-agentcore:GetEvaluator",
           "bedrock-agentcore:ListCodeInterpreterSessions",
-          "bedrock-agentcore:ListBrowserSessions"
+          "bedrock-agentcore:ListBrowserSessions",
+          "bedrock-agentcore:ListApiKeyCredentialProviders"
         ],
         "Effect": "Allow",
         "Resource": "*",
@@ -672,12 +675,14 @@
           "bedrock-agentcore:*CodeInterpreterSession",
           "bedrock-agentcore:InvokeCodeInterpreter",
           "bedrock-agentcore:*BrowserSession",
-          "bedrock-agentcore:ConnectBrowserAutomationStream"
+          "bedrock-agentcore:ConnectBrowserAutomationStream",
+          "bedrock-agentcore:InvokeWebSearch"
         ],
         "Effect": "Allow",
         "Resource": [
           "arn:*:bedrock-agentcore:*:aws:code-interpreter/*",
-          "arn:*:bedrock-agentcore:*:aws:browser/*"
+          "arn:*:bedrock-agentcore:*:aws:browser/*",
+          "arn:*:bedrock-agentcore:*:aws:tool/web-search.v1"
         ],
         "Sid": "ACManagedBuiltInTools"
       },
@@ -1353,6 +1358,44 @@
       },
       {
         "Action": [
+          "kms:Decrypt"
+        ],
+        "Condition": {
+          "ForAnyValue:StringEquals": {
+            "kms:EncryptionContextKeys": [
+              "aws:sso:instance-arn",
+              "aws:identitystore:identitystore-arn"
+            ]
+          },
+          "StringLike": {
+            "kms:ViaService": [
+              "sso.*.amazonaws.com",
+              "identitystore.*.amazonaws.com"
+            ]
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "IdCKmsDecrypt"
+      },
+      {
+        "Action": [
+          "kms:DescribeKey"
+        ],
+        "Condition": {
+          "StringLike": {
+            "kms:ViaService": [
+              "sso.*.amazonaws.com",
+              "identitystore.*.amazonaws.com"
+            ]
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "IdCKmsDescribe"
+      },
+      {
+        "Action": [
           "iam:CreateServiceLinkedRole"
         ],
         "Effect": "Allow",
@@ -1362,7 +1405,8 @@
           "arn:aws:iam::*:role/aws-service-role/runtime-identity.bedrock-agentcore.amazonaws.com/AWSServiceRoleForBedrockAgentCoreRuntimeIdentity",
           "arn:aws:iam::*:role/aws-service-role/network.bedrock-agentcore.amazonaws.com/AWSServiceRoleForBedrockAgentCoreNetwork",
           "arn:aws:iam::*:role/aws-service-role/bedrock-agentcore.amazonaws.com/AWSServiceRoleForBedrockAgentCoreGatewayNetwork",
-          "arn:aws:iam::*:role/aws-service-role/identity-network.bedrock-agentcore.amazonaws.com/AWSServiceRoleForBedrockAgentCoreIdentity"
+          "arn:aws:iam::*:role/aws-service-role/identity-network.bedrock-agentcore.amazonaws.com/AWSServiceRoleForBedrockAgentCoreIdentity",
+          "arn:aws:iam::*:role/aws-service-role/agent-registry.amazonaws.com/AWSServiceRoleForAgentRegistry"
         ],
         "Sid": "CreateSLR"
       },
@@ -1374,6 +1418,7 @@
           "datazone:CreateListingChangeSet",
           "datazone:CreateSubscriptionRequest",
           "datazone:RevokeSubscription",
+          "datazone:UpdateAssetOwner",
           "datazone:List*",
           "datazone:Search*",
           "datazone:*Message*",
@@ -1420,7 +1465,11 @@
       {
         "Action": [
           "bedrock-agentcore:CreateWorkloadIdentity",
-          "bedrock-agentcore:DeleteWorkloadIdentity"
+          "bedrock-agentcore:DeleteWorkloadIdentity",
+          "bedrock-agentcore:GetResourceApiKey",
+          "bedrock-agentcore:*TokenVault",
+          "bedrock-agentcore:*ApiKeyCredentialProvider",
+          "bedrock-agentcore:ListTagsForResource"
         ],
         "Condition": {
           "StringEquals": {
@@ -1428,7 +1477,10 @@
           }
         },
         "Effect": "Allow",
-        "Resource": "arn:*:bedrock-agentcore:*:*:workload-identity-directory/default",
+        "Resource": [
+          "arn:*:bedrock-agentcore:*:*:workload-identity-directory/default",
+          "arn:*:bedrock-agentcore:*:*:token-vault/default"
+        ],
         "Sid": "ACIdentityDirectory"
       },
       {
@@ -1446,6 +1498,22 @@
         "Effect": "Allow",
         "Resource": "arn:*:bedrock-agentcore:*:*:workload-identity-directory/default/workload-identity/*",
         "Sid": "ACGatewayWorkloadIdentity"
+      },
+      {
+        "Action": [
+          "secretsmanager:CreateSecret",
+          "secretsmanager:PutSecretValue",
+          "secretsmanager:DeleteSecret",
+          "secretsmanager:GetSecretValue"
+        ],
+        "Condition": {
+          "ForAnyValue:StringEquals": {
+            "aws:CalledVia": "bedrock-agentcore.amazonaws.com"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:secretsmanager:*:*:secret:bedrock-agentcore-identity!*",
+        "Sid": "ACApiKeySecret"
       },
       {
         "Action": [
@@ -1511,10 +1579,57 @@
       },
       {
         "Action": [
+          "agent-registry:List*",
+          "agent-registry:GetRegistry",
+          "agent-registry:GetRegistryRecord",
+          "agent-registry:GetDiscoverableRegistryRecord",
+          "agent-registry:SearchDiscoverableRegistryRecords"
+        ],
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "ARConsumerPublisher"
+      },
+      {
+        "Action": [
+          "agent-registry:UpdateRegistryRecord",
+          "agent-registry:UpdateRegistryRecordStatus",
+          "agent-registry:DeleteRegistryRecord",
+          "agent-registry:SubmitRegistryRecordForApproval",
+          "agent-registry:TagResource"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceTag/AmazonDataZoneProject": "${aws:PrincipalTag/AmazonDataZoneProject}"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "ARPublisher"
+      },
+      {
+        "Action": [
+          "agent-registry:CreateRegistryRecord"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:RequestTag/AmazonDataZoneProject": "${aws:PrincipalTag/AmazonDataZoneProject}"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "ARCreate"
+      },
+      {
+        "Action": [
           "identitystore:DescribeUser",
           "identitystore:DescribeGroup",
           "sso:DescribeInstance",
-          "sso:DescribeApplication"
+          "sso:DescribeApplication",
+          "sso-directory:DescribeUser",
+          "sso-directory:DescribeGroup",
+          "identitystore:GetUserId",
+          "identitystore:GetGroupId",
+          "sso:ListInstances"
         ],
         "Condition": {
           "Bool": {
@@ -5778,6 +5893,76 @@
       "resource_exposure": false
     },
     {
+      "access_level": "Write",
+      "action": "bedrock-agentcore:*ApiKeyCredentialProvider",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/AmazonDataZoneProject": "${aws:PrincipalTag/AmazonDataZoneProject}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "bedrock-agentcore:CreateApiKeyCredentialProvider",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "bedrock-agentcore:*ApiKeyCredentialProvider",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/AmazonDataZoneProject": "${aws:PrincipalTag/AmazonDataZoneProject}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "bedrock-agentcore:DeleteApiKeyCredentialProvider",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "bedrock-agentcore:*ApiKeyCredentialProvider",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/AmazonDataZoneProject": "${aws:PrincipalTag/AmazonDataZoneProject}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "bedrock-agentcore:GetApiKeyCredentialProvider",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "bedrock-agentcore:*ApiKeyCredentialProvider",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/AmazonDataZoneProject": "${aws:PrincipalTag/AmazonDataZoneProject}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "bedrock-agentcore:UpdateApiKeyCredentialProvider",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "bedrock-agentcore:GetResourceApiKey",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/AmazonDataZoneProject": "${aws:PrincipalTag/AmazonDataZoneProject}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "bedrock-agentcore:GetResourceApiKey",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
       "access_level": "List",
       "action": "bedrock-agentcore:ListHarnesses",
       "condition": null,
@@ -5879,6 +6064,16 @@
     },
     {
       "access_level": "Read",
+      "action": "bedrock-agentcore:ListApiKeyCredentialProviders",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "bedrock-agentcore:ListApiKeyCredentialProviders",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
       "action": "bedrock-agentcore:*CodeInterpreterSession",
       "condition": null,
       "credentials_exposure": false,
@@ -5954,6 +6149,16 @@
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "bedrock-agentcore:ConnectBrowserAutomationStream",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Permissions management, Write",
+      "action": "bedrock-agentcore:InvokeWebSearch",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "bedrock-agentcore:InvokeWebSearch",
       "privesc": false,
       "resource_exposure": false
     },
@@ -7671,6 +7876,46 @@
       "resource_exposure": false
     },
     {
+      "access_level": "Write",
+      "action": "kms:Decrypt",
+      "condition": {
+        "ForAnyValue:StringEquals": {
+          "kms:EncryptionContextKeys": [
+            "aws:sso:instance-arn",
+            "aws:identitystore:identitystore-arn"
+          ]
+        },
+        "StringLike": {
+          "kms:ViaService": [
+            "sso.*.amazonaws.com",
+            "identitystore.*.amazonaws.com"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "kms:Decrypt",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "kms:DescribeKey",
+      "condition": {
+        "StringLike": {
+          "kms:ViaService": [
+            "sso.*.amazonaws.com",
+            "identitystore.*.amazonaws.com"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "kms:DescribeKey",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
       "access_level": "Permissions management",
       "action": "iam:CreateServiceLinkedRole",
       "condition": null,
@@ -8337,6 +8582,16 @@
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "datazone:RevokeSubscription",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "datazone:UpdateAssetOwner",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "datazone:UpdateAssetOwner",
       "privesc": false,
       "resource_exposure": false
     },
@@ -9546,6 +9801,104 @@
       "resource_exposure": false
     },
     {
+      "access_level": "Read",
+      "action": "bedrock-agentcore:GetResourceApiKey",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "bedrock-agentcore:GetResourceApiKey",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "bedrock-agentcore:*TokenVault",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "bedrock-agentcore:GetTokenVault",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "bedrock-agentcore:*ApiKeyCredentialProvider",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "bedrock-agentcore:CreateApiKeyCredentialProvider",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "bedrock-agentcore:*ApiKeyCredentialProvider",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "bedrock-agentcore:DeleteApiKeyCredentialProvider",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "bedrock-agentcore:*ApiKeyCredentialProvider",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "bedrock-agentcore:GetApiKeyCredentialProvider",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "bedrock-agentcore:*ApiKeyCredentialProvider",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "bedrock-agentcore:UpdateApiKeyCredentialProvider",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "bedrock-agentcore:ListTagsForResource",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "bedrock-agentcore:ListTagsForResource",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
       "access_level": "Write",
       "action": "bedrock-agentcore:CreateWorkloadIdentity",
       "condition": {
@@ -9559,6 +9912,62 @@
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "bedrock-agentcore:CreateWorkloadIdentity",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "secretsmanager:CreateSecret",
+      "condition": {
+        "ForAnyValue:StringEquals": {
+          "aws:CalledVia": "bedrock-agentcore.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "secretsmanager:CreateSecret",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "secretsmanager:PutSecretValue",
+      "condition": {
+        "ForAnyValue:StringEquals": {
+          "aws:CalledVia": "bedrock-agentcore.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "secretsmanager:PutSecretValue",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "secretsmanager:DeleteSecret",
+      "condition": {
+        "ForAnyValue:StringEquals": {
+          "aws:CalledVia": "bedrock-agentcore.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "secretsmanager:DeleteSecret",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "secretsmanager:GetSecretValue",
+      "condition": {
+        "ForAnyValue:StringEquals": {
+          "aws:CalledVia": "bedrock-agentcore.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "secretsmanager:GetSecretValue",
       "privesc": false,
       "resource_exposure": false
     },
@@ -9688,6 +10097,170 @@
       "resource_exposure": true
     },
     {
+      "access_level": "List",
+      "action": "agent-registry:List*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "agent-registry:ListDiscoverableRegistryRecords",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "agent-registry:List*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "agent-registry:ListRegistries",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "agent-registry:List*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "agent-registry:ListRegistryRecords",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "agent-registry:List*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "agent-registry:ListTagsForResource",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "agent-registry:GetRegistry",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "agent-registry:GetRegistry",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "agent-registry:GetRegistryRecord",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "agent-registry:GetRegistryRecord",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "agent-registry:GetDiscoverableRegistryRecord",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "agent-registry:GetDiscoverableRegistryRecord",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "agent-registry:SearchDiscoverableRegistryRecords",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "agent-registry:SearchDiscoverableRegistryRecords",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "agent-registry:UpdateRegistryRecord",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/AmazonDataZoneProject": "${aws:PrincipalTag/AmazonDataZoneProject}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "agent-registry:UpdateRegistryRecord",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "agent-registry:UpdateRegistryRecordStatus",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/AmazonDataZoneProject": "${aws:PrincipalTag/AmazonDataZoneProject}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "agent-registry:UpdateRegistryRecordStatus",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "agent-registry:DeleteRegistryRecord",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/AmazonDataZoneProject": "${aws:PrincipalTag/AmazonDataZoneProject}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "agent-registry:DeleteRegistryRecord",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "agent-registry:SubmitRegistryRecordForApproval",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/AmazonDataZoneProject": "${aws:PrincipalTag/AmazonDataZoneProject}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "agent-registry:SubmitRegistryRecordForApproval",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Tagging, Write",
+      "action": "agent-registry:TagResource",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceTag/AmazonDataZoneProject": "${aws:PrincipalTag/AmazonDataZoneProject}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "agent-registry:TagResource",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "agent-registry:CreateRegistryRecord",
+      "condition": {
+        "StringEquals": {
+          "aws:RequestTag/AmazonDataZoneProject": "${aws:PrincipalTag/AmazonDataZoneProject}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "agent-registry:CreateRegistryRecord",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
       "access_level": "Read",
       "action": "identitystore:DescribeUser",
       "condition": {
@@ -9742,6 +10315,76 @@
       "effective_action": "sso:DescribeApplication",
       "privesc": false,
       "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "sso-directory:DescribeUser",
+      "condition": {
+        "Bool": {
+          "aws:ViaAWSService": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": true,
+      "effective_action": "sso-directory:DescribeUser",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "sso-directory:DescribeGroup",
+      "condition": {
+        "Bool": {
+          "aws:ViaAWSService": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": true,
+      "effective_action": "sso-directory:DescribeGroup",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "identitystore:GetUserId",
+      "condition": {
+        "Bool": {
+          "aws:ViaAWSService": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "identitystore:GetUserId",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "identitystore:GetGroupId",
+      "condition": {
+        "Bool": {
+          "aws:ViaAWSService": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "identitystore:GetGroupId",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "sso:ListInstances",
+      "condition": {
+        "Bool": {
+          "aws:ViaAWSService": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sso:ListInstances",
+      "privesc": false,
+      "resource_exposure": false
     }
   ],
   "grantless": false,
@@ -9751,6 +10394,6 @@
   "resource_exposure": true,
   "undocumented_actions": false,
   "unknown_actions": [],
-  "updatedate": "2026-10-29T22:27:07+00:00",
-  "version": "v47"
+  "updatedate": "2026-11-13T20:47:08+00:00",
+  "version": "v48"
 }

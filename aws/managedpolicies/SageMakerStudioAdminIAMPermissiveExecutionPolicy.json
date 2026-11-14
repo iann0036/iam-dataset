@@ -8,7 +8,7 @@
     "Unknown"
   ],
   "arn": "arn:aws:iam::aws:policy/SageMakerStudioAdminIAMPermissiveExecutionPolicy",
-  "createdate": "2026-10-29T19:27:07+00:00",
+  "createdate": "2026-11-14T00:07:09+00:00",
   "credentials_exposure": true,
   "data_access": true,
   "deprecated": false,
@@ -39,14 +39,30 @@
       },
       {
         "Action": [
+          "ec2:AuthorizeSecurityGroupEgress",
+          "ec2:AuthorizeSecurityGroupIngress"
+        ],
+        "Condition": {
+          "ForAnyValue:StringEquals": {
+            "aws:CalledVia": "emr-containers.amazonaws.com"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "ManageViaEmrContainers"
+      },
+      {
+        "Action": [
           "athena:*",
           "bedrock:*",
           "bedrock-agentcore:*",
+          "agent-registry:*",
           "codewhisperer:*",
           "sagemaker-unified-studio-mcp:*",
           "datazone:*",
           "elasticmapreduce:*",
           "emr-containers:*",
+          "eks:*",
           "q:*",
           "sagemaker:*",
           "sagemaker-mlflow:*",
@@ -90,7 +106,6 @@
           "athena:TerminateSession",
           "emr-serverless:*Session*",
           "emr-serverless:*Dashboard*",
-          "emr-containers:*ManagedEndpoint*",
           "elasticmapreduce:*Session*",
           "glue:CancelStatement",
           "glue:CreateSession",
@@ -112,7 +127,6 @@
         "Resource": [
           "arn:aws:athena:*:*:workgroup/*/session/*",
           "arn:aws:emr-serverless:*:*:/applications/*/sessions/*",
-          "arn:aws:emr-containers:*:*:/virtualclusters/*/endpoints/*",
           "arn:aws:elasticmapreduce:*:*:cluster/*/session/*",
           "arn:aws:glue:*:*:session/*"
         ],
@@ -123,7 +137,6 @@
           "athena:TagResource",
           "athena:UntagResource",
           "emr-serverless:*Resource",
-          "emr-containers:*Resource",
           "elasticmapreduce:AddTags",
           "elasticmapreduce:RemoveTags",
           "glue:TagResource",
@@ -138,7 +151,6 @@
         "Resource": [
           "arn:aws:athena:*:*:workgroup/*/session/*",
           "arn:aws:emr-serverless:*:*:/applications/*/sessions/*",
-          "arn:aws:emr-containers:*:*:/virtualclusters/*/endpoints/*",
           "arn:aws:elasticmapreduce:*:*:cluster/*/session/*",
           "arn:aws:glue:*:*:session/*"
         ],
@@ -146,10 +158,32 @@
       },
       {
         "Action": [
+          "emr-containers:GetManagedEndpointSessionCredentials",
+          "emr-containers:DeleteManagedEndpoint",
+          "emr-containers:*Resource"
+        ],
+        "Condition": {
+          "Null": {
+            "aws:ResourceTag/AmazonDataZoneSessionOwner": "false"
+          },
+          "StringNotEquals": {
+            "aws:ResourceTag/AmazonDataZoneSessionOwner": "${aws:SourceIdentity}"
+          }
+        },
+        "Effect": "Deny",
+        "Resource": "arn:aws:emr-containers:*:*:/virtualclusters/*/endpoints/*",
+        "Sid": "DenyForeignEmrOnEksSessions"
+      },
+      {
+        "Action": [
           "iam:GetRole",
           "iam:ListRoles",
           "iam:GetUser",
           "iam:ListUsers",
+          "iam:ListAttachedRolePolicies",
+          "iam:ListRolePolicies",
+          "iam:GetRolePolicy",
+          "access-analyzer:CheckNoNewAccess",
           "sts:AssumeRole",
           "ecr-public:GetAuthorizationToken",
           "sts:GetServiceBearerToken"
@@ -164,6 +198,7 @@
         ],
         "Effect": "Allow",
         "Resource": [
+          "arn:aws:iam::*:role/aws-service-role/emr-containers.amazonaws.com/AWSServiceRoleForAmazonEMRContainers",
           "arn:aws:iam::*:role/aws-service-role/neptune-graph.amazonaws.com/AWSServiceRoleForNeptuneGraph",
           "arn:aws:iam::*:role/aws-service-role/redshift.amazonaws.com/AWSServiceRoleForRedshift",
           "arn:aws:iam::*:role/aws-service-role/sagemaker.amazonaws.com/AWSServiceRoleForAmazonSageMakerNotebooks",
@@ -177,20 +212,27 @@
           "arn:aws:iam::*:role/aws-service-role/runtime-identity.bedrock-agentcore.amazonaws.com/AWSServiceRoleForBedrockAgentCoreRuntimeIdentity",
           "arn:aws:iam::*:role/aws-service-role/network.bedrock-agentcore.amazonaws.com/AWSServiceRoleForBedrockAgentCoreNetwork",
           "arn:aws:iam::*:role/aws-service-role/bedrock-agentcore.amazonaws.com/AWSServiceRoleForBedrockAgentCoreGatewayNetwork",
-          "arn:aws:iam::*:role/aws-service-role/identity-network.bedrock-agentcore.amazonaws.com/AWSServiceRoleForBedrockAgentCoreIdentity"
+          "arn:aws:iam::*:role/aws-service-role/identity-network.bedrock-agentcore.amazonaws.com/AWSServiceRoleForBedrockAgentCoreIdentity",
+          "arn:aws:iam::*:role/aws-service-role/agent-registry.amazonaws.com/AWSServiceRoleForAgentRegistry"
         ],
         "Sid": "CreateSLR"
       },
       {
         "Action": [
           "iam:TagRole",
+          "iam:UntagRole",
           "sts:TagSession"
         ],
         "Condition": {
           "ForAllValues:StringLike": {
             "aws:TagKeys": [
               "AmazonDataZone*",
-              "SageMakerSpacesDomainId"
+              "DataZone*",
+              "SageMakerSpacesDomainId",
+              "for-use-with-amazon-emr-managed-policies",
+              "DomainBucketName",
+              "KmsKeyId",
+              "VpcId"
             ]
           }
         },
@@ -204,10 +246,12 @@
         ],
         "Effect": "Allow",
         "Resource": [
+          "arn:aws:iam::*:role/datazone_emr_containers_system_namespace_role_*",
           "arn:aws:iam::*:role/service-role/AmazonSageMakerAdminIAMExecutionRole*",
           "arn:aws:iam::*:role/service-role/AmazonSageMakerUserIAMExecutionRole*",
           "arn:aws:iam::*:role/AmazonSageMakerAdminIAMExecutionRole*",
-          "arn:aws:iam::*:role/AmazonSageMakerUserIAMExecutionRole*"
+          "arn:aws:iam::*:role/AmazonSageMakerUserIAMExecutionRole*",
+          "arn:aws:iam::*:role/datazone_usr_role_*"
         ],
         "Sid": "UpdateDzManagedRoleTrustPolicy"
       },
@@ -219,12 +263,16 @@
           "StringEquals": {
             "aws:ResourceAccount": "${aws:PrincipalAccount}",
             "iam:PassedToService": [
+              "pods.eks.amazonaws.com",
               "sagemaker.amazonaws.com",
               "lakeformation.amazonaws.com",
               "athena.amazonaws.com",
               "glue.amazonaws.com",
               "datazone.amazonaws.com",
-              "airflow-serverless.amazonaws.com"
+              "airflow-serverless.amazonaws.com",
+              "elasticmapreduce.amazonaws.com",
+              "ec2.amazonaws.com",
+              "redshift-serverless.amazonaws.com"
             ]
           }
         },
@@ -267,13 +315,17 @@
         ],
         "Effect": "Allow",
         "Resource": [
-          "arn:aws:iam::*:role/service-role/AmazonSageMaker*"
+          "arn:aws:iam::*:role/service-role/AmazonSageMaker*",
+          "arn:aws:iam::*:role/datazone_emr_service_role_*",
+          "arn:aws:iam::*:role/datazone_emr_ec2_instance_role_*",
+          "arn:aws:iam::*:role/datazone_emr_containers_system_namespace_role_*"
         ],
         "Sid": "CreateRole"
       },
       {
         "Action": [
-          "iam:AttachRolePolicy"
+          "iam:AttachRolePolicy",
+          "iam:DetachRolePolicy"
         ],
         "Condition": {
           "ArnEquals": {
@@ -281,13 +333,35 @@
               "arn:aws:iam::aws:policy/SageMakerStudioUserIAMDefaultExecutionPolicy",
               "arn:aws:iam::aws:policy/SageMakerStudioUserIAMPermissiveExecutionPolicy",
               "arn:aws:iam::aws:policy/service-role/AmazonS3TablesLakeFormationServiceRole",
-              "arn:aws:iam::aws:policy/service-role/SageMakerStudioDataAppsAccessRolePolicy"
+              "arn:aws:iam::aws:policy/service-role/SageMakerStudioDataAppsAccessRolePolicy",
+              "arn:aws:iam::aws:policy/service-role/SageMakerStudioEMRInstanceRolePolicy",
+              "arn:aws:iam::aws:policy/service-role/AmazonEMRServicePolicy_v2",
+              "arn:aws:iam::aws:policy/service-role/SageMakerStudioEMRServiceRolePolicy",
+              "arn:aws:iam::aws:policy/service-role/AmazonEMRServicePolicyForSessions",
+              "arn:aws:iam::aws:policy/service-role/SageMakerStudioEMRContainersSystemNamespaceRolePolicy"
             ]
           }
         },
         "Effect": "Allow",
-        "Resource": "arn:aws:iam::*:role/service-role/AmazonSageMaker*",
-        "Sid": "AttachPolicy"
+        "Resource": [
+          "arn:aws:iam::*:role/service-role/AmazonSageMaker*",
+          "arn:aws:iam::*:role/datazone_emr_service_role_*",
+          "arn:aws:iam::*:role/datazone_emr_ec2_instance_role_*",
+          "arn:aws:iam::*:role/datazone_emr_containers_system_namespace_role_*"
+        ],
+        "Sid": "AttachAndDetachPolicy"
+      },
+      {
+        "Action": [
+          "iam:GetInstanceProfile",
+          "iam:CreateInstanceProfile",
+          "iam:AddRoleToInstanceProfile",
+          "iam:RemoveRoleFromInstanceProfile",
+          "iam:DeleteInstanceProfile"
+        ],
+        "Effect": "Allow",
+        "Resource": "arn:aws:iam::*:instance-profile/datazone_emr_ec2_instance_profile_*",
+        "Sid": "InstanceProfile"
       },
       {
         "Action": [
@@ -301,6 +375,14 @@
         "Effect": "Allow",
         "Resource": "*",
         "Sid": "SourceIdentity"
+      },
+      {
+        "Action": [
+          "sts:SetContext"
+        ],
+        "Effect": "Allow",
+        "Resource": "arn:aws:sts::*:self",
+        "Sid": "AllowSetContextOnSelf"
       },
       {
         "Action": [
@@ -408,6 +490,22 @@
         "Effect": "Allow",
         "Resource": "arn:aws:secretsmanager:*:*:secret:redshift!*",
         "Sid": "RedshiftSecret"
+      },
+      {
+        "Action": [
+          "secretsmanager:CreateSecret",
+          "secretsmanager:PutSecretValue",
+          "secretsmanager:DeleteSecret",
+          "secretsmanager:GetSecretValue"
+        ],
+        "Condition": {
+          "ForAnyValue:StringEquals": {
+            "aws:CalledVia": "bedrock-agentcore.amazonaws.com"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:secretsmanager:*:*:secret:bedrock-agentcore-identity!*",
+        "Sid": "ACApiKeySecret"
       },
       {
         "Action": [
@@ -697,7 +795,8 @@
       },
       {
         "Action": [
-          "ec2:CreateTags"
+          "ec2:CreateTags",
+          "ec2:DeleteTags"
         ],
         "Condition": {
           "ForAllValues:StringLike": {
@@ -710,7 +809,7 @@
         },
         "Effect": "Allow",
         "Resource": "arn:aws:ec2:*:*:security-group/*",
-        "Sid": "SGCreateTags"
+        "Sid": "SGCreateAndDeleteTags"
       },
       {
         "Action": [
@@ -749,7 +848,11 @@
           "sso:PutApplicationAccessScope",
           "sso:UpdateApplication",
           "sso:CreateApplicationAssignment",
-          "sso:DeleteApplicationAssignment"
+          "sso:DeleteApplicationAssignment",
+          "sso-directory:DescribeUser",
+          "sso-directory:DescribeGroup",
+          "identitystore:GetUserId",
+          "identitystore:GetGroupId"
         ],
         "Condition": {
           "Bool": {
@@ -804,24 +907,14 @@
       {
         "Action": [
           "ram:Get*",
-          "ram:List*"
+          "ram:List*",
+          "ram:AcceptResourceShareInvitation",
+          "ram:CreateResourceShare",
+          "ram:TagResource"
         ],
         "Effect": "Allow",
         "Resource": "*",
-        "Sid": "RAMReadOnlyPermissions"
-      },
-      {
-        "Action": [
-          "ram:CreateResourceShare"
-        ],
-        "Condition": {
-          "StringEquals": {
-            "ram:RequestedResourceType": "datazone:Domain"
-          }
-        },
-        "Effect": "Allow",
-        "Resource": "*",
-        "Sid": "RAMCreateResourcePermission"
+        "Sid": "RAMPermissions"
       },
       {
         "Action": [
@@ -20181,6 +20274,34 @@
       "resource_exposure": false
     },
     {
+      "access_level": "Write",
+      "action": "ec2:AuthorizeSecurityGroupEgress",
+      "condition": {
+        "ForAnyValue:StringEquals": {
+          "aws:CalledVia": "emr-containers.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:AuthorizeSecurityGroupEgress",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:AuthorizeSecurityGroupIngress",
+      "condition": {
+        "ForAnyValue:StringEquals": {
+          "aws:CalledVia": "emr-containers.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:AuthorizeSecurityGroupIngress",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
       "access_level": "Read",
       "action": "athena:*",
       "condition": null,
@@ -26321,6 +26442,226 @@
       "resource_exposure": false
     },
     {
+      "access_level": "Write",
+      "action": "agent-registry:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "agent-registry:CreateRegistry",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "agent-registry:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "agent-registry:CreateRegistryRecord",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "agent-registry:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "agent-registry:DeleteRegistry",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "agent-registry:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "agent-registry:DeleteRegistryRecord",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "agent-registry:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "agent-registry:GetDiscoverableRegistryRecord",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "agent-registry:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "agent-registry:GetRegistry",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "agent-registry:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "agent-registry:GetRegistryRecord",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "agent-registry:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "agent-registry:InvokeRegistryMcp",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "agent-registry:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "agent-registry:ListDiscoverableRegistryRecords",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "agent-registry:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "agent-registry:ListRegistries",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "agent-registry:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "agent-registry:ListRegistryRecords",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "agent-registry:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "agent-registry:ListTagsForResource",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "agent-registry:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "agent-registry:SearchDiscoverableRegistryRecords",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "agent-registry:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "agent-registry:SubmitRegistryRecordForApproval",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Tagging, Write",
+      "action": "agent-registry:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "agent-registry:TagResource",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Tagging, Write",
+      "action": "agent-registry:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "agent-registry:UntagResource",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "agent-registry:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "agent-registry:UpdateRegistry",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "agent-registry:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "agent-registry:UpdateRegistryRecord",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "agent-registry:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "agent-registry:UpdateRegistryRecordStatus",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "agent-registry:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "agent-registry:DeleteResourcePolicy",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "agent-registry:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "agent-registry:GetResourcePolicy",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "agent-registry:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "agent-registry:PutResourcePolicy",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
       "access_level": "Permissions management, Write",
       "action": "codewhisperer:*",
       "condition": null,
@@ -30427,6 +30768,746 @@
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "emr-containers:UntagResource",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "eks:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "eks:ActivateCertificateAuthority",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "eks:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "eks:AssociateAccessPolicy",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "eks:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "eks:AssociateEncryptionConfig",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "eks:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "eks:AssociateIdentityProviderConfig",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "eks:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "eks:CancelUpdate",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "eks:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "eks:CreateAccessEntry",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "eks:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "eks:CreateAddon",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "eks:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "eks:CreateCapability",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "eks:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "eks:CreateCertificateAuthority",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "eks:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "eks:CreateCluster",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "eks:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "eks:CreateEksAnywhereSubscription",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "eks:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "eks:CreateFargateProfile",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "eks:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "eks:CreateNodegroup",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "eks:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "eks:CreatePodIdentityAssociation",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "eks:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "eks:DeleteAccessEntry",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "eks:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "eks:DeleteAddon",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "eks:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "eks:DeleteCapability",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "eks:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "eks:DeleteCertificateAuthority",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "eks:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "eks:DeleteCluster",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "eks:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "eks:DeleteEksAnywhereSubscription",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "eks:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "eks:DeleteFargateProfile",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "eks:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "eks:DeleteNodegroup",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "eks:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "eks:DeletePodIdentityAssociation",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "eks:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "eks:DeregisterCluster",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "eks:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "eks:DescribeAccessEntry",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "eks:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "eks:DescribeAddon",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "eks:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "eks:DescribeAddonConfiguration",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "eks:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "eks:DescribeAddonVersions",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "eks:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "eks:DescribeCapability",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "eks:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "eks:DescribeCertificateAuthority",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "eks:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "eks:DescribeCluster",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "eks:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "eks:DescribeClusterVersions",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "eks:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "eks:DescribeEksAnywhereSubscription",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "eks:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "eks:DescribeFargateProfile",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "eks:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "eks:DescribeIdentityProviderConfig",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "eks:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "eks:DescribeInsight",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "eks:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "eks:DescribeInsightsRefresh",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "eks:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "eks:DescribeNodegroup",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "eks:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "eks:DescribePodIdentityAssociation",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "eks:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "eks:DescribeUpdate",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "eks:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "eks:DisassociateAccessPolicy",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "eks:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "eks:DisassociateIdentityProviderConfig",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "eks:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "eks:ListAccessEntries",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "eks:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "eks:ListAccessPolicies",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "eks:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "eks:ListAddons",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "eks:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "eks:ListAssociatedAccessPolicies",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "eks:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "eks:ListCapabilities",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "eks:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "eks:ListCertificateAuthorities",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "eks:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "eks:ListClusters",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "eks:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "eks:ListDashboardData",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "eks:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "eks:ListDashboardResources",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "eks:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "eks:ListEksAnywhereSubscriptions",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "eks:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "eks:ListFargateProfiles",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "eks:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "eks:ListIdentityProviderConfigs",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "eks:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "eks:ListInsights",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "eks:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "eks:ListNodegroups",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "eks:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "eks:ListPodIdentityAssociations",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "eks:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "eks:ListTagsForResource",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "eks:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "eks:ListUpdates",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "eks:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "eks:RegisterCluster",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "eks:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "eks:StartInsightsRefresh",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Tagging, Write",
+      "action": "eks:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "eks:TagResource",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Tagging, Write",
+      "action": "eks:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "eks:UntagResource",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "eks:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "eks:UpdateAccessEntry",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "eks:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "eks:UpdateAddon",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "eks:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "eks:UpdateCapability",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "eks:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "eks:UpdateClusterConfig",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "eks:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "eks:UpdateClusterVersion",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "eks:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "eks:UpdateEksAnywhereSubscription",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "eks:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "eks:UpdateNodegroupConfig",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "eks:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "eks:UpdateNodegroupVersion",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "eks:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "eks:UpdatePodIdentityAssociation",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "eks:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "eks:AccessKubernetesApi",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "eks:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "eks:MutateViaKubernetesApi",
       "privesc": false,
       "resource_exposure": false
     },
@@ -38636,7 +39717,27 @@
       "condition": null,
       "credentials_exposure": false,
       "data_access": false,
+      "effective_action": "cloudformation:RemoveAlias",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "cloudformation:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
       "effective_action": "cloudformation:RollbackStack",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "cloudformation:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudformation:SetAlias",
       "privesc": false,
       "resource_exposure": false
     },
@@ -38851,6 +39952,46 @@
       "resource_exposure": false
     },
     {
+      "access_level": "List",
+      "action": "iam:ListAttachedRolePolicies",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "iam:ListAttachedRolePolicies",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "iam:ListRolePolicies",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "iam:ListRolePolicies",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "iam:GetRolePolicy",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "iam:GetRolePolicy",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "access-analyzer:CheckNoNewAccess",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "access-analyzer:CheckNoNewAccess",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
       "access_level": "Write",
       "action": "sts:AssumeRole",
       "condition": null,
@@ -38897,7 +40038,12 @@
         "ForAllValues:StringLike": {
           "aws:TagKeys": [
             "AmazonDataZone*",
-            "SageMakerSpacesDomainId"
+            "DataZone*",
+            "SageMakerSpacesDomainId",
+            "for-use-with-amazon-emr-managed-policies",
+            "DomainBucketName",
+            "KmsKeyId",
+            "VpcId"
           ]
         }
       },
@@ -38909,12 +40055,39 @@
     },
     {
       "access_level": "Tagging, Write",
+      "action": "iam:UntagRole",
+      "condition": {
+        "ForAllValues:StringLike": {
+          "aws:TagKeys": [
+            "AmazonDataZone*",
+            "DataZone*",
+            "SageMakerSpacesDomainId",
+            "for-use-with-amazon-emr-managed-policies",
+            "DomainBucketName",
+            "KmsKeyId",
+            "VpcId"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "iam:UntagRole",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Tagging, Write",
       "action": "sts:TagSession",
       "condition": {
         "ForAllValues:StringLike": {
           "aws:TagKeys": [
             "AmazonDataZone*",
-            "SageMakerSpacesDomainId"
+            "DataZone*",
+            "SageMakerSpacesDomainId",
+            "for-use-with-amazon-emr-managed-policies",
+            "DomainBucketName",
+            "KmsKeyId",
+            "VpcId"
           ]
         }
       },
@@ -38941,12 +40114,16 @@
         "StringEquals": {
           "aws:ResourceAccount": "${aws:PrincipalAccount}",
           "iam:PassedToService": [
+            "pods.eks.amazonaws.com",
             "sagemaker.amazonaws.com",
             "lakeformation.amazonaws.com",
             "athena.amazonaws.com",
             "glue.amazonaws.com",
             "datazone.amazonaws.com",
-            "airflow-serverless.amazonaws.com"
+            "airflow-serverless.amazonaws.com",
+            "elasticmapreduce.amazonaws.com",
+            "ec2.amazonaws.com",
+            "redshift-serverless.amazonaws.com"
           ]
         }
       },
@@ -39002,7 +40179,12 @@
             "arn:aws:iam::aws:policy/SageMakerStudioUserIAMDefaultExecutionPolicy",
             "arn:aws:iam::aws:policy/SageMakerStudioUserIAMPermissiveExecutionPolicy",
             "arn:aws:iam::aws:policy/service-role/AmazonS3TablesLakeFormationServiceRole",
-            "arn:aws:iam::aws:policy/service-role/SageMakerStudioDataAppsAccessRolePolicy"
+            "arn:aws:iam::aws:policy/service-role/SageMakerStudioDataAppsAccessRolePolicy",
+            "arn:aws:iam::aws:policy/service-role/SageMakerStudioEMRInstanceRolePolicy",
+            "arn:aws:iam::aws:policy/service-role/AmazonEMRServicePolicy_v2",
+            "arn:aws:iam::aws:policy/service-role/SageMakerStudioEMRServiceRolePolicy",
+            "arn:aws:iam::aws:policy/service-role/AmazonEMRServicePolicyForSessions",
+            "arn:aws:iam::aws:policy/service-role/SageMakerStudioEMRContainersSystemNamespaceRolePolicy"
           ]
         }
       },
@@ -39010,6 +40192,80 @@
       "data_access": false,
       "effective_action": "iam:AttachRolePolicy",
       "privesc": true,
+      "resource_exposure": true
+    },
+    {
+      "access_level": "Permissions management, Write",
+      "action": "iam:DetachRolePolicy",
+      "condition": {
+        "ArnEquals": {
+          "iam:PolicyARN": [
+            "arn:aws:iam::aws:policy/SageMakerStudioUserIAMDefaultExecutionPolicy",
+            "arn:aws:iam::aws:policy/SageMakerStudioUserIAMPermissiveExecutionPolicy",
+            "arn:aws:iam::aws:policy/service-role/AmazonS3TablesLakeFormationServiceRole",
+            "arn:aws:iam::aws:policy/service-role/SageMakerStudioDataAppsAccessRolePolicy",
+            "arn:aws:iam::aws:policy/service-role/SageMakerStudioEMRInstanceRolePolicy",
+            "arn:aws:iam::aws:policy/service-role/AmazonEMRServicePolicy_v2",
+            "arn:aws:iam::aws:policy/service-role/SageMakerStudioEMRServiceRolePolicy",
+            "arn:aws:iam::aws:policy/service-role/AmazonEMRServicePolicyForSessions",
+            "arn:aws:iam::aws:policy/service-role/SageMakerStudioEMRContainersSystemNamespaceRolePolicy"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "iam:DetachRolePolicy",
+      "privesc": false,
+      "resource_exposure": true
+    },
+    {
+      "access_level": "Read",
+      "action": "iam:GetInstanceProfile",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "iam:GetInstanceProfile",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Permissions management",
+      "action": "iam:CreateInstanceProfile",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "iam:CreateInstanceProfile",
+      "privesc": false,
+      "resource_exposure": true
+    },
+    {
+      "access_level": "Permissions management",
+      "action": "iam:AddRoleToInstanceProfile",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "iam:AddRoleToInstanceProfile",
+      "privesc": false,
+      "resource_exposure": true
+    },
+    {
+      "access_level": "Permissions management",
+      "action": "iam:RemoveRoleFromInstanceProfile",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "iam:RemoveRoleFromInstanceProfile",
+      "privesc": false,
+      "resource_exposure": true
+    },
+    {
+      "access_level": "Permissions management",
+      "action": "iam:DeleteInstanceProfile",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "iam:DeleteInstanceProfile",
+      "privesc": false,
       "resource_exposure": true
     },
     {
@@ -39023,6 +40279,16 @@
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "sts:SetSourceIdentity",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "sts:SetContext",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sts:SetContext",
       "privesc": false,
       "resource_exposure": false
     },
@@ -39894,6 +41160,62 @@
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "secretsmanager:TagResource",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "secretsmanager:CreateSecret",
+      "condition": {
+        "ForAnyValue:StringEquals": {
+          "aws:CalledVia": "bedrock-agentcore.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "secretsmanager:CreateSecret",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "secretsmanager:PutSecretValue",
+      "condition": {
+        "ForAnyValue:StringEquals": {
+          "aws:CalledVia": "bedrock-agentcore.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "secretsmanager:PutSecretValue",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "secretsmanager:DeleteSecret",
+      "condition": {
+        "ForAnyValue:StringEquals": {
+          "aws:CalledVia": "bedrock-agentcore.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "secretsmanager:DeleteSecret",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "secretsmanager:GetSecretValue",
+      "condition": {
+        "ForAnyValue:StringEquals": {
+          "aws:CalledVia": "bedrock-agentcore.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "secretsmanager:GetSecretValue",
       "privesc": false,
       "resource_exposure": false
     },
@@ -43333,6 +44655,24 @@
       "resource_exposure": false
     },
     {
+      "access_level": "Tagging, Write",
+      "action": "ec2:DeleteTags",
+      "condition": {
+        "ForAllValues:StringLike": {
+          "aws:TagKeys": [
+            "AmazonDataZone*",
+            "for-use-with-amazon-emr-managed-policies",
+            "aws:cloudformation:*"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:DeleteTags",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
       "access_level": "Write",
       "action": "ec2:CreateNetworkInterface",
       "condition": null,
@@ -43585,6 +44925,62 @@
       "resource_exposure": false
     },
     {
+      "access_level": "Read",
+      "action": "sso-directory:DescribeUser",
+      "condition": {
+        "Bool": {
+          "aws:ViaAWSService": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": true,
+      "effective_action": "sso-directory:DescribeUser",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "sso-directory:DescribeGroup",
+      "condition": {
+        "Bool": {
+          "aws:ViaAWSService": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": true,
+      "effective_action": "sso-directory:DescribeGroup",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "identitystore:GetUserId",
+      "condition": {
+        "Bool": {
+          "aws:ViaAWSService": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "identitystore:GetUserId",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "identitystore:GetGroupId",
+      "condition": {
+        "Bool": {
+          "aws:ViaAWSService": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "identitystore:GetGroupId",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
       "access_level": "List",
       "action": "sso:ListInstances",
       "condition": null,
@@ -43800,17 +45196,33 @@
     },
     {
       "access_level": "Permissions management",
+      "action": "ram:AcceptResourceShareInvitation",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ram:AcceptResourceShareInvitation",
+      "privesc": false,
+      "resource_exposure": true
+    },
+    {
+      "access_level": "Permissions management",
       "action": "ram:CreateResourceShare",
-      "condition": {
-        "StringEquals": {
-          "ram:RequestedResourceType": "datazone:Domain"
-        }
-      },
+      "condition": null,
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "ram:CreateResourceShare",
       "privesc": false,
       "resource_exposure": true
+    },
+    {
+      "access_level": "Tagging",
+      "action": "ram:TagResource",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ram:TagResource",
+      "privesc": false,
+      "resource_exposure": false
     },
     {
       "access_level": "Permissions management",
@@ -43897,6 +45309,6 @@
   "resource_exposure": true,
   "undocumented_actions": true,
   "unknown_actions": [],
-  "updatedate": "2026-10-29T19:27:07+00:00",
-  "version": "v25"
+  "updatedate": "2026-11-14T00:07:09+00:00",
+  "version": "v26"
 }

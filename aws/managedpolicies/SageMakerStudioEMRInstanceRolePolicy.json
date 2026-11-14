@@ -6,7 +6,7 @@
     "Permissions management"
   ],
   "arn": "arn:aws:iam::aws:policy/service-role/SageMakerStudioEMRInstanceRolePolicy",
-  "createdate": "2026-06-01T23:27:10+00:00",
+  "createdate": "2026-11-13T21:17:07+00:00",
   "credentials_exposure": true,
   "data_access": true,
   "deprecated": false,
@@ -155,6 +155,28 @@
         "Effect": "Allow",
         "Resource": "arn:aws:kms:*:*:key/${aws:PrincipalTag/KmsKeyId}",
         "Sid": "AllowGenerateDataKeyForEbsEncryption"
+      },
+      {
+        "Action": [
+          "sts:AssumeRole",
+          "sts:TagSession"
+        ],
+        "Condition": {
+          "ForAllValues:StringEquals": {
+            "aws:TagKeys": [
+              "LakeFormationAuthorizedCaller"
+            ]
+          },
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          },
+          "StringEqualsIfExists": {
+            "aws:RequestTag/LakeFormationAuthorizedCaller": "Amazon EMR"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:iam::*:role/${aws:PrincipalTag/AmazonDataZoneExecutionRolePath}",
+        "Sid": "AssumeTaggedExecutionRole"
       }
     ],
     "Version": "2012-10-17"
@@ -386,6 +408,50 @@
       "effective_action": "kms:GenerateDataKey",
       "privesc": false,
       "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "sts:AssumeRole",
+      "condition": {
+        "ForAllValues:StringEquals": {
+          "aws:TagKeys": [
+            "LakeFormationAuthorizedCaller"
+          ]
+        },
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        },
+        "StringEqualsIfExists": {
+          "aws:RequestTag/LakeFormationAuthorizedCaller": "Amazon EMR"
+        }
+      },
+      "credentials_exposure": true,
+      "data_access": false,
+      "effective_action": "sts:AssumeRole",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Tagging, Write",
+      "action": "sts:TagSession",
+      "condition": {
+        "ForAllValues:StringEquals": {
+          "aws:TagKeys": [
+            "LakeFormationAuthorizedCaller"
+          ]
+        },
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        },
+        "StringEqualsIfExists": {
+          "aws:RequestTag/LakeFormationAuthorizedCaller": "Amazon EMR"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sts:TagSession",
+      "privesc": false,
+      "resource_exposure": false
     }
   ],
   "grantless": false,
@@ -395,6 +461,6 @@
   "resource_exposure": true,
   "undocumented_actions": false,
   "unknown_actions": [],
-  "updatedate": "2026-06-01T23:27:10+00:00",
-  "version": "v4"
+  "updatedate": "2026-11-13T21:17:07+00:00",
+  "version": "v5"
 }

@@ -4,7 +4,7 @@
     "Write"
   ],
   "arn": "arn:aws:iam::aws:policy/service-role/SageMakerStudioEMRContainersSystemNamespaceRolePolicy",
-  "createdate": "2026-02-12T18:01:48+00:00",
+  "createdate": "2026-11-13T21:17:07+00:00",
   "credentials_exposure": true,
   "data_access": false,
   "deprecated": false,
@@ -68,6 +68,34 @@
           "arn:aws:iam::*:role/datazone_usr_role_*"
         ],
         "Sid": "SetContextProjectRoles"
+      },
+      {
+        "Action": [
+          "sts:AssumeRole",
+          "sts:TagSession",
+          "sts:SetContext"
+        ],
+        "Condition": {
+          "ForAllValues:ArnEquals": {
+            "sts:RequestContextProviders": [
+              "arn:aws:iam::aws:contextProvider/IdentityCenter"
+            ]
+          },
+          "ForAllValues:StringEquals": {
+            "aws:TagKeys": [
+              "LakeFormationAuthorizedCaller"
+            ]
+          },
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          },
+          "StringEqualsIfExists": {
+            "aws:RequestTag/LakeFormationAuthorizedCaller": "EMR on EKS Engine"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:iam::*:role/${aws:PrincipalTag/AmazonDataZoneExecutionRolePath}",
+        "Sid": "AssumeTaggedExecutionRole"
       }
     ],
     "Version": "2012-10-17"
@@ -128,6 +156,87 @@
       "effective_action": "sts:SetContext",
       "privesc": false,
       "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "sts:AssumeRole",
+      "condition": {
+        "ForAllValues:ArnEquals": {
+          "sts:RequestContextProviders": [
+            "arn:aws:iam::aws:contextProvider/IdentityCenter"
+          ]
+        },
+        "ForAllValues:StringEquals": {
+          "aws:TagKeys": [
+            "LakeFormationAuthorizedCaller"
+          ]
+        },
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        },
+        "StringEqualsIfExists": {
+          "aws:RequestTag/LakeFormationAuthorizedCaller": "EMR on EKS Engine"
+        }
+      },
+      "credentials_exposure": true,
+      "data_access": false,
+      "effective_action": "sts:AssumeRole",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Tagging, Write",
+      "action": "sts:TagSession",
+      "condition": {
+        "ForAllValues:ArnEquals": {
+          "sts:RequestContextProviders": [
+            "arn:aws:iam::aws:contextProvider/IdentityCenter"
+          ]
+        },
+        "ForAllValues:StringEquals": {
+          "aws:TagKeys": [
+            "LakeFormationAuthorizedCaller"
+          ]
+        },
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        },
+        "StringEqualsIfExists": {
+          "aws:RequestTag/LakeFormationAuthorizedCaller": "EMR on EKS Engine"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sts:TagSession",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "sts:SetContext",
+      "condition": {
+        "ForAllValues:ArnEquals": {
+          "sts:RequestContextProviders": [
+            "arn:aws:iam::aws:contextProvider/IdentityCenter"
+          ]
+        },
+        "ForAllValues:StringEquals": {
+          "aws:TagKeys": [
+            "LakeFormationAuthorizedCaller"
+          ]
+        },
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        },
+        "StringEqualsIfExists": {
+          "aws:RequestTag/LakeFormationAuthorizedCaller": "EMR on EKS Engine"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sts:SetContext",
+      "privesc": false,
+      "resource_exposure": false
     }
   ],
   "grantless": false,
@@ -137,6 +246,6 @@
   "resource_exposure": false,
   "undocumented_actions": false,
   "unknown_actions": [],
-  "updatedate": "2026-02-12T18:01:48+00:00",
-  "version": "v6"
+  "updatedate": "2026-11-13T21:17:07+00:00",
+  "version": "v7"
 }

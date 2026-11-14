@@ -5,7 +5,7 @@
     "Write"
   ],
   "arn": "arn:aws:iam::aws:policy/service-role/ROSAControlPlaneOperatorPolicy",
-  "createdate": "2026-07-28T23:12:18+00:00",
+  "createdate": "2026-11-13T23:47:08+00:00",
   "credentials_exposure": false,
   "data_access": false,
   "deprecated": false,
@@ -17,7 +17,8 @@
           "ec2:DescribeVpcs",
           "ec2:DescribeSecurityGroups",
           "ec2:DescribeSubnets",
-          "route53:ListHostedZones"
+          "route53:ListHostedZones",
+          "route53:GetHostedZone"
         ],
         "Effect": "Allow",
         "Resource": "*",
@@ -98,7 +99,11 @@
         "Condition": {
           "ForAllValues:StringLike": {
             "route53:ChangeResourceRecordSetsNormalizedRecordNames": [
-              "*.hypershift.local"
+              "*.hypershift.local",
+              "*.openshiftapps.com",
+              "*.devshift.org",
+              "*.openshiftusgov.com",
+              "*.devshiftusgov.com"
             ]
           }
         },
@@ -107,6 +112,23 @@
           "*"
         ],
         "Sid": "ChangeResourceRecordSetsRestrictedRecordNames"
+      },
+      {
+        "Action": [
+          "route53:CreateHostedZone",
+          "route53:DeleteHostedZone"
+        ],
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "ManageHostedZones"
+      },
+      {
+        "Action": [
+          "route53:ChangeTagsForResource"
+        ],
+        "Effect": "Allow",
+        "Resource": "arn:aws:route53:::hostedzone/*",
+        "Sid": "TagHostedZones"
       },
       {
         "Action": [
@@ -275,6 +297,16 @@
       "resource_exposure": false
     },
     {
+      "access_level": "List",
+      "action": "route53:GetHostedZone",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "route53:GetHostedZone",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
       "access_level": "Write",
       "action": "ec2:CreateSecurityGroup",
       "condition": {
@@ -384,13 +416,47 @@
       "condition": {
         "ForAllValues:StringLike": {
           "route53:ChangeResourceRecordSetsNormalizedRecordNames": [
-            "*.hypershift.local"
+            "*.hypershift.local",
+            "*.openshiftapps.com",
+            "*.devshift.org",
+            "*.openshiftusgov.com",
+            "*.devshiftusgov.com"
           ]
         }
       },
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "route53:ChangeResourceRecordSets",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "route53:CreateHostedZone",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "route53:CreateHostedZone",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "route53:DeleteHostedZone",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "route53:DeleteHostedZone",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Tagging, Write",
+      "action": "route53:ChangeTagsForResource",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "route53:ChangeTagsForResource",
       "privesc": false,
       "resource_exposure": false
     },
@@ -539,6 +605,6 @@
   "resource_exposure": false,
   "undocumented_actions": false,
   "unknown_actions": [],
-  "updatedate": "2026-07-28T23:12:18+00:00",
-  "version": "v7"
+  "updatedate": "2026-11-13T23:47:08+00:00",
+  "version": "v8"
 }
