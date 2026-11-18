@@ -7,7 +7,7 @@
     "Permissions management"
   ],
   "arn": "arn:aws:iam::aws:policy/CloudWatchOmniSpaceAccessPolicy",
-  "createdate": "2026-11-11T01:27:08+00:00",
+  "createdate": "2026-11-17T16:37:08+00:00",
   "credentials_exposure": false,
   "data_access": true,
   "deprecated": false,
@@ -303,6 +303,285 @@
         "Effect": "Allow",
         "Resource": "arn:aws:iam::*:role/aws-service-role/config.amazonaws.com/*",
         "Sid": "AllowConfigServiceLinkedRoleCreation"
+      },
+      {
+        "Action": [
+          "iam:GetOutboundWebIdentityFederationInfo"
+        ],
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "AzureVendedReadOutboundWebIdentityFederation"
+      },
+      {
+        "Action": [
+          "observabilityadmin:GetDatasetIntegration"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:observabilityadmin:*:*:dataset-integration/default",
+        "Sid": "AzureVendedGetDatasetIntegration"
+      },
+      {
+        "Action": [
+          "observabilityadmin:CreateConnector",
+          "observabilityadmin:ListConnectors"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:observabilityadmin:*:*:connector/*",
+        "Sid": "AzureVendedCreateAndListConnectors"
+      },
+      {
+        "Action": [
+          "iam:PassRole"
+        ],
+        "Condition": {
+          "ArnLike": {
+            "iam:AssociatedResourceArn": "arn:aws:observabilityadmin:*:*:connector/*"
+          },
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}",
+            "iam:PassedToService": "observabilityadmin.amazonaws.com"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:iam::*:role/*",
+        "Sid": "AzureVendedPassConnectorRole"
+      },
+      {
+        "Action": [
+          "observabilityadmin:GetConnector",
+          "observabilityadmin:DeleteConnector",
+          "observabilityadmin:ListResourcesByConnector",
+          "observabilityadmin:PutConnectorTelemetryManifest",
+          "observabilityadmin:GetConnectorTelemetryManifest",
+          "observabilityadmin:GetConnectorTelemetrySetup"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:observabilityadmin:*:*:connector/azure/*",
+        "Sid": "AzureVendedConnectorAccess"
+      },
+      {
+        "Action": [
+          "observabilityadmin:ListTelemetryPipelines"
+        ],
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "AzureVendedListTelemetryPipelines"
+      },
+      {
+        "Action": [
+          "observabilityadmin:CreateTelemetryPipeline"
+        ],
+        "Condition": {
+          "Null": {
+            "aws:TagKeys": "true"
+          },
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}",
+            "observabilityadmin:SourceType": "cloudwatch_connector"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:observabilityadmin:*:*:telemetry-pipeline/*",
+        "Sid": "AzureVendedCreateTelemetryPipeline"
+      },
+      {
+        "Action": [
+          "observabilityadmin:UpdateTelemetryPipeline",
+          "observabilityadmin:GetTelemetryPipeline",
+          "observabilityadmin:DeleteTelemetryPipeline",
+          "observabilityadmin:StartTelemetryPipelineRefresh"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:observabilityadmin:*:*:telemetry-pipeline/*",
+        "Sid": "AzureVendedManageTelemetryPipelines"
+      },
+      {
+        "Action": [
+          "logs:CreateLogGroup",
+          "logs:PutRetentionPolicy",
+          "logs:DeleteRetentionPolicy"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:logs:*:*:log-group:/az/*",
+        "Sid": "AzureVendedLogGroupManagement"
+      },
+      {
+        "Action": [
+          "iam:PassRole"
+        ],
+        "Condition": {
+          "ArnLike": {
+            "iam:AssociatedResourceArn": "arn:aws:observabilityadmin:*:*:telemetry-pipeline/*"
+          },
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}",
+            "iam:PassedToService": "telemetry-pipelines.observabilityadmin.amazonaws.com"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:iam::*:role/*",
+        "Sid": "AzureVendedPassPipelineWriterRole"
+      },
+      {
+        "Action": [
+          "observabilityadmin:ListThirdPartyTelemetryEnrichments"
+        ],
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "AzureVendedListTelemetryEnrichments"
+      },
+      {
+        "Action": [
+          "observabilityadmin:StartThirdPartyTelemetryEnrichment"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:observabilityadmin:*:*:telemetry-enrichments/*",
+        "Sid": "AzureVendedStartTelemetryEnrichment"
+      },
+      {
+        "Action": [
+          "observabilityadmin:GetThirdPartyTelemetryEnrichment",
+          "observabilityadmin:StopThirdPartyTelemetryEnrichment"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:observabilityadmin:*:*:telemetry-enrichments/*",
+        "Sid": "AzureVendedManageTelemetryEnrichments"
+      },
+      {
+        "Action": [
+          "config:ListConnectors"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "AzureResourceContextDiscovery"
+      },
+      {
+        "Action": [
+          "config:GetConnector"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:config:*:*:connector/azure/*",
+        "Sid": "AzureResourceContextRead"
+      },
+      {
+        "Action": [
+          "config:PutConnector"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:config:*:*:connector/azure/*",
+        "Sid": "AzureResourceContextConnectorCreation"
+      },
+      {
+        "Action": [
+          "iam:CreateServiceLinkedRole"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}",
+            "iam:AWSServiceName": "thirdparty.config.amazonaws.com"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:iam::*:role/aws-service-role/thirdparty.config.amazonaws.com/*",
+        "Sid": "AzureResourceContextServiceLinkedRole"
+      },
+      {
+        "Action": [
+          "config:PutThirdPartyServiceLinkedConfigurationRecorder"
+        ],
+        "Condition": {
+          "Bool": {
+            "aws:ViaAWSService": "true"
+          },
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}",
+            "config:ConfigurationRecorderServicePrincipal": [
+              "azure.cloudwatch.amazonaws.com",
+              "azure.telemetry-enrichment.observabilityadmin.amazonaws.com"
+            ]
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:config:*:*:configuration-recorder/*",
+        "Sid": "AzureResourceContextEnablement"
+      },
+      {
+        "Action": [
+          "config:DeleteServiceLinkedConfigurationRecorder"
+        ],
+        "Condition": {
+          "Bool": {
+            "aws:ViaAWSService": "true"
+          },
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}",
+            "config:ConfigurationRecorderServicePrincipal": [
+              "azure.cloudwatch.amazonaws.com",
+              "azure.telemetry-enrichment.observabilityadmin.amazonaws.com"
+            ]
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:config:*:*:configuration-recorder/*",
+        "Sid": "AzureResourceContextDisablement"
+      },
+      {
+        "Action": [
+          "xray:GetTraceSegmentDestination"
+        ],
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "AzureTraceReadiness"
       },
       {
         "Action": [
@@ -1744,6 +2023,465 @@
       "resource_exposure": true
     },
     {
+      "access_level": "Read",
+      "action": "iam:GetOutboundWebIdentityFederationInfo",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "iam:GetOutboundWebIdentityFederationInfo",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "observabilityadmin:GetDatasetIntegration",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "observabilityadmin:GetDatasetIntegration",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "observabilityadmin:CreateConnector",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "observabilityadmin:CreateConnector",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "observabilityadmin:ListConnectors",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "observabilityadmin:ListConnectors",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Permissions management",
+      "action": "iam:PassRole",
+      "condition": {
+        "ArnLike": {
+          "iam:AssociatedResourceArn": "arn:aws:observabilityadmin:*:*:connector/*"
+        },
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}",
+          "iam:PassedToService": "observabilityadmin.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "iam:PassRole",
+      "privesc": true,
+      "resource_exposure": true
+    },
+    {
+      "access_level": "Read",
+      "action": "observabilityadmin:GetConnector",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "observabilityadmin:GetConnector",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "observabilityadmin:DeleteConnector",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "observabilityadmin:DeleteConnector",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "observabilityadmin:ListResourcesByConnector",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "observabilityadmin:ListResourcesByConnector",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "observabilityadmin:PutConnectorTelemetryManifest",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "observabilityadmin:PutConnectorTelemetryManifest",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "observabilityadmin:GetConnectorTelemetryManifest",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "observabilityadmin:GetConnectorTelemetryManifest",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "observabilityadmin:GetConnectorTelemetrySetup",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "observabilityadmin:GetConnectorTelemetrySetup",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "observabilityadmin:ListTelemetryPipelines",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "observabilityadmin:ListTelemetryPipelines",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "observabilityadmin:CreateTelemetryPipeline",
+      "condition": {
+        "Null": {
+          "aws:TagKeys": "true"
+        },
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}",
+          "observabilityadmin:SourceType": "cloudwatch_connector"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "observabilityadmin:CreateTelemetryPipeline",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "observabilityadmin:UpdateTelemetryPipeline",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "observabilityadmin:UpdateTelemetryPipeline",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "observabilityadmin:GetTelemetryPipeline",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "observabilityadmin:GetTelemetryPipeline",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "observabilityadmin:DeleteTelemetryPipeline",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "observabilityadmin:DeleteTelemetryPipeline",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "observabilityadmin:StartTelemetryPipelineRefresh",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "observabilityadmin:StartTelemetryPipelineRefresh",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "logs:CreateLogGroup",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "logs:CreateLogGroup",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "logs:PutRetentionPolicy",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "logs:PutRetentionPolicy",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "logs:DeleteRetentionPolicy",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "logs:DeleteRetentionPolicy",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Permissions management",
+      "action": "iam:PassRole",
+      "condition": {
+        "ArnLike": {
+          "iam:AssociatedResourceArn": "arn:aws:observabilityadmin:*:*:telemetry-pipeline/*"
+        },
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}",
+          "iam:PassedToService": "telemetry-pipelines.observabilityadmin.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "iam:PassRole",
+      "privesc": true,
+      "resource_exposure": true
+    },
+    {
+      "access_level": "List",
+      "action": "observabilityadmin:ListThirdPartyTelemetryEnrichments",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "observabilityadmin:ListThirdPartyTelemetryEnrichments",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "observabilityadmin:StartThirdPartyTelemetryEnrichment",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "observabilityadmin:StartThirdPartyTelemetryEnrichment",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "observabilityadmin:GetThirdPartyTelemetryEnrichment",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "observabilityadmin:GetThirdPartyTelemetryEnrichment",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "observabilityadmin:StopThirdPartyTelemetryEnrichment",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "observabilityadmin:StopThirdPartyTelemetryEnrichment",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "config:ListConnectors",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "config:ListConnectors",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "config:GetConnector",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "config:GetConnector",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "config:PutConnector",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "config:PutConnector",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Permissions management",
+      "action": "iam:CreateServiceLinkedRole",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}",
+          "iam:AWSServiceName": "thirdparty.config.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "iam:CreateServiceLinkedRole",
+      "privesc": true,
+      "resource_exposure": true
+    },
+    {
+      "access_level": "Write",
+      "action": "config:PutThirdPartyServiceLinkedConfigurationRecorder",
+      "condition": {
+        "Bool": {
+          "aws:ViaAWSService": "true"
+        },
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}",
+          "config:ConfigurationRecorderServicePrincipal": [
+            "azure.cloudwatch.amazonaws.com",
+            "azure.telemetry-enrichment.observabilityadmin.amazonaws.com"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "config:PutThirdPartyServiceLinkedConfigurationRecorder",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "config:DeleteServiceLinkedConfigurationRecorder",
+      "condition": {
+        "Bool": {
+          "aws:ViaAWSService": "true"
+        },
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}",
+          "config:ConfigurationRecorderServicePrincipal": [
+            "azure.cloudwatch.amazonaws.com",
+            "azure.telemetry-enrichment.observabilityadmin.amazonaws.com"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "config:DeleteServiceLinkedConfigurationRecorder",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "xray:GetTraceSegmentDestination",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "xray:GetTraceSegmentDestination",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
       "access_level": "Write",
       "action": "bedrock-agentcore:CreateEvaluator",
       "condition": {
@@ -2518,6 +3256,6 @@
   "resource_exposure": true,
   "undocumented_actions": false,
   "unknown_actions": [],
-  "updatedate": "2026-11-11T01:27:08+00:00",
-  "version": "v3"
+  "updatedate": "2026-11-17T16:37:08+00:00",
+  "version": "v4"
 }

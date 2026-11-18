@@ -1,10 +1,12 @@
 {
   "access_levels": [
     "List",
-    "Read"
+    "Read",
+    "Write",
+    "Permissions management"
   ],
   "arn": "arn:aws:iam::aws:policy/aws-service-role/AccessAnalyzerServiceRolePolicy",
-  "createdate": "2026-02-12T17:59:49+00:00",
+  "createdate": "2026-11-17T20:17:08+00:00",
   "credentials_exposure": false,
   "data_access": false,
   "deprecated": false,
@@ -106,11 +108,51 @@
           "secretsmanager:GetResourcePolicy",
           "secretsmanager:ListSecrets",
           "sqs:GetQueueAttributes",
-          "sqs:ListQueues"
+          "sqs:ListQueues",
+          "tag:GetResources"
         ],
         "Effect": "Allow",
         "Resource": "*",
         "Sid": "AccessAnalyzerServiceRolePolicy"
+      },
+      {
+        "Action": [
+          "config:PutServiceLinkedConfigurationRecorder",
+          "config:DeleteServiceLinkedConfigurationRecorder"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "config:ConfigurationRecorderServicePrincipal": [
+              "access-analyzer.amazonaws.com"
+            ]
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "AllowConfigRecorderScopedAccess"
+      },
+      {
+        "Action": [
+          "config:DescribeConfigurationRecorders",
+          "config:DescribeConfigurationRecorderStatus",
+          "config:SelectResourceConfig"
+        ],
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "AllowConfigRecorderReadAccess"
+      },
+      {
+        "Action": [
+          "iam:CreateServiceLinkedRole"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "iam:AWSServiceName": "config.amazonaws.com"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:iam::*:role/aws-service-role/config.amazonaws.com/AWSServiceRoleForConfig",
+        "Sid": "CreateConfigServiceLinkedRole"
       }
     ],
     "Version": "2012-10-17"
@@ -1065,15 +1107,101 @@
       "effective_action": "sqs:ListQueues",
       "privesc": false,
       "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "tag:GetResources",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "tag:GetResources",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "config:PutServiceLinkedConfigurationRecorder",
+      "condition": {
+        "StringEquals": {
+          "config:ConfigurationRecorderServicePrincipal": [
+            "access-analyzer.amazonaws.com"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "config:PutServiceLinkedConfigurationRecorder",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "config:DeleteServiceLinkedConfigurationRecorder",
+      "condition": {
+        "StringEquals": {
+          "config:ConfigurationRecorderServicePrincipal": [
+            "access-analyzer.amazonaws.com"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "config:DeleteServiceLinkedConfigurationRecorder",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "config:DescribeConfigurationRecorders",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "config:DescribeConfigurationRecorders",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "config:DescribeConfigurationRecorderStatus",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "config:DescribeConfigurationRecorderStatus",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "config:SelectResourceConfig",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "config:SelectResourceConfig",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Permissions management",
+      "action": "iam:CreateServiceLinkedRole",
+      "condition": {
+        "StringEquals": {
+          "iam:AWSServiceName": "config.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "iam:CreateServiceLinkedRole",
+      "privesc": true,
+      "resource_exposure": true
     }
   ],
   "grantless": false,
   "malformed": false,
   "name": "AccessAnalyzerServiceRolePolicy",
-  "privesc": false,
-  "resource_exposure": false,
+  "privesc": true,
+  "resource_exposure": true,
   "undocumented_actions": false,
   "unknown_actions": [],
-  "updatedate": "2026-02-12T17:59:49+00:00",
-  "version": "v23"
+  "updatedate": "2026-11-17T20:17:08+00:00",
+  "version": "v24"
 }

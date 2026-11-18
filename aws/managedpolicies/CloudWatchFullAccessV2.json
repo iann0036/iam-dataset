@@ -7,7 +7,7 @@
     "Permissions management"
   ],
   "arn": "arn:aws:iam::aws:policy/CloudWatchFullAccessV2",
-  "createdate": "2026-10-20T18:57:07+00:00",
+  "createdate": "2026-11-17T19:07:07+00:00",
   "credentials_exposure": false,
   "data_access": true,
   "deprecated": false,
@@ -30,51 +30,7 @@
           "iam:GetPolicyVersion",
           "iam:GetRole",
           "oam:ListSinks",
-          "observabilityadmin:GetCentralizationRuleForOrganization",
-          "observabilityadmin:ListCentralizationRulesForOrganization",
-          "observabilityadmin:CreateCentralizationRuleForOrganization",
-          "observabilityadmin:UpdateCentralizationRuleForOrganization",
-          "observabilityadmin:DeleteCentralizationRuleForOrganization",
-          "observabilityadmin:StartTelemetryEvaluation",
-          "observabilityadmin:GetTelemetryEvaluationStatus",
-          "observabilityadmin:ListResourceTelemetry",
-          "observabilityadmin:StopTelemetryEvaluation",
-          "observabilityadmin:StartTelemetryEvaluationForOrganization",
-          "observabilityadmin:GetTelemetryEvaluationStatusForOrganization",
-          "observabilityadmin:ListResourceTelemetryForOrganization",
-          "observabilityadmin:StopTelemetryEvaluationForOrganization",
-          "observabilityadmin:CreateTelemetryRule",
-          "observabilityadmin:GetTelemetryRule",
-          "observabilityadmin:ListTelemetryRules",
-          "observabilityadmin:UpdateTelemetryRule",
-          "observabilityadmin:DeleteTelemetryRule",
-          "observabilityadmin:CreateTelemetryRuleForOrganization",
-          "observabilityadmin:GetTelemetryRuleForOrganization",
-          "observabilityadmin:ListTelemetryRulesForOrganization",
-          "observabilityadmin:UpdateTelemetryRuleForOrganization",
-          "observabilityadmin:DeleteTelemetryRuleForOrganization",
-          "observabilityadmin:GetTelemetryEnrichmentStatus",
-          "observabilityadmin:StartTelemetryEnrichment",
-          "observabilityadmin:StopTelemetryEnrichment",
-          "observabilityadmin:TagResource",
-          "observabilityadmin:UntagResource",
-          "observabilityadmin:ListTagsForResource",
-          "observabilityadmin:CreateTelemetryPipeline",
-          "observabilityadmin:GetTelemetryPipeline",
-          "observabilityadmin:UpdateTelemetryPipeline",
-          "observabilityadmin:DeleteTelemetryPipeline",
-          "observabilityadmin:ListTelemetryPipelines",
-          "observabilityadmin:TestTelemetryPipeline",
-          "observabilityadmin:ValidateTelemetryPipelineConfiguration",
-          "observabilityadmin:CreateS3TableIntegration",
-          "observabilityadmin:GetS3TableIntegration",
-          "observabilityadmin:ListS3TableIntegrations",
-          "observabilityadmin:DeleteS3TableIntegration",
-          "observabilityadmin:CreateDatasetIntegration",
-          "observabilityadmin:GetDatasetIntegration",
-          "observabilityadmin:ListDatasetIntegrations",
-          "observabilityadmin:UpdateDatasetIntegration",
-          "observabilityadmin:DeleteDatasetIntegration",
+          "observabilityadmin:*",
           "rum:*",
           "synthetics:*",
           "xray:*"
@@ -287,6 +243,52 @@
         "Effect": "Allow",
         "Resource": "arn:aws:kms:*:*:key/*",
         "Sid": "CloudWatchLogsKmsDescribeKeyPermissions"
+      },
+      {
+        "Action": [
+          "iam:PassRole"
+        ],
+        "Condition": {
+          "ArnLike": {
+            "iam:AssociatedResourceArn": "arn:aws:observabilityadmin:*:*:connector/*"
+          },
+          "StringEquals": {
+            "iam:PassedToService": "observabilityadmin.amazonaws.com"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "ObservabilityAdminConnectorPassRolePermissions"
+      },
+      {
+        "Action": [
+          "config:PutThirdPartyServiceLinkedConfigurationRecorder",
+          "config:DeleteServiceLinkedConfigurationRecorder"
+        ],
+        "Effect": "Allow",
+        "Resource": "arn:aws:config:*:*:configuration-recorder/*ConfigurationRecorderForCloudWatchTelemetryEnrichment*",
+        "Sid": "ObservabilityAdminThirdPartyEnrichmentConfigRecorderPermissions"
+      },
+      {
+        "Action": [
+          "iam:CreateServiceLinkedRole"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "iam:AWSServiceName": "config.amazonaws.com"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:iam::*:role/aws-service-role/config.amazonaws.com/AWSServiceRoleForConfig",
+        "Sid": "ObservabilityAdminThirdPartyEnrichmentConfigSLRPermissions"
+      },
+      {
+        "Action": [
+          "config:GetConnector"
+        ],
+        "Effect": "Allow",
+        "Resource": "arn:aws:config:*:*:connector/*",
+        "Sid": "ObservabilityAdminThirdPartyEnrichmentConfigConnectorRead"
       }
     ],
     "Version": "2012-10-17"
@@ -3713,28 +3715,8 @@
       "resource_exposure": false
     },
     {
-      "access_level": "Read",
-      "action": "observabilityadmin:GetCentralizationRuleForOrganization",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "observabilityadmin:GetCentralizationRuleForOrganization",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "observabilityadmin:ListCentralizationRulesForOrganization",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "observabilityadmin:ListCentralizationRulesForOrganization",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
       "access_level": "Write",
-      "action": "observabilityadmin:CreateCentralizationRuleForOrganization",
+      "action": "observabilityadmin:*",
       "condition": null,
       "credentials_exposure": false,
       "data_access": false,
@@ -3744,17 +3726,67 @@
     },
     {
       "access_level": "Write",
-      "action": "observabilityadmin:UpdateCentralizationRuleForOrganization",
+      "action": "observabilityadmin:*",
       "condition": null,
       "credentials_exposure": false,
       "data_access": false,
-      "effective_action": "observabilityadmin:UpdateCentralizationRuleForOrganization",
+      "effective_action": "observabilityadmin:CreateConnector",
       "privesc": false,
       "resource_exposure": false
     },
     {
       "access_level": "Write",
-      "action": "observabilityadmin:DeleteCentralizationRuleForOrganization",
+      "action": "observabilityadmin:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "observabilityadmin:CreateDatasetIntegration",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "observabilityadmin:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "observabilityadmin:CreateS3TableIntegration",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "observabilityadmin:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "observabilityadmin:CreateTelemetryPipeline",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "observabilityadmin:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "observabilityadmin:CreateTelemetryRule",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "observabilityadmin:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "observabilityadmin:CreateTelemetryRuleForOrganization",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "observabilityadmin:*",
       "condition": null,
       "credentials_exposure": false,
       "data_access": false,
@@ -3764,347 +3796,27 @@
     },
     {
       "access_level": "Write",
-      "action": "observabilityadmin:StartTelemetryEvaluation",
+      "action": "observabilityadmin:*",
       "condition": null,
       "credentials_exposure": false,
       "data_access": false,
-      "effective_action": "observabilityadmin:StartTelemetryEvaluation",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Read",
-      "action": "observabilityadmin:GetTelemetryEvaluationStatus",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "observabilityadmin:GetTelemetryEvaluationStatus",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Read",
-      "action": "observabilityadmin:ListResourceTelemetry",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "observabilityadmin:ListResourceTelemetry",
+      "effective_action": "observabilityadmin:DeleteConnector",
       "privesc": false,
       "resource_exposure": false
     },
     {
       "access_level": "Write",
-      "action": "observabilityadmin:StopTelemetryEvaluation",
+      "action": "observabilityadmin:*",
       "condition": null,
       "credentials_exposure": false,
       "data_access": false,
-      "effective_action": "observabilityadmin:StopTelemetryEvaluation",
+      "effective_action": "observabilityadmin:DeleteDatasetIntegration",
       "privesc": false,
       "resource_exposure": false
     },
     {
       "access_level": "Write",
-      "action": "observabilityadmin:StartTelemetryEvaluationForOrganization",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "observabilityadmin:StartTelemetryEvaluationForOrganization",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Read",
-      "action": "observabilityadmin:GetTelemetryEvaluationStatusForOrganization",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "observabilityadmin:GetTelemetryEvaluationStatusForOrganization",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Read",
-      "action": "observabilityadmin:ListResourceTelemetryForOrganization",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "observabilityadmin:ListResourceTelemetryForOrganization",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Write",
-      "action": "observabilityadmin:StopTelemetryEvaluationForOrganization",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "observabilityadmin:StopTelemetryEvaluationForOrganization",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Write",
-      "action": "observabilityadmin:CreateTelemetryRule",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "observabilityadmin:CreateTelemetryRule",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Read",
-      "action": "observabilityadmin:GetTelemetryRule",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "observabilityadmin:GetTelemetryRule",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "observabilityadmin:ListTelemetryRules",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "observabilityadmin:ListTelemetryRules",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Write",
-      "action": "observabilityadmin:UpdateTelemetryRule",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "observabilityadmin:UpdateTelemetryRule",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Write",
-      "action": "observabilityadmin:DeleteTelemetryRule",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "observabilityadmin:DeleteTelemetryRule",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Write",
-      "action": "observabilityadmin:CreateTelemetryRuleForOrganization",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "observabilityadmin:CreateTelemetryRuleForOrganization",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Read",
-      "action": "observabilityadmin:GetTelemetryRuleForOrganization",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "observabilityadmin:GetTelemetryRuleForOrganization",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "observabilityadmin:ListTelemetryRulesForOrganization",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "observabilityadmin:ListTelemetryRulesForOrganization",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Write",
-      "action": "observabilityadmin:UpdateTelemetryRuleForOrganization",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "observabilityadmin:UpdateTelemetryRuleForOrganization",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Write",
-      "action": "observabilityadmin:DeleteTelemetryRuleForOrganization",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "observabilityadmin:DeleteTelemetryRuleForOrganization",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Read",
-      "action": "observabilityadmin:GetTelemetryEnrichmentStatus",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "observabilityadmin:GetTelemetryEnrichmentStatus",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Write",
-      "action": "observabilityadmin:StartTelemetryEnrichment",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "observabilityadmin:StartTelemetryEnrichment",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Write",
-      "action": "observabilityadmin:StopTelemetryEnrichment",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "observabilityadmin:StopTelemetryEnrichment",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Tagging, Write",
-      "action": "observabilityadmin:TagResource",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "observabilityadmin:TagResource",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Tagging, Write",
-      "action": "observabilityadmin:UntagResource",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "observabilityadmin:UntagResource",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "observabilityadmin:ListTagsForResource",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "observabilityadmin:ListTagsForResource",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Write",
-      "action": "observabilityadmin:CreateTelemetryPipeline",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "observabilityadmin:CreateTelemetryPipeline",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Read",
-      "action": "observabilityadmin:GetTelemetryPipeline",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "observabilityadmin:GetTelemetryPipeline",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Write",
-      "action": "observabilityadmin:UpdateTelemetryPipeline",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "observabilityadmin:UpdateTelemetryPipeline",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Write",
-      "action": "observabilityadmin:DeleteTelemetryPipeline",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "observabilityadmin:DeleteTelemetryPipeline",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "observabilityadmin:ListTelemetryPipelines",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "observabilityadmin:ListTelemetryPipelines",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Read",
-      "action": "observabilityadmin:TestTelemetryPipeline",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "observabilityadmin:TestTelemetryPipeline",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Read",
-      "action": "observabilityadmin:ValidateTelemetryPipelineConfiguration",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "observabilityadmin:ValidateTelemetryPipelineConfiguration",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Write",
-      "action": "observabilityadmin:CreateS3TableIntegration",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "observabilityadmin:CreateS3TableIntegration",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Read",
-      "action": "observabilityadmin:GetS3TableIntegration",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "observabilityadmin:GetS3TableIntegration",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "List",
-      "action": "observabilityadmin:ListS3TableIntegrations",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "observabilityadmin:ListS3TableIntegrations",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Write",
-      "action": "observabilityadmin:DeleteS3TableIntegration",
+      "action": "observabilityadmin:*",
       "condition": null,
       "credentials_exposure": false,
       "data_access": false,
@@ -4114,17 +3826,77 @@
     },
     {
       "access_level": "Write",
-      "action": "observabilityadmin:CreateDatasetIntegration",
+      "action": "observabilityadmin:*",
       "condition": null,
       "credentials_exposure": false,
       "data_access": false,
-      "effective_action": "observabilityadmin:CreateDatasetIntegration",
+      "effective_action": "observabilityadmin:DeleteTelemetryPipeline",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "observabilityadmin:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "observabilityadmin:DeleteTelemetryRule",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "observabilityadmin:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "observabilityadmin:DeleteTelemetryRuleForOrganization",
       "privesc": false,
       "resource_exposure": false
     },
     {
       "access_level": "Read",
-      "action": "observabilityadmin:GetDatasetIntegration",
+      "action": "observabilityadmin:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "observabilityadmin:GetCentralizationRuleForOrganization",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "observabilityadmin:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "observabilityadmin:GetConnector",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "observabilityadmin:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "observabilityadmin:GetConnectorTelemetryManifest",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "observabilityadmin:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "observabilityadmin:GetConnectorTelemetrySetup",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "observabilityadmin:*",
       "condition": null,
       "credentials_exposure": false,
       "data_access": false,
@@ -4133,8 +3905,108 @@
       "resource_exposure": false
     },
     {
+      "access_level": "Read",
+      "action": "observabilityadmin:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "observabilityadmin:GetS3TableIntegration",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "observabilityadmin:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "observabilityadmin:GetTelemetryEnrichmentStatus",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "observabilityadmin:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "observabilityadmin:GetTelemetryEvaluationStatus",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "observabilityadmin:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "observabilityadmin:GetTelemetryEvaluationStatusForOrganization",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "observabilityadmin:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "observabilityadmin:GetTelemetryPipeline",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "observabilityadmin:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "observabilityadmin:GetTelemetryRule",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "observabilityadmin:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "observabilityadmin:GetTelemetryRuleForOrganization",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "observabilityadmin:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "observabilityadmin:GetThirdPartyTelemetryEnrichment",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
       "access_level": "List",
-      "action": "observabilityadmin:ListDatasetIntegrations",
+      "action": "observabilityadmin:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "observabilityadmin:ListCentralizationRulesForOrganization",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "observabilityadmin:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "observabilityadmin:ListConnectors",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "observabilityadmin:*",
       "condition": null,
       "credentials_exposure": false,
       "data_access": false,
@@ -4143,8 +4015,238 @@
       "resource_exposure": false
     },
     {
+      "access_level": "Read",
+      "action": "observabilityadmin:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "observabilityadmin:ListResourceTelemetry",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "observabilityadmin:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "observabilityadmin:ListResourceTelemetryForOrganization",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "observabilityadmin:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "observabilityadmin:ListResourcesByConnector",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "observabilityadmin:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "observabilityadmin:ListS3TableIntegrations",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "observabilityadmin:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "observabilityadmin:ListTagsForResource",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "observabilityadmin:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "observabilityadmin:ListTelemetryPipelines",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "observabilityadmin:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "observabilityadmin:ListTelemetryRules",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "observabilityadmin:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "observabilityadmin:ListTelemetryRulesForOrganization",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "observabilityadmin:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "observabilityadmin:ListThirdPartyTelemetryEnrichments",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
       "access_level": "Write",
-      "action": "observabilityadmin:UpdateDatasetIntegration",
+      "action": "observabilityadmin:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "observabilityadmin:PutConnectorTelemetryManifest",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "observabilityadmin:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "observabilityadmin:StartTelemetryEnrichment",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "observabilityadmin:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "observabilityadmin:StartTelemetryEvaluation",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "observabilityadmin:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "observabilityadmin:StartTelemetryEvaluationForOrganization",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "observabilityadmin:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "observabilityadmin:StartTelemetryPipelineRefresh",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "observabilityadmin:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "observabilityadmin:StartThirdPartyTelemetryEnrichment",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "observabilityadmin:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "observabilityadmin:StopTelemetryEnrichment",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "observabilityadmin:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "observabilityadmin:StopTelemetryEvaluation",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "observabilityadmin:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "observabilityadmin:StopTelemetryEvaluationForOrganization",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "observabilityadmin:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "observabilityadmin:StopThirdPartyTelemetryEnrichment",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Tagging, Write",
+      "action": "observabilityadmin:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "observabilityadmin:TagResource",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "observabilityadmin:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "observabilityadmin:TestTelemetryPipeline",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Tagging, Write",
+      "action": "observabilityadmin:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "observabilityadmin:UntagResource",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "observabilityadmin:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "observabilityadmin:UpdateCentralizationRuleForOrganization",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "observabilityadmin:*",
       "condition": null,
       "credentials_exposure": false,
       "data_access": false,
@@ -4154,11 +4256,41 @@
     },
     {
       "access_level": "Write",
-      "action": "observabilityadmin:DeleteDatasetIntegration",
+      "action": "observabilityadmin:*",
       "condition": null,
       "credentials_exposure": false,
       "data_access": false,
-      "effective_action": "observabilityadmin:DeleteDatasetIntegration",
+      "effective_action": "observabilityadmin:UpdateTelemetryPipeline",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "observabilityadmin:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "observabilityadmin:UpdateTelemetryRule",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "observabilityadmin:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "observabilityadmin:UpdateTelemetryRuleForOrganization",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "observabilityadmin:*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "observabilityadmin:ValidateTelemetryPipelineConfiguration",
       "privesc": false,
       "resource_exposure": false
     },
@@ -5271,6 +5403,67 @@
       "effective_action": "kms:DescribeKey",
       "privesc": false,
       "resource_exposure": false
+    },
+    {
+      "access_level": "Permissions management",
+      "action": "iam:PassRole",
+      "condition": {
+        "ArnLike": {
+          "iam:AssociatedResourceArn": "arn:aws:observabilityadmin:*:*:connector/*"
+        },
+        "StringEquals": {
+          "iam:PassedToService": "observabilityadmin.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "iam:PassRole",
+      "privesc": true,
+      "resource_exposure": true
+    },
+    {
+      "access_level": "Write",
+      "action": "config:PutThirdPartyServiceLinkedConfigurationRecorder",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "config:PutThirdPartyServiceLinkedConfigurationRecorder",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "config:DeleteServiceLinkedConfigurationRecorder",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "config:DeleteServiceLinkedConfigurationRecorder",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Permissions management",
+      "action": "iam:CreateServiceLinkedRole",
+      "condition": {
+        "StringEquals": {
+          "iam:AWSServiceName": "config.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "iam:CreateServiceLinkedRole",
+      "privesc": true,
+      "resource_exposure": true
+    },
+    {
+      "access_level": "Read",
+      "action": "config:GetConnector",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "config:GetConnector",
+      "privesc": false,
+      "resource_exposure": false
     }
   ],
   "grantless": false,
@@ -5280,6 +5473,6 @@
   "resource_exposure": true,
   "undocumented_actions": false,
   "unknown_actions": [],
-  "updatedate": "2026-10-20T18:57:07+00:00",
-  "version": "v18"
+  "updatedate": "2026-11-17T19:07:07+00:00",
+  "version": "v19"
 }

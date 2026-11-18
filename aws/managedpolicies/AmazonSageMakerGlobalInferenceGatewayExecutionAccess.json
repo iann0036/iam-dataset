@@ -1,0 +1,160 @@
+{
+  "access_levels": [
+    "Read",
+    "Write"
+  ],
+  "arn": "arn:aws:iam::aws:policy/AmazonSageMakerGlobalInferenceGatewayExecutionAccess",
+  "createdate": "2026-11-17T23:37:08+00:00",
+  "credentials_exposure": false,
+  "data_access": true,
+  "deprecated": false,
+  "document": {
+    "Statement": [
+      {
+        "Action": [
+          "sagemaker:DescribeCluster"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:sagemaker:*:*:cluster/*",
+        "Sid": "DescribeHyperPodCluster"
+      },
+      {
+        "Action": [
+          "eks:AccessKubernetesApi",
+          "eks:MutateViaKubernetesApi"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:eks:*:*:cluster/*",
+        "Sid": "ReachMemberClusterApi"
+      },
+      {
+        "Action": [
+          "s3:GetObject"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}",
+            "s3:ExistingObjectTag/CreatedBy": "HyperPodInference"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:s3:::hyperpod-tls*/*gig/*/*-certificate-*.pem",
+        "Sid": "ReadGIGCertificate"
+      },
+      {
+        "Action": [
+          "kms:Decrypt"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          },
+          "StringLike": {
+            "kms:EncryptionContext:aws:s3:arn": "arn:aws:s3:::hyperpod-tls*",
+            "kms:ViaService": "s3.*.amazonaws.com"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:kms:*:*:key/*",
+        "Sid": "DecryptGIGCertificate"
+      }
+    ],
+    "Version": "2012-10-17"
+  },
+  "effective_actions": [
+    {
+      "access_level": "Read",
+      "action": "sagemaker:DescribeCluster",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sagemaker:DescribeCluster",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "eks:AccessKubernetesApi",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "eks:AccessKubernetesApi",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "eks:MutateViaKubernetesApi",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "eks:MutateViaKubernetesApi",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "s3:GetObject",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}",
+          "s3:ExistingObjectTag/CreatedBy": "HyperPodInference"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": true,
+      "effective_action": "s3:GetObject",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "kms:Decrypt",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        },
+        "StringLike": {
+          "kms:EncryptionContext:aws:s3:arn": "arn:aws:s3:::hyperpod-tls*",
+          "kms:ViaService": "s3.*.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "kms:Decrypt",
+      "privesc": false,
+      "resource_exposure": false
+    }
+  ],
+  "grantless": false,
+  "malformed": false,
+  "name": "AmazonSageMakerGlobalInferenceGatewayExecutionAccess",
+  "privesc": false,
+  "resource_exposure": false,
+  "undocumented_actions": false,
+  "unknown_actions": [],
+  "updatedate": "2026-11-17T23:37:08+00:00",
+  "version": "v1"
+}

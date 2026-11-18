@@ -7,7 +7,7 @@
     "Permissions management"
   ],
   "arn": "arn:aws:iam::aws:policy/service-role/SageMakerStudioProjectProvisioningRolePolicy",
-  "createdate": "2026-11-13T20:07:08+00:00",
+  "createdate": "2026-11-17T21:17:09+00:00",
   "credentials_exposure": true,
   "data_access": true,
   "deprecated": false,
@@ -82,14 +82,16 @@
           "cloudformation:ValidateTemplate",
           "codecommit:ListRepositories",
           "eks:DescribeCluster",
+          "eks:ListPodIdentityAssociations",
           "elasticmapreduce:*SecurityConfiguration",
           "glue:DescribeConnectionType",
           "glue:ListConnectionTypes",
           "glue:*GlueIdentityCenterConfiguration",
           "iam:ListPolicies",
           "logs:DescribeLogGroups",
+          "organizations:DescribeOrganization",
           "ram:GetResourceShare*",
-          "ram:ListResources",
+          "ram:ListResource*",
           "redshift-data:DescribeStatement",
           "redshift-data:GetStatementResult",
           "redshift-serverless:ListNamespaces",
@@ -248,7 +250,14 @@
         "Resource": [
           "arn:aws:iam::*:role/datazone*",
           "arn:aws:iam::*:role/AmazonBedrock*",
-          "arn:aws:iam::*:role/BedrockStudio*"
+          "arn:aws:iam::*:role/BedrockStudio*",
+          "arn:aws:iam::*:role/service-role/AmazonSageMakerAdminIAMExecutionRole*",
+          "arn:aws:iam::*:role/service-role/AmazonSageMakerUserIAMExecutionRole*",
+          "arn:aws:iam::*:role/AmazonSageMakerAdminIAMExecutionRole*",
+          "arn:aws:iam::*:role/AmazonSageMakerUserIAMExecutionRole*",
+          "arn:aws:iam::*:role/SageMakerStudioQueryExecutionRole",
+          "arn:aws:iam::*:role/service-role/AmazonSageMakerQueryExecution",
+          "arn:aws:iam::*:role/datazone_s3tables_*"
         ],
         "Sid": "GetIamRole"
       },
@@ -1244,18 +1253,6 @@
       },
       {
         "Action": [
-          "iam:GetRole"
-        ],
-        "Effect": "Allow",
-        "Resource": [
-          "arn:aws:iam::*:role/SageMakerStudioQueryExecutionRole",
-          "arn:aws:iam::*:role/service-role/AmazonSageMakerQueryExecution",
-          "arn:aws:iam::*:role/datazone_s3tables_*"
-        ],
-        "Sid": "GetRole"
-      },
-      {
-        "Action": [
           "glue:PassConnection"
         ],
         "Condition": {
@@ -1477,21 +1474,6 @@
           "arn:aws:ec2:*:*:security-group/*"
         ],
         "Sid": "SGMng"
-      },
-      {
-        "Action": [
-          "ec2:RevokeSecurityGroupIngress"
-        ],
-        "Condition": {
-          "Null": {
-            "aws:ResourceTag/AmazonDataZoneProject": "false"
-          }
-        },
-        "Effect": "Allow",
-        "Resource": [
-          "arn:aws:ec2:*:*:security-group/*"
-        ],
-        "Sid": "SGRevoke"
       },
       {
         "Action": [
@@ -2650,7 +2632,8 @@
       {
         "Action": [
           "ec2:DeleteSecurityGroup",
-          "ec2:DeleteTags"
+          "ec2:DeleteTags",
+          "ec2:RevokeSecurityGroupIngress"
         ],
         "Condition": {
           "Null": {
@@ -3002,11 +2985,15 @@
         "Action": [
           "ram:AcceptResourceShareInvitation",
           "ram:DeleteResourceShare",
+          "ram:DisassociateResourceShare",
           "ram:TagResource"
         ],
         "Condition": {
           "StringLike": {
-            "ram:ResourceShareName": "DataZone*"
+            "ram:ResourceShareName": [
+              "DataZone*",
+              "LakeFormation-*"
+            ]
           }
         },
         "Effect": "Allow",
@@ -3027,7 +3014,10 @@
             ]
           },
           "StringLike": {
-            "ram:ResourceShareName": "DataZone*"
+            "ram:ResourceShareName": [
+              "DataZone*",
+              "LakeFormation-*"
+            ]
           }
         },
         "Effect": "Allow",
@@ -3060,7 +3050,8 @@
           "emr-containers:DescribeVirtualCluster",
           "emr-containers:DescribeManagedEndpoint",
           "emr-containers:TagResource",
-          "emr-containers:UntagResource"
+          "emr-containers:UntagResource",
+          "eks:DeletePodIdentityAssociation"
         ],
         "Condition": {
           "Null": {
@@ -3070,6 +3061,23 @@
         "Effect": "Allow",
         "Resource": "*",
         "Sid": "EmrContainersMng"
+      },
+      {
+        "Action": [
+          "eks:CreatePodIdentityAssociation",
+          "eks:TagResource"
+        ],
+        "Condition": {
+          "Null": {
+            "aws:RequestTag/AmazonDataZoneProject": "false"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:eks:*:*:cluster/*",
+          "arn:aws:eks:*:*:podidentityassociation/*"
+        ],
+        "Sid": "EksPodIdentity"
       },
       {
         "Action": [
@@ -3301,6 +3309,16 @@
       "resource_exposure": false
     },
     {
+      "access_level": "List",
+      "action": "eks:ListPodIdentityAssociations",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "eks:ListPodIdentityAssociations",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
       "access_level": "Write",
       "action": "elasticmapreduce:*SecurityConfiguration",
       "condition": null,
@@ -3412,6 +3430,16 @@
     },
     {
       "access_level": "Read",
+      "action": "organizations:DescribeOrganization",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "organizations:DescribeOrganization",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
       "action": "ram:GetResourceShare*",
       "condition": null,
       "credentials_exposure": false,
@@ -3442,7 +3470,27 @@
     },
     {
       "access_level": "List",
-      "action": "ram:ListResources",
+      "action": "ram:ListResource*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ram:ListResourceSharePermissions",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "ram:ListResource*",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ram:ListResourceTypes",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "ram:ListResource*",
       "condition": null,
       "credentials_exposure": false,
       "data_access": false,
@@ -5898,16 +5946,6 @@
       "resource_exposure": true
     },
     {
-      "access_level": "Read",
-      "action": "iam:GetRole",
-      "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "iam:GetRole",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
       "access_level": "Write",
       "action": "glue:PassConnection",
       "condition": {
@@ -6479,20 +6517,6 @@
       "access_level": "Write",
       "action": "ec2:RevokeSecurityGroupIngress",
       "condition": null,
-      "credentials_exposure": false,
-      "data_access": false,
-      "effective_action": "ec2:RevokeSecurityGroupIngress",
-      "privesc": false,
-      "resource_exposure": false
-    },
-    {
-      "access_level": "Write",
-      "action": "ec2:RevokeSecurityGroupIngress",
-      "condition": {
-        "Null": {
-          "aws:ResourceTag/AmazonDataZoneProject": "false"
-        }
-      },
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "ec2:RevokeSecurityGroupIngress",
@@ -10129,6 +10153,20 @@
       "resource_exposure": false
     },
     {
+      "access_level": "Write",
+      "action": "ec2:RevokeSecurityGroupIngress",
+      "condition": {
+        "Null": {
+          "aws:ResourceTag/AmazonDataZoneProject": "false"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:RevokeSecurityGroupIngress",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
       "access_level": "List",
       "action": "iam:ListAttachedRolePolicies",
       "condition": {
@@ -11455,7 +11493,10 @@
       "action": "ram:AcceptResourceShareInvitation",
       "condition": {
         "StringLike": {
-          "ram:ResourceShareName": "DataZone*"
+          "ram:ResourceShareName": [
+            "DataZone*",
+            "LakeFormation-*"
+          ]
         }
       },
       "credentials_exposure": false,
@@ -11469,7 +11510,10 @@
       "action": "ram:DeleteResourceShare",
       "condition": {
         "StringLike": {
-          "ram:ResourceShareName": "DataZone*"
+          "ram:ResourceShareName": [
+            "DataZone*",
+            "LakeFormation-*"
+          ]
         }
       },
       "credentials_exposure": false,
@@ -11479,11 +11523,31 @@
       "resource_exposure": true
     },
     {
+      "access_level": "Permissions management",
+      "action": "ram:DisassociateResourceShare",
+      "condition": {
+        "StringLike": {
+          "ram:ResourceShareName": [
+            "DataZone*",
+            "LakeFormation-*"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ram:DisassociateResourceShare",
+      "privesc": false,
+      "resource_exposure": true
+    },
+    {
       "access_level": "Tagging",
       "action": "ram:TagResource",
       "condition": {
         "StringLike": {
-          "ram:ResourceShareName": "DataZone*"
+          "ram:ResourceShareName": [
+            "DataZone*",
+            "LakeFormation-*"
+          ]
         }
       },
       "credentials_exposure": false,
@@ -11504,7 +11568,10 @@
           ]
         },
         "StringLike": {
-          "ram:ResourceShareName": "DataZone*"
+          "ram:ResourceShareName": [
+            "DataZone*",
+            "LakeFormation-*"
+          ]
         }
       },
       "credentials_exposure": false,
@@ -11525,7 +11592,10 @@
           ]
         },
         "StringLike": {
-          "ram:ResourceShareName": "DataZone*"
+          "ram:ResourceShareName": [
+            "DataZone*",
+            "LakeFormation-*"
+          ]
         }
       },
       "credentials_exposure": false,
@@ -11713,6 +11783,48 @@
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "emr-containers:UntagResource",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "eks:DeletePodIdentityAssociation",
+      "condition": {
+        "Null": {
+          "aws:ResourceTag/AmazonDataZoneProject": "false"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "eks:DeletePodIdentityAssociation",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "eks:CreatePodIdentityAssociation",
+      "condition": {
+        "Null": {
+          "aws:RequestTag/AmazonDataZoneProject": "false"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "eks:CreatePodIdentityAssociation",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Tagging, Write",
+      "action": "eks:TagResource",
+      "condition": {
+        "Null": {
+          "aws:RequestTag/AmazonDataZoneProject": "false"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "eks:TagResource",
       "privesc": false,
       "resource_exposure": false
     },
@@ -11932,6 +12044,6 @@
   "resource_exposure": true,
   "undocumented_actions": false,
   "unknown_actions": [],
-  "updatedate": "2026-11-13T20:07:08+00:00",
-  "version": "v85"
+  "updatedate": "2026-11-17T21:17:09+00:00",
+  "version": "v86"
 }

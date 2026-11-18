@@ -1,0 +1,934 @@
+{
+  "access_levels": [
+    "List",
+    "Read",
+    "Tagging",
+    "Write",
+    "Permissions management"
+  ],
+  "arn": "arn:aws:iam::aws:policy/AmazonSageMakerHyperPodInferenceGatewayGlobalRoutingAccess",
+  "createdate": "2026-11-17T23:17:08+00:00",
+  "credentials_exposure": false,
+  "data_access": false,
+  "deprecated": false,
+  "document": {
+    "Statement": [
+      {
+        "Action": [
+          "ec2:CreateVpcEndpointServiceConfiguration"
+        ],
+        "Condition": {
+          "ForAllValues:StringEquals": {
+            "aws:TagKeys": [
+              "CreatedBy",
+              "HyperPodInferenceOwner"
+            ]
+          },
+          "Null": {
+            "aws:RequestTag/HyperPodInferenceOwner": "false"
+          },
+          "StringEquals": {
+            "aws:RequestTag/CreatedBy": "HyperPodInference",
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:ec2:*:*:vpc-endpoint-service/*",
+        "Sid": "CreateEndpointSvc"
+      },
+      {
+        "Action": [
+          "ec2:CreateTags"
+        ],
+        "Condition": {
+          "ForAllValues:StringEquals": {
+            "aws:TagKeys": [
+              "CreatedBy",
+              "HyperPodInferenceOwner"
+            ]
+          },
+          "Null": {
+            "aws:TagKeys": "false"
+          },
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}",
+            "ec2:CreateAction": "CreateVpcEndpointServiceConfiguration"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:ec2:*:*:vpc-endpoint-service/*",
+        "Sid": "TagEndpointSvc"
+      },
+      {
+        "Action": [
+          "ec2:DescribeVpcEndpointServiceConfigurations",
+          "ec2:DescribeVpcEndpointConnections",
+          "ec2:DescribeVpcEndpointServices",
+          "ec2:DescribeVpcEndpoints",
+          "ec2:DescribeSecurityGroups",
+          "ec2:DescribeSubnets",
+          "ec2:DescribeVpcs",
+          "ec2:DescribeRegions",
+          "elasticloadbalancing:DescribeLoadBalancers",
+          "elasticloadbalancing:DescribeTargetGroups",
+          "elasticloadbalancing:DescribeTargetHealth"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "DescribeNetwork"
+      },
+      {
+        "Action": [
+          "ec2:DescribeVpcEndpointServicePermissions"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:ec2:*:*:vpc-endpoint-service/*",
+        "Sid": "DescribeSvcPerms"
+      },
+      {
+        "Action": [
+          "ec2:ModifyVpcEndpointServiceConfiguration",
+          "ec2:ModifyVpcEndpointServicePermissions",
+          "ec2:DeleteVpcEndpointServiceConfigurations"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}",
+            "aws:ResourceTag/CreatedBy": "HyperPodInference"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:ec2:*:*:vpc-endpoint-service/*",
+        "Sid": "ManageEndpointService"
+      },
+      {
+        "Action": [
+          "vpce:AllowMultiRegion"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:ec2:*:*:vpc-endpoint-service/*",
+          "arn:aws:ec2:*:*:vpc-endpoint/*"
+        ],
+        "Sid": "AllowMultiRegion"
+      },
+      {
+        "Action": [
+          "s3:PutObject"
+        ],
+        "Condition": {
+          "ForAllValues:StringEquals": {
+            "s3:RequestObjectTagKeys": [
+              "CreatedBy"
+            ]
+          },
+          "Null": {
+            "s3:RequestObjectTagKeys": "false"
+          },
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}",
+            "s3:RequestObjectTag/CreatedBy": "HyperPodInference"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:s3:::hyperpod-tls*/*gig/*/*-certificate-*.pem",
+        "Sid": "WriteGIGCert"
+      },
+      {
+        "Action": [
+          "s3:PutObjectTagging"
+        ],
+        "Condition": {
+          "ForAllValues:StringEquals": {
+            "s3:RequestObjectTagKeys": [
+              "CreatedBy"
+            ]
+          },
+          "Null": {
+            "s3:RequestObjectTagKeys": "false"
+          },
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}",
+            "s3:RequestObjectTag/CreatedBy": "HyperPodInference"
+          },
+          "StringEqualsIfExists": {
+            "s3:ExistingObjectTag/CreatedBy": "HyperPodInference"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:s3:::hyperpod-tls*/*gig/*/*-certificate-*.pem",
+        "Sid": "TagGIGCert"
+      },
+      {
+        "Action": [
+          "kms:GenerateDataKey"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          },
+          "StringLike": {
+            "kms:EncryptionContext:aws:s3:arn": "arn:aws:s3:::hyperpod-tls*",
+            "kms:ViaService": "s3.*.amazonaws.com"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:kms:*:*:key/*",
+        "Sid": "EncryptGIGCert"
+      },
+      {
+        "Action": [
+          "s3:DeleteObject"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:s3:::hyperpod-tls*/*gig/*/*-certificate-*.pem",
+        "Sid": "DeleteGIGCert"
+      },
+      {
+        "Action": [
+          "sagemaker:DescribeCluster"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:sagemaker:*:*:cluster/*",
+        "Sid": "DescribeCluster"
+      },
+      {
+        "Action": [
+          "ec2:CreateVpcEndpoint"
+        ],
+        "Condition": {
+          "ForAllValues:StringEquals": {
+            "aws:TagKeys": [
+              "CreatedBy",
+              "HyperPodInferenceOwner",
+              "HyperPodInferenceComponent",
+              "Name"
+            ]
+          },
+          "Null": {
+            "aws:TagKeys": "false"
+          },
+          "StringEquals": {
+            "aws:RequestTag/CreatedBy": "HyperPodInference",
+            "aws:RequestTag/HyperPodInferenceComponent": "metrics-publisher-kinesis-endpoint",
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          },
+          "StringLike": {
+            "ec2:VpceServiceName": "com.amazonaws.*.kinesis-streams"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:ec2:*:*:vpc-endpoint/*",
+        "Sid": "CreateKinesisEndpoint"
+      },
+      {
+        "Action": [
+          "ec2:CreateSecurityGroup"
+        ],
+        "Condition": {
+          "ForAllValues:StringEquals": {
+            "aws:TagKeys": [
+              "CreatedBy",
+              "HyperPodInferenceOwner",
+              "HyperPodInferenceComponent",
+              "Name"
+            ]
+          },
+          "Null": {
+            "aws:TagKeys": "false"
+          },
+          "StringEquals": {
+            "aws:RequestTag/CreatedBy": "HyperPodInference",
+            "aws:RequestTag/HyperPodInferenceComponent": "metrics-publisher-kinesis-endpoint",
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:ec2:*:*:security-group/*",
+        "Sid": "CreateEndpointSG"
+      },
+      {
+        "Action": [
+          "ec2:CreateVpcEndpoint",
+          "ec2:ModifyVpcEndpoint"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:ec2:*:*:vpc/*",
+          "arn:aws:ec2:*:*:subnet/*",
+          "arn:aws:ec2:*:*:security-group/*"
+        ],
+        "Sid": "UseVpc"
+      },
+      {
+        "Action": [
+          "ec2:CreateSecurityGroup"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:ec2:*:*:vpc/*",
+        "Sid": "UseVpcForSG"
+      },
+      {
+        "Action": [
+          "ec2:CreateTags"
+        ],
+        "Condition": {
+          "ForAllValues:StringEquals": {
+            "aws:TagKeys": [
+              "CreatedBy",
+              "HyperPodInferenceOwner",
+              "HyperPodInferenceComponent",
+              "Name"
+            ]
+          },
+          "Null": {
+            "aws:TagKeys": "false"
+          },
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}",
+            "ec2:CreateAction": [
+              "CreateVpcEndpoint",
+              "CreateSecurityGroup"
+            ]
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:ec2:*:*:vpc-endpoint/*",
+          "arn:aws:ec2:*:*:security-group/*"
+        ],
+        "Sid": "TagKinesisEndpoint"
+      },
+      {
+        "Action": [
+          "ec2:DeleteVpcEndpoints",
+          "ec2:ModifyVpcEndpoint",
+          "ec2:AuthorizeSecurityGroupIngress",
+          "ec2:DeleteSecurityGroup"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}",
+            "aws:ResourceTag/CreatedBy": "HyperPodInference",
+            "aws:ResourceTag/HyperPodInferenceComponent": "metrics-publisher-kinesis-endpoint"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:ec2:*:*:vpc-endpoint/*",
+          "arn:aws:ec2:*:*:security-group/*"
+        ],
+        "Sid": "ManageKinesisEndpoint"
+      }
+    ],
+    "Version": "2012-10-17"
+  },
+  "effective_actions": [
+    {
+      "access_level": "Write",
+      "action": "ec2:CreateVpcEndpointServiceConfiguration",
+      "condition": {
+        "ForAllValues:StringEquals": {
+          "aws:TagKeys": [
+            "CreatedBy",
+            "HyperPodInferenceOwner"
+          ]
+        },
+        "Null": {
+          "aws:RequestTag/HyperPodInferenceOwner": "false"
+        },
+        "StringEquals": {
+          "aws:RequestTag/CreatedBy": "HyperPodInference",
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:CreateVpcEndpointServiceConfiguration",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Tagging, Write",
+      "action": "ec2:CreateTags",
+      "condition": {
+        "ForAllValues:StringEquals": {
+          "aws:TagKeys": [
+            "CreatedBy",
+            "HyperPodInferenceOwner"
+          ]
+        },
+        "Null": {
+          "aws:TagKeys": "false"
+        },
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}",
+          "ec2:CreateAction": "CreateVpcEndpointServiceConfiguration"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:CreateTags",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "ec2:DescribeVpcEndpointServiceConfigurations",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:DescribeVpcEndpointServiceConfigurations",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "ec2:DescribeVpcEndpointConnections",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:DescribeVpcEndpointConnections",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "ec2:DescribeVpcEndpointServices",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:DescribeVpcEndpointServices",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "ec2:DescribeVpcEndpoints",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:DescribeVpcEndpoints",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "ec2:DescribeSecurityGroups",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:DescribeSecurityGroups",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "ec2:DescribeSubnets",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:DescribeSubnets",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "ec2:DescribeVpcs",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:DescribeVpcs",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "ec2:DescribeRegions",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:DescribeRegions",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "elasticloadbalancing:DescribeLoadBalancers",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "elasticloadbalancing:DescribeLoadBalancers",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "elasticloadbalancing:DescribeTargetGroups",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "elasticloadbalancing:DescribeTargetGroups",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "elasticloadbalancing:DescribeTargetHealth",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "elasticloadbalancing:DescribeTargetHealth",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "ec2:DescribeVpcEndpointServicePermissions",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:DescribeVpcEndpointServicePermissions",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:ModifyVpcEndpointServiceConfiguration",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}",
+          "aws:ResourceTag/CreatedBy": "HyperPodInference"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:ModifyVpcEndpointServiceConfiguration",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Permissions management",
+      "action": "ec2:ModifyVpcEndpointServicePermissions",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}",
+          "aws:ResourceTag/CreatedBy": "HyperPodInference"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:ModifyVpcEndpointServicePermissions",
+      "privesc": false,
+      "resource_exposure": true
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:DeleteVpcEndpointServiceConfigurations",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}",
+          "aws:ResourceTag/CreatedBy": "HyperPodInference"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:DeleteVpcEndpointServiceConfigurations",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "vpce:AllowMultiRegion",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "vpce:AllowMultiRegion",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "s3:PutObject",
+      "condition": {
+        "ForAllValues:StringEquals": {
+          "s3:RequestObjectTagKeys": [
+            "CreatedBy"
+          ]
+        },
+        "Null": {
+          "s3:RequestObjectTagKeys": "false"
+        },
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}",
+          "s3:RequestObjectTag/CreatedBy": "HyperPodInference"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3:PutObject",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Tagging, Write",
+      "action": "s3:PutObjectTagging",
+      "condition": {
+        "ForAllValues:StringEquals": {
+          "s3:RequestObjectTagKeys": [
+            "CreatedBy"
+          ]
+        },
+        "Null": {
+          "s3:RequestObjectTagKeys": "false"
+        },
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}",
+          "s3:RequestObjectTag/CreatedBy": "HyperPodInference"
+        },
+        "StringEqualsIfExists": {
+          "s3:ExistingObjectTag/CreatedBy": "HyperPodInference"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3:PutObjectTagging",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "kms:GenerateDataKey",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        },
+        "StringLike": {
+          "kms:EncryptionContext:aws:s3:arn": "arn:aws:s3:::hyperpod-tls*",
+          "kms:ViaService": "s3.*.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "kms:GenerateDataKey",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "s3:DeleteObject",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3:DeleteObject",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "sagemaker:DescribeCluster",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sagemaker:DescribeCluster",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:CreateVpcEndpoint",
+      "condition": {
+        "ForAllValues:StringEquals": {
+          "aws:TagKeys": [
+            "CreatedBy",
+            "HyperPodInferenceOwner",
+            "HyperPodInferenceComponent",
+            "Name"
+          ]
+        },
+        "Null": {
+          "aws:TagKeys": "false"
+        },
+        "StringEquals": {
+          "aws:RequestTag/CreatedBy": "HyperPodInference",
+          "aws:RequestTag/HyperPodInferenceComponent": "metrics-publisher-kinesis-endpoint",
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        },
+        "StringLike": {
+          "ec2:VpceServiceName": "com.amazonaws.*.kinesis-streams"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:CreateVpcEndpoint",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:CreateSecurityGroup",
+      "condition": {
+        "ForAllValues:StringEquals": {
+          "aws:TagKeys": [
+            "CreatedBy",
+            "HyperPodInferenceOwner",
+            "HyperPodInferenceComponent",
+            "Name"
+          ]
+        },
+        "Null": {
+          "aws:TagKeys": "false"
+        },
+        "StringEquals": {
+          "aws:RequestTag/CreatedBy": "HyperPodInference",
+          "aws:RequestTag/HyperPodInferenceComponent": "metrics-publisher-kinesis-endpoint",
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:CreateSecurityGroup",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:CreateVpcEndpoint",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:CreateVpcEndpoint",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:ModifyVpcEndpoint",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:ModifyVpcEndpoint",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:CreateSecurityGroup",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:CreateSecurityGroup",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Tagging, Write",
+      "action": "ec2:CreateTags",
+      "condition": {
+        "ForAllValues:StringEquals": {
+          "aws:TagKeys": [
+            "CreatedBy",
+            "HyperPodInferenceOwner",
+            "HyperPodInferenceComponent",
+            "Name"
+          ]
+        },
+        "Null": {
+          "aws:TagKeys": "false"
+        },
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}",
+          "ec2:CreateAction": [
+            "CreateVpcEndpoint",
+            "CreateSecurityGroup"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:CreateTags",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:DeleteVpcEndpoints",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}",
+          "aws:ResourceTag/CreatedBy": "HyperPodInference",
+          "aws:ResourceTag/HyperPodInferenceComponent": "metrics-publisher-kinesis-endpoint"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:DeleteVpcEndpoints",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:ModifyVpcEndpoint",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}",
+          "aws:ResourceTag/CreatedBy": "HyperPodInference",
+          "aws:ResourceTag/HyperPodInferenceComponent": "metrics-publisher-kinesis-endpoint"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:ModifyVpcEndpoint",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:AuthorizeSecurityGroupIngress",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}",
+          "aws:ResourceTag/CreatedBy": "HyperPodInference",
+          "aws:ResourceTag/HyperPodInferenceComponent": "metrics-publisher-kinesis-endpoint"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:AuthorizeSecurityGroupIngress",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:DeleteSecurityGroup",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}",
+          "aws:ResourceTag/CreatedBy": "HyperPodInference",
+          "aws:ResourceTag/HyperPodInferenceComponent": "metrics-publisher-kinesis-endpoint"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:DeleteSecurityGroup",
+      "privesc": false,
+      "resource_exposure": false
+    }
+  ],
+  "grantless": false,
+  "malformed": false,
+  "name": "AmazonSageMakerHyperPodInferenceGatewayGlobalRoutingAccess",
+  "privesc": false,
+  "resource_exposure": true,
+  "undocumented_actions": false,
+  "unknown_actions": [],
+  "updatedate": "2026-11-17T23:17:08+00:00",
+  "version": "v1"
+}
