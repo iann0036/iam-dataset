@@ -5,7 +5,7 @@
     "Write"
   ],
   "arn": "arn:aws:iam::aws:policy/AWSMarketplaceSellerOfferManagement",
-  "createdate": "2026-10-27T00:47:06+00:00",
+  "createdate": "2026-11-18T20:07:09+00:00",
   "credentials_exposure": false,
   "data_access": false,
   "deprecated": false,
@@ -109,6 +109,34 @@
         "Effect": "Allow",
         "Resource": "*",
         "Sid": "AWSMarketplaceAgreementsCancellationAndAdjustmentReadAccess"
+      },
+      {
+        "Action": [
+          "aws-marketplace:GetAgreementContacts"
+        ],
+        "Condition": {
+          "ForAllValues:StringEquals": {
+            "aws-marketplace:AgreementType": [
+              "PurchaseAgreement"
+            ]
+          },
+          "Null": {
+            "aws-marketplace:AgreementType": "false"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "AWSMarketplaceAgreementContactsReadAccess"
+      },
+      {
+        "Action": [
+          "s3:PutObject"
+        ],
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:s3:::aws-partner-central-marketplace-ephemeral-writeonly-files/${aws:PrincipalAccount}/*"
+        ],
+        "Sid": "MarketplaceEphemeralWriteS3Access"
       }
     ],
     "Version": "2012-10-17"
@@ -329,6 +357,35 @@
       "effective_action": "aws-marketplace:GetAgreementCancellationRequest",
       "privesc": false,
       "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "aws-marketplace:GetAgreementContacts",
+      "condition": {
+        "ForAllValues:StringEquals": {
+          "aws-marketplace:AgreementType": [
+            "PurchaseAgreement"
+          ]
+        },
+        "Null": {
+          "aws-marketplace:AgreementType": "false"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "aws-marketplace:GetAgreementContacts",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "s3:PutObject",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3:PutObject",
+      "privesc": false,
+      "resource_exposure": false
     }
   ],
   "grantless": false,
@@ -339,5 +396,5 @@
   "undocumented_actions": false,
   "unknown_actions": [],
   "updatedate": "2026-10-27T00:47:06+00:00",
-  "version": "v3"
+  "version": "v4"
 }

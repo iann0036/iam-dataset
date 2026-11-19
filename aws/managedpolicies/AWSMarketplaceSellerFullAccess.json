@@ -7,7 +7,7 @@
     "Permissions management"
   ],
   "arn": "arn:aws:iam::aws:policy/AWSMarketplaceSellerFullAccess",
-  "createdate": "2026-11-13T18:47:08+00:00",
+  "createdate": "2026-11-18T20:07:09+00:00",
   "credentials_exposure": false,
   "data_access": false,
   "deprecated": false,
@@ -103,7 +103,8 @@
           "arn:aws:aws-marketplace:*:*:catalog/AWSMarketplace*/*",
           "arn:aws:aws-marketplace:*:*:verification-type/*/verification-evidence/*",
           "arn:aws:aws-marketplace:*:*:tax-compliance-profile/*",
-          "arn:aws:aws-marketplace:*:*:tax-compliance-profile-change-task/*"
+          "arn:aws:aws-marketplace:*:*:tax-compliance-profile-change-task/*",
+          "arn:aws:aws-marketplace:*:*:DeploymentConfiguration:catalogs/AWSMarketplace/*"
         ],
         "Sid": "TagManagement"
       },
@@ -347,6 +348,43 @@
         "Effect": "Allow",
         "Resource": "arn:aws:partnercentral:*::catalog/*/connection/*",
         "Sid": "ReadAccountConnections"
+      },
+      {
+        "Action": [
+          "aws-marketplace:StartDeploymentConfigurationJob",
+          "aws-marketplace:GetDeploymentConfigurationJob",
+          "aws-marketplace:ListDeploymentConfigurationJobs",
+          "aws-marketplace:GetDeploymentConfiguration"
+        ],
+        "Effect": "Allow",
+        "Resource": "arn:aws:aws-marketplace:*:*:DeploymentConfiguration:catalogs/AWSMarketplace/*",
+        "Sid": "DeploymentConfigurationManagement"
+      },
+      {
+        "Action": [
+          "aws-marketplace:GetAgreementContacts"
+        ],
+        "Condition": {
+          "ForAllValues:StringEquals": {
+            "aws-marketplace:AgreementType": [
+              "PurchaseAgreement"
+            ]
+          },
+          "Null": {
+            "aws-marketplace:AgreementType": "false"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "AWSMarketplaceAgreementContactsReadAccess"
+      },
+      {
+        "Action": [
+          "aws-marketplace:StartAssessment"
+        ],
+        "Effect": "Allow",
+        "Resource": "arn:aws:aws-marketplace:*:*:AWSMarketplace*/*",
+        "Sid": "MarketplaceStartAssessment"
       }
     ],
     "Version": "2012-10-17"
@@ -1478,6 +1516,75 @@
       "effective_action": "partnercentral:GetConnection",
       "privesc": false,
       "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "aws-marketplace:StartDeploymentConfigurationJob",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "aws-marketplace:StartDeploymentConfigurationJob",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "aws-marketplace:GetDeploymentConfigurationJob",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "aws-marketplace:GetDeploymentConfigurationJob",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "aws-marketplace:ListDeploymentConfigurationJobs",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "aws-marketplace:ListDeploymentConfigurationJobs",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "aws-marketplace:GetDeploymentConfiguration",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "aws-marketplace:GetDeploymentConfiguration",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "aws-marketplace:GetAgreementContacts",
+      "condition": {
+        "ForAllValues:StringEquals": {
+          "aws-marketplace:AgreementType": [
+            "PurchaseAgreement"
+          ]
+        },
+        "Null": {
+          "aws-marketplace:AgreementType": "false"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "aws-marketplace:GetAgreementContacts",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "aws-marketplace:StartAssessment",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "aws-marketplace:StartAssessment",
+      "privesc": false,
+      "resource_exposure": false
     }
   ],
   "grantless": false,
@@ -1488,5 +1595,5 @@
   "undocumented_actions": false,
   "unknown_actions": [],
   "updatedate": "2026-11-13T18:47:08+00:00",
-  "version": "v36"
+  "version": "v37"
 }

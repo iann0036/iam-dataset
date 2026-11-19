@@ -8,7 +8,7 @@
     "Unknown"
   ],
   "arn": "arn:aws:iam::aws:policy/SageMakerStudioUserIAMPermissiveExecutionPolicy",
-  "createdate": "2026-11-14T00:07:08+00:00",
+  "createdate": "2026-11-18T17:37:09+00:00",
   "credentials_exposure": true,
   "data_access": true,
   "deprecated": false,
@@ -410,6 +410,19 @@
       },
       {
         "Action": [
+          "lakeformation:GetResourceLFTags",
+          "lakeformation:CreateDataCellsFilter",
+          "lakeformation:GetDataCellsFilter",
+          "lakeformation:ListDataCellsFilter",
+          "lakeformation:UpdateDataCellsFilter",
+          "lakeformation:DeleteDataCellsFilter"
+        ],
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "LfFilters"
+      },
+      {
+        "Action": [
           "dynamodb:List*",
           "dynamodb:Describe*",
           "dynamodb:Scan",
@@ -795,6 +808,46 @@
         "Effect": "Allow",
         "Resource": "*",
         "Sid": "RamShareCreate"
+      },
+      {
+        "Action": [
+          "ram:GetResourceShareInvitations",
+          "ram:ListResources"
+        ],
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "RamRead"
+      },
+      {
+        "Action": [
+          "ram:*ResourceShare*"
+        ],
+        "Condition": {
+          "ForAnyValue:StringEquals": {
+            "aws:CalledVia": [
+              "lakeformation.amazonaws.com"
+            ]
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "RamViaLf"
+      },
+      {
+        "Action": [
+          "ram:AcceptResourceShareInvitation"
+        ],
+        "Condition": {
+          "StringLike": {
+            "ram:ResourceShareName": [
+              "LakeFormation*",
+              "DataZoneS3AG*"
+            ]
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:*:ram:*:*:resource-share-invitation/*",
+        "Sid": "RamAccept"
       },
       {
         "Action": [
@@ -39754,6 +39807,66 @@
       "resource_exposure": true
     },
     {
+      "access_level": "Read",
+      "action": "lakeformation:GetResourceLFTags",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "lakeformation:GetResourceLFTags",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "lakeformation:CreateDataCellsFilter",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "lakeformation:CreateDataCellsFilter",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "lakeformation:GetDataCellsFilter",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "lakeformation:GetDataCellsFilter",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "lakeformation:ListDataCellsFilter",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "lakeformation:ListDataCellsFilter",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "lakeformation:UpdateDataCellsFilter",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "lakeformation:UpdateDataCellsFilter",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "lakeformation:DeleteDataCellsFilter",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "lakeformation:DeleteDataCellsFilter",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
       "access_level": "List",
       "action": "dynamodb:List*",
       "condition": null,
@@ -43185,6 +43298,267 @@
     },
     {
       "access_level": "Read",
+      "action": "ram:GetResourceShareInvitations",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ram:GetResourceShareInvitations",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "ram:ListResources",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ram:ListResources",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Permissions management",
+      "action": "ram:*ResourceShare*",
+      "condition": {
+        "ForAnyValue:StringEquals": {
+          "aws:CalledVia": [
+            "lakeformation.amazonaws.com"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ram:AcceptResourceShareInvitation",
+      "privesc": false,
+      "resource_exposure": true
+    },
+    {
+      "access_level": "Permissions management",
+      "action": "ram:*ResourceShare*",
+      "condition": {
+        "ForAnyValue:StringEquals": {
+          "aws:CalledVia": [
+            "lakeformation.amazonaws.com"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ram:AssociateResourceShare",
+      "privesc": false,
+      "resource_exposure": true
+    },
+    {
+      "access_level": "Write",
+      "action": "ram:*ResourceShare*",
+      "condition": {
+        "ForAnyValue:StringEquals": {
+          "aws:CalledVia": [
+            "lakeformation.amazonaws.com"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ram:AssociateResourceSharePermission",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Permissions management",
+      "action": "ram:*ResourceShare*",
+      "condition": {
+        "ForAnyValue:StringEquals": {
+          "aws:CalledVia": [
+            "lakeformation.amazonaws.com"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ram:CreateResourceShare",
+      "privesc": false,
+      "resource_exposure": true
+    },
+    {
+      "access_level": "Permissions management",
+      "action": "ram:*ResourceShare*",
+      "condition": {
+        "ForAnyValue:StringEquals": {
+          "aws:CalledVia": [
+            "lakeformation.amazonaws.com"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ram:DeleteResourceShare",
+      "privesc": false,
+      "resource_exposure": true
+    },
+    {
+      "access_level": "Permissions management",
+      "action": "ram:*ResourceShare*",
+      "condition": {
+        "ForAnyValue:StringEquals": {
+          "aws:CalledVia": [
+            "lakeformation.amazonaws.com"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ram:DisassociateResourceShare",
+      "privesc": false,
+      "resource_exposure": true
+    },
+    {
+      "access_level": "Write",
+      "action": "ram:*ResourceShare*",
+      "condition": {
+        "ForAnyValue:StringEquals": {
+          "aws:CalledVia": [
+            "lakeformation.amazonaws.com"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ram:DisassociateResourceSharePermission",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "ram:*ResourceShare*",
+      "condition": {
+        "ForAnyValue:StringEquals": {
+          "aws:CalledVia": [
+            "lakeformation.amazonaws.com"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ram:GetResourceShareAssociations",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "ram:*ResourceShare*",
+      "condition": {
+        "ForAnyValue:StringEquals": {
+          "aws:CalledVia": [
+            "lakeformation.amazonaws.com"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ram:GetResourceShareInvitations",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "ram:*ResourceShare*",
+      "condition": {
+        "ForAnyValue:StringEquals": {
+          "aws:CalledVia": [
+            "lakeformation.amazonaws.com"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ram:GetResourceShares",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "ram:*ResourceShare*",
+      "condition": {
+        "ForAnyValue:StringEquals": {
+          "aws:CalledVia": [
+            "lakeformation.amazonaws.com"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ram:ListResourceSharePermissions",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ram:*ResourceShare*",
+      "condition": {
+        "ForAnyValue:StringEquals": {
+          "aws:CalledVia": [
+            "lakeformation.amazonaws.com"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ram:PromoteResourceShareCreatedFromPolicy",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Permissions management",
+      "action": "ram:*ResourceShare*",
+      "condition": {
+        "ForAnyValue:StringEquals": {
+          "aws:CalledVia": [
+            "lakeformation.amazonaws.com"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ram:RejectResourceShareInvitation",
+      "privesc": false,
+      "resource_exposure": true
+    },
+    {
+      "access_level": "Permissions management",
+      "action": "ram:*ResourceShare*",
+      "condition": {
+        "ForAnyValue:StringEquals": {
+          "aws:CalledVia": [
+            "lakeformation.amazonaws.com"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ram:UpdateResourceShare",
+      "privesc": false,
+      "resource_exposure": true
+    },
+    {
+      "access_level": "Permissions management",
+      "action": "ram:AcceptResourceShareInvitation",
+      "condition": {
+        "StringLike": {
+          "ram:ResourceShareName": [
+            "LakeFormation*",
+            "DataZoneS3AG*"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ram:AcceptResourceShareInvitation",
+      "privesc": false,
+      "resource_exposure": true
+    },
+    {
+      "access_level": "Read",
       "action": "sso:DescribeInstance",
       "condition": {
         "Bool": {
@@ -43318,5 +43692,5 @@
   "undocumented_actions": true,
   "unknown_actions": [],
   "updatedate": "2026-11-14T00:07:08+00:00",
-  "version": "v28"
+  "version": "v29"
 }

@@ -1479,6 +1479,50 @@
     "service_name": "Alexa for Business"
   },
   {
+    "conditions": [],
+    "prefix": "abuse",
+    "privileges": [
+      {
+        "access_level": "Write",
+        "description": "Grants permission to submit a new abuse report",
+        "privilege": "CreateAbuseReport",
+        "resource_types": [
+          {
+            "condition_keys": [],
+            "dependent_actions": [],
+            "resource_type": ""
+          }
+        ]
+      },
+      {
+        "access_level": "Read",
+        "description": "Grants permission to retrieve the status of an abuse report",
+        "privilege": "GetAbuseReportStatus",
+        "resource_types": [
+          {
+            "condition_keys": [],
+            "dependent_actions": [],
+            "resource_type": ""
+          }
+        ]
+      },
+      {
+        "access_level": "Read",
+        "description": "Grants permission to list abuse report statuses",
+        "privilege": "ListAbuseReportStatuses",
+        "resource_types": [
+          {
+            "condition_keys": [],
+            "dependent_actions": [],
+            "resource_type": ""
+          }
+        ]
+      }
+    ],
+    "resources": [],
+    "service_name": "AWS Abuse Signal API"
+  },
+  {
     "conditions": [
       {
         "condition": "aws:RequestTag/${TagKey}",
@@ -34054,9 +34098,66 @@
     "privileges": [
       {
         "access_level": "Read",
-        "description": "Grants permission to list tags for a deployment parameter resource",
+        "description": "Grants permission to get the active deployment configuration",
+        "privilege": "GetDeploymentConfiguration",
+        "resource_types": [
+          {
+            "condition_keys": [
+              "aws:RequestTag/${TagKey}",
+              "aws:ResourceTag/${TagKey}",
+              "aws:TagKeys"
+            ],
+            "dependent_actions": [],
+            "resource_type": "DeploymentConfiguration*"
+          }
+        ]
+      },
+      {
+        "access_level": "Read",
+        "description": "Grants permission to get a deployment configuration job",
+        "privilege": "GetDeploymentConfigurationJob",
+        "resource_types": [
+          {
+            "condition_keys": [
+              "aws:RequestTag/${TagKey}",
+              "aws:ResourceTag/${TagKey}",
+              "aws:TagKeys"
+            ],
+            "dependent_actions": [],
+            "resource_type": "DeploymentConfiguration*"
+          }
+        ]
+      },
+      {
+        "access_level": "List",
+        "description": "Grants permission to list deployment configuration jobs",
+        "privilege": "ListDeploymentConfigurationJobs",
+        "resource_types": [
+          {
+            "condition_keys": [
+              "aws:RequestTag/${TagKey}",
+              "aws:ResourceTag/${TagKey}",
+              "aws:TagKeys"
+            ],
+            "dependent_actions": [],
+            "resource_type": "DeploymentConfiguration*"
+          }
+        ]
+      },
+      {
+        "access_level": "Read",
+        "description": "Grants permission to list tags for a deployment parameter or deployment configuration resource",
         "privilege": "ListTagsForResource",
         "resource_types": [
+          {
+            "condition_keys": [
+              "aws:RequestTag/${TagKey}",
+              "aws:ResourceTag/${TagKey}",
+              "aws:TagKeys"
+            ],
+            "dependent_actions": [],
+            "resource_type": "DeploymentConfiguration"
+          },
           {
             "condition_keys": [
               "aws:RequestTag/${TagKey}",
@@ -34087,10 +34188,35 @@
         ]
       },
       {
+        "access_level": "Write",
+        "description": "Grants permission to start a job that publishes a deployment configuration",
+        "privilege": "StartDeploymentConfigurationJob",
+        "resource_types": [
+          {
+            "condition_keys": [
+              "aws:RequestTag/${TagKey}",
+              "aws:ResourceTag/${TagKey}",
+              "aws:TagKeys"
+            ],
+            "dependent_actions": [],
+            "resource_type": "DeploymentConfiguration*"
+          }
+        ]
+      },
+      {
         "access_level": "Tagging, Write",
-        "description": "Grants permission to tag a deployment parameter resource",
+        "description": "Grants permission to tag a deployment parameter or deployment configuration resource",
         "privilege": "TagResource",
         "resource_types": [
+          {
+            "condition_keys": [
+              "aws:RequestTag/${TagKey}",
+              "aws:ResourceTag/${TagKey}",
+              "aws:TagKeys"
+            ],
+            "dependent_actions": [],
+            "resource_type": "DeploymentConfiguration*"
+          },
           {
             "condition_keys": [
               "aws:RequestTag/${TagKey}",
@@ -34104,9 +34230,18 @@
       },
       {
         "access_level": "Tagging, Write",
-        "description": "Grants permission to untag a deployment parameter resource",
+        "description": "Grants permission to untag a deployment parameter or deployment configuration resource",
         "privilege": "UntagResource",
         "resource_types": [
+          {
+            "condition_keys": [
+              "aws:RequestTag/${TagKey}",
+              "aws:ResourceTag/${TagKey}",
+              "aws:TagKeys"
+            ],
+            "dependent_actions": [],
+            "resource_type": "DeploymentConfiguration*"
+          },
           {
             "condition_keys": [
               "aws:RequestTag/${TagKey}",
@@ -34120,6 +34255,15 @@
       }
     ],
     "resources": [
+      {
+        "arn": "arn:${Partition}:aws-marketplace:${Region}:${Account}:DeploymentConfiguration:catalogs/${CatalogName}/products/${ProductId}/delivery-options/${DeliveryOptionType}",
+        "condition_keys": [
+          "aws:RequestTag/${TagKey}",
+          "aws:ResourceTag/${TagKey}",
+          "aws:TagKeys"
+        ],
+        "resource": "DeploymentConfiguration"
+      },
       {
         "arn": "arn:${Partition}:aws-marketplace:${Region}:${Account}:DeploymentParameter:catalogs/${CatalogName}/products/${ProductId}/${ResourceId}",
         "condition_keys": [
@@ -34263,7 +34407,9 @@
         "privilege": "DescribeAssessment",
         "resource_types": [
           {
-            "condition_keys": [],
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}"
+            ],
             "dependent_actions": [],
             "resource_type": "Assessment"
           }
@@ -34583,6 +34729,23 @@
       },
       {
         "access_level": "Write",
+        "description": "Grants permission to star a new assessment",
+        "privilege": "StartAssessment",
+        "resource_types": [
+          {
+            "condition_keys": [
+              "aws:RequestTag/${TagKey}",
+              "aws:ResourceTag/${TagKey}",
+              "aws:TagKeys",
+              "catalog:ChangeType"
+            ],
+            "dependent_actions": [],
+            "resource_type": "Entity*"
+          }
+        ]
+      },
+      {
+        "access_level": "Write",
         "description": "Grants permission to request a new change set (Note: resource-level permissions for this action and condition context keys for this action are only supported when used with Catalog API and are not supported when used with AWS Marketplace Management Portal)",
         "privilege": "StartChangeSet",
         "resource_types": [
@@ -34809,7 +34972,9 @@
     "resources": [
       {
         "arn": "arn:${Partition}:aws-marketplace:${Region}::${Catalog}/Assessment/${ResourceId}",
-        "condition_keys": [],
+        "condition_keys": [
+          "aws:ResourceTag/${TagKey}"
+        ],
         "resource": "Assessment"
       },
       {
@@ -41409,6 +41574,233 @@
       }
     ],
     "service_name": "AWS Billing And Cost Management Data Exports"
+  },
+  {
+    "conditions": [
+      {
+        "condition": "aws:RequestTag/${TagKey}",
+        "description": "Filters access by the tags that are passed in the request",
+        "type": "String"
+      },
+      {
+        "condition": "aws:ResourceTag/${TagKey}",
+        "description": "Filters access by the tags associated with the resource",
+        "type": "String"
+      },
+      {
+        "condition": "aws:TagKeys",
+        "description": "Filters access by the tag keys that are passed in the request",
+        "type": "ArrayOfString"
+      }
+    ],
+    "prefix": "bcm-data-hub",
+    "privileges": [
+      {
+        "access_level": "Write",
+        "description": "Grants permission to cancel a query execution",
+        "privilege": "CancelQueryExecution",
+        "resource_types": [
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}"
+            ],
+            "dependent_actions": [],
+            "resource_type": "dataset*"
+          }
+        ]
+      },
+      {
+        "access_level": "Write",
+        "description": "Grants permission to create a dataset",
+        "privilege": "CreateDataset",
+        "resource_types": [
+          {
+            "condition_keys": [
+              "aws:RequestTag/${TagKey}",
+              "aws:ResourceTag/${TagKey}",
+              "aws:TagKeys"
+            ],
+            "dependent_actions": [],
+            "resource_type": "dataset*"
+          }
+        ]
+      },
+      {
+        "access_level": "Write",
+        "description": "Grants permission to delete a dataset",
+        "privilege": "DeleteDataset",
+        "resource_types": [
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}"
+            ],
+            "dependent_actions": [],
+            "resource_type": "dataset*"
+          }
+        ]
+      },
+      {
+        "access_level": "Read",
+        "description": "Grants permission to get a dataset",
+        "privilege": "GetDataset",
+        "resource_types": [
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}"
+            ],
+            "dependent_actions": [],
+            "resource_type": "dataset*"
+          }
+        ]
+      },
+      {
+        "access_level": "Read",
+        "description": "Grants permission to get a dataset schema",
+        "privilege": "GetDatasetSchema",
+        "resource_types": [
+          {
+            "condition_keys": [],
+            "dependent_actions": [],
+            "resource_type": ""
+          }
+        ]
+      },
+      {
+        "access_level": "Read",
+        "description": "Grants permission to get a query execution",
+        "privilege": "GetQueryExecution",
+        "resource_types": [
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}"
+            ],
+            "dependent_actions": [],
+            "resource_type": "dataset*"
+          }
+        ]
+      },
+      {
+        "access_level": "Read",
+        "description": "Grants permission to get query execution results",
+        "privilege": "GetQueryExecutionResults",
+        "resource_types": [
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}"
+            ],
+            "dependent_actions": [],
+            "resource_type": "dataset*"
+          }
+        ]
+      },
+      {
+        "access_level": "List",
+        "description": "Grants permission to list datasets",
+        "privilege": "ListDatasets",
+        "resource_types": [
+          {
+            "condition_keys": [],
+            "dependent_actions": [],
+            "resource_type": ""
+          }
+        ]
+      },
+      {
+        "access_level": "List",
+        "description": "Grants permission to list query executions",
+        "privilege": "ListQueryExecutions",
+        "resource_types": [
+          {
+            "condition_keys": [],
+            "dependent_actions": [],
+            "resource_type": ""
+          }
+        ]
+      },
+      {
+        "access_level": "Read",
+        "description": "Grants permission to list tags for a resource",
+        "privilege": "ListTagsForResource",
+        "resource_types": [
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}"
+            ],
+            "dependent_actions": [],
+            "resource_type": "dataset*"
+          }
+        ]
+      },
+      {
+        "access_level": "Write",
+        "description": "Grants permission to start a query execution",
+        "privilege": "StartQueryExecution",
+        "resource_types": [
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}"
+            ],
+            "dependent_actions": [],
+            "resource_type": "dataset*"
+          }
+        ]
+      },
+      {
+        "access_level": "Tagging, Write",
+        "description": "Grants permission to tag a resource",
+        "privilege": "TagResource",
+        "resource_types": [
+          {
+            "condition_keys": [
+              "aws:RequestTag/${TagKey}",
+              "aws:ResourceTag/${TagKey}",
+              "aws:TagKeys"
+            ],
+            "dependent_actions": [],
+            "resource_type": "dataset*"
+          }
+        ]
+      },
+      {
+        "access_level": "Tagging, Write",
+        "description": "Grants permission to untag a resource",
+        "privilege": "UntagResource",
+        "resource_types": [
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}",
+              "aws:TagKeys"
+            ],
+            "dependent_actions": [],
+            "resource_type": "dataset*"
+          }
+        ]
+      },
+      {
+        "access_level": "Write",
+        "description": "Grants permission to update a dataset",
+        "privilege": "UpdateDataset",
+        "resource_types": [
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}"
+            ],
+            "dependent_actions": [],
+            "resource_type": "dataset*"
+          }
+        ]
+      }
+    ],
+    "resources": [
+      {
+        "arn": "arn:${Partition}:bcm-data-hub:${Region}:${Account}:dataset/${Identifier}",
+        "condition_keys": [
+          "aws:ResourceTag/${TagKey}"
+        ],
+        "resource": "dataset"
+      }
+    ],
+    "service_name": "AWS Billing and Cost Management Data Hub"
   },
   {
     "conditions": [
@@ -94098,6 +94490,21 @@
             "resource_type": "StoredQuery"
           }
         ]
+      },
+      {
+        "access_level": "Permissions management, Write",
+        "description": "Grants permission to configure vended log delivery for Config",
+        "privilege": "AllowVendedLogDeliveryForResource",
+        "resource_types": [
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}",
+              "config:ConfigurationRecorderServicePrincipal"
+            ],
+            "dependent_actions": [],
+            "resource_type": "ConfigurationRecorder*"
+          }
+        ]
       }
     ],
     "resources": [
@@ -94308,6 +94715,21 @@
             ],
             "dependent_actions": [],
             "resource_type": "instance*"
+          }
+        ]
+      },
+      {
+        "access_level": "Write",
+        "description": "Grants permission to approve a time off request for a user in an Amazon Connect instance",
+        "privilege": "ApproveTimeOff",
+        "resource_types": [
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}",
+              "connect:InstanceId"
+            ],
+            "dependent_actions": [],
+            "resource_type": "user*"
           }
         ]
       },
@@ -94855,6 +95277,21 @@
             ],
             "dependent_actions": [],
             "resource_type": "data-table*"
+          }
+        ]
+      },
+      {
+        "access_level": "Write",
+        "description": "Grants permission to cancel a time off request for a user in an Amazon Connect instance",
+        "privilege": "CancelTimeOff",
+        "resource_types": [
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}",
+              "connect:InstanceId"
+            ],
+            "dependent_actions": [],
+            "resource_type": "user*"
           }
         ]
       },
@@ -95578,6 +96015,21 @@
             ],
             "dependent_actions": [],
             "resource_type": "task-template*"
+          }
+        ]
+      },
+      {
+        "access_level": "Write",
+        "description": "Grants permission to create a time off request for a user in an Amazon Connect instance",
+        "privilege": "CreateTimeOff",
+        "resource_types": [
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}",
+              "connect:InstanceId"
+            ],
+            "dependent_actions": [],
+            "resource_type": "user*"
           }
         ]
       },
@@ -97595,6 +98047,21 @@
         ]
       },
       {
+        "access_level": "Read",
+        "description": "Grants permission to get a time off request for a user in an Amazon Connect instance",
+        "privilege": "GetTimeOff",
+        "resource_types": [
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}",
+              "connect:InstanceId"
+            ],
+            "dependent_actions": [],
+            "resource_type": "user*"
+          }
+        ]
+      },
+      {
         "access_level": "List",
         "description": "Grants permission to read traffic distribution for a traffic distribution group",
         "privilege": "GetTrafficDistribution",
@@ -98929,6 +99396,21 @@
       },
       {
         "access_level": "Write",
+        "description": "Grants permission to set the time off balance of a user for a shift activity in an Amazon Connect instance",
+        "privilege": "PutTimeOffBalance",
+        "resource_types": [
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}",
+              "connect:InstanceId"
+            ],
+            "dependent_actions": [],
+            "resource_type": "user*"
+          }
+        ]
+      },
+      {
+        "access_level": "Write",
         "description": "Grants permission to switch User Status in an Amazon Connect instance",
         "privilege": "PutUserStatus",
         "resource_types": [
@@ -98948,6 +99430,21 @@
             "dependent_actions": [],
             "resource_type": "instance*"
           },
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}",
+              "connect:InstanceId"
+            ],
+            "dependent_actions": [],
+            "resource_type": "user*"
+          }
+        ]
+      },
+      {
+        "access_level": "Write",
+        "description": "Grants permission to reject a time off request for a user in an Amazon Connect instance",
+        "privilege": "RejectTimeOff",
+        "resource_types": [
           {
             "condition_keys": [
               "aws:ResourceTag/${TagKey}",
@@ -125717,6 +126214,20 @@
         "access_level": "Write",
         "description": "Grants permission to add a peer cluster to a multi-Region cluster",
         "privilege": "AddPeerCluster",
+        "resource_types": [
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}"
+            ],
+            "dependent_actions": [],
+            "resource_type": "Cluster*"
+          }
+        ]
+      },
+      {
+        "access_level": "Permissions management, Write",
+        "description": "Grants permission to configure vended log delivery for an Aurora DSQL cluster",
+        "privilege": "AllowVendedLogDeliveryForResource",
         "resource_types": [
           {
             "condition_keys": [
@@ -165392,6 +165903,14 @@
             ],
             "dependent_actions": [],
             "resource_type": "feed"
+          },
+          {
+            "condition_keys": [
+              "aws:RequestTag/${TagKey}",
+              "aws:TagKeys"
+            ],
+            "dependent_actions": [],
+            "resource_type": "question-set"
           }
         ]
       },
@@ -165415,6 +165934,13 @@
             ],
             "dependent_actions": [],
             "resource_type": "feed"
+          },
+          {
+            "condition_keys": [
+              "aws:TagKeys"
+            ],
+            "dependent_actions": [],
+            "resource_type": "question-set"
           }
         ]
       },
@@ -197673,6 +198199,26 @@
   {
     "conditions": [
       {
+        "condition": "aws:RequestTag/${TagKey}",
+        "description": "Filters access by the tag key-value pairs in the request filter",
+        "type": "String"
+      },
+      {
+        "condition": "aws:TagKeys",
+        "description": "Filters access by the tag keys in the request filter",
+        "type": "ArrayOfString"
+      },
+      {
+        "condition": "health:TagChannel",
+        "description": "Filters access by the channel (API or EventBridge) for which tag keys are configured",
+        "type": "ArrayOfString"
+      },
+      {
+        "condition": "health:TagKeys",
+        "description": "Filters access by the resource tag keys being configured",
+        "type": "ArrayOfString"
+      },
+      {
         "condition": "health:eventTypeCode",
         "description": "Filters access by event type",
         "type": "String"
@@ -197686,12 +198232,45 @@
     "prefix": "health",
     "privileges": [
       {
+        "access_level": "Write",
+        "description": "Grants permission to configure the resource tag keys propagated to AWS Health events for an account",
+        "privilege": "ConfigureTags",
+        "resource_types": [
+          {
+            "condition_keys": [
+              "health:TagChannel",
+              "health:TagKeys"
+            ],
+            "dependent_actions": [],
+            "resource_type": ""
+          }
+        ]
+      },
+      {
+        "access_level": "Write",
+        "description": "Grants permission to configure the resource tag keys propagated to AWS Health events for an organization",
+        "privilege": "ConfigureTagsForOrganization",
+        "resource_types": [
+          {
+            "condition_keys": [
+              "health:TagChannel",
+              "health:TagKeys"
+            ],
+            "dependent_actions": [],
+            "resource_type": ""
+          }
+        ]
+      },
+      {
         "access_level": "Read",
         "description": "Grants permission to retrieve a list of accounts that have been affected by the specified events in organization",
         "privilege": "DescribeAffectedAccountsForOrganization",
         "resource_types": [
           {
-            "condition_keys": [],
+            "condition_keys": [
+              "aws:RequestTag/${TagKey}",
+              "aws:TagKeys"
+            ],
             "dependent_actions": [
               "organizations:ListAccounts"
             ],
@@ -197706,6 +198285,8 @@
         "resource_types": [
           {
             "condition_keys": [
+              "aws:RequestTag/${TagKey}",
+              "aws:TagKeys",
               "health:eventTypeCode",
               "health:service"
             ],
@@ -197720,7 +198301,10 @@
         "privilege": "DescribeAffectedEntitiesForOrganization",
         "resource_types": [
           {
-            "condition_keys": [],
+            "condition_keys": [
+              "aws:RequestTag/${TagKey}",
+              "aws:TagKeys"
+            ],
             "dependent_actions": [
               "organizations:ListAccounts"
             ],
@@ -197734,7 +198318,10 @@
         "privilege": "DescribeEntityAggregates",
         "resource_types": [
           {
-            "condition_keys": [],
+            "condition_keys": [
+              "aws:RequestTag/${TagKey}",
+              "aws:TagKeys"
+            ],
             "dependent_actions": [],
             "resource_type": ""
           }
@@ -197746,7 +198333,10 @@
         "privilege": "DescribeEntityAggregatesForOrganization",
         "resource_types": [
           {
-            "condition_keys": [],
+            "condition_keys": [
+              "aws:RequestTag/${TagKey}",
+              "aws:TagKeys"
+            ],
             "dependent_actions": [
               "organizations:ListAccounts"
             ],
@@ -197760,7 +198350,10 @@
         "privilege": "DescribeEventAggregates",
         "resource_types": [
           {
-            "condition_keys": [],
+            "condition_keys": [
+              "aws:RequestTag/${TagKey}",
+              "aws:TagKeys"
+            ],
             "dependent_actions": [],
             "resource_type": ""
           }
@@ -197813,7 +198406,10 @@
         "privilege": "DescribeEvents",
         "resource_types": [
           {
-            "condition_keys": [],
+            "condition_keys": [
+              "aws:RequestTag/${TagKey}",
+              "aws:TagKeys"
+            ],
             "dependent_actions": [],
             "resource_type": ""
           }
@@ -197823,6 +198419,23 @@
         "access_level": "Read",
         "description": "Grants permission to retrieve information about events that meet the specified filter criteria in organization",
         "privilege": "DescribeEventsForOrganization",
+        "resource_types": [
+          {
+            "condition_keys": [
+              "aws:RequestTag/${TagKey}",
+              "aws:TagKeys"
+            ],
+            "dependent_actions": [
+              "organizations:ListAccounts"
+            ],
+            "resource_type": ""
+          }
+        ]
+      },
+      {
+        "access_level": "Read",
+        "description": "Grants permission to retrieve the status of enabling or disabling the Organizational View feature",
+        "privilege": "DescribeHealthServiceStatusForOrganization",
         "resource_types": [
           {
             "condition_keys": [],
@@ -197835,8 +198448,72 @@
       },
       {
         "access_level": "Read",
-        "description": "Grants permission to retrieve the status of enabling or disabling the Organizational View feature",
-        "privilege": "DescribeHealthServiceStatusForOrganization",
+        "description": "Grants permission to retrieve the resource tag keys configured for an account",
+        "privilege": "DescribeTagKeys",
+        "resource_types": [
+          {
+            "condition_keys": [],
+            "dependent_actions": [],
+            "resource_type": ""
+          }
+        ]
+      },
+      {
+        "access_level": "Read",
+        "description": "Grants permission to retrieve the resource tag keys configured for an organization",
+        "privilege": "DescribeTagKeysForOrganization",
+        "resource_types": [
+          {
+            "condition_keys": [],
+            "dependent_actions": [
+              "organizations:ListAccounts"
+            ],
+            "resource_type": ""
+          }
+        ]
+      },
+      {
+        "access_level": "Read",
+        "description": "Grants permission to retrieve the resource tags configured for an account",
+        "privilege": "DescribeTags",
+        "resource_types": [
+          {
+            "condition_keys": [],
+            "dependent_actions": [],
+            "resource_type": ""
+          }
+        ]
+      },
+      {
+        "access_level": "Read",
+        "description": "Grants permission to retrieve the resource tags configured for an organization",
+        "privilege": "DescribeTagsForOrganization",
+        "resource_types": [
+          {
+            "condition_keys": [],
+            "dependent_actions": [
+              "organizations:ListAccounts"
+            ],
+            "resource_type": ""
+          }
+        ]
+      },
+      {
+        "access_level": "Read",
+        "description": "Grants permission to retrieve the onboarding status of the resource tags feature for an account",
+        "privilege": "DescribeTagsOnboardingStatus",
+        "resource_types": [
+          {
+            "condition_keys": [],
+            "dependent_actions": [],
+            "resource_type": ""
+          }
+        ]
+      },
+      {
+        "access_level": "Read",
+        "description": "Grants permission to retrieve the onboarding status of the resource tags feature for an organization",
+        "privilege": "DescribeTagsOnboardingStatusForOrganization",
         "resource_types": [
           {
             "condition_keys": [],
@@ -197863,6 +198540,32 @@
         ]
       },
       {
+        "access_level": "Write",
+        "description": "Grants permission to disable the resource tags feature for an account",
+        "privilege": "DisableTags",
+        "resource_types": [
+          {
+            "condition_keys": [],
+            "dependent_actions": [],
+            "resource_type": ""
+          }
+        ]
+      },
+      {
+        "access_level": "Write",
+        "description": "Grants permission to disable the resource tags feature for an organization",
+        "privilege": "DisableTagsForOrganization",
+        "resource_types": [
+          {
+            "condition_keys": [],
+            "dependent_actions": [
+              "organizations:ListAccounts"
+            ],
+            "resource_type": ""
+          }
+        ]
+      },
+      {
         "access_level": "Permissions management, Write",
         "description": "Grants permission to enable the Organizational View feature",
         "privilege": "EnableHealthServiceAccessForOrganization",
@@ -197874,6 +198577,30 @@
               "organizations:EnableAWSServiceAccess",
               "organizations:ListAccounts"
             ],
+            "resource_type": ""
+          }
+        ]
+      },
+      {
+        "access_level": "Write",
+        "description": "Grants permission to enable the resource tags feature for an account",
+        "privilege": "EnableTags",
+        "resource_types": [
+          {
+            "condition_keys": [],
+            "dependent_actions": [],
+            "resource_type": ""
+          }
+        ]
+      },
+      {
+        "access_level": "Write",
+        "description": "Grants permission to enable the resource tags feature for an organization",
+        "privilege": "EnableTagsForOrganization",
+        "resource_types": [
+          {
+            "condition_keys": [],
+            "dependent_actions": [],
             "resource_type": ""
           }
         ]
@@ -201834,6 +202561,30 @@
             ],
             "dependent_actions": [],
             "resource_type": "policy*"
+          }
+        ]
+      },
+      {
+        "access_level": "Read",
+        "description": "Grants permission to retrieve authorization details for a specific access denied request",
+        "privilege": "GetRequestAuthorizationDetails",
+        "resource_types": [
+          {
+            "condition_keys": [],
+            "dependent_actions": [],
+            "resource_type": ""
+          }
+        ]
+      },
+      {
+        "access_level": "Read",
+        "description": "Grants permission to retrieve a policy evaluated for a specific access denied request",
+        "privilege": "GetRequestAuthorizationPolicy",
+        "resource_types": [
+          {
+            "condition_keys": [],
+            "dependent_actions": [],
+            "resource_type": ""
           }
         ]
       },
@@ -235673,6 +236424,20 @@
       },
       {
         "access_level": "Write",
+        "description": "Grants permission to delete an AWS Lambda durable execution",
+        "privilege": "DeleteDurableExecution",
+        "resource_types": [
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}"
+            ],
+            "dependent_actions": [],
+            "resource_type": "durable execution*"
+          }
+        ]
+      },
+      {
+        "access_level": "Write",
         "description": "Grants permission to delete an AWS Lambda event source mapping",
         "privilege": "DeleteEventSourceMapping",
         "resource_types": [
@@ -236906,6 +237671,20 @@
       },
       {
         "access_level": "Write",
+        "description": "Grants permission to pause an AWS Lambda durable execution",
+        "privilege": "PauseDurableExecution",
+        "resource_types": [
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}"
+            ],
+            "dependent_actions": [],
+            "resource_type": "durable execution*"
+          }
+        ]
+      },
+      {
+        "access_level": "Write",
         "description": "Grants permission to create an AWS Lambda layer",
         "privilege": "PublishLayerVersion",
         "resource_types": [
@@ -237114,6 +237893,20 @@
             ],
             "dependent_actions": [],
             "resource_type": "runtime*"
+          }
+        ]
+      },
+      {
+        "access_level": "Write",
+        "description": "Grants permission to resume a paused AWS Lambda durable execution",
+        "privilege": "ResumeDurableExecution",
+        "resource_types": [
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}"
+            ],
+            "dependent_actions": [],
+            "resource_type": "durable execution*"
           }
         ]
       },
@@ -274469,6 +275262,11 @@
         "type": "ArrayOfString"
       },
       {
+        "condition": "networkmanager:ManagedBy",
+        "description": "Filters access by the service that manages the network scope",
+        "type": "String"
+      },
+      {
         "condition": "networkmanager:cgwArn",
         "description": "Filters access by which customer gateways can be associated or disassociated",
         "type": "ARN"
@@ -274490,7 +275288,7 @@
       },
       {
         "condition": "networkmanager:tgwArn",
-        "description": "Filters access by which transit gateways can be registered, deregistered, or peered",
+        "description": "Filters access by which transit gateways can be registered, deregistered, or peered, or associated with or disassociated from a context store",
         "type": "ARN"
       },
       {
@@ -274548,6 +275346,21 @@
             ],
             "dependent_actions": [],
             "resource_type": "global-network*"
+          }
+        ]
+      },
+      {
+        "access_level": "Write",
+        "description": "Grants permission to associate a transit gateway with a context store",
+        "privilege": "AssociateContextStore",
+        "resource_types": [
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}",
+              "networkmanager:tgwArn"
+            ],
+            "dependent_actions": [],
+            "resource_type": "context-store*"
           }
         ]
       },
@@ -274692,6 +275505,24 @@
         "access_level": "Write",
         "description": "Grants permission to create a new connection",
         "privilege": "CreateConnection",
+        "resource_types": [
+          {
+            "condition_keys": [
+              "aws:RequestTag/${TagKey}",
+              "aws:ResourceTag/${TagKey}",
+              "aws:TagKeys"
+            ],
+            "dependent_actions": [
+              "networkmanager:TagResource"
+            ],
+            "resource_type": "global-network*"
+          }
+        ]
+      },
+      {
+        "access_level": "Write",
+        "description": "Grants permission to create a context store in a global network",
+        "privilege": "CreateContextStore",
         "resource_types": [
           {
             "condition_keys": [
@@ -274973,6 +275804,20 @@
       },
       {
         "access_level": "Write",
+        "description": "Grants permission to delete a context store",
+        "privilege": "DeleteContextStore",
+        "resource_types": [
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}"
+            ],
+            "dependent_actions": [],
+            "resource_type": "context-store*"
+          }
+        ]
+      },
+      {
+        "access_level": "Write",
         "description": "Grants permission to delete a core network",
         "privilege": "DeleteCoreNetwork",
         "resource_types": [
@@ -275163,6 +276008,21 @@
       },
       {
         "access_level": "Write",
+        "description": "Grants permission to disassociate a transit gateway from a context store",
+        "privilege": "DisassociateContextStore",
+        "resource_types": [
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}",
+              "networkmanager:tgwArn"
+            ],
+            "dependent_actions": [],
+            "resource_type": "context-store*"
+          }
+        ]
+      },
+      {
+        "access_level": "Write",
         "description": "Grants permission to disassociate a customer gateway from a device",
         "privilege": "DisassociateCustomerGateway",
         "resource_types": [
@@ -275293,6 +276153,49 @@
             ],
             "dependent_actions": [],
             "resource_type": "global-network*"
+          }
+        ]
+      },
+      {
+        "access_level": "Read",
+        "description": "Grants permission to retrieve a context store",
+        "privilege": "GetContextStore",
+        "resource_types": [
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}"
+            ],
+            "dependent_actions": [],
+            "resource_type": "context-store*"
+          }
+        ]
+      },
+      {
+        "access_level": "Read",
+        "description": "Grants permission to retrieve the association between a context store and a transit gateway",
+        "privilege": "GetContextStoreAssociation",
+        "resource_types": [
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}",
+              "networkmanager:tgwArn"
+            ],
+            "dependent_actions": [],
+            "resource_type": "context-store*"
+          }
+        ]
+      },
+      {
+        "access_level": "Read",
+        "description": "Grants permission to retrieve the current context version of a context store",
+        "privilege": "GetContextVersion",
+        "resource_types": [
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}"
+            ],
+            "dependent_actions": [],
+            "resource_type": "context-store*"
           }
         ]
       },
@@ -275710,6 +276613,62 @@
         ]
       },
       {
+        "access_level": "Read",
+        "description": "Grants permission to list the resource context changes in a context store since a context version",
+        "privilege": "ListContextChanges",
+        "resource_types": [
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}"
+            ],
+            "dependent_actions": [],
+            "resource_type": "context-store*"
+          }
+        ]
+      },
+      {
+        "access_level": "List",
+        "description": "Grants permission to list the transit gateway associations of a context store",
+        "privilege": "ListContextStoreAssociations",
+        "resource_types": [
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}"
+            ],
+            "dependent_actions": [],
+            "resource_type": "context-store*"
+          }
+        ]
+      },
+      {
+        "access_level": "List",
+        "description": "Grants permission to list context stores",
+        "privilege": "ListContextStores",
+        "resource_types": [
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}"
+            ],
+            "dependent_actions": [],
+            "resource_type": "context-store"
+          }
+        ]
+      },
+      {
+        "access_level": "Read",
+        "description": "Grants permission to list the resource contexts in a context store",
+        "privilege": "ListContexts",
+        "resource_types": [
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}"
+            ],
+            "dependent_actions": [],
+            "resource_type": "context-store*"
+          }
+        ]
+      },
+      {
         "access_level": "List",
         "description": "Grants permission to list core network policy versions",
         "privilege": "ListCoreNetworkPolicyVersions",
@@ -275818,6 +276777,13 @@
               "aws:ResourceTag/${TagKey}"
             ],
             "dependent_actions": [],
+            "resource_type": "context-store"
+          },
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}"
+            ],
+            "dependent_actions": [],
             "resource_type": "core-network"
           },
           {
@@ -275840,6 +276806,14 @@
             ],
             "dependent_actions": [],
             "resource_type": "link"
+          },
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}",
+              "networkmanager:ManagedBy"
+            ],
+            "dependent_actions": [],
+            "resource_type": "network-scope"
           },
           {
             "condition_keys": [
@@ -276035,6 +277009,15 @@
               "aws:TagKeys"
             ],
             "dependent_actions": [],
+            "resource_type": "context-store"
+          },
+          {
+            "condition_keys": [
+              "aws:RequestTag/${TagKey}",
+              "aws:ResourceTag/${TagKey}",
+              "aws:TagKeys"
+            ],
+            "dependent_actions": [],
             "resource_type": "core-network"
           },
           {
@@ -276063,6 +277046,16 @@
             ],
             "dependent_actions": [],
             "resource_type": "link"
+          },
+          {
+            "condition_keys": [
+              "aws:RequestTag/${TagKey}",
+              "aws:ResourceTag/${TagKey}",
+              "aws:TagKeys",
+              "networkmanager:ManagedBy"
+            ],
+            "dependent_actions": [],
+            "resource_type": "network-scope"
           },
           {
             "condition_keys": [
@@ -276119,6 +277112,14 @@
               "aws:TagKeys"
             ],
             "dependent_actions": [],
+            "resource_type": "context-store"
+          },
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}",
+              "aws:TagKeys"
+            ],
+            "dependent_actions": [],
             "resource_type": "core-network"
           },
           {
@@ -276144,6 +277145,15 @@
             ],
             "dependent_actions": [],
             "resource_type": "link"
+          },
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}",
+              "aws:TagKeys",
+              "networkmanager:ManagedBy"
+            ],
+            "dependent_actions": [],
+            "resource_type": "network-scope"
           },
           {
             "condition_keys": [
@@ -276195,6 +277205,20 @@
             ],
             "dependent_actions": [],
             "resource_type": "global-network*"
+          }
+        ]
+      },
+      {
+        "access_level": "Write",
+        "description": "Grants permission to update a context store",
+        "privilege": "UpdateContextStore",
+        "resource_types": [
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}"
+            ],
+            "dependent_actions": [],
+            "resource_type": "context-store*"
           }
         ]
       },
@@ -276361,6 +277385,13 @@
         "resource": "connection"
       },
       {
+        "arn": "arn:${Partition}:networkmanager::${Account}:context-store/${ResourceId}",
+        "condition_keys": [
+          "aws:ResourceTag/${TagKey}"
+        ],
+        "resource": "context-store"
+      },
+      {
         "arn": "arn:${Partition}:networkmanager::${Account}:core-network/${ResourceId}",
         "condition_keys": [
           "aws:ResourceTag/${TagKey}"
@@ -276387,6 +277418,14 @@
           "aws:ResourceTag/${TagKey}"
         ],
         "resource": "link"
+      },
+      {
+        "arn": "arn:${Partition}:networkmanager:${Region}:${Account}:network-scope/${ResourceId}",
+        "condition_keys": [
+          "aws:ResourceTag/${TagKey}",
+          "networkmanager:ManagedBy"
+        ],
+        "resource": "network-scope"
       },
       {
         "arn": "arn:${Partition}:networkmanager::${Account}:peering/${ResourceId}",
@@ -333116,6 +334155,24 @@
       },
       {
         "access_level": "Write",
+        "description": "Grants permission to create a core network endpoint",
+        "privilege": "CreateCoreNetworkEndpoint",
+        "resource_types": [
+          {
+            "condition_keys": [
+              "aws:RequestTag/${TagKey}",
+              "aws:ResourceTag/${TagKey}",
+              "aws:TagKeys"
+            ],
+            "dependent_actions": [
+              "route53globalresolver:TagResource"
+            ],
+            "resource_type": "core-network-endpoint*"
+          }
+        ]
+      },
+      {
+        "access_level": "Write",
         "description": "Grants permission to create a dns view",
         "privilege": "CreateDNSView",
         "resource_types": [
@@ -333214,6 +334271,20 @@
             ],
             "dependent_actions": [],
             "resource_type": "access-token*"
+          }
+        ]
+      },
+      {
+        "access_level": "Write",
+        "description": "Grants permission to delete a core network endpoint",
+        "privilege": "DeleteCoreNetworkEndpoint",
+        "resource_types": [
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}"
+            ],
+            "dependent_actions": [],
+            "resource_type": "core-network-endpoint*"
           }
         ]
       },
@@ -333341,6 +334412,20 @@
       },
       {
         "access_level": "Read",
+        "description": "Grants permission to get a core network endpoint",
+        "privilege": "GetCoreNetworkEndpoint",
+        "resource_types": [
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}"
+            ],
+            "dependent_actions": [],
+            "resource_type": "core-network-endpoint*"
+          }
+        ]
+      },
+      {
+        "access_level": "Read",
         "description": "Grants permission to get a dns view",
         "privilege": "GetDNSView",
         "resource_types": [
@@ -333457,6 +334542,18 @@
       },
       {
         "access_level": "List",
+        "description": "Grants permission to list core network endpoints",
+        "privilege": "ListCoreNetworkEndpoints",
+        "resource_types": [
+          {
+            "condition_keys": [],
+            "dependent_actions": [],
+            "resource_type": ""
+          }
+        ]
+      },
+      {
+        "access_level": "List",
         "description": "Grants permission to list dns views",
         "privilege": "ListDNSViews",
         "resource_types": [
@@ -333544,6 +334641,18 @@
         ]
       },
       {
+        "access_level": "List",
+        "description": "Grants permission to list shared dns views",
+        "privilege": "ListSharedDNSViews",
+        "resource_types": [
+          {
+            "condition_keys": [],
+            "dependent_actions": [],
+            "resource_type": ""
+          }
+        ]
+      },
+      {
         "access_level": "Write",
         "description": "Grants permission to list tags for a resource",
         "privilege": "ListTagsForResource",
@@ -333561,6 +334670,13 @@
             ],
             "dependent_actions": [],
             "resource_type": "access-token"
+          },
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}"
+            ],
+            "dependent_actions": [],
+            "resource_type": "core-network-endpoint"
           },
           {
             "condition_keys": [
@@ -333607,6 +334723,15 @@
             ],
             "dependent_actions": [],
             "resource_type": "access-token"
+          },
+          {
+            "condition_keys": [
+              "aws:RequestTag/${TagKey}",
+              "aws:ResourceTag/${TagKey}",
+              "aws:TagKeys"
+            ],
+            "dependent_actions": [],
+            "resource_type": "core-network-endpoint"
           },
           {
             "condition_keys": [
@@ -333664,6 +334789,14 @@
               "aws:TagKeys"
             ],
             "dependent_actions": [],
+            "resource_type": "core-network-endpoint"
+          },
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}",
+              "aws:TagKeys"
+            ],
+            "dependent_actions": [],
             "resource_type": "dns-view"
           },
           {
@@ -333709,6 +334842,20 @@
             ],
             "dependent_actions": [],
             "resource_type": "access-token*"
+          }
+        ]
+      },
+      {
+        "access_level": "Write",
+        "description": "Grants permission to update a core network endpoint",
+        "privilege": "UpdateCoreNetworkEndpoint",
+        "resource_types": [
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}"
+            ],
+            "dependent_actions": [],
+            "resource_type": "core-network-endpoint*"
           }
         ]
       },
@@ -333809,6 +334956,13 @@
         "resource": "access-token"
       },
       {
+        "arn": "arn:${Partition}:route53globalresolver::${Account}:core-network-endpoint/${Id}",
+        "condition_keys": [
+          "aws:ResourceTag/${TagKey}"
+        ],
+        "resource": "core-network-endpoint"
+      },
+      {
         "arn": "arn:${Partition}:route53globalresolver::${Account}:dns-view/${Id}",
         "condition_keys": [
           "aws:ResourceTag/${TagKey}"
@@ -333830,7 +334984,7 @@
         "resource": "global-resolver"
       }
     ],
-    "service_name": "AWS Route53 Global Resolver"
+    "service_name": "AWS Route 53 Global Resolver"
   },
   {
     "conditions": [
