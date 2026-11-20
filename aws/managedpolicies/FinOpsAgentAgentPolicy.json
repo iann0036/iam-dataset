@@ -6,7 +6,7 @@
     "Permissions management"
   ],
   "arn": "arn:aws:iam::aws:policy/FinOpsAgentAgentPolicy",
-  "createdate": "2026-10-02T18:27:07+00:00",
+  "createdate": "2026-11-20T02:07:08+00:00",
   "credentials_exposure": false,
   "data_access": true,
   "deprecated": false,
@@ -145,11 +145,147 @@
           "cost-optimization-hub:ListEnrollmentStatuses",
           "cost-optimization-hub:GetPreferences",
           "billing:GetBillingPreferences",
-          "billing:ListBillingViewSegments"
+          "billing:ListBillingViewSegments",
+          "ce:ListCostCategoryResourceAssociations",
+          "ce:ListTagsForResource",
+          "bcm-data-exports:GetExport",
+          "bcm-data-exports:ListExports",
+          "cur:DescribeReportDefinitions",
+          "billing:GetBillingData",
+          "billing:GetBillingDetails",
+          "billing:GetBillingNotifications",
+          "billing:GetContractInformation",
+          "billing:GetIAMAccessPreference",
+          "billing:GetSellerOfRecord",
+          "billingconductor:ListTagsForResource",
+          "budgets:DescribeBudgetAction",
+          "budgets:DescribeBudgetActionHistories",
+          "budgets:ListTagsForResource",
+          "invoicing:GetInvoiceCorrection",
+          "invoicing:GetInvoiceEmailDeliveryPreferences",
+          "invoicing:GetInvoicePDF",
+          "invoicing:ListInvoiceCorrections",
+          "invoicing:ListProcurementPortalSuppliers",
+          "invoicing:ListProcurementPortals",
+          "invoicing:ListTagsForResource",
+          "purchase-orders:GetPurchaseOrder",
+          "purchase-orders:ListPurchaseOrderInvoices",
+          "purchase-orders:ListPurchaseOrders",
+          "purchase-orders:ListTagsForResource",
+          "purchase-orders:ViewPurchaseOrders",
+          "freetier:GetAccountActivity",
+          "freetier:GetAccountPlanState",
+          "freetier:GetFreeTierAlertPreference",
+          "freetier:ListAccountActivities",
+          "mapcredits:ListAssociatedPrograms",
+          "mapcredits:ListQuarterCredits",
+          "mapcredits:ListQuarterSpend",
+          "account:GetRegionOptStatus",
+          "account:ListRegions",
+          "consolidatedbilling:GetAccountBillingRole",
+          "consolidatedbilling:ListLinkedAccounts",
+          "organizations:DescribeOrganizationalUnit",
+          "organizations:ListAWSServiceAccessForOrganization",
+          "organizations:ListChildren",
+          "organizations:ListOrganizationalUnitsForParent",
+          "organizations:ListParents",
+          "organizations:ListRoots",
+          "application-autoscaling:DescribeScalableTargets",
+          "application-autoscaling:DescribeScalingPolicies",
+          "ec2:DescribeAddresses",
+          "ec2:DescribeInstanceTypes",
+          "ec2:DescribeNatGateways",
+          "ec2:DescribeReservedInstances",
+          "ec2:DescribeSnapshots",
+          "ec2:DescribeVpcEndpoints",
+          "lambda:GetFunctionConfiguration",
+          "dynamodb:DescribeContinuousBackups",
+          "dynamodb:DescribeTable",
+          "dynamodb:ListTables",
+          "elasticache:DescribeCacheClusters",
+          "elasticache:DescribeReplicationGroups",
+          "elasticache:DescribeReservedCacheNodes",
+          "elasticache:DescribeSnapshots",
+          "memorydb:DescribeClusters",
+          "memorydb:DescribeSnapshots",
+          "rds:DescribeDBClusterSnapshots",
+          "rds:DescribeDBEngineVersions",
+          "rds:DescribeDBSnapshots",
+          "rds:DescribeReservedDBInstances",
+          "redshift:DescribeClusterSnapshots",
+          "redshift:DescribeClusters",
+          "redshift:DescribeReservedNodes",
+          "sagemaker:DescribeEndpoint",
+          "sagemaker:DescribeEndpointConfig",
+          "sagemaker:DescribeNotebookInstance",
+          "sagemaker:ListApps",
+          "sagemaker:ListDomains",
+          "sagemaker:ListEndpointConfigs",
+          "sagemaker:ListEndpoints",
+          "sagemaker:ListNotebookInstances",
+          "workspaces:DescribeWorkspaces",
+          "workspaces:DescribeWorkspacesConnectionStatus",
+          "ram:GetResourceShares",
+          "resource-explorer-2:GetIndex",
+          "resource-explorer-2:ListIndexes",
+          "resource-explorer-2:Search",
+          "tag:GetResources",
+          "logs:DescribeLogGroups",
+          "logs:DescribeSubscriptionFilters"
         ],
         "Effect": "Allow",
         "Resource": "*",
         "Sid": "FinOpsAgentDataAccess"
+      },
+      {
+        "Action": [
+          "s3:GetBucketLocation",
+          "s3:GetBucketVersioning",
+          "s3:GetIntelligentTieringConfiguration",
+          "s3:GetInventoryConfiguration",
+          "s3:GetLifecycleConfiguration",
+          "s3:GetReplicationConfiguration",
+          "s3:GetStorageLensConfiguration",
+          "s3:ListAllMyBuckets"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "StorageResourceReadAccess"
+      },
+      {
+        "Action": [
+          "organizations:ListDelegatedAdministrators"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "organizations:ServicePrincipal": [
+              "finops-agent.amazonaws.com"
+            ]
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "AwsOrgsScopedAccess"
+      },
+      {
+        "Action": [
+          "bcm-data-hub:ListDatasets",
+          "bcm-data-hub:GetDataset",
+          "bcm-data-hub:GetDatasetSchema",
+          "bcm-data-hub:StartQueryExecution",
+          "bcm-data-hub:GetQueryExecution",
+          "bcm-data-hub:GetQueryExecutionResults",
+          "bcm-data-hub:CancelQueryExecution",
+          "bcm-data-hub:ListQueryExecutions"
+        ],
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "BCMDataHubQueryAccess"
       },
       {
         "Action": [
@@ -1509,6 +1645,1074 @@
       "resource_exposure": false
     },
     {
+      "access_level": "List",
+      "action": "ce:ListCostCategoryResourceAssociations",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ce:ListCostCategoryResourceAssociations",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "ce:ListTagsForResource",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ce:ListTagsForResource",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "bcm-data-exports:GetExport",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "bcm-data-exports:GetExport",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "bcm-data-exports:ListExports",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "bcm-data-exports:ListExports",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "cur:DescribeReportDefinitions",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cur:DescribeReportDefinitions",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "billing:GetBillingData",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "billing:GetBillingData",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "billing:GetBillingDetails",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "billing:GetBillingDetails",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "billing:GetBillingNotifications",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "billing:GetBillingNotifications",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "billing:GetContractInformation",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "billing:GetContractInformation",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "billing:GetIAMAccessPreference",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "billing:GetIAMAccessPreference",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "billing:GetSellerOfRecord",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "billing:GetSellerOfRecord",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "billingconductor:ListTagsForResource",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "billingconductor:ListTagsForResource",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "budgets:DescribeBudgetAction",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "budgets:DescribeBudgetAction",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "budgets:DescribeBudgetActionHistories",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "budgets:DescribeBudgetActionHistories",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "budgets:ListTagsForResource",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "budgets:ListTagsForResource",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "invoicing:GetInvoiceCorrection",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "invoicing:GetInvoiceCorrection",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "invoicing:GetInvoiceEmailDeliveryPreferences",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "invoicing:GetInvoiceEmailDeliveryPreferences",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "invoicing:GetInvoicePDF",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "invoicing:GetInvoicePDF",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "invoicing:ListInvoiceCorrections",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "invoicing:ListInvoiceCorrections",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "invoicing:ListProcurementPortalSuppliers",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "invoicing:ListProcurementPortalSuppliers",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "invoicing:ListProcurementPortals",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "invoicing:ListProcurementPortals",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "invoicing:ListTagsForResource",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "invoicing:ListTagsForResource",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "purchase-orders:GetPurchaseOrder",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "purchase-orders:GetPurchaseOrder",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "purchase-orders:ListPurchaseOrderInvoices",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "purchase-orders:ListPurchaseOrderInvoices",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "purchase-orders:ListPurchaseOrders",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "purchase-orders:ListPurchaseOrders",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "purchase-orders:ListTagsForResource",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "purchase-orders:ListTagsForResource",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "purchase-orders:ViewPurchaseOrders",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "purchase-orders:ViewPurchaseOrders",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "freetier:GetAccountActivity",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "freetier:GetAccountActivity",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "freetier:GetAccountPlanState",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "freetier:GetAccountPlanState",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "freetier:GetFreeTierAlertPreference",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "freetier:GetFreeTierAlertPreference",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "freetier:ListAccountActivities",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "freetier:ListAccountActivities",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "mapcredits:ListAssociatedPrograms",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "mapcredits:ListAssociatedPrograms",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "mapcredits:ListQuarterCredits",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "mapcredits:ListQuarterCredits",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "mapcredits:ListQuarterSpend",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "mapcredits:ListQuarterSpend",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "account:GetRegionOptStatus",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "account:GetRegionOptStatus",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "account:ListRegions",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "account:ListRegions",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "consolidatedbilling:GetAccountBillingRole",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "consolidatedbilling:GetAccountBillingRole",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "consolidatedbilling:ListLinkedAccounts",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "consolidatedbilling:ListLinkedAccounts",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "organizations:DescribeOrganizationalUnit",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "organizations:DescribeOrganizationalUnit",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "organizations:ListAWSServiceAccessForOrganization",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "organizations:ListAWSServiceAccessForOrganization",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "organizations:ListChildren",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "organizations:ListChildren",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "organizations:ListOrganizationalUnitsForParent",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "organizations:ListOrganizationalUnitsForParent",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "organizations:ListParents",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "organizations:ListParents",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "organizations:ListRoots",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "organizations:ListRoots",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "application-autoscaling:DescribeScalableTargets",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "application-autoscaling:DescribeScalableTargets",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "application-autoscaling:DescribeScalingPolicies",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "application-autoscaling:DescribeScalingPolicies",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "ec2:DescribeAddresses",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:DescribeAddresses",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "ec2:DescribeInstanceTypes",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:DescribeInstanceTypes",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "ec2:DescribeNatGateways",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:DescribeNatGateways",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "ec2:DescribeReservedInstances",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:DescribeReservedInstances",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "ec2:DescribeSnapshots",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:DescribeSnapshots",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "ec2:DescribeVpcEndpoints",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:DescribeVpcEndpoints",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "lambda:GetFunctionConfiguration",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "lambda:GetFunctionConfiguration",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "dynamodb:DescribeContinuousBackups",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "dynamodb:DescribeContinuousBackups",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "dynamodb:DescribeTable",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "dynamodb:DescribeTable",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "dynamodb:ListTables",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "dynamodb:ListTables",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "elasticache:DescribeCacheClusters",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "elasticache:DescribeCacheClusters",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "elasticache:DescribeReplicationGroups",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "elasticache:DescribeReplicationGroups",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "elasticache:DescribeReservedCacheNodes",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "elasticache:DescribeReservedCacheNodes",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "elasticache:DescribeSnapshots",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "elasticache:DescribeSnapshots",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "memorydb:DescribeClusters",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "memorydb:DescribeClusters",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "memorydb:DescribeSnapshots",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "memorydb:DescribeSnapshots",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "rds:DescribeDBClusterSnapshots",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "rds:DescribeDBClusterSnapshots",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "rds:DescribeDBEngineVersions",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "rds:DescribeDBEngineVersions",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "rds:DescribeDBSnapshots",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "rds:DescribeDBSnapshots",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "rds:DescribeReservedDBInstances",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "rds:DescribeReservedDBInstances",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "redshift:DescribeClusterSnapshots",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "redshift:DescribeClusterSnapshots",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "redshift:DescribeClusters",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "redshift:DescribeClusters",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "redshift:DescribeReservedNodes",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "redshift:DescribeReservedNodes",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "sagemaker:DescribeEndpoint",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sagemaker:DescribeEndpoint",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "sagemaker:DescribeEndpointConfig",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sagemaker:DescribeEndpointConfig",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "sagemaker:DescribeNotebookInstance",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sagemaker:DescribeNotebookInstance",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "sagemaker:ListApps",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sagemaker:ListApps",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "sagemaker:ListDomains",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sagemaker:ListDomains",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "sagemaker:ListEndpointConfigs",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sagemaker:ListEndpointConfigs",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "sagemaker:ListEndpoints",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sagemaker:ListEndpoints",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "sagemaker:ListNotebookInstances",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sagemaker:ListNotebookInstances",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "workspaces:DescribeWorkspaces",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "workspaces:DescribeWorkspaces",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "workspaces:DescribeWorkspacesConnectionStatus",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "workspaces:DescribeWorkspacesConnectionStatus",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "ram:GetResourceShares",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ram:GetResourceShares",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "resource-explorer-2:GetIndex",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "resource-explorer-2:GetIndex",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "resource-explorer-2:ListIndexes",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "resource-explorer-2:ListIndexes",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "resource-explorer-2:Search",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "resource-explorer-2:Search",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "tag:GetResources",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "tag:GetResources",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "logs:DescribeLogGroups",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "logs:DescribeLogGroups",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "logs:DescribeSubscriptionFilters",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "logs:DescribeSubscriptionFilters",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "s3:GetBucketLocation",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3:GetBucketLocation",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "s3:GetBucketVersioning",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3:GetBucketVersioning",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "s3:GetIntelligentTieringConfiguration",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3:GetIntelligentTieringConfiguration",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "s3:GetInventoryConfiguration",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3:GetInventoryConfiguration",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "s3:GetLifecycleConfiguration",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3:GetLifecycleConfiguration",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "s3:GetReplicationConfiguration",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3:GetReplicationConfiguration",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "s3:GetStorageLensConfiguration",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3:GetStorageLensConfiguration",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "s3:ListAllMyBuckets",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3:ListAllMyBuckets",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "organizations:ListDelegatedAdministrators",
+      "condition": {
+        "StringEquals": {
+          "organizations:ServicePrincipal": [
+            "finops-agent.amazonaws.com"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "organizations:ListDelegatedAdministrators",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "bcm-data-hub:ListDatasets",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "bcm-data-hub:ListDatasets",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "bcm-data-hub:GetDataset",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "bcm-data-hub:GetDataset",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "bcm-data-hub:GetDatasetSchema",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "bcm-data-hub:GetDatasetSchema",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "bcm-data-hub:StartQueryExecution",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "bcm-data-hub:StartQueryExecution",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "bcm-data-hub:GetQueryExecution",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "bcm-data-hub:GetQueryExecution",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "bcm-data-hub:GetQueryExecutionResults",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "bcm-data-hub:GetQueryExecutionResults",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "bcm-data-hub:CancelQueryExecution",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "bcm-data-hub:CancelQueryExecution",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "bcm-data-hub:ListQueryExecutions",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "bcm-data-hub:ListQueryExecutions",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
       "access_level": "Write",
       "action": "events:PutRule",
       "condition": {
@@ -1634,6 +2838,6 @@
   "resource_exposure": false,
   "undocumented_actions": false,
   "unknown_actions": [],
-  "updatedate": "2026-10-02T18:27:07+00:00",
-  "version": "v5"
+  "updatedate": "2026-11-20T02:07:08+00:00",
+  "version": "v6"
 }

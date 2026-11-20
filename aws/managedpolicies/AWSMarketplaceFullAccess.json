@@ -7,7 +7,7 @@
     "Permissions management"
   ],
   "arn": "arn:aws:iam::aws:policy/AWSMarketplaceFullAccess",
-  "createdate": "2026-09-11T16:27:07+00:00",
+  "createdate": "2026-11-19T15:37:08+00:00",
   "credentials_exposure": false,
   "data_access": false,
   "deprecated": false,
@@ -39,11 +39,46 @@
           "ec2:StartInstances",
           "ec2:StopInstances",
           "ec2:TerminateInstances",
+          "ec2:DescribeInstanceTypes",
+          "ec2:DescribeNetworkInterfaces",
+          "ec2:DescribeRegions",
+          "servicequotas:ListServiceQuotas",
+          "cloudwatch:GetMetricStatistics",
           "license-manager:ListReceivedLicenses",
           "payments:ListPaymentProgramStatus"
         ],
         "Effect": "Allow",
         "Resource": "*"
+      },
+      {
+        "Action": [
+          "servicequotas:GetServiceQuota"
+        ],
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:servicequotas:*:*:ec2/*",
+          "arn:aws:servicequotas:*:*:vpc/*"
+        ]
+      },
+      {
+        "Action": [
+          "cloudformation:DeleteStack",
+          "cloudformation:DescribeStackEvents"
+        ],
+        "Effect": "Allow",
+        "Resource": "arn:aws:cloudformation:*:*:stack/AgentModeDeployment*/*"
+      },
+      {
+        "Action": [
+          "ec2:RevokeSecurityGroupEgress"
+        ],
+        "Condition": {
+          "StringLike": {
+            "aws:ResourceTag/aws:cloudformation:stack-name": "AgentModeDeployment*"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:ec2:*:*:security-group/*"
       },
       {
         "Action": [
@@ -1676,6 +1711,56 @@
     },
     {
       "access_level": "List",
+      "action": "ec2:DescribeInstanceTypes",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:DescribeInstanceTypes",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "ec2:DescribeNetworkInterfaces",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:DescribeNetworkInterfaces",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "ec2:DescribeRegions",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:DescribeRegions",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "servicequotas:ListServiceQuotas",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "servicequotas:ListServiceQuotas",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "cloudwatch:GetMetricStatistics",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudwatch:GetMetricStatistics",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
       "action": "license-manager:ListReceivedLicenses",
       "condition": null,
       "credentials_exposure": false,
@@ -1691,6 +1776,50 @@
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "payments:ListPaymentProgramStatus",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "servicequotas:GetServiceQuota",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "servicequotas:GetServiceQuota",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "cloudformation:DeleteStack",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudformation:DeleteStack",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "cloudformation:DescribeStackEvents",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudformation:DescribeStackEvents",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "ec2:RevokeSecurityGroupEgress",
+      "condition": {
+        "StringLike": {
+          "aws:ResourceTag/aws:cloudformation:stack-name": "AgentModeDeployment*"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:RevokeSecurityGroupEgress",
       "privesc": false,
       "resource_exposure": false
     },
@@ -1924,6 +2053,6 @@
   "resource_exposure": true,
   "undocumented_actions": false,
   "unknown_actions": [],
-  "updatedate": "2026-09-11T16:27:07+00:00",
-  "version": "v8"
+  "updatedate": "2026-11-19T15:37:08+00:00",
+  "version": "v9"
 }

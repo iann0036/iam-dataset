@@ -7,7 +7,7 @@
     "Permissions management"
   ],
   "arn": "arn:aws:iam::aws:policy/aws-service-role/AWSObservabilityAdminTelemetryEnablementServiceRolePolicy",
-  "createdate": "2026-11-13T21:27:08+00:00",
+  "createdate": "2026-11-19T22:07:08+00:00",
   "credentials_exposure": false,
   "data_access": false,
   "deprecated": false,
@@ -848,6 +848,55 @@
         "Effect": "Allow",
         "Resource": "arn:aws:cloudtrail:*:*:channel/aws-service-channel/application-signals/*",
         "Sid": "CloudWatchApplicationSignalsCloudTrailPermissions"
+      },
+      {
+        "Action": [
+          "network-firewall:DescribeLoggingConfiguration",
+          "network-firewall:UpdateLoggingConfiguration"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:network-firewall:*:*:firewall/*",
+        "Sid": "TelemetryOperationsForNetworkFirewallLoggingConfigurations"
+      },
+      {
+        "Action": [
+          "logs:CreateLogDelivery",
+          "logs:GetLogDelivery",
+          "logs:ListLogDeliveries"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:CalledViaLast": "network-firewall.amazonaws.com",
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "TelemetryOperationsForNetworkFirewallLogs"
+      },
+      {
+        "Action": [
+          "events:PutRule",
+          "events:PutTargets",
+          "events:RemoveTargets",
+          "events:DescribeRule",
+          "events:ListTargetsByRule",
+          "events:TagResource",
+          "events:DeleteRule"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:events:*:*:rule/aws-events-managed-omni-rule",
+        "Sid": "TelemetryOperationsForEventsManagement"
       }
     ],
     "Version": "2012-10-17"
@@ -2345,6 +2394,177 @@
       "effective_action": "cloudtrail:CreateServiceLinkedChannel",
       "privesc": false,
       "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "network-firewall:DescribeLoggingConfiguration",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "network-firewall:DescribeLoggingConfiguration",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "network-firewall:UpdateLoggingConfiguration",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "network-firewall:UpdateLoggingConfiguration",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "logs:CreateLogDelivery",
+      "condition": {
+        "StringEquals": {
+          "aws:CalledViaLast": "network-firewall.amazonaws.com",
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "logs:CreateLogDelivery",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "logs:GetLogDelivery",
+      "condition": {
+        "StringEquals": {
+          "aws:CalledViaLast": "network-firewall.amazonaws.com",
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "logs:GetLogDelivery",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "logs:ListLogDeliveries",
+      "condition": {
+        "StringEquals": {
+          "aws:CalledViaLast": "network-firewall.amazonaws.com",
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "logs:ListLogDeliveries",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "events:PutRule",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "events:PutRule",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "events:PutTargets",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "events:PutTargets",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "events:RemoveTargets",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "events:RemoveTargets",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "events:DescribeRule",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "events:DescribeRule",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "events:ListTargetsByRule",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "events:ListTargetsByRule",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Tagging, Write",
+      "action": "events:TagResource",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "events:TagResource",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "events:DeleteRule",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "events:DeleteRule",
+      "privesc": false,
+      "resource_exposure": false
     }
   ],
   "grantless": false,
@@ -2354,6 +2574,6 @@
   "resource_exposure": true,
   "undocumented_actions": false,
   "unknown_actions": [],
-  "updatedate": "2026-11-13T21:27:08+00:00",
-  "version": "v17"
+  "updatedate": "2026-11-19T22:07:08+00:00",
+  "version": "v18"
 }

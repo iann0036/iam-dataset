@@ -6,9 +6,9 @@
     "Write"
   ],
   "arn": "arn:aws:iam::aws:policy/AWSPartnerCentralOpportunityManagement",
-  "createdate": "2026-11-10T03:17:07+00:00",
+  "createdate": "2026-11-20T03:37:07+00:00",
   "credentials_exposure": false,
-  "data_access": false,
+  "data_access": true,
   "deprecated": false,
   "document": {
     "Statement": [
@@ -58,7 +58,13 @@
           "partnercentral:StopResourceSnapshotJob",
           "partnercentral:SubmitOpportunity",
           "partnercentral:UpdateEngagementContext",
-          "partnercentral:UpdateOpportunity"
+          "partnercentral:UpdateOpportunity",
+          "partnercentral:SearchEngagements",
+          "partnercentral:ListEngagementGroups",
+          "partnercentral:SearchCustomerAccounts",
+          "partnercentral:GetCustomerAccountStatistics",
+          "partnercentral:StartCustomerAccountBulkJob",
+          "partnercentral:ListCustomerAccountBulkJobs"
         ],
         "Condition": {
           "StringEquals": {
@@ -71,6 +77,51 @@
         "Effect": "Allow",
         "Resource": "*",
         "Sid": "OpportunityManagement"
+      },
+      {
+        "Action": [
+          "partnercentral:CreateCustomerAccount",
+          "partnercentral:GetCustomerAccount",
+          "partnercentral:UpdateCustomerAccount",
+          "partnercentral:DeleteCustomerAccount"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "partnercentral:Catalog": [
+              "AWS",
+              "Sandbox"
+            ]
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:partnercentral:*:*:catalog/*/customer-account/*",
+        "Sid": "CustomerAccountManagement"
+      },
+      {
+        "Action": [
+          "partnercentral:GetCustomerAccountBulkJob",
+          "partnercentral:ListCustomerAccountBulkJobResults",
+          "partnercentral:GetCustomerAccountBulkJobReportUrl"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "partnercentral:Catalog": [
+              "AWS",
+              "Sandbox"
+            ]
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:partnercentral:*:*:catalog/*/customer-account-bulk-job/*",
+        "Sid": "CustomerAccountBulkJobAccess"
+      },
+      {
+        "Action": [
+          "s3:PutObject"
+        ],
+        "Effect": "Allow",
+        "Resource": "arn:aws:s3:::aws-partner-central-marketplace-ephemeral-writeonly-files/${aws:PrincipalAccount}/*",
+        "Sid": "PartnerCentralBulkFileUpload"
       },
       {
         "Action": [
@@ -115,6 +166,41 @@
           "arn:aws:partnercentral::*:catalog/AWS/ReportingData/Engagement_V1/Dashboard/*"
         ],
         "Sid": "PartnerDashboardAccess"
+      },
+      {
+        "Action": [
+          "partnercentral:GetPartnerReportingData"
+        ],
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:partnercentral::*:catalog/AWS/ReportingData/Opportunity_V1/Dataset/*",
+          "arn:aws:partnercentral::*:catalog/AWS/ReportingData/Engagement_V1/Dataset/*"
+        ],
+        "Sid": "PartnerReportingDataAccess"
+      },
+      {
+        "Action": [
+          "partnercentral:CreateDataSubscription",
+          "partnercentral:GetDataSubscription",
+          "partnercentral:DeleteDataSubscription",
+          "partnercentral:TagResource",
+          "partnercentral:UntagResource",
+          "partnercentral:ListTagsForResource"
+        ],
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:partnercentral::*:catalog/AWS/ReportingData/Opportunity_V1/DataSubscription/*",
+          "arn:aws:partnercentral::*:catalog/AWS/ReportingData/Engagement_V1/DataSubscription/*"
+        ],
+        "Sid": "PartnerDataSubscriptionAccess"
+      },
+      {
+        "Action": [
+          "partnercentral:ListDataSubscriptions"
+        ],
+        "Effect": "Allow",
+        "Resource": "arn:aws:partnercentral::*:catalog/AWS",
+        "Sid": "PartnerDataSubscriptionList"
       },
       {
         "Action": [
@@ -180,7 +266,8 @@
         "Effect": "Allow",
         "Resource": [
           "arn:aws:partnercentral:*:*:catalog/*/opportunity/*",
-          "arn:aws:partnercentral:*:*:catalog/*/resource-snapshot-job/*"
+          "arn:aws:partnercentral:*:*:catalog/*/resource-snapshot-job/*",
+          "arn:aws:partnercentral:*:*:catalog/*/customer-account/*"
         ],
         "Sid": "TaggingAccess"
       },
@@ -214,6 +301,34 @@
         "Effect": "Allow",
         "Resource": "*",
         "Sid": "PartnerCentralAgentsSessionAccess"
+      },
+      {
+        "Action": [
+          "support:CreateCase",
+          "support:DescribeCases",
+          "support:DescribeCommunications",
+          "support:DescribeAttachment",
+          "support:AddCommunicationToCase",
+          "support:ResolveCase",
+          "support:AddAttachmentsToSet",
+          "support:SearchForCases",
+          "support:DescribeServices",
+          "support:DescribeCreateCaseOptions"
+        ],
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "Support"
+      },
+      {
+        "Action": [
+          "support-console:GetAccountState",
+          "support-console:GetAccountGovCloudEnabled",
+          "support-console:CheckSubscription",
+          "support-console:GetBanner"
+        ],
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "SupportConsole"
       }
     ],
     "Version": "2012-10-17"
@@ -917,6 +1032,16 @@
       "resource_exposure": false
     },
     {
+      "access_level": "Write",
+      "action": "s3:PutObject",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3:PutObject",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
       "access_level": "List",
       "action": "aws-marketplace:ListEntities",
       "condition": null,
@@ -957,6 +1082,46 @@
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "partnercentral:GetPartnerDashboard",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "partnercentral:GetPartnerReportingData",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "partnercentral:GetPartnerReportingData",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Tagging, Write",
+      "action": "partnercentral:TagResource",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "partnercentral:TagResource",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Tagging, Write",
+      "action": "partnercentral:UntagResource",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "partnercentral:UntagResource",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "partnercentral:ListTagsForResource",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "partnercentral:ListTagsForResource",
       "privesc": false,
       "resource_exposure": false
     },
@@ -1222,6 +1387,146 @@
       "effective_action": "partnercentral:UseSession",
       "privesc": false,
       "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "support:CreateCase",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "support:CreateCase",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "support:DescribeCases",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "support:DescribeCases",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "support:DescribeCommunications",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": true,
+      "effective_action": "support:DescribeCommunications",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "support:DescribeAttachment",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": true,
+      "effective_action": "support:DescribeAttachment",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "support:AddCommunicationToCase",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "support:AddCommunicationToCase",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "support:ResolveCase",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "support:ResolveCase",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "support:AddAttachmentsToSet",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "support:AddAttachmentsToSet",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "support:SearchForCases",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "support:SearchForCases",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "support:DescribeServices",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "support:DescribeServices",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "support:DescribeCreateCaseOptions",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "support:DescribeCreateCaseOptions",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "support-console:GetAccountState",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "support-console:GetAccountState",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "support-console:GetAccountGovCloudEnabled",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "support-console:GetAccountGovCloudEnabled",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "support-console:CheckSubscription",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "support-console:CheckSubscription",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "support-console:GetBanner",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "support-console:GetBanner",
+      "privesc": false,
+      "resource_exposure": false
     }
   ],
   "grantless": false,
@@ -1274,8 +1579,167 @@
           ]
         }
       }
+    },
+    {
+      "action": "partnercentral:SearchEngagements",
+      "condition": {
+        "StringEquals": {
+          "partnercentral:Catalog": [
+            "AWS",
+            "Sandbox"
+          ]
+        }
+      }
+    },
+    {
+      "action": "partnercentral:ListEngagementGroups",
+      "condition": {
+        "StringEquals": {
+          "partnercentral:Catalog": [
+            "AWS",
+            "Sandbox"
+          ]
+        }
+      }
+    },
+    {
+      "action": "partnercentral:SearchCustomerAccounts",
+      "condition": {
+        "StringEquals": {
+          "partnercentral:Catalog": [
+            "AWS",
+            "Sandbox"
+          ]
+        }
+      }
+    },
+    {
+      "action": "partnercentral:GetCustomerAccountStatistics",
+      "condition": {
+        "StringEquals": {
+          "partnercentral:Catalog": [
+            "AWS",
+            "Sandbox"
+          ]
+        }
+      }
+    },
+    {
+      "action": "partnercentral:StartCustomerAccountBulkJob",
+      "condition": {
+        "StringEquals": {
+          "partnercentral:Catalog": [
+            "AWS",
+            "Sandbox"
+          ]
+        }
+      }
+    },
+    {
+      "action": "partnercentral:ListCustomerAccountBulkJobs",
+      "condition": {
+        "StringEquals": {
+          "partnercentral:Catalog": [
+            "AWS",
+            "Sandbox"
+          ]
+        }
+      }
+    },
+    {
+      "action": "partnercentral:CreateCustomerAccount",
+      "condition": {
+        "StringEquals": {
+          "partnercentral:Catalog": [
+            "AWS",
+            "Sandbox"
+          ]
+        }
+      }
+    },
+    {
+      "action": "partnercentral:GetCustomerAccount",
+      "condition": {
+        "StringEquals": {
+          "partnercentral:Catalog": [
+            "AWS",
+            "Sandbox"
+          ]
+        }
+      }
+    },
+    {
+      "action": "partnercentral:UpdateCustomerAccount",
+      "condition": {
+        "StringEquals": {
+          "partnercentral:Catalog": [
+            "AWS",
+            "Sandbox"
+          ]
+        }
+      }
+    },
+    {
+      "action": "partnercentral:DeleteCustomerAccount",
+      "condition": {
+        "StringEquals": {
+          "partnercentral:Catalog": [
+            "AWS",
+            "Sandbox"
+          ]
+        }
+      }
+    },
+    {
+      "action": "partnercentral:GetCustomerAccountBulkJob",
+      "condition": {
+        "StringEquals": {
+          "partnercentral:Catalog": [
+            "AWS",
+            "Sandbox"
+          ]
+        }
+      }
+    },
+    {
+      "action": "partnercentral:ListCustomerAccountBulkJobResults",
+      "condition": {
+        "StringEquals": {
+          "partnercentral:Catalog": [
+            "AWS",
+            "Sandbox"
+          ]
+        }
+      }
+    },
+    {
+      "action": "partnercentral:GetCustomerAccountBulkJobReportUrl",
+      "condition": {
+        "StringEquals": {
+          "partnercentral:Catalog": [
+            "AWS",
+            "Sandbox"
+          ]
+        }
+      }
+    },
+    {
+      "action": "partnercentral:CreateDataSubscription",
+      "condition": null
+    },
+    {
+      "action": "partnercentral:GetDataSubscription",
+      "condition": null
+    },
+    {
+      "action": "partnercentral:DeleteDataSubscription",
+      "condition": null
+    },
+    {
+      "action": "partnercentral:ListDataSubscriptions",
+      "condition": null
     }
   ],
-  "updatedate": "2026-11-10T03:17:07+00:00",
-  "version": "v13"
+  "updatedate": "2026-11-20T03:37:07+00:00",
+  "version": "v14"
 }
