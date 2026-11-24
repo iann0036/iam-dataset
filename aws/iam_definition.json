@@ -42508,18 +42508,23 @@
       },
       {
         "condition": "bedrock:ModelArn",
-        "description": "Filters access by the model that a stateful invocation runs, on the authorization whose resource is the project",
+        "description": "Filters access by the model associated with a request authorized against a project",
         "type": "ARN"
       },
       {
         "condition": "bedrock:ProjectArn",
-        "description": "Filters access by the project that a stateful invocation belongs to, on authorizations whose resource is the inference target it runs",
+        "description": "Filters access by the project associated with a request",
         "type": "ARN"
       },
       {
         "condition": "bedrock:PromptRouterArn",
         "description": "Filters access by the specified prompt router",
         "type": "ARN"
+      },
+      {
+        "condition": "bedrock:Provider",
+        "description": "Filters access by the provider of a trusted access program",
+        "type": "String"
       },
       {
         "condition": "bedrock:ServiceTier",
@@ -42530,6 +42535,11 @@
         "condition": "bedrock:ThirdPartyKnowledgeBaseCredentialsSecretArn",
         "description": "Filters access by the secretArn containing the credentials of the third party platform",
         "type": "ARN"
+      },
+      {
+        "condition": "bedrock:TrustedAccessProgramOptIn",
+        "description": "Filters access by the requested trusted access program opt-in preference",
+        "type": "String"
       }
     ],
     "prefix": "bedrock",
@@ -42562,6 +42572,20 @@
             "condition_keys": [],
             "dependent_actions": [],
             "resource_type": "guardrail-profile"
+          }
+        ]
+      },
+      {
+        "access_level": "Write",
+        "description": "Grants permission to archive a Bedrock project",
+        "privilege": "ArchiveProject",
+        "resource_types": [
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}"
+            ],
+            "dependent_actions": [],
+            "resource_type": "project*"
           }
         ]
       },
@@ -42971,7 +42995,9 @@
               "aws:ResourceTag/${TagKey}",
               "aws:TagKeys"
             ],
-            "dependent_actions": [],
+            "dependent_actions": [
+              "iam:PassedToService"
+            ],
             "resource_type": "custom-model*"
           },
           {
@@ -43294,6 +43320,23 @@
       },
       {
         "access_level": "Write",
+        "description": "Grants permission to create a Bedrock project",
+        "privilege": "CreateProject",
+        "resource_types": [
+          {
+            "condition_keys": [
+              "aws:RequestTag/${TagKey}",
+              "aws:ResourceTag/${TagKey}",
+              "aws:TagKeys",
+              "bedrock:DataRetentionMode"
+            ],
+            "dependent_actions": [],
+            "resource_type": "project*"
+          }
+        ]
+      },
+      {
+        "access_level": "Write",
         "description": "Grants permission to create a prompt",
         "privilege": "CreatePrompt",
         "resource_types": [
@@ -43418,6 +43461,18 @@
               "aws:RequestTag/${TagKey}",
               "aws:TagKeys"
             ],
+            "dependent_actions": [],
+            "resource_type": ""
+          }
+        ]
+      },
+      {
+        "access_level": "Write",
+        "description": "Grants permission to delete the data retention storage configuration for an account",
+        "privilege": "DeleteAccountDataRetentionStorage",
+        "resource_types": [
+          {
+            "condition_keys": [],
             "dependent_actions": [],
             "resource_type": ""
           }
@@ -43814,6 +43869,32 @@
       },
       {
         "access_level": "Write",
+        "description": "Grants permission to delete the data retention storage configuration for an organization",
+        "privilege": "DeleteOrganizationDataRetentionStorage",
+        "resource_types": [
+          {
+            "condition_keys": [],
+            "dependent_actions": [],
+            "resource_type": ""
+          }
+        ]
+      },
+      {
+        "access_level": "Write",
+        "description": "Grants permission to delete the data retention storage configuration for a project",
+        "privilege": "DeleteProjectDataRetentionStorage",
+        "resource_types": [
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}"
+            ],
+            "dependent_actions": [],
+            "resource_type": "project*"
+          }
+        ]
+      },
+      {
+        "access_level": "Write",
         "description": "Grants permission to delete a prompt or its version",
         "privilege": "DeletePrompt",
         "resource_types": [
@@ -43999,6 +44080,18 @@
         "access_level": "Read",
         "description": "Returns the account-wide data retention mode for Amazon Bedrock",
         "privilege": "GetAccountDataRetention",
+        "resource_types": [
+          {
+            "condition_keys": [],
+            "dependent_actions": [],
+            "resource_type": ""
+          }
+        ]
+      },
+      {
+        "access_level": "Read",
+        "description": "Grants permission to get the data retention storage configuration for an account",
+        "privilege": "GetAccountDataRetentionStorage",
         "resource_types": [
           {
             "condition_keys": [],
@@ -44530,7 +44623,9 @@
         "privilege": "GetFoundationModel",
         "resource_types": [
           {
-            "condition_keys": [],
+            "condition_keys": [
+              "bedrock:ProjectArn"
+            ],
             "dependent_actions": [],
             "resource_type": "foundation-model*"
           }
@@ -44583,13 +44678,16 @@
         "resource_types": [
           {
             "condition_keys": [
-              "aws:ResourceTag/${TagKey}"
+              "aws:ResourceTag/${TagKey}",
+              "bedrock:ProjectArn"
             ],
             "dependent_actions": [],
             "resource_type": "application-inference-profile*"
           },
           {
-            "condition_keys": [],
+            "condition_keys": [
+              "bedrock:ProjectArn"
+            ],
             "dependent_actions": [],
             "resource_type": "inference-profile*"
           }
@@ -44773,6 +44871,46 @@
       },
       {
         "access_level": "Read",
+        "description": "Grants permission to get the data retention storage configuration for an organization",
+        "privilege": "GetOrganizationDataRetentionStorage",
+        "resource_types": [
+          {
+            "condition_keys": [],
+            "dependent_actions": [],
+            "resource_type": ""
+          }
+        ]
+      },
+      {
+        "access_level": "Read",
+        "description": "Grants permission to get a Bedrock project",
+        "privilege": "GetProject",
+        "resource_types": [
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}"
+            ],
+            "dependent_actions": [],
+            "resource_type": "project*"
+          }
+        ]
+      },
+      {
+        "access_level": "Read",
+        "description": "Grants permission to get the data retention storage configuration for a project",
+        "privilege": "GetProjectDataRetentionStorage",
+        "resource_types": [
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}"
+            ],
+            "dependent_actions": [],
+            "resource_type": "project*"
+          }
+        ]
+      },
+      {
+        "access_level": "Read",
         "description": "Grants permission to retrieve an existing prompt or its version",
         "privilege": "GetPrompt",
         "resource_types": [
@@ -44850,6 +44988,78 @@
             ],
             "dependent_actions": [],
             "resource_type": "session*"
+          }
+        ]
+      },
+      {
+        "access_level": "Read",
+        "description": "Grants permission to get a trusted access program",
+        "privilege": "GetTrustedAccessProgram",
+        "resource_types": [
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}",
+              "bedrock:Provider"
+            ],
+            "dependent_actions": [],
+            "resource_type": "project"
+          },
+          {
+            "condition_keys": [
+              "bedrock:Provider"
+            ],
+            "dependent_actions": [],
+            "resource_type": "trusted-access-program*"
+          }
+        ]
+      },
+      {
+        "access_level": "Read",
+        "description": "Grants permission to get trusted access program enrollment for an account",
+        "privilege": "GetTrustedAccessProgramAccountEnrollment",
+        "resource_types": [
+          {
+            "condition_keys": [
+              "bedrock:Provider"
+            ],
+            "dependent_actions": [],
+            "resource_type": "trusted-access-program*"
+          }
+        ]
+      },
+      {
+        "access_level": "Read",
+        "description": "Grants permission to get trusted access program enrollment for an organization",
+        "privilege": "GetTrustedAccessProgramOrganizationEnrollment",
+        "resource_types": [
+          {
+            "condition_keys": [
+              "bedrock:Provider"
+            ],
+            "dependent_actions": [],
+            "resource_type": "trusted-access-program*"
+          }
+        ]
+      },
+      {
+        "access_level": "Read",
+        "description": "Grants permission to get trusted access program enrollment for a project",
+        "privilege": "GetTrustedAccessProgramProjectEnrollment",
+        "resource_types": [
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}",
+              "bedrock:Provider"
+            ],
+            "dependent_actions": [],
+            "resource_type": "project*"
+          },
+          {
+            "condition_keys": [
+              "bedrock:Provider"
+            ],
+            "dependent_actions": [],
+            "resource_type": "trusted-access-program*"
           }
         ]
       },
@@ -45166,7 +45376,7 @@
               "bedrock:ServiceTier"
             ],
             "dependent_actions": [],
-            "resource_type": "project*"
+            "resource_type": "project"
           },
           {
             "condition_keys": [
@@ -45224,6 +45434,8 @@
               "aws:ResourceTag/${TagKey}",
               "bedrock:GuardrailIdentifier",
               "bedrock:InferenceProfileArn",
+              "bedrock:ModelArn",
+              "bedrock:ProjectArn",
               "bedrock:PromptRouterArn",
               "bedrock:ServiceTier"
             ],
@@ -45234,6 +45446,8 @@
             "condition_keys": [
               "bedrock:GuardrailIdentifier",
               "bedrock:InferenceProfileArn",
+              "bedrock:ModelArn",
+              "bedrock:ProjectArn",
               "bedrock:PromptRouterArn",
               "bedrock:ServiceTier"
             ],
@@ -45245,6 +45459,8 @@
               "aws:ResourceTag/${TagKey}",
               "bedrock:GuardrailIdentifier",
               "bedrock:InferenceProfileArn",
+              "bedrock:ModelArn",
+              "bedrock:ProjectArn",
               "bedrock:PromptRouterArn",
               "bedrock:ServiceTier"
             ],
@@ -45255,6 +45471,8 @@
             "condition_keys": [
               "bedrock:GuardrailIdentifier",
               "bedrock:InferenceProfileArn",
+              "bedrock:ModelArn",
+              "bedrock:ProjectArn",
               "bedrock:PromptRouterArn",
               "bedrock:ServiceTier"
             ],
@@ -45265,6 +45483,8 @@
             "condition_keys": [
               "bedrock:GuardrailIdentifier",
               "bedrock:InferenceProfileArn",
+              "bedrock:ModelArn",
+              "bedrock:ProjectArn",
               "bedrock:PromptRouterArn",
               "bedrock:ServiceTier"
             ],
@@ -45276,6 +45496,8 @@
               "aws:ResourceTag/${TagKey}",
               "bedrock:GuardrailIdentifier",
               "bedrock:InferenceProfileArn",
+              "bedrock:ModelArn",
+              "bedrock:ProjectArn",
               "bedrock:PromptRouterArn",
               "bedrock:ServiceTier"
             ],
@@ -45286,6 +45508,8 @@
             "condition_keys": [
               "bedrock:GuardrailIdentifier",
               "bedrock:InferenceProfileArn",
+              "bedrock:ModelArn",
+              "bedrock:ProjectArn",
               "bedrock:PromptRouterArn",
               "bedrock:ServiceTier"
             ],
@@ -45297,6 +45521,21 @@
               "aws:ResourceTag/${TagKey}",
               "bedrock:GuardrailIdentifier",
               "bedrock:InferenceProfileArn",
+              "bedrock:ModelArn",
+              "bedrock:ProjectArn",
+              "bedrock:PromptRouterArn",
+              "bedrock:ServiceTier"
+            ],
+            "dependent_actions": [],
+            "resource_type": "project"
+          },
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}",
+              "bedrock:GuardrailIdentifier",
+              "bedrock:InferenceProfileArn",
+              "bedrock:ModelArn",
+              "bedrock:ProjectArn",
               "bedrock:PromptRouterArn",
               "bedrock:ServiceTier"
             ],
@@ -45308,6 +45547,8 @@
               "aws:ResourceTag/${TagKey}",
               "bedrock:GuardrailIdentifier",
               "bedrock:InferenceProfileArn",
+              "bedrock:ModelArn",
+              "bedrock:ProjectArn",
               "bedrock:PromptRouterArn",
               "bedrock:ServiceTier"
             ],
@@ -45318,6 +45559,8 @@
             "condition_keys": [
               "bedrock:GuardrailIdentifier",
               "bedrock:InferenceProfileArn",
+              "bedrock:ModelArn",
+              "bedrock:ProjectArn",
               "bedrock:PromptRouterArn",
               "bedrock:ServiceTier"
             ],
@@ -45744,7 +45987,9 @@
         "privilege": "ListFoundationModels",
         "resource_types": [
           {
-            "condition_keys": [],
+            "condition_keys": [
+              "bedrock:ProjectArn"
+            ],
             "dependent_actions": [],
             "resource_type": ""
           }
@@ -45782,9 +46027,19 @@
         "privilege": "ListInferenceProfiles",
         "resource_types": [
           {
-            "condition_keys": [],
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}",
+              "bedrock:ProjectArn"
+            ],
             "dependent_actions": [],
-            "resource_type": ""
+            "resource_type": "application-inference-profile*"
+          },
+          {
+            "condition_keys": [
+              "bedrock:ProjectArn"
+            ],
+            "dependent_actions": [],
+            "resource_type": "inference-profile*"
           }
         ]
       },
@@ -45925,6 +46180,20 @@
             "condition_keys": [],
             "dependent_actions": [],
             "resource_type": ""
+          }
+        ]
+      },
+      {
+        "access_level": "List",
+        "description": "Grants permission to list Bedrock projects",
+        "privilege": "ListProjects",
+        "resource_types": [
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}"
+            ],
+            "dependent_actions": [],
+            "resource_type": "project*"
           }
         ]
       },
@@ -46196,6 +46465,13 @@
               "aws:ResourceTag/${TagKey}"
             ],
             "dependent_actions": [],
+            "resource_type": "project*"
+          },
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}"
+            ],
+            "dependent_actions": [],
             "resource_type": "prompt*"
           },
           {
@@ -46232,6 +46508,25 @@
             ],
             "dependent_actions": [],
             "resource_type": "session*"
+          }
+        ]
+      },
+      {
+        "access_level": "List",
+        "description": "Grants permission to list trusted access programs",
+        "privilege": "ListTrustedAccessPrograms",
+        "resource_types": [
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}"
+            ],
+            "dependent_actions": [],
+            "resource_type": "project"
+          },
+          {
+            "condition_keys": [],
+            "dependent_actions": [],
+            "resource_type": "trusted-access-program*"
           }
         ]
       },
@@ -46291,6 +46586,18 @@
       },
       {
         "access_level": "Write",
+        "description": "Grants permission to set the data retention storage configuration for an account",
+        "privilege": "PutAccountDataRetentionStorage",
+        "resource_types": [
+          {
+            "condition_keys": [],
+            "dependent_actions": [],
+            "resource_type": ""
+          }
+        ]
+      },
+      {
+        "access_level": "Write",
         "description": "Grants permission to set account-level enforced guardrail configuration",
         "privilege": "PutEnforcedGuardrailConfiguration",
         "resource_types": [
@@ -46336,6 +46643,86 @@
             "condition_keys": [],
             "dependent_actions": [],
             "resource_type": ""
+          }
+        ]
+      },
+      {
+        "access_level": "Write",
+        "description": "Grants permission to set the data retention storage configuration for an organization",
+        "privilege": "PutOrganizationDataRetentionStorage",
+        "resource_types": [
+          {
+            "condition_keys": [],
+            "dependent_actions": [],
+            "resource_type": ""
+          }
+        ]
+      },
+      {
+        "access_level": "Write",
+        "description": "Grants permission to set the data retention storage configuration for a project",
+        "privilege": "PutProjectDataRetentionStorage",
+        "resource_types": [
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}"
+            ],
+            "dependent_actions": [],
+            "resource_type": "project*"
+          }
+        ]
+      },
+      {
+        "access_level": "Write",
+        "description": "Grants permission to set trusted access program enrollment preferences for an account",
+        "privilege": "PutTrustedAccessProgramAccountEnrollment",
+        "resource_types": [
+          {
+            "condition_keys": [
+              "bedrock:Provider",
+              "bedrock:TrustedAccessProgramOptIn"
+            ],
+            "dependent_actions": [],
+            "resource_type": "trusted-access-program*"
+          }
+        ]
+      },
+      {
+        "access_level": "Write",
+        "description": "Grants permission to set trusted access program enrollment preferences for an organization",
+        "privilege": "PutTrustedAccessProgramOrganizationEnrollment",
+        "resource_types": [
+          {
+            "condition_keys": [
+              "bedrock:Provider",
+              "bedrock:TrustedAccessProgramOptIn"
+            ],
+            "dependent_actions": [],
+            "resource_type": "trusted-access-program*"
+          }
+        ]
+      },
+      {
+        "access_level": "Write",
+        "description": "Grants permission to set trusted access program enrollment preferences for a project",
+        "privilege": "PutTrustedAccessProgramProjectEnrollment",
+        "resource_types": [
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}",
+              "bedrock:Provider",
+              "bedrock:TrustedAccessProgramOptIn"
+            ],
+            "dependent_actions": [],
+            "resource_type": "project*"
+          },
+          {
+            "condition_keys": [
+              "bedrock:Provider",
+              "bedrock:TrustedAccessProgramOptIn"
+            ],
+            "dependent_actions": [],
+            "resource_type": "trusted-access-program*"
           }
         ]
       },
@@ -46461,6 +46848,56 @@
             ],
             "dependent_actions": [],
             "resource_type": "knowledge-base*"
+          }
+        ]
+      },
+      {
+        "access_level": "Write",
+        "description": "Grants permission to start a trusted access program application for an account",
+        "privilege": "StartTrustedAccessProgramAccountApplication",
+        "resource_types": [
+          {
+            "condition_keys": [
+              "bedrock:Provider"
+            ],
+            "dependent_actions": [],
+            "resource_type": "trusted-access-program*"
+          }
+        ]
+      },
+      {
+        "access_level": "Write",
+        "description": "Grants permission to start a trusted access program application for an organization",
+        "privilege": "StartTrustedAccessProgramOrganizationApplication",
+        "resource_types": [
+          {
+            "condition_keys": [
+              "bedrock:Provider"
+            ],
+            "dependent_actions": [],
+            "resource_type": "trusted-access-program*"
+          }
+        ]
+      },
+      {
+        "access_level": "Write",
+        "description": "Grants permission to start a trusted access program application for a project",
+        "privilege": "StartTrustedAccessProgramProjectApplication",
+        "resource_types": [
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}",
+              "bedrock:Provider"
+            ],
+            "dependent_actions": [],
+            "resource_type": "project*"
+          },
+          {
+            "condition_keys": [
+              "bedrock:Provider"
+            ],
+            "dependent_actions": [],
+            "resource_type": "trusted-access-program*"
           }
         ]
       },
@@ -46806,6 +47243,15 @@
               "aws:TagKeys"
             ],
             "dependent_actions": [],
+            "resource_type": "project"
+          },
+          {
+            "condition_keys": [
+              "aws:RequestTag/${TagKey}",
+              "aws:ResourceTag/${TagKey}",
+              "aws:TagKeys"
+            ],
+            "dependent_actions": [],
             "resource_type": "prompt"
           },
           {
@@ -47067,6 +47513,14 @@
             ],
             "dependent_actions": [],
             "resource_type": "model-invocation-job"
+          },
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}",
+              "aws:TagKeys"
+            ],
+            "dependent_actions": [],
+            "resource_type": "project"
           },
           {
             "condition_keys": [
@@ -47421,6 +47875,21 @@
       },
       {
         "access_level": "Write",
+        "description": "Grants permission to update a Bedrock project",
+        "privilege": "UpdateProject",
+        "resource_types": [
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}",
+              "bedrock:DataRetentionMode"
+            ],
+            "dependent_actions": [],
+            "resource_type": "project*"
+          }
+        ]
+      },
+      {
+        "access_level": "Write",
         "description": "Grants permission to update a prompt",
         "privilege": "UpdatePrompt",
         "resource_types": [
@@ -47501,7 +47970,7 @@
       },
       {
         "access_level": "Permissions management, Write",
-        "description": "Grants permission to configure vended log delivery for a knowledge base",
+        "description": "Grants permission to configure vended log delivery for a knowledge base or project",
         "privilege": "AllowVendedLogDeliveryForResource",
         "resource_types": [
           {
@@ -47510,6 +47979,13 @@
             ],
             "dependent_actions": [],
             "resource_type": "knowledge-base"
+          },
+          {
+            "condition_keys": [
+              "aws:ResourceTag/${TagKey}"
+            ],
+            "dependent_actions": [],
+            "resource_type": "project"
           }
         ]
       },
@@ -47985,6 +48461,11 @@
         "arn": "arn:${Partition}:bedrock::${Account}:system-tool/${ResourceId}",
         "condition_keys": [],
         "resource": "system-tool"
+      },
+      {
+        "arn": "arn:${Partition}:bedrock::aws:trusted-access-program/${ProgramId}",
+        "condition_keys": [],
+        "resource": "trusted-access-program"
       }
     ],
     "service_name": "Amazon Bedrock"
@@ -172879,7 +173360,7 @@
           {
             "condition_keys": [],
             "dependent_actions": [],
-            "resource_type": ""
+            "resource_type": "agentspace*"
           }
         ]
       },
@@ -172891,7 +173372,7 @@
           {
             "condition_keys": [],
             "dependent_actions": [],
-            "resource_type": ""
+            "resource_type": "agentspace*"
           }
         ]
       },
@@ -172903,7 +173384,7 @@
           {
             "condition_keys": [],
             "dependent_actions": [],
-            "resource_type": ""
+            "resource_type": "agentspace*"
           }
         ]
       },
@@ -172927,7 +173408,7 @@
           {
             "condition_keys": [],
             "dependent_actions": [],
-            "resource_type": ""
+            "resource_type": "agentspace*"
           }
         ]
       },
@@ -172939,7 +173420,12 @@
           {
             "condition_keys": [],
             "dependent_actions": [],
-            "resource_type": ""
+            "resource_type": "agentspace*"
+          },
+          {
+            "condition_keys": [],
+            "dependent_actions": [],
+            "resource_type": "integration*"
           }
         ]
       },
@@ -172951,7 +173437,7 @@
           {
             "condition_keys": [],
             "dependent_actions": [],
-            "resource_type": ""
+            "resource_type": "agentspace*"
           }
         ]
       },
@@ -172963,7 +173449,7 @@
           {
             "condition_keys": [],
             "dependent_actions": [],
-            "resource_type": ""
+            "resource_type": "agentspace*"
           }
         ]
       },
@@ -172987,7 +173473,7 @@
           {
             "condition_keys": [],
             "dependent_actions": [],
-            "resource_type": ""
+            "resource_type": "agentspace*"
           }
         ]
       },
@@ -172999,7 +173485,7 @@
           {
             "condition_keys": [],
             "dependent_actions": [],
-            "resource_type": ""
+            "resource_type": "agentspace*"
           }
         ]
       },
@@ -173011,7 +173497,7 @@
           {
             "condition_keys": [],
             "dependent_actions": [],
-            "resource_type": ""
+            "resource_type": "agentspace*"
           }
         ]
       },
@@ -173023,7 +173509,7 @@
           {
             "condition_keys": [],
             "dependent_actions": [],
-            "resource_type": ""
+            "resource_type": "agentspace*"
           }
         ]
       },
@@ -173035,7 +173521,7 @@
           {
             "condition_keys": [],
             "dependent_actions": [],
-            "resource_type": ""
+            "resource_type": "agentspace*"
           }
         ]
       },
@@ -173047,7 +173533,7 @@
           {
             "condition_keys": [],
             "dependent_actions": [],
-            "resource_type": ""
+            "resource_type": "automation*"
           }
         ]
       },
@@ -173059,7 +173545,7 @@
           {
             "condition_keys": [],
             "dependent_actions": [],
-            "resource_type": ""
+            "resource_type": "connection*"
           }
         ]
       },
@@ -173071,7 +173557,7 @@
           {
             "condition_keys": [],
             "dependent_actions": [],
-            "resource_type": ""
+            "resource_type": "document*"
           }
         ]
       },
@@ -173083,7 +173569,7 @@
           {
             "condition_keys": [],
             "dependent_actions": [],
-            "resource_type": ""
+            "resource_type": "integration*"
           }
         ]
       },
@@ -173095,7 +173581,7 @@
           {
             "condition_keys": [],
             "dependent_actions": [],
-            "resource_type": ""
+            "resource_type": "agentspace*"
           }
         ]
       },
@@ -173107,7 +173593,7 @@
           {
             "condition_keys": [],
             "dependent_actions": [],
-            "resource_type": ""
+            "resource_type": "agentspace*"
           }
         ]
       },
@@ -173119,7 +173605,7 @@
           {
             "condition_keys": [],
             "dependent_actions": [],
-            "resource_type": ""
+            "resource_type": "agentspace*"
           }
         ]
       },
@@ -173131,7 +173617,7 @@
           {
             "condition_keys": [],
             "dependent_actions": [],
-            "resource_type": ""
+            "resource_type": "agentspace*"
           }
         ]
       },
@@ -173143,7 +173629,7 @@
           {
             "condition_keys": [],
             "dependent_actions": [],
-            "resource_type": ""
+            "resource_type": "automation*"
           }
         ]
       },
@@ -173155,7 +173641,7 @@
           {
             "condition_keys": [],
             "dependent_actions": [],
-            "resource_type": ""
+            "resource_type": "connection*"
           }
         ]
       },
@@ -173167,7 +173653,7 @@
           {
             "condition_keys": [],
             "dependent_actions": [],
-            "resource_type": ""
+            "resource_type": "document*"
           }
         ]
       },
@@ -173179,7 +173665,7 @@
           {
             "condition_keys": [],
             "dependent_actions": [],
-            "resource_type": ""
+            "resource_type": "document*"
           }
         ]
       },
@@ -173191,7 +173677,7 @@
           {
             "condition_keys": [],
             "dependent_actions": [],
-            "resource_type": ""
+            "resource_type": "integration*"
           }
         ]
       },
@@ -173215,7 +173701,7 @@
           {
             "condition_keys": [],
             "dependent_actions": [],
-            "resource_type": ""
+            "resource_type": "agentspace*"
           }
         ]
       },
@@ -173227,7 +173713,7 @@
           {
             "condition_keys": [],
             "dependent_actions": [],
-            "resource_type": ""
+            "resource_type": "agentspace*"
           }
         ]
       },
@@ -173251,7 +173737,7 @@
           {
             "condition_keys": [],
             "dependent_actions": [],
-            "resource_type": ""
+            "resource_type": "agentspace*"
           }
         ]
       },
@@ -173263,7 +173749,7 @@
           {
             "condition_keys": [],
             "dependent_actions": [],
-            "resource_type": ""
+            "resource_type": "agentspace*"
           }
         ]
       },
@@ -173275,7 +173761,7 @@
           {
             "condition_keys": [],
             "dependent_actions": [],
-            "resource_type": ""
+            "resource_type": "agentspace*"
           }
         ]
       },
@@ -173287,7 +173773,7 @@
           {
             "condition_keys": [],
             "dependent_actions": [],
-            "resource_type": ""
+            "resource_type": "agentspace*"
           }
         ]
       },
@@ -173299,7 +173785,7 @@
           {
             "condition_keys": [],
             "dependent_actions": [],
-            "resource_type": ""
+            "resource_type": "agentspace*"
           }
         ]
       },
@@ -173323,7 +173809,7 @@
           {
             "condition_keys": [],
             "dependent_actions": [],
-            "resource_type": ""
+            "resource_type": "agentspace*"
           }
         ]
       },
@@ -173335,7 +173821,7 @@
           {
             "condition_keys": [],
             "dependent_actions": [],
-            "resource_type": ""
+            "resource_type": "agentspace*"
           }
         ]
       },
@@ -173347,7 +173833,7 @@
           {
             "condition_keys": [],
             "dependent_actions": [],
-            "resource_type": ""
+            "resource_type": "agentspace*"
           }
         ]
       },
@@ -173359,7 +173845,7 @@
           {
             "condition_keys": [],
             "dependent_actions": [],
-            "resource_type": ""
+            "resource_type": "agentspace*"
           }
         ]
       },
@@ -173371,7 +173857,7 @@
           {
             "condition_keys": [],
             "dependent_actions": [],
-            "resource_type": ""
+            "resource_type": "document*"
           }
         ]
       },
@@ -173383,7 +173869,7 @@
           {
             "condition_keys": [],
             "dependent_actions": [],
-            "resource_type": ""
+            "resource_type": "agentspace*"
           }
         ]
       },
@@ -173395,7 +173881,7 @@
           {
             "condition_keys": [],
             "dependent_actions": [],
-            "resource_type": ""
+            "resource_type": "agentspace*"
           }
         ]
       },
@@ -173407,7 +173893,7 @@
           {
             "condition_keys": [],
             "dependent_actions": [],
-            "resource_type": ""
+            "resource_type": "automation*"
           }
         ]
       },
@@ -173419,7 +173905,7 @@
           {
             "condition_keys": [],
             "dependent_actions": [],
-            "resource_type": ""
+            "resource_type": "connection*"
           }
         ]
       },
@@ -173431,7 +173917,7 @@
           {
             "condition_keys": [],
             "dependent_actions": [],
-            "resource_type": ""
+            "resource_type": "document*"
           }
         ]
       },
@@ -173448,7 +173934,33 @@
         ]
       }
     ],
-    "resources": [],
+    "resources": [
+      {
+        "arn": "arn:${Partition}:finops-agent:${Region}:${Account}:agentspace/${AgentSpaceId}",
+        "condition_keys": [],
+        "resource": "agentspace"
+      },
+      {
+        "arn": "arn:${Partition}:finops-agent:${Region}:${Account}:agentspace/${AgentSpaceId}/automation/${AutomationId}",
+        "condition_keys": [],
+        "resource": "automation"
+      },
+      {
+        "arn": "arn:${Partition}:finops-agent:${Region}:${Account}:agentspace/${AgentSpaceId}/connection/${ConnectionId}",
+        "condition_keys": [],
+        "resource": "connection"
+      },
+      {
+        "arn": "arn:${Partition}:finops-agent:${Region}:${Account}:agentspace/${AgentSpaceId}/document/${DocumentId}",
+        "condition_keys": [],
+        "resource": "document"
+      },
+      {
+        "arn": "arn:${Partition}:finops-agent:${Region}:${Account}:integration/${IntegrationId}",
+        "condition_keys": [],
+        "resource": "integration"
+      }
+    ],
     "service_name": "AWS FinOps Agent"
   },
   {
@@ -180304,7 +180816,9 @@
               "aws:ResourceTag/${TagKey}",
               "aws:TagKeys"
             ],
-            "dependent_actions": [],
+            "dependent_actions": [
+              "fsx:TagResource"
+            ],
             "resource_type": "cluster-peer*"
           },
           {
@@ -180460,7 +180974,9 @@
               "aws:ResourceTag/${TagKey}",
               "aws:TagKeys"
             ],
-            "dependent_actions": [],
+            "dependent_actions": [
+              "fsx:TagResource"
+            ],
             "resource_type": "file-system"
           },
           {
@@ -180494,7 +181010,9 @@
               "aws:ResourceTag/${TagKey}",
               "aws:TagKeys"
             ],
-            "dependent_actions": [],
+            "dependent_actions": [
+              "fsx:TagResource"
+            ],
             "resource_type": "snapmirror-policy"
           },
           {
@@ -180556,7 +181074,9 @@
               "aws:ResourceTag/${TagKey}",
               "aws:TagKeys"
             ],
-            "dependent_actions": [],
+            "dependent_actions": [
+              "fsx:TagResource"
+            ],
             "resource_type": "file-system"
           },
           {
@@ -180617,7 +181137,9 @@
               "aws:ResourceTag/${TagKey}",
               "aws:TagKeys"
             ],
-            "dependent_actions": [],
+            "dependent_actions": [
+              "fsx:TagResource"
+            ],
             "resource_type": "storage-virtual-machine*"
           },
           {
@@ -296106,7 +296628,10 @@
         "resource_types": [
           {
             "condition_keys": [],
-            "dependent_actions": [],
+            "dependent_actions": [
+              "payments:GetPaymentStatus",
+              "aws-portal:ViewBilling"
+            ],
             "resource_type": ""
           }
         ]
@@ -296173,7 +296698,9 @@
         "resource_types": [
           {
             "condition_keys": [],
-            "dependent_actions": [],
+            "dependent_actions": [
+              "aws-portal:ViewPaymentMethods"
+            ],
             "resource_type": ""
           }
         ]

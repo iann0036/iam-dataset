@@ -7,7 +7,7 @@
     "Permissions management"
   ],
   "arn": "arn:aws:iam::aws:policy/AmazonLaunchWizardFullAccessV2",
-  "createdate": "2026-10-20T16:37:07+00:00",
+  "createdate": "2026-11-23T20:37:07+00:00",
   "credentials_exposure": true,
   "data_access": true,
   "deprecated": false,
@@ -187,7 +187,9 @@
           "arn:aws:ec2:*:*:volume/*",
           "arn:aws:ec2:*:*:key-pair/*",
           "arn:aws:ec2:*:*:placement-group/*",
-          "arn:aws:ec2:*:*:launch-template/*"
+          "arn:aws:ec2:*:*:launch-template/*",
+          "arn:aws:ec2:*:*:capacity-reservation/*",
+          "arn:aws:resource-groups:*:*:group/*"
         ],
         "Sid": "Ec2RunInstancesActions0"
       },
@@ -225,7 +227,8 @@
           "arn:aws:ec2:*:*:vpc/*",
           "arn:aws:ec2:*:*:subnet/*",
           "arn:aws:ec2:*:*:elastic-ip/*",
-          "arn:aws:ec2:*:*:route-table/*"
+          "arn:aws:ec2:*:*:route-table/*",
+          "arn:aws:ec2:*:*:launch-template/*"
         ],
         "Sid": "Ec2TagActions0"
       },
@@ -489,6 +492,8 @@
           "ec2:DescribeStaleSecurityGroups",
           "ec2:DescribeInstanceTypeOfferings",
           "ec2:DescribePlacementGroups",
+          "ec2:DescribeCapacityReservations",
+          "ec2:GetGroupsForCapacityReservation",
           "iam:GetRole",
           "iam:GetRolePolicy",
           "iam:GetUser",
@@ -622,7 +627,9 @@
       {
         "Action": [
           "elasticfilesystem:UntagResource",
-          "elasticfilesystem:TagResource"
+          "elasticfilesystem:TagResource",
+          "elasticfilesystem:DeleteReplicationConfiguration",
+          "elasticfilesystem:DescribeReplicationConfigurations"
         ],
         "Condition": {
           "ForAnyValue:StringEquals": {
@@ -5626,6 +5633,26 @@
       "resource_exposure": false
     },
     {
+      "access_level": "List",
+      "action": "ec2:DescribeCapacityReservations",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:DescribeCapacityReservations",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "ec2:GetGroupsForCapacityReservation",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ec2:GetGroupsForCapacityReservation",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
       "access_level": "Read",
       "action": "iam:GetRole",
       "condition": null,
@@ -6798,6 +6825,34 @@
       "resource_exposure": false
     },
     {
+      "access_level": "Write",
+      "action": "elasticfilesystem:DeleteReplicationConfiguration",
+      "condition": {
+        "ForAnyValue:StringEquals": {
+          "aws:CalledVia": "launchwizard.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "elasticfilesystem:DeleteReplicationConfiguration",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "elasticfilesystem:DescribeReplicationConfigurations",
+      "condition": {
+        "ForAnyValue:StringEquals": {
+          "aws:CalledVia": "launchwizard.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "elasticfilesystem:DescribeReplicationConfigurations",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
       "access_level": "Read",
       "action": "s3:GetObject",
       "condition": null,
@@ -7962,5 +8017,5 @@
   "undocumented_actions": false,
   "unknown_actions": [],
   "updatedate": "2026-10-20T16:37:07+00:00",
-  "version": "v3"
+  "version": "v4"
 }
