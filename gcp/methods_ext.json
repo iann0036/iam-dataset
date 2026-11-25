@@ -257947,23 +257947,18 @@
         "httpMethod": "DELETE",
         "method": "mcp",
         "parameters": {
-          "collectionsId": {
-            "location": "path",
-            "required": true,
-            "type": "string"
-          },
-          "contentType": {
+          "httpBody.contentType": {
             "description": "The HTTP Content-Type header value specifying the content type of the body.",
             "location": "query",
             "type": "string"
           },
-          "data": {
+          "httpBody.data": {
             "description": "The HTTP request/response body as raw binary.",
             "format": "byte",
             "location": "query",
             "type": "string"
           },
-          "extensions": {
+          "httpBody.extensions": {
             "additionalProperties": {
               "description": "Properties of the object. Contains field @type with type URL.",
               "type": "any"
@@ -257973,13 +257968,10 @@
             "repeated": true,
             "type": "object"
           },
-          "locationsId": {
+          "name": {
+            "description": "Required. The DataConnector the MCP request is for. Format: `projects/{project}/locations/{location}/collections/{collection}/dataConnector`",
             "location": "path",
-            "required": true,
-            "type": "string"
-          },
-          "projectsId": {
-            "location": "path",
+            "pattern": "^projects/[^/]+/locations/[^/]+/collections/[^/]+/dataConnector$",
             "required": true,
             "type": "string"
           }
@@ -261593,6 +261585,27 @@
           "v1alpha"
         ]
       },
+      "discoveryengine.projects.locations.collections.engines.assistants.agents.transferAgentOwner": {
+        "apiPaths": [],
+        "description": "Transfers ownership of an Agent to a new owner. The new owner becomes the agent's only owner. The previous owner loses access unless `previous_owner_disposition` keeps them as a user. The previous owner's schedules and event triggers on the agent are disabled (their configuration stays on the agent), and the new owner is notified. Requires the `discoveryengine.agents.manage` permission on the agent. Private agents cannot be transferred. A failed call can be retried with the same request; the retry completes the transfer.",
+        "flatPath": "{_version}/projects/{projectsId}/locations/{locationsId}/collections/{collectionsId}/engines/{enginesId}/assistants/{assistantsId}/agents/{agentsId}:transferAgentOwner",
+        "httpMethod": "POST",
+        "method": "transferAgentOwner",
+        "parameters": {
+          "name": {
+            "description": "Required. The name of the Agent whose ownership is being transferred. Format: `projects/{project}/locations/{location}/collections/{collection}/engines/{engine}/assistants/{assistant}/agents/{agent}`",
+            "location": "path",
+            "pattern": "^projects/[^/]+/locations/[^/]+/collections/[^/]+/engines/[^/]+/assistants/[^/]+/agents/[^/]+$",
+            "required": true,
+            "type": "string"
+          }
+        },
+        "resourceType": "agents",
+        "resourceTypePath": "//projects/locations/collections/engines/assistants",
+        "versions": [
+          "v1alpha"
+        ]
+      },
       "discoveryengine.projects.locations.collections.engines.assistants.cannedQueries.create": {
         "apiPaths": [],
         "description": "Creates a CannedQuery.",
@@ -263421,6 +263434,27 @@
           "v1alpha",
           "v1beta",
           "v1"
+        ]
+      },
+      "discoveryengine.projects.locations.collections.engines.sessions.validateUserAuthorization": {
+        "apiPaths": [],
+        "description": "Validates an A2A 3-legged-OAuth (3LO) downstream-auth consent flow after the user returns from the third-party consent screen, and finalizes the downstream credential with Auth Manager.",
+        "flatPath": "{_version}/projects/{projectsId}/locations/{locationsId}/collections/{collectionsId}/engines/{enginesId}/sessions/{sessionsId}:validateUserAuthorization",
+        "httpMethod": "POST",
+        "method": "validateUserAuthorization",
+        "parameters": {
+          "session": {
+            "description": "Required. The resource name of the assist Session that initiated the consent flow. Used together with `downstream_connector` to recover the server-stored `consent_nonce`. Format: `projects/{project}/locations/{location}/collections/{collection}/engines/{engine}/sessions/{session}`",
+            "location": "path",
+            "pattern": "^projects/[^/]+/locations/[^/]+/collections/[^/]+/engines/[^/]+/sessions/[^/]+$",
+            "required": true,
+            "type": "string"
+          }
+        },
+        "resourceType": "sessions",
+        "resourceTypePath": "//projects/locations/collections/engines",
+        "versions": [
+          "v1alpha"
         ]
       },
       "discoveryengine.projects.locations.collections.engines.setIamPolicy": {
@@ -268532,85 +268566,6 @@
           "v1alpha",
           "v1beta",
           "v1"
-        ]
-      },
-      "discoveryengine.projects.locations.userStores.userAvailabilities.batchUpdate": {
-        "apiPaths": [],
-        "description": "Updates multiple UserAvailabilitys.",
-        "flatPath": "{_version}/projects/{projectsId}/locations/{locationsId}/userStores/{userStoresId}/userAvailabilities:batchUpdate",
-        "httpMethod": "POST",
-        "method": "batchUpdate",
-        "parameters": {
-          "parent": {
-            "description": "Required. The parent UserStore resource name, format: `projects/{project}/locations/{location}/userStores/{user_store_id}`.",
-            "location": "path",
-            "pattern": "^projects/[^/]+/locations/[^/]+/userStores/[^/]+$",
-            "required": true,
-            "type": "string"
-          }
-        },
-        "resourceType": "userAvailabilities",
-        "resourceTypePath": "//projects/locations/userStores",
-        "versions": [
-          "v1alpha"
-        ]
-      },
-      "discoveryengine.projects.locations.userStores.userAvailabilities.list": {
-        "apiPaths": [],
-        "description": "Lists the UserAvailabilitys.",
-        "flatPath": "{_version}/projects/{projectsId}/locations/{locationsId}/userStores/{userStoresId}/userAvailabilities",
-        "httpMethod": "GET",
-        "method": "list",
-        "parameters": {
-          "filter": {
-            "description": "Optional. Filter for the list request. Supported fields (only `user_principal` is supported for now): * `user_principal` (will be normalized for matching) Examples: * `user_principal = \"user1@example.com\"` to list user availability for `user1@example.com`.",
-            "location": "query",
-            "type": "string"
-          },
-          "pageSize": {
-            "description": "Optional. Requested page size. Server may return fewer items than requested. If unspecified, defaults to 100. The maximum value is 1000; values above 1000 will be coerced to 1000. If this field is negative, an INVALID_ARGUMENT error is returned.",
-            "format": "int32",
-            "location": "query",
-            "type": "integer"
-          },
-          "pageToken": {
-            "description": "Optional. A page token, received from a previous `ListUserAvailabilities` call. Provide this to retrieve the subsequent page. When paginating, all other parameters provided to `ListUserAvailabilities` must match the call that provided the page token.",
-            "location": "query",
-            "type": "string"
-          },
-          "parent": {
-            "description": "Required. The parent UserStore resource name, format: `projects/{project}/locations/{location}/userStores/{user_store_id}`.",
-            "location": "path",
-            "pattern": "^projects/[^/]+/locations/[^/]+/userStores/[^/]+$",
-            "required": true,
-            "type": "string"
-          }
-        },
-        "resourceType": "userAvailabilities",
-        "resourceTypePath": "//projects/locations/userStores",
-        "versions": [
-          "v1alpha"
-        ]
-      },
-      "discoveryengine.projects.locations.userStores.userAvailability.update": {
-        "apiPaths": [],
-        "description": "Updates a UserAvailability.",
-        "flatPath": "{_version}/projects/{projectsId}/locations/{locationsId}/userStores/{userStoresId}/userAvailability:update",
-        "httpMethod": "POST",
-        "method": "update",
-        "parameters": {
-          "parent": {
-            "description": "Optional. The parent UserStore resource name, format: `projects/{project}/locations/{location}/userStores/{user_store_id}`.",
-            "location": "path",
-            "pattern": "^projects/[^/]+/locations/[^/]+/userStores/[^/]+$",
-            "required": true,
-            "type": "string"
-          }
-        },
-        "resourceType": "userAvailability",
-        "resourceTypePath": "//projects/locations/userStores",
-        "versions": [
-          "v1alpha"
         ]
       },
       "discoveryengine.projects.locations.userStores.userLicenses.export": {
