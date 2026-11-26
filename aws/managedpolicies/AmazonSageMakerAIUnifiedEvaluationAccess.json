@@ -1,0 +1,1511 @@
+{
+  "access_levels": [
+    "List",
+    "Read",
+    "Tagging",
+    "Write",
+    "Permissions management"
+  ],
+  "arn": null,
+  "createdate": "2026-11-25T22:47:08+00:00",
+  "credentials_exposure": true,
+  "data_access": true,
+  "deprecated": false,
+  "document": {
+    "Statement": [
+      {
+        "Action": [
+          "s3:GetObject",
+          "s3:PutObject",
+          "s3:ListBucket"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:s3:::*SageMaker*",
+          "arn:aws:s3:::*Sagemaker*",
+          "arn:aws:s3:::*sagemaker*"
+        ],
+        "Sid": "EvaluationDataAccess"
+      },
+      {
+        "Action": [
+          "s3:GetObject",
+          "s3:ListBucket"
+        ],
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:s3:::jumpstart*"
+        ],
+        "Sid": "EvaluationJumpStartArtifactRead"
+      },
+      {
+        "Action": [
+          "logs:CreateLogGroup",
+          "logs:CreateLogStream",
+          "logs:PutLogEvents",
+          "logs:DescribeLogStreams"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:logs:*:*:log-group:/aws/sagemaker/*",
+        "Sid": "EvaluationJobLogs"
+      },
+      {
+        "Action": [
+          "sagemaker:CallMlflowAppApi",
+          "sagemaker:DescribeMlflowApp"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:sagemaker:*:*:mlflow-app/*"
+        ],
+        "Sid": "EvaluationMlflow"
+      },
+      {
+        "Action": [
+          "sagemaker:DescribeHub",
+          "sagemaker:DescribeHubContent",
+          "sagemaker:ListHubContentVersions"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:sagemaker:*:*:hub/*",
+          "arn:aws:sagemaker:*:*:hub-content/*"
+        ],
+        "Sid": "EvaluationCriteriaRead"
+      },
+      {
+        "Action": [
+          "sagemaker:DescribeHubContent"
+        ],
+        "Effect": "Allow",
+        "Resource": "arn:aws:sagemaker:*:aws:hub-content/SageMakerPublicHub/Model/*",
+        "Sid": "EvaluationJumpStartModelRead"
+      },
+      {
+        "Action": [
+          "bedrock:InvokeModel",
+          "bedrock:InvokeModelWithResponseStream"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:bedrock:*:*:inference-profile/*",
+          "arn:aws:bedrock:*:*:application-inference-profile/*"
+        ],
+        "Sid": "EvaluationBedrockProfileInvoke"
+      },
+      {
+        "Action": [
+          "bedrock:InvokeModel",
+          "bedrock:InvokeModelWithResponseStream"
+        ],
+        "Condition": {
+          "ArnLike": {
+            "bedrock:InferenceProfileArn": [
+              "arn:aws:bedrock:*:*:inference-profile/*",
+              "arn:aws:bedrock:*:*:application-inference-profile/*"
+            ]
+          },
+          "StringEqualsIfExists": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:bedrock:*::foundation-model/*",
+        "Sid": "EvaluationFoundationModelViaProfile"
+      },
+      {
+        "Action": [
+          "bedrock-mantle:CreateInference",
+          "bedrock-mantle:ListModels"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:bedrock-mantle:*:*:project/default",
+        "Sid": "EvaluationMantleInference"
+      },
+      {
+        "Action": [
+          "bedrock-mantle:CallWithBearerToken"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "bedrock-mantle:BearerTokenType": "SHORT_TERM"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "EvaluationMantleBearerToken"
+      },
+      {
+        "Action": [
+          "bedrock:GetKnowledgeBase",
+          "bedrock:ListDataSources",
+          "bedrock:ListIngestionJobs",
+          "bedrock:Retrieve"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:bedrock:*:*:knowledge-base/*",
+        "Sid": "EvaluationRagKnowledgeBase"
+      },
+      {
+        "Action": [
+          "bedrock:GetPrompt"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:bedrock:*:*:prompt/*",
+        "Sid": "EvaluationRagPromptTemplateRead"
+      },
+      {
+        "Action": [
+          "lambda:InvokeFunction"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:lambda:*:*:function:*SageMaker*",
+          "arn:aws:lambda:*:*:function:*Sagemaker*",
+          "arn:aws:lambda:*:*:function:*sagemaker*"
+        ],
+        "Sid": "EvaluationScorerInvoke"
+      },
+      {
+        "Action": [
+          "sagemaker:InvokeEndpoint",
+          "sagemaker:InvokeEndpointWithResponseStream"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:sagemaker:*:*:endpoint/*",
+          "arn:aws:sagemaker:*:*:inference-component/*"
+        ],
+        "Sid": "EvaluationEndpointInvoke"
+      },
+      {
+        "Action": [
+          "sagemaker:CreateAIRecommendationJob",
+          "sagemaker:CreateAIWorkloadConfig",
+          "sagemaker:CreateOptimizationJob"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:sagemaker:*:*:ai-recommendation-job/*",
+          "arn:aws:sagemaker:*:*:ai-workload-config/*",
+          "arn:aws:sagemaker:*:*:optimization-job/*"
+        ],
+        "Sid": "EvaluationHostingJobCreate"
+      },
+      {
+        "Action": [
+          "sagemaker:DescribeAIRecommendationJob",
+          "sagemaker:StopAIRecommendationJob",
+          "sagemaker:DescribeAIWorkloadConfig",
+          "sagemaker:DescribeOptimizationJob",
+          "sagemaker:StopOptimizationJob"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:sagemaker:*:*:ai-recommendation-job/*",
+          "arn:aws:sagemaker:*:*:ai-workload-config/*",
+          "arn:aws:sagemaker:*:*:optimization-job/*"
+        ],
+        "Sid": "EvaluationHostingJobControl"
+      },
+      {
+        "Action": [
+          "sagemaker:DescribeModel",
+          "sagemaker:DescribeEndpointConfig",
+          "sagemaker:DescribeEndpoint",
+          "sagemaker:DescribeInferenceComponent",
+          "sagemaker:DescribeTrainingJob"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:sagemaker:*:*:model/*",
+          "arn:aws:sagemaker:*:*:endpoint-config/*",
+          "arn:aws:sagemaker:*:*:endpoint/*",
+          "arn:aws:sagemaker:*:*:inference-component/*",
+          "arn:aws:sagemaker:*:*:training-job/*"
+        ],
+        "Sid": "EvaluationHostingResourcesDescribe"
+      },
+      {
+        "Action": [
+          "sagemaker:CreateModel",
+          "sagemaker:DeleteModel",
+          "sagemaker:CreateEndpointConfig",
+          "sagemaker:DeleteEndpointConfig",
+          "sagemaker:CreateEndpoint",
+          "sagemaker:DeleteEndpoint",
+          "sagemaker:CreateInferenceComponent",
+          "sagemaker:DeleteInferenceComponent"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:sagemaker:*:*:model/ai-rec-*",
+          "arn:aws:sagemaker:*:*:endpoint-config/ai-rec-*",
+          "arn:aws:sagemaker:*:*:endpoint/ai-rec-*",
+          "arn:aws:sagemaker:*:*:inference-component/ai-rec-*"
+        ],
+        "Sid": "EvaluationHostingResourcesManage"
+      },
+      {
+        "Action": [
+          "sagemaker:CreateTrainingJob",
+          "sagemaker:StopTrainingJob"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:sagemaker:*:*:training-job/bmk-*",
+          "arn:aws:sagemaker:*:*:training-job/ai-rec-*"
+        ],
+        "Sid": "EvaluationBenchmarkTrainingJobManage"
+      },
+      {
+        "Action": [
+          "sagemaker:CreateModelPackageGroup",
+          "sagemaker:DescribeModelPackageGroup",
+          "sagemaker:CreateModelPackage",
+          "sagemaker:DescribeModelPackage"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:sagemaker:*:*:model-package-group/*",
+          "arn:aws:sagemaker:*:*:model-package/*"
+        ],
+        "Sid": "EvaluationModelPackages"
+      },
+      {
+        "Action": [
+          "sagemaker:CreateArtifact",
+          "sagemaker:DescribeArtifact",
+          "sagemaker:CreateAction",
+          "sagemaker:DescribeAction",
+          "sagemaker:AddAssociation"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:sagemaker:*:*:artifact/*",
+          "arn:aws:sagemaker:*:*:action/*",
+          "arn:aws:sagemaker:*:*:endpoint/*",
+          "arn:aws:sagemaker:*:*:model-package/*"
+        ],
+        "Sid": "EvaluationLineage"
+      },
+      {
+        "Action": [
+          "sagemaker:AddTags"
+        ],
+        "Condition": {
+          "ForAllValues:StringLike": {
+            "aws:TagKeys": "sagemaker:ai-*"
+          },
+          "Null": {
+            "aws:TagKeys": "false"
+          },
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}",
+            "sagemaker:TaggingAction": [
+              "CreateModel",
+              "CreateEndpointConfig",
+              "CreateEndpoint",
+              "CreateInferenceComponent",
+              "CreateTrainingJob",
+              "CreateModelPackageGroup"
+            ]
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:sagemaker:*:*:model/*",
+          "arn:aws:sagemaker:*:*:endpoint-config/*",
+          "arn:aws:sagemaker:*:*:endpoint/*",
+          "arn:aws:sagemaker:*:*:inference-component/*",
+          "arn:aws:sagemaker:*:*:training-job/*",
+          "arn:aws:sagemaker:*:*:model-package-group/*"
+        ],
+        "Sid": "EvaluationHostingTagOnCreate"
+      },
+      {
+        "Action": [
+          "servicequotas:GetServiceQuota"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:servicequotas:*:*:sagemaker/*",
+        "Sid": "EvaluationServiceQuotaRead"
+      },
+      {
+        "Action": [
+          "sagemaker:ListModelPackages",
+          "sagemaker:ListArtifacts",
+          "cloudwatch:GetMetricStatistics"
+        ],
+        "Condition": {
+          "StringEqualsIfExists": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "EvaluationListAndMetricsRead"
+      },
+      {
+        "Action": [
+          "ecr:BatchGetImage",
+          "ecr:BatchCheckLayerAvailability",
+          "ecr:GetDownloadUrlForLayer"
+        ],
+        "Effect": "Allow",
+        "Resource": "arn:aws:ecr:*:*:repository/*",
+        "Sid": "EvaluationHostingImagePull"
+      },
+      {
+        "Action": [
+          "ecr:GetAuthorizationToken"
+        ],
+        "Condition": {
+          "StringEqualsIfExists": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "EvaluationEcrAuth"
+      },
+      {
+        "Action": [
+          "iam:PassRole"
+        ],
+        "Condition": {
+          "ArnLike": {
+            "iam:AssociatedResourceArn": "arn:aws:sagemaker:*:*:*"
+          },
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}",
+            "iam:PassedToService": "sagemaker.amazonaws.com"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:iam::*:role/service-role/*SageMaker*",
+          "arn:aws:iam::*:role/service-role/*Sagemaker*",
+          "arn:aws:iam::*:role/service-role/*sagemaker*"
+        ],
+        "Sid": "EvaluationPassRoleToSageMaker"
+      }
+    ],
+    "Version": "2012-10-17"
+  },
+  "effective_actions": [
+    {
+      "access_level": "Read",
+      "action": "s3:GetObject",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": true,
+      "effective_action": "s3:GetObject",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "s3:PutObject",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3:PutObject",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "s3:ListBucket",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3:ListBucket",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "s3:GetObject",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": true,
+      "effective_action": "s3:GetObject",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "s3:ListBucket",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3:ListBucket",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "logs:CreateLogGroup",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "logs:CreateLogGroup",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "logs:CreateLogStream",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "logs:CreateLogStream",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "logs:PutLogEvents",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "logs:PutLogEvents",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "logs:DescribeLogStreams",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "logs:DescribeLogStreams",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "sagemaker:CallMlflowAppApi",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sagemaker:CallMlflowAppApi",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "sagemaker:DescribeMlflowApp",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sagemaker:DescribeMlflowApp",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "sagemaker:DescribeHub",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sagemaker:DescribeHub",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "sagemaker:DescribeHubContent",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sagemaker:DescribeHubContent",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "sagemaker:ListHubContentVersions",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sagemaker:ListHubContentVersions",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "sagemaker:DescribeHubContent",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sagemaker:DescribeHubContent",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "bedrock:InvokeModel",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "bedrock:InvokeModel",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "bedrock:InvokeModelWithResponseStream",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "bedrock:InvokeModelWithResponseStream",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "bedrock:InvokeModel",
+      "condition": {
+        "ArnLike": {
+          "bedrock:InferenceProfileArn": [
+            "arn:aws:bedrock:*:*:inference-profile/*",
+            "arn:aws:bedrock:*:*:application-inference-profile/*"
+          ]
+        },
+        "StringEqualsIfExists": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "bedrock:InvokeModel",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "bedrock:InvokeModelWithResponseStream",
+      "condition": {
+        "ArnLike": {
+          "bedrock:InferenceProfileArn": [
+            "arn:aws:bedrock:*:*:inference-profile/*",
+            "arn:aws:bedrock:*:*:application-inference-profile/*"
+          ]
+        },
+        "StringEqualsIfExists": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "bedrock:InvokeModelWithResponseStream",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "bedrock-mantle:CreateInference",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "bedrock-mantle:CreateInference",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "bedrock-mantle:ListModels",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "bedrock-mantle:ListModels",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "bedrock-mantle:CallWithBearerToken",
+      "condition": {
+        "StringEquals": {
+          "bedrock-mantle:BearerTokenType": "SHORT_TERM"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "bedrock-mantle:CallWithBearerToken",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "bedrock:GetKnowledgeBase",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "bedrock:GetKnowledgeBase",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "bedrock:ListDataSources",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "bedrock:ListDataSources",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "bedrock:ListIngestionJobs",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "bedrock:ListIngestionJobs",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "bedrock:Retrieve",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "bedrock:Retrieve",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "bedrock:GetPrompt",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "bedrock:GetPrompt",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "lambda:InvokeFunction",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "lambda:InvokeFunction",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "sagemaker:InvokeEndpoint",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sagemaker:InvokeEndpoint",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "sagemaker:InvokeEndpointWithResponseStream",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sagemaker:InvokeEndpointWithResponseStream",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "sagemaker:CreateAIRecommendationJob",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sagemaker:CreateAIRecommendationJob",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "sagemaker:CreateAIWorkloadConfig",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sagemaker:CreateAIWorkloadConfig",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "sagemaker:CreateOptimizationJob",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sagemaker:CreateOptimizationJob",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "sagemaker:DescribeAIRecommendationJob",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sagemaker:DescribeAIRecommendationJob",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "sagemaker:StopAIRecommendationJob",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sagemaker:StopAIRecommendationJob",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "sagemaker:DescribeAIWorkloadConfig",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sagemaker:DescribeAIWorkloadConfig",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "sagemaker:DescribeOptimizationJob",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sagemaker:DescribeOptimizationJob",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "sagemaker:StopOptimizationJob",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sagemaker:StopOptimizationJob",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "sagemaker:DescribeModel",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sagemaker:DescribeModel",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "sagemaker:DescribeEndpointConfig",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sagemaker:DescribeEndpointConfig",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "sagemaker:DescribeEndpoint",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sagemaker:DescribeEndpoint",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "sagemaker:DescribeInferenceComponent",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sagemaker:DescribeInferenceComponent",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "sagemaker:DescribeTrainingJob",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sagemaker:DescribeTrainingJob",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "sagemaker:CreateModel",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sagemaker:CreateModel",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "sagemaker:DeleteModel",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sagemaker:DeleteModel",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "sagemaker:CreateEndpointConfig",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sagemaker:CreateEndpointConfig",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "sagemaker:DeleteEndpointConfig",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sagemaker:DeleteEndpointConfig",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "sagemaker:CreateEndpoint",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sagemaker:CreateEndpoint",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "sagemaker:DeleteEndpoint",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sagemaker:DeleteEndpoint",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "sagemaker:CreateInferenceComponent",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sagemaker:CreateInferenceComponent",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "sagemaker:DeleteInferenceComponent",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sagemaker:DeleteInferenceComponent",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "sagemaker:CreateTrainingJob",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sagemaker:CreateTrainingJob",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "sagemaker:StopTrainingJob",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sagemaker:StopTrainingJob",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "sagemaker:CreateModelPackageGroup",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sagemaker:CreateModelPackageGroup",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "sagemaker:DescribeModelPackageGroup",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sagemaker:DescribeModelPackageGroup",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "sagemaker:CreateModelPackage",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sagemaker:CreateModelPackage",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "sagemaker:DescribeModelPackage",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sagemaker:DescribeModelPackage",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "sagemaker:CreateArtifact",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sagemaker:CreateArtifact",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "sagemaker:DescribeArtifact",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sagemaker:DescribeArtifact",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "sagemaker:CreateAction",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sagemaker:CreateAction",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "sagemaker:DescribeAction",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sagemaker:DescribeAction",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "sagemaker:AddAssociation",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sagemaker:AddAssociation",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Tagging, Write",
+      "action": "sagemaker:AddTags",
+      "condition": {
+        "ForAllValues:StringLike": {
+          "aws:TagKeys": "sagemaker:ai-*"
+        },
+        "Null": {
+          "aws:TagKeys": "false"
+        },
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}",
+          "sagemaker:TaggingAction": [
+            "CreateModel",
+            "CreateEndpointConfig",
+            "CreateEndpoint",
+            "CreateInferenceComponent",
+            "CreateTrainingJob",
+            "CreateModelPackageGroup"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sagemaker:AddTags",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "servicequotas:GetServiceQuota",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "servicequotas:GetServiceQuota",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "sagemaker:ListModelPackages",
+      "condition": {
+        "StringEqualsIfExists": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sagemaker:ListModelPackages",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "sagemaker:ListArtifacts",
+      "condition": {
+        "StringEqualsIfExists": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sagemaker:ListArtifacts",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "cloudwatch:GetMetricStatistics",
+      "condition": {
+        "StringEqualsIfExists": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudwatch:GetMetricStatistics",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "ecr:BatchGetImage",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ecr:BatchGetImage",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "ecr:BatchCheckLayerAvailability",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "ecr:BatchCheckLayerAvailability",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "ecr:GetDownloadUrlForLayer",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": true,
+      "effective_action": "ecr:GetDownloadUrlForLayer",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "ecr:GetAuthorizationToken",
+      "condition": {
+        "StringEqualsIfExists": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": true,
+      "data_access": false,
+      "effective_action": "ecr:GetAuthorizationToken",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Permissions management",
+      "action": "iam:PassRole",
+      "condition": {
+        "ArnLike": {
+          "iam:AssociatedResourceArn": "arn:aws:sagemaker:*:*:*"
+        },
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}",
+          "iam:PassedToService": "sagemaker.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "iam:PassRole",
+      "privesc": true,
+      "resource_exposure": true
+    }
+  ],
+  "grantless": false,
+  "malformed": false,
+  "name": "AmazonSageMakerAIUnifiedEvaluationAccess",
+  "privesc": true,
+  "resource_exposure": true,
+  "undocumented_actions": false,
+  "unknown_actions": [],
+  "updatedate": null,
+  "version": "v1"
+}

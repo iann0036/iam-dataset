@@ -1,0 +1,800 @@
+{
+  "access_levels": [
+    "List",
+    "Read",
+    "Tagging",
+    "Write"
+  ],
+  "arn": null,
+  "createdate": "2026-11-25T22:47:07+00:00",
+  "credentials_exposure": false,
+  "data_access": false,
+  "deprecated": false,
+  "document": {
+    "Statement": [
+      {
+        "Action": [
+          "bedrock:CreateAdvancedPromptOptimizationJob"
+        ],
+        "Condition": {
+          "ForAllValues:StringLike": {
+            "aws:TagKeys": [
+              "sagemaker:prompt-optimization-*",
+              "sagemaker:project-id"
+            ]
+          },
+          "Null": {
+            "aws:TagKeys": "false"
+          },
+          "StringEquals": {
+            "aws:RequestTag/sagemaker:prompt-optimization-managed": "true"
+          },
+          "StringEqualsIfExists": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:bedrock:*:*:inference-profile/*",
+          "arn:aws:bedrock:*:*:application-inference-profile/*",
+          "arn:aws:bedrock:*::foundation-model/*",
+          "arn:aws:bedrock:*:*:advanced-prompt-optimization-job/*"
+        ],
+        "Sid": "JobCreate"
+      },
+      {
+        "Action": [
+          "bedrock:GetAdvancedPromptOptimizationJob",
+          "bedrock:StopAdvancedPromptOptimizationJob"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}",
+            "aws:ResourceTag/sagemaker:prompt-optimization-managed": "true"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:bedrock:*:*:advanced-prompt-optimization-job/*",
+        "Sid": "JobControl"
+      },
+      {
+        "Action": [
+          "bedrock:CreatePrompt"
+        ],
+        "Condition": {
+          "ForAllValues:StringLike": {
+            "aws:TagKeys": [
+              "sagemaker:prompt-optimization-*",
+              "sagemaker:project-id"
+            ]
+          },
+          "Null": {
+            "aws:TagKeys": "false"
+          },
+          "StringEquals": {
+            "aws:RequestTag/sagemaker:prompt-optimization-managed": "true",
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "PromptCreate"
+      },
+      {
+        "Action": [
+          "bedrock:CreatePromptVersion"
+        ],
+        "Condition": {
+          "ForAllValues:StringLike": {
+            "aws:TagKeys": [
+              "sagemaker:prompt-optimization-*",
+              "sagemaker:project-id"
+            ]
+          },
+          "Null": {
+            "aws:TagKeys": "false"
+          },
+          "StringEquals": {
+            "aws:RequestTag/sagemaker:prompt-optimization-managed": "true",
+            "aws:ResourceAccount": "${aws:PrincipalAccount}",
+            "aws:ResourceTag/sagemaker:prompt-optimization-managed": "true"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:bedrock:*:*:prompt/*",
+        "Sid": "PromptVersionCreate"
+      },
+      {
+        "Action": [
+          "bedrock:ListPrompts"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:bedrock:*:*:prompt/*",
+        "Sid": "PromptRead"
+      },
+      {
+        "Action": [
+          "bedrock:GetPrompt",
+          "bedrock:UpdatePrompt"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}",
+            "aws:ResourceTag/sagemaker:prompt-optimization-managed": "true"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:bedrock:*:*:prompt/*",
+        "Sid": "PromptReadUpdate"
+      },
+      {
+        "Action": [
+          "bedrock:TagResource"
+        ],
+        "Condition": {
+          "ForAllValues:StringLike": {
+            "aws:TagKeys": [
+              "sagemaker:prompt-optimization-*",
+              "sagemaker:project-id"
+            ]
+          },
+          "Null": {
+            "aws:TagKeys": "false"
+          },
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}",
+            "aws:ResourceTag/sagemaker:prompt-optimization-managed": "true"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:bedrock:*:*:advanced-prompt-optimization-job/*",
+          "arn:aws:bedrock:*:*:prompt/*"
+        ],
+        "Sid": "BedrockTagOnCreate"
+      },
+      {
+        "Action": [
+          "bedrock:InvokeModel",
+          "bedrock:InvokeModelWithResponseStream"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:bedrock:*:*:inference-profile/*",
+          "arn:aws:bedrock:*:*:application-inference-profile/*"
+        ],
+        "Sid": "ModelInvoke"
+      },
+      {
+        "Action": [
+          "bedrock:InvokeModel",
+          "bedrock:InvokeModelWithResponseStream"
+        ],
+        "Condition": {
+          "ArnLike": {
+            "bedrock:InferenceProfileArn": "arn:aws:bedrock:*:*:application-inference-profile/*"
+          },
+          "StringEqualsIfExists": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:bedrock:*::foundation-model/*",
+        "Sid": "FoundationModelInvoke"
+      },
+      {
+        "Action": [
+          "lambda:GetFunctionConfiguration",
+          "lambda:ListTags"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:lambda:*:*:function:SageMakerPromptOptimization*",
+        "Sid": "GraderRead"
+      },
+      {
+        "Action": [
+          "lambda:UpdateFunctionCode",
+          "lambda:PublishVersion"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}",
+            "aws:ResourceTag/sagemaker:prompt-optimization-managed": "true"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:lambda:*:*:function:SageMakerPromptOptimization*",
+        "Sid": "GraderUpdate"
+      },
+      {
+        "Action": [
+          "lambda:TagResource"
+        ],
+        "Condition": {
+          "ForAllValues:StringLike": {
+            "aws:TagKeys": [
+              "sagemaker:prompt-optimization-*",
+              "sagemaker:project-id"
+            ]
+          },
+          "Null": {
+            "aws:TagKeys": "false"
+          },
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}",
+            "aws:ResourceTag/sagemaker:prompt-optimization-managed": "true"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:lambda:*:*:function:SageMakerPromptOptimization*",
+        "Sid": "GraderTagOnCreate"
+      },
+      {
+        "Action": [
+          "sagemaker:RetryPipelineExecution",
+          "sagemaker:StopPipelineExecution",
+          "sagemaker:ListPipelineParametersForExecution"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:sagemaker:*:*:pipeline/apo-*/execution/*",
+        "Sid": "PipelineExecutions"
+      },
+      {
+        "Action": [
+          "sagemaker:DescribeProject"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:sagemaker:*:*:project/*",
+        "Sid": "ProjectRead"
+      },
+      {
+        "Action": [
+          "sagemaker:DeleteEndpointConfig"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:sagemaker:*:*:endpoint-config/po-*",
+        "Sid": "EndpointConfigCleanup"
+      },
+      {
+        "Action": [
+          "sagemaker:DeleteModel"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:sagemaker:*:*:model/po-*",
+        "Sid": "ModelCleanup"
+      },
+      {
+        "Action": [
+          "sagemaker:DescribeContext"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:sagemaker:*:*:context/*",
+        "Sid": "ContextRead"
+      },
+      {
+        "Action": [
+          "bedrock:ListAdvancedPromptOptimizationJobs",
+          "sagemaker:ListProjects",
+          "sagemaker:ListContexts"
+        ],
+        "Condition": {
+          "StringEqualsIfExists": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "ListOperations"
+      }
+    ],
+    "Version": "2012-10-17"
+  },
+  "effective_actions": [
+    {
+      "access_level": "Write",
+      "action": "bedrock:CreateAdvancedPromptOptimizationJob",
+      "condition": {
+        "ForAllValues:StringLike": {
+          "aws:TagKeys": [
+            "sagemaker:prompt-optimization-*",
+            "sagemaker:project-id"
+          ]
+        },
+        "Null": {
+          "aws:TagKeys": "false"
+        },
+        "StringEquals": {
+          "aws:RequestTag/sagemaker:prompt-optimization-managed": "true"
+        },
+        "StringEqualsIfExists": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "bedrock:CreateAdvancedPromptOptimizationJob",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "bedrock:GetAdvancedPromptOptimizationJob",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}",
+          "aws:ResourceTag/sagemaker:prompt-optimization-managed": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "bedrock:GetAdvancedPromptOptimizationJob",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "bedrock:StopAdvancedPromptOptimizationJob",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}",
+          "aws:ResourceTag/sagemaker:prompt-optimization-managed": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "bedrock:StopAdvancedPromptOptimizationJob",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "bedrock:CreatePrompt",
+      "condition": {
+        "ForAllValues:StringLike": {
+          "aws:TagKeys": [
+            "sagemaker:prompt-optimization-*",
+            "sagemaker:project-id"
+          ]
+        },
+        "Null": {
+          "aws:TagKeys": "false"
+        },
+        "StringEquals": {
+          "aws:RequestTag/sagemaker:prompt-optimization-managed": "true",
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "bedrock:CreatePrompt",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "bedrock:CreatePromptVersion",
+      "condition": {
+        "ForAllValues:StringLike": {
+          "aws:TagKeys": [
+            "sagemaker:prompt-optimization-*",
+            "sagemaker:project-id"
+          ]
+        },
+        "Null": {
+          "aws:TagKeys": "false"
+        },
+        "StringEquals": {
+          "aws:RequestTag/sagemaker:prompt-optimization-managed": "true",
+          "aws:ResourceAccount": "${aws:PrincipalAccount}",
+          "aws:ResourceTag/sagemaker:prompt-optimization-managed": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "bedrock:CreatePromptVersion",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "bedrock:ListPrompts",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "bedrock:ListPrompts",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "bedrock:GetPrompt",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}",
+          "aws:ResourceTag/sagemaker:prompt-optimization-managed": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "bedrock:GetPrompt",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "bedrock:UpdatePrompt",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}",
+          "aws:ResourceTag/sagemaker:prompt-optimization-managed": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "bedrock:UpdatePrompt",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Tagging, Write",
+      "action": "bedrock:TagResource",
+      "condition": {
+        "ForAllValues:StringLike": {
+          "aws:TagKeys": [
+            "sagemaker:prompt-optimization-*",
+            "sagemaker:project-id"
+          ]
+        },
+        "Null": {
+          "aws:TagKeys": "false"
+        },
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}",
+          "aws:ResourceTag/sagemaker:prompt-optimization-managed": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "bedrock:TagResource",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "bedrock:InvokeModel",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "bedrock:InvokeModel",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "bedrock:InvokeModelWithResponseStream",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "bedrock:InvokeModelWithResponseStream",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "bedrock:InvokeModel",
+      "condition": {
+        "ArnLike": {
+          "bedrock:InferenceProfileArn": "arn:aws:bedrock:*:*:application-inference-profile/*"
+        },
+        "StringEqualsIfExists": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "bedrock:InvokeModel",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "bedrock:InvokeModelWithResponseStream",
+      "condition": {
+        "ArnLike": {
+          "bedrock:InferenceProfileArn": "arn:aws:bedrock:*:*:application-inference-profile/*"
+        },
+        "StringEqualsIfExists": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "bedrock:InvokeModelWithResponseStream",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "lambda:GetFunctionConfiguration",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "lambda:GetFunctionConfiguration",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "lambda:ListTags",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "lambda:ListTags",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "lambda:UpdateFunctionCode",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}",
+          "aws:ResourceTag/sagemaker:prompt-optimization-managed": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "lambda:UpdateFunctionCode",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "lambda:PublishVersion",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}",
+          "aws:ResourceTag/sagemaker:prompt-optimization-managed": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "lambda:PublishVersion",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Tagging",
+      "action": "lambda:TagResource",
+      "condition": {
+        "ForAllValues:StringLike": {
+          "aws:TagKeys": [
+            "sagemaker:prompt-optimization-*",
+            "sagemaker:project-id"
+          ]
+        },
+        "Null": {
+          "aws:TagKeys": "false"
+        },
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}",
+          "aws:ResourceTag/sagemaker:prompt-optimization-managed": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "lambda:TagResource",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "sagemaker:RetryPipelineExecution",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sagemaker:RetryPipelineExecution",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "sagemaker:StopPipelineExecution",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sagemaker:StopPipelineExecution",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "sagemaker:ListPipelineParametersForExecution",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sagemaker:ListPipelineParametersForExecution",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "sagemaker:DescribeProject",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sagemaker:DescribeProject",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "sagemaker:DeleteEndpointConfig",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sagemaker:DeleteEndpointConfig",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "sagemaker:DeleteModel",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sagemaker:DeleteModel",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "sagemaker:DescribeContext",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sagemaker:DescribeContext",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "bedrock:ListAdvancedPromptOptimizationJobs",
+      "condition": {
+        "StringEqualsIfExists": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "bedrock:ListAdvancedPromptOptimizationJobs",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "sagemaker:ListProjects",
+      "condition": {
+        "StringEqualsIfExists": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sagemaker:ListProjects",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "sagemaker:ListContexts",
+      "condition": {
+        "StringEqualsIfExists": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sagemaker:ListContexts",
+      "privesc": false,
+      "resource_exposure": false
+    }
+  ],
+  "grantless": false,
+  "malformed": false,
+  "name": "AmazonSageMakerAIPromptOptimizationAccess",
+  "privesc": false,
+  "resource_exposure": false,
+  "undocumented_actions": false,
+  "unknown_actions": [],
+  "updatedate": null,
+  "version": "v1"
+}

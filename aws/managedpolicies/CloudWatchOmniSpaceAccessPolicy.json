@@ -7,7 +7,7 @@
     "Permissions management"
   ],
   "arn": "arn:aws:iam::aws:policy/CloudWatchOmniSpaceAccessPolicy",
-  "createdate": "2026-11-19T23:37:09+00:00",
+  "createdate": "2026-11-25T19:47:07+00:00",
   "credentials_exposure": false,
   "data_access": true,
   "deprecated": false,
@@ -39,6 +39,12 @@
           "cloudwatch:UpdateAlert",
           "cloudwatch:DeleteAlert",
           "cloudwatch:ListAlerts",
+          "cloudwatch:CreateOmniSlo",
+          "cloudwatch:GetOmniSlo",
+          "cloudwatch:UpdateOmniSlo",
+          "cloudwatch:DeleteOmniSlo",
+          "cloudwatch:ListOmniSlos",
+          "cloudwatch:BatchGetOmniSloReport",
           "cloudwatch:CreateOmniDashboard",
           "cloudwatch:GetOmniDashboard",
           "cloudwatch:UpdateOmniDashboard",
@@ -55,6 +61,11 @@
           "cloudwatch:UpdateView",
           "cloudwatch:DeleteView",
           "cloudwatch:ListViews",
+          "cloudwatch:CreateLookup",
+          "cloudwatch:GetLookup",
+          "cloudwatch:UpdateLookup",
+          "cloudwatch:DeleteLookup",
+          "cloudwatch:ListLookups",
           "cloudwatch:GetPreferences",
           "cloudwatch:UpdatePreferences",
           "cloudwatch:CreateOmniThread",
@@ -68,12 +79,25 @@
           "cloudwatch:UpdateOmniAgentAsset",
           "cloudwatch:ListOmniAgentAssets",
           "cloudwatch:DeleteOmniAgentAsset",
+          "cloudwatch:CreateExperiment",
+          "cloudwatch:GetExperiment",
+          "cloudwatch:UpdateExperiment",
+          "cloudwatch:DeleteExperiment",
+          "cloudwatch:ListExperiments",
+          "cloudwatch:StartExperimentRun",
+          "cloudwatch:StopExperimentRun",
+          "cloudwatch:GetExperimentRun",
+          "cloudwatch:ListExperimentRuns",
+          "cloudwatch:DeleteExperimentRun",
           "cloudwatch:SubmitFeedback",
+          "cloudwatch:ListObservations",
+          "cloudwatch:ListAnomalies",
           "cloudwatch:CreateIntegration",
           "cloudwatch:UpdateIntegration",
           "cloudwatch:GetIntegration",
           "cloudwatch:DeleteIntegration",
           "cloudwatch:ListIntegrations",
+          "cloudwatch:ListIntegrationTargets",
           "cloudwatch:InvokeIntegration",
           "cloudwatch:GetIntelligenceConfiguration",
           "cloudwatch:PutIntelligenceConfiguration",
@@ -111,7 +135,10 @@
           "arn:aws:cloudwatch:*:*:view/*",
           "arn:aws:cloudwatch:*:*:integration/*",
           "arn:aws:cloudwatch:*:*:dataset/*",
-          "arn:aws:cloudwatch:*:*:omni-agent-asset/*"
+          "arn:aws:cloudwatch:*:*:omni-agent-asset/*",
+          "arn:aws:cloudwatch:*:*:experiment/*",
+          "arn:aws:cloudwatch:*:*:omni-slo/*",
+          "arn:aws:cloudwatch:*:*:lookup/*"
         ],
         "Sid": "DenyClassicCloudWatchResourceTagging"
       },
@@ -221,6 +248,29 @@
         "Effect": "Allow",
         "Resource": "arn:aws:kms:*:*:key/*",
         "Sid": "KmsCryptoOpsForDatasets"
+      },
+      {
+        "Action": [
+          "kms:Decrypt",
+          "kms:GenerateDataKey"
+        ],
+        "Condition": {
+          "ForAnyValue:StringEquals": {
+            "aws:CalledVia": [
+              "cloudwatch.amazonaws.com"
+            ]
+          },
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}",
+            "aws:ResourceTag/cw-omni": "true"
+          },
+          "StringLike": {
+            "kms:EncryptionContext:aws:cloudwatch:arn": "arn:aws:cloudwatch:*:${aws:PrincipalAccount}:lookup/*"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:kms:*:*:key/*",
+        "Sid": "KmsCryptoOpsForLookups"
       },
       {
         "Action": [
@@ -660,12 +710,64 @@
       },
       {
         "Action": [
+          "bedrock-agentcore:GetMemory",
+          "bedrock-agentcore:GetGateway",
+          "bedrock-agentcore:GetBrowser",
+          "bedrock-agentcore:GetCodeInterpreter",
+          "bedrock-agentcore:GetPaymentManager",
+          "bedrock-agentcore:GetOauth2CredentialProvider",
+          "bedrock-agentcore:GetApiKeyCredentialProvider",
+          "bedrock-agentcore:GetPaymentCredentialProvider",
+          "bedrock-agentcore:ListGatewayTargets",
+          "bedrock-agentcore:GetGatewayTarget",
+          "bedrock-agentcore:GetPolicyEngine"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:bedrock-agentcore:*:*:memory/*",
+          "arn:aws:bedrock-agentcore:*:*:gateway/*",
+          "arn:aws:bedrock-agentcore:*:*:browser-custom/*",
+          "arn:aws:bedrock-agentcore:*:*:code-interpreter-custom/*",
+          "arn:aws:bedrock-agentcore:*:*:payment-manager/*",
+          "arn:aws:bedrock-agentcore:*:*:token-vault/*",
+          "arn:aws:bedrock-agentcore:*:*:policy-engine/*"
+        ],
+        "Sid": "AgentCorePrimitiveReads"
+      },
+      {
+        "Action": [
+          "bedrock:GetKnowledgeBase"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:bedrock:*:*:knowledge-base/*",
+        "Sid": "BedrockKnowledgeBaseReads"
+      },
+      {
+        "Action": [
           "bedrock:ListFoundationModels",
           "bedrock:ListInferenceProfiles"
         ],
         "Effect": "Allow",
         "Resource": "*",
         "Sid": "BedrockFoundationModelDiscovery"
+      },
+      {
+        "Action": [
+          "pricing:GetProducts"
+        ],
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "PriceListModelPrices"
       },
       {
         "Action": [
@@ -918,6 +1020,98 @@
         "Effect": "Allow",
         "Resource": "arn:aws:iam::aws:role-template/cloudwatch.amazonaws.com/CloudWatchOmniDevOpsAgentInvestigationAccessRoleTemplate:*",
         "Sid": "DevOpsAgentInvestigationRoleTemplateRead"
+      },
+      {
+        "Action": [
+          "sns:GetTopicAttributes"
+        ],
+        "Condition": {
+          "ForAnyValue:StringEquals": {
+            "aws:CalledVia": [
+              "cloudwatch.amazonaws.com"
+            ]
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:sns:*:*:*",
+        "Sid": "SnsTopicReadForIntelligenceNotifications"
+      },
+      {
+        "Action": [
+          "observabilityadmin:GetTelemetryEvaluationStatus",
+          "observabilityadmin:ListTelemetryRules"
+        ],
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "ObservabilityAdminTelemetryStatusReads"
+      },
+      {
+        "Action": [
+          "observabilityadmin:GetTelemetryRule",
+          "observabilityadmin:CreateTelemetryRule",
+          "observabilityadmin:UpdateTelemetryRule",
+          "observabilityadmin:DeleteTelemetryRule"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:observabilityadmin:*:*:telemetry-rule/CloudWatchOmniEvents",
+        "Sid": "AwsEventsTelemetryRuleManagement"
+      },
+      {
+        "Action": [
+          "observabilityadmin:StartTelemetryEvaluation"
+        ],
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "AwsEventsTelemetryEvaluation"
+      },
+      {
+        "Action": [
+          "config:PutServiceLinkedConfigurationRecorder"
+        ],
+        "Condition": {
+          "ForAnyValue:StringEquals": {
+            "aws:CalledVia": [
+              "observabilityadmin.amazonaws.com"
+            ]
+          },
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}",
+            "config:ConfigurationRecorderServicePrincipal": "observabilityadmin.amazonaws.com"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:config:*:*:configuration-recorder/AWSConfigurationRecorderForObservabilityAdmin/*",
+        "Sid": "AwsEventsObservabilityAdminConfigRecorder"
+      },
+      {
+        "Action": [
+          "iam:CreateServiceLinkedRole"
+        ],
+        "Condition": {
+          "ForAnyValue:StringEquals": {
+            "aws:CalledVia": [
+              "observabilityadmin.amazonaws.com"
+            ]
+          },
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}",
+            "iam:AWSServiceName": [
+              "observabilityadmin.amazonaws.com",
+              "telemetry-enablement.observabilityadmin.amazonaws.com"
+            ]
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:iam::*:role/aws-service-role/observabilityadmin.amazonaws.com/AWSServiceRoleForObservabilityAdmin",
+          "arn:aws:iam::*:role/aws-service-role/telemetry-enablement.observabilityadmin.amazonaws.com/AWSServiceRoleForObservabilityAdmin_TelemetryEnablement"
+        ],
+        "Sid": "AwsEventsObservabilityAdminServiceLinkedRoles"
       }
     ],
     "Version": "2012-10-17"
@@ -1261,6 +1455,90 @@
     },
     {
       "access_level": "Write",
+      "action": "cloudwatch:CreateOmniSlo",
+      "condition": {
+        "StringEquals": {
+          "cloudwatch:HasAccessGrant": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudwatch:CreateOmniSlo",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "cloudwatch:GetOmniSlo",
+      "condition": {
+        "StringEquals": {
+          "cloudwatch:HasAccessGrant": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudwatch:GetOmniSlo",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "cloudwatch:UpdateOmniSlo",
+      "condition": {
+        "StringEquals": {
+          "cloudwatch:HasAccessGrant": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudwatch:UpdateOmniSlo",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "cloudwatch:DeleteOmniSlo",
+      "condition": {
+        "StringEquals": {
+          "cloudwatch:HasAccessGrant": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudwatch:DeleteOmniSlo",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "cloudwatch:ListOmniSlos",
+      "condition": {
+        "StringEquals": {
+          "cloudwatch:HasAccessGrant": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudwatch:ListOmniSlos",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "cloudwatch:BatchGetOmniSloReport",
+      "condition": {
+        "StringEquals": {
+          "cloudwatch:HasAccessGrant": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudwatch:BatchGetOmniSloReport",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
       "action": "cloudwatch:CreateOmniDashboard",
       "condition": {
         "StringEquals": {
@@ -1484,6 +1762,76 @@
       "resource_exposure": false
     },
     {
+      "access_level": "Write",
+      "action": "cloudwatch:CreateLookup",
+      "condition": {
+        "StringEquals": {
+          "cloudwatch:HasAccessGrant": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudwatch:CreateLookup",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "cloudwatch:GetLookup",
+      "condition": {
+        "StringEquals": {
+          "cloudwatch:HasAccessGrant": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudwatch:GetLookup",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "cloudwatch:UpdateLookup",
+      "condition": {
+        "StringEquals": {
+          "cloudwatch:HasAccessGrant": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudwatch:UpdateLookup",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "cloudwatch:DeleteLookup",
+      "condition": {
+        "StringEquals": {
+          "cloudwatch:HasAccessGrant": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudwatch:DeleteLookup",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "cloudwatch:ListLookups",
+      "condition": {
+        "StringEquals": {
+          "cloudwatch:HasAccessGrant": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudwatch:ListLookups",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
       "access_level": "Read",
       "action": "cloudwatch:GetPreferences",
       "condition": {
@@ -1667,6 +2015,146 @@
     },
     {
       "access_level": "Write",
+      "action": "cloudwatch:CreateExperiment",
+      "condition": {
+        "StringEquals": {
+          "cloudwatch:HasAccessGrant": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudwatch:CreateExperiment",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "cloudwatch:GetExperiment",
+      "condition": {
+        "StringEquals": {
+          "cloudwatch:HasAccessGrant": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudwatch:GetExperiment",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "cloudwatch:UpdateExperiment",
+      "condition": {
+        "StringEquals": {
+          "cloudwatch:HasAccessGrant": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudwatch:UpdateExperiment",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "cloudwatch:DeleteExperiment",
+      "condition": {
+        "StringEquals": {
+          "cloudwatch:HasAccessGrant": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudwatch:DeleteExperiment",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "cloudwatch:ListExperiments",
+      "condition": {
+        "StringEquals": {
+          "cloudwatch:HasAccessGrant": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudwatch:ListExperiments",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "cloudwatch:StartExperimentRun",
+      "condition": {
+        "StringEquals": {
+          "cloudwatch:HasAccessGrant": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudwatch:StartExperimentRun",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "cloudwatch:StopExperimentRun",
+      "condition": {
+        "StringEquals": {
+          "cloudwatch:HasAccessGrant": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudwatch:StopExperimentRun",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "cloudwatch:GetExperimentRun",
+      "condition": {
+        "StringEquals": {
+          "cloudwatch:HasAccessGrant": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudwatch:GetExperimentRun",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "cloudwatch:ListExperimentRuns",
+      "condition": {
+        "StringEquals": {
+          "cloudwatch:HasAccessGrant": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudwatch:ListExperimentRuns",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "cloudwatch:DeleteExperimentRun",
+      "condition": {
+        "StringEquals": {
+          "cloudwatch:HasAccessGrant": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudwatch:DeleteExperimentRun",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
       "action": "cloudwatch:SubmitFeedback",
       "condition": {
         "StringEquals": {
@@ -1676,6 +2164,34 @@
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "cloudwatch:SubmitFeedback",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "cloudwatch:ListObservations",
+      "condition": {
+        "StringEquals": {
+          "cloudwatch:HasAccessGrant": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudwatch:ListObservations",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "cloudwatch:ListAnomalies",
+      "condition": {
+        "StringEquals": {
+          "cloudwatch:HasAccessGrant": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudwatch:ListAnomalies",
       "privesc": false,
       "resource_exposure": false
     },
@@ -1746,6 +2262,20 @@
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "cloudwatch:ListIntegrations",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "cloudwatch:ListIntegrationTargets",
+      "condition": {
+        "StringEquals": {
+          "cloudwatch:HasAccessGrant": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "cloudwatch:ListIntegrationTargets",
       "privesc": false,
       "resource_exposure": false
     },
@@ -2052,6 +2582,52 @@
         },
         "StringLike": {
           "kms:EncryptionContext:aws:cloudwatch:arn": "arn:aws:cloudwatch:*:${aws:PrincipalAccount}:dataset/*"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "kms:GenerateDataKey",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "kms:Decrypt",
+      "condition": {
+        "ForAnyValue:StringEquals": {
+          "aws:CalledVia": [
+            "cloudwatch.amazonaws.com"
+          ]
+        },
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}",
+          "aws:ResourceTag/cw-omni": "true"
+        },
+        "StringLike": {
+          "kms:EncryptionContext:aws:cloudwatch:arn": "arn:aws:cloudwatch:*:${aws:PrincipalAccount}:lookup/*"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "kms:Decrypt",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "kms:GenerateDataKey",
+      "condition": {
+        "ForAnyValue:StringEquals": {
+          "aws:CalledVia": [
+            "cloudwatch.amazonaws.com"
+          ]
+        },
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}",
+          "aws:ResourceTag/cw-omni": "true"
+        },
+        "StringLike": {
+          "kms:EncryptionContext:aws:cloudwatch:arn": "arn:aws:cloudwatch:*:${aws:PrincipalAccount}:lookup/*"
         }
       },
       "credentials_exposure": false,
@@ -3109,6 +3685,174 @@
       "resource_exposure": false
     },
     {
+      "access_level": "Read",
+      "action": "bedrock-agentcore:GetMemory",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "bedrock-agentcore:GetMemory",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "bedrock-agentcore:GetGateway",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "bedrock-agentcore:GetGateway",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "bedrock-agentcore:GetBrowser",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "bedrock-agentcore:GetBrowser",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "bedrock-agentcore:GetCodeInterpreter",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "bedrock-agentcore:GetCodeInterpreter",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "bedrock-agentcore:GetPaymentManager",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "bedrock-agentcore:GetPaymentManager",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "bedrock-agentcore:GetOauth2CredentialProvider",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "bedrock-agentcore:GetOauth2CredentialProvider",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "bedrock-agentcore:GetApiKeyCredentialProvider",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "bedrock-agentcore:GetApiKeyCredentialProvider",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "bedrock-agentcore:GetPaymentCredentialProvider",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "bedrock-agentcore:GetPaymentCredentialProvider",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "bedrock-agentcore:ListGatewayTargets",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "bedrock-agentcore:ListGatewayTargets",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "bedrock-agentcore:GetGatewayTarget",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "bedrock-agentcore:GetGatewayTarget",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "bedrock-agentcore:GetPolicyEngine",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "bedrock-agentcore:GetPolicyEngine",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "bedrock:GetKnowledgeBase",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "bedrock:GetKnowledgeBase",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
       "access_level": "List",
       "action": "bedrock:ListFoundationModels",
       "condition": null,
@@ -3125,6 +3869,16 @@
       "credentials_exposure": false,
       "data_access": false,
       "effective_action": "bedrock:ListInferenceProfiles",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "pricing:GetProducts",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "pricing:GetProducts",
       "privesc": false,
       "resource_exposure": false
     },
@@ -3551,6 +4305,151 @@
       "effective_action": "iam:GetRoleTemplateVersion",
       "privesc": false,
       "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "sns:GetTopicAttributes",
+      "condition": {
+        "ForAnyValue:StringEquals": {
+          "aws:CalledVia": [
+            "cloudwatch.amazonaws.com"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sns:GetTopicAttributes",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "observabilityadmin:GetTelemetryEvaluationStatus",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "observabilityadmin:GetTelemetryEvaluationStatus",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "observabilityadmin:ListTelemetryRules",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "observabilityadmin:ListTelemetryRules",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "observabilityadmin:GetTelemetryRule",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "observabilityadmin:GetTelemetryRule",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "observabilityadmin:CreateTelemetryRule",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "observabilityadmin:CreateTelemetryRule",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "observabilityadmin:UpdateTelemetryRule",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "observabilityadmin:UpdateTelemetryRule",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "observabilityadmin:DeleteTelemetryRule",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "observabilityadmin:DeleteTelemetryRule",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "observabilityadmin:StartTelemetryEvaluation",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "observabilityadmin:StartTelemetryEvaluation",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "config:PutServiceLinkedConfigurationRecorder",
+      "condition": {
+        "ForAnyValue:StringEquals": {
+          "aws:CalledVia": [
+            "observabilityadmin.amazonaws.com"
+          ]
+        },
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}",
+          "config:ConfigurationRecorderServicePrincipal": "observabilityadmin.amazonaws.com"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "config:PutServiceLinkedConfigurationRecorder",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Permissions management",
+      "action": "iam:CreateServiceLinkedRole",
+      "condition": {
+        "ForAnyValue:StringEquals": {
+          "aws:CalledVia": [
+            "observabilityadmin.amazonaws.com"
+          ]
+        },
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}",
+          "iam:AWSServiceName": [
+            "observabilityadmin.amazonaws.com",
+            "telemetry-enablement.observabilityadmin.amazonaws.com"
+          ]
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "iam:CreateServiceLinkedRole",
+      "privesc": true,
+      "resource_exposure": true
     }
   ],
   "grantless": false,
@@ -3561,5 +4460,5 @@
   "undocumented_actions": false,
   "unknown_actions": [],
   "updatedate": "2026-11-19T23:37:09+00:00",
-  "version": "v5"
+  "version": "v6"
 }

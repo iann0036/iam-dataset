@@ -1,0 +1,364 @@
+{
+  "access_levels": [
+    "List",
+    "Read",
+    "Write"
+  ],
+  "arn": null,
+  "createdate": "2026-11-25T22:37:08+00:00",
+  "credentials_exposure": false,
+  "data_access": false,
+  "deprecated": false,
+  "document": {
+    "Statement": [
+      {
+        "Action": [
+          "s3:GetBucketLocation"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:s3:::*sagemaker*",
+        "Sid": "DataPrepBucketLocation"
+      },
+      {
+        "Action": [
+          "s3:AbortMultipartUpload"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:s3:::*sagemaker*/*",
+        "Sid": "DataPrepMultipartUploadCleanup"
+      },
+      {
+        "Action": [
+          "sagemaker:DescribeHubContent"
+        ],
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:sagemaker:*:aws:hub/SageMakerPublicHub",
+          "arn:aws:sagemaker:*:aws:hub-content/SageMakerPublicHub/Model/*"
+        ],
+        "Sid": "DataPrepPublicHubModelLookup"
+      },
+      {
+        "Action": [
+          "sagemaker:ListDomains",
+          "sagemaker:ListUserProfiles"
+        ],
+        "Condition": {
+          "StringEqualsIfExists": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "*",
+        "Sid": "HumanReviewDomainDiscovery"
+      },
+      {
+        "Action": [
+          "sagemaker:CreateSpace",
+          "sagemaker:UpdateSpace"
+        ],
+        "Condition": {
+          "ArnLike": {
+            "sagemaker:OwnerUserProfileArn": "arn:aws:sagemaker:*:*:user-profile/${sagemaker:DomainId}/${sagemaker:UserProfileName}"
+          },
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}",
+            "sagemaker:SpaceSharingType": "Shared"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:sagemaker:*:*:space/${sagemaker:DomainId}/label-studio-*",
+        "Sid": "HumanReviewSpaceWrites"
+      },
+      {
+        "Action": [
+          "sagemaker:CreateApp",
+          "sagemaker:DeleteApp"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          },
+          "StringEqualsIfExists": {
+            "sagemaker:SpaceSharingType": "Shared"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:sagemaker:*:*:app/${sagemaker:DomainId}/label-studio-*/*",
+        "Sid": "HumanReviewSpaceAppWrites"
+      },
+      {
+        "Action": [
+          "s3:GetBucketPublicAccessBlock",
+          "s3:GetBucketPolicyStatus",
+          "s3:GetBucketOwnershipControls",
+          "s3:GetBucketAcl",
+          "s3:GetEncryptionConfiguration"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:s3:::*sagemaker*",
+        "Sid": "HumanReviewExportBucketSettings"
+      },
+      {
+        "Action": [
+          "s3:DeleteObject"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:s3:::*sagemaker*/*.hil-write-check-*",
+        "Sid": "HumanReviewExportProbeCleanup"
+      }
+    ],
+    "Version": "2012-10-17"
+  },
+  "effective_actions": [
+    {
+      "access_level": "Read",
+      "action": "s3:GetBucketLocation",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3:GetBucketLocation",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "s3:AbortMultipartUpload",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3:AbortMultipartUpload",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "sagemaker:DescribeHubContent",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sagemaker:DescribeHubContent",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "sagemaker:ListDomains",
+      "condition": {
+        "StringEqualsIfExists": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sagemaker:ListDomains",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "List",
+      "action": "sagemaker:ListUserProfiles",
+      "condition": {
+        "StringEqualsIfExists": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sagemaker:ListUserProfiles",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "sagemaker:CreateSpace",
+      "condition": {
+        "ArnLike": {
+          "sagemaker:OwnerUserProfileArn": "arn:aws:sagemaker:*:*:user-profile/${sagemaker:DomainId}/${sagemaker:UserProfileName}"
+        },
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}",
+          "sagemaker:SpaceSharingType": "Shared"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sagemaker:CreateSpace",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "sagemaker:UpdateSpace",
+      "condition": {
+        "ArnLike": {
+          "sagemaker:OwnerUserProfileArn": "arn:aws:sagemaker:*:*:user-profile/${sagemaker:DomainId}/${sagemaker:UserProfileName}"
+        },
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}",
+          "sagemaker:SpaceSharingType": "Shared"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sagemaker:UpdateSpace",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "sagemaker:CreateApp",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        },
+        "StringEqualsIfExists": {
+          "sagemaker:SpaceSharingType": "Shared"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sagemaker:CreateApp",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "sagemaker:DeleteApp",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        },
+        "StringEqualsIfExists": {
+          "sagemaker:SpaceSharingType": "Shared"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sagemaker:DeleteApp",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "s3:GetBucketPublicAccessBlock",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3:GetBucketPublicAccessBlock",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "s3:GetBucketPolicyStatus",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3:GetBucketPolicyStatus",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "s3:GetBucketOwnershipControls",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3:GetBucketOwnershipControls",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "s3:GetBucketAcl",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3:GetBucketAcl",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
+      "action": "s3:GetEncryptionConfiguration",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3:GetEncryptionConfiguration",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "s3:DeleteObject",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "s3:DeleteObject",
+      "privesc": false,
+      "resource_exposure": false
+    }
+  ],
+  "grantless": false,
+  "malformed": false,
+  "name": "AmazonSageMakerAIDataPreparationAccess",
+  "privesc": false,
+  "resource_exposure": false,
+  "undocumented_actions": false,
+  "unknown_actions": [],
+  "updatedate": null,
+  "version": "v1"
+}
