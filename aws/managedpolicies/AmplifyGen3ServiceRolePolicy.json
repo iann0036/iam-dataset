@@ -2,11 +2,12 @@
   "access_levels": [
     "List",
     "Read",
+    "Tagging",
     "Write",
     "Permissions management"
   ],
-  "arn": null,
-  "createdate": "2026-11-25T18:57:07+00:00",
+  "arn": "arn:aws:iam::aws:policy/service-role/AmplifyGen3ServiceRolePolicy",
+  "createdate": "2026-11-27T05:17:08+00:00",
   "credentials_exposure": false,
   "data_access": false,
   "deprecated": false,
@@ -112,18 +113,120 @@
       },
       {
         "Action": [
-          "sso:ListInstances"
+          "sso:ListInstances",
+          "sso:DescribeInstance"
         ],
         "Effect": "Allow",
         "Resource": "*",
-        "Sid": "IdcInstanceDiscovery"
+        "Sid": "IdcDiscovery"
+      },
+      {
+        "Action": [
+          "sso:CreateApplication"
+        ],
+        "Condition": {
+          "ForAllValues:StringEquals": {
+            "aws:TagKeys": [
+              "ManagedByAmplifyGen3"
+            ]
+          },
+          "StringEquals": {
+            "aws:RequestTag/ManagedByAmplifyGen3": "true"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:sso::*:application/*",
+          "arn:aws:sso:::instance/*",
+          "arn:aws:sso::aws:applicationProvider/amplifygen3"
+        ],
+        "Sid": "IdcApplicationProvisioning"
+      },
+      {
+        "Action": [
+          "sso:TagResource"
+        ],
+        "Condition": {
+          "ForAllValues:StringEquals": {
+            "aws:TagKeys": [
+              "ManagedByAmplifyGen3"
+            ]
+          },
+          "StringEquals": {
+            "aws:RequestTag/ManagedByAmplifyGen3": "true"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": [
+          "arn:aws:sso:::instance/*",
+          "arn:aws:sso::aws:applicationProvider/amplifygen3"
+        ],
+        "Sid": "IdcApplicationTagOnCreate"
+      },
+      {
+        "Action": [
+          "sso:TagResource"
+        ],
+        "Condition": {
+          "ForAllValues:StringEquals": {
+            "aws:TagKeys": [
+              "ManagedByAmplifyGen3"
+            ]
+          },
+          "StringEquals": {
+            "aws:RequestTag/ManagedByAmplifyGen3": "true",
+            "aws:ResourceTag/ManagedByAmplifyGen3": "true"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:sso::*:application/*",
+        "Sid": "IdcApplicationTagManagement"
+      },
+      {
+        "Action": [
+          "sso:PutApplicationAssignmentConfiguration",
+          "sso:PutApplicationGrant",
+          "sso:PutApplicationAuthenticationMethod",
+          "sso:CreateApplicationAssignment",
+          "sso:DeleteApplication"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceAccount": "${aws:PrincipalAccount}",
+            "aws:ResourceTag/ManagedByAmplifyGen3": "true"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:sso::*:application/*",
+        "Sid": "IdcApplicationConfigurationSameAccount"
+      },
+      {
+        "Action": [
+          "sso:PutApplicationAssignmentConfiguration",
+          "sso:PutApplicationGrant",
+          "sso:PutApplicationAuthenticationMethod",
+          "sso:CreateApplicationAssignment",
+          "sso:DeleteApplication"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "aws:ResourceOrgID": "${aws:PrincipalOrgID}",
+            "aws:ResourceTag/ManagedByAmplifyGen3": "true"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:aws:sso::*:application/*",
+        "Sid": "IdcApplicationConfigurationSameOrganization"
       },
       {
         "Action": [
           "identitystore:GetGroupId"
         ],
         "Effect": "Allow",
-        "Resource": "arn:aws:identitystore::*:identitystore/*",
+        "Resource": [
+          "arn:aws:identitystore::*:identitystore/*",
+          "arn:aws:identitystore:::group/*"
+        ],
         "Sid": "IdcAdminGroupResolution"
       },
       {
@@ -372,6 +475,224 @@
     },
     {
       "access_level": "Read",
+      "action": "sso:DescribeInstance",
+      "condition": null,
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sso:DescribeInstance",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "sso:CreateApplication",
+      "condition": {
+        "ForAllValues:StringEquals": {
+          "aws:TagKeys": [
+            "ManagedByAmplifyGen3"
+          ]
+        },
+        "StringEquals": {
+          "aws:RequestTag/ManagedByAmplifyGen3": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sso:CreateApplication",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Tagging, Write",
+      "action": "sso:TagResource",
+      "condition": {
+        "ForAllValues:StringEquals": {
+          "aws:TagKeys": [
+            "ManagedByAmplifyGen3"
+          ]
+        },
+        "StringEquals": {
+          "aws:RequestTag/ManagedByAmplifyGen3": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sso:TagResource",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Tagging, Write",
+      "action": "sso:TagResource",
+      "condition": {
+        "ForAllValues:StringEquals": {
+          "aws:TagKeys": [
+            "ManagedByAmplifyGen3"
+          ]
+        },
+        "StringEquals": {
+          "aws:RequestTag/ManagedByAmplifyGen3": "true",
+          "aws:ResourceTag/ManagedByAmplifyGen3": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sso:TagResource",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "sso:PutApplicationAssignmentConfiguration",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}",
+          "aws:ResourceTag/ManagedByAmplifyGen3": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sso:PutApplicationAssignmentConfiguration",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "sso:PutApplicationGrant",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}",
+          "aws:ResourceTag/ManagedByAmplifyGen3": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sso:PutApplicationGrant",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "sso:PutApplicationAuthenticationMethod",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}",
+          "aws:ResourceTag/ManagedByAmplifyGen3": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sso:PutApplicationAuthenticationMethod",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "sso:CreateApplicationAssignment",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}",
+          "aws:ResourceTag/ManagedByAmplifyGen3": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sso:CreateApplicationAssignment",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "sso:DeleteApplication",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceAccount": "${aws:PrincipalAccount}",
+          "aws:ResourceTag/ManagedByAmplifyGen3": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sso:DeleteApplication",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "sso:PutApplicationAssignmentConfiguration",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceOrgID": "${aws:PrincipalOrgID}",
+          "aws:ResourceTag/ManagedByAmplifyGen3": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sso:PutApplicationAssignmentConfiguration",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "sso:PutApplicationGrant",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceOrgID": "${aws:PrincipalOrgID}",
+          "aws:ResourceTag/ManagedByAmplifyGen3": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sso:PutApplicationGrant",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "sso:PutApplicationAuthenticationMethod",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceOrgID": "${aws:PrincipalOrgID}",
+          "aws:ResourceTag/ManagedByAmplifyGen3": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sso:PutApplicationAuthenticationMethod",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "sso:CreateApplicationAssignment",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceOrgID": "${aws:PrincipalOrgID}",
+          "aws:ResourceTag/ManagedByAmplifyGen3": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sso:CreateApplicationAssignment",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Write",
+      "action": "sso:DeleteApplication",
+      "condition": {
+        "StringEquals": {
+          "aws:ResourceOrgID": "${aws:PrincipalOrgID}",
+          "aws:ResourceTag/ManagedByAmplifyGen3": "true"
+        }
+      },
+      "credentials_exposure": false,
+      "data_access": false,
+      "effective_action": "sso:DeleteApplication",
+      "privesc": false,
+      "resource_exposure": false
+    },
+    {
+      "access_level": "Read",
       "action": "identitystore:GetGroupId",
       "condition": null,
       "credentials_exposure": false,
@@ -447,6 +768,6 @@
   "resource_exposure": true,
   "undocumented_actions": false,
   "unknown_actions": [],
-  "updatedate": null,
-  "version": "v1"
+  "updatedate": "2026-11-25T18:57:07+00:00",
+  "version": "v2"
 }
